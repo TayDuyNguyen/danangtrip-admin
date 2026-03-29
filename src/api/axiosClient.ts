@@ -91,7 +91,7 @@ const refreshAccessToken = async (): Promise<string | null> => {
             // Sync updated user info into global store if provided
             // (Đồng bộ thông tin user mới vào global store nếu có)
             if (user) {
-                useUserStore.getState().setUser(user);
+                useUserStore.getState().setUser(user, token);
             }
             return token;
         }
