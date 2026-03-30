@@ -23,3 +23,5 @@ export interface User {
     created_at: string;
     updated_at: string;
 }
+
+export type LoginField = 'email' | 'password';

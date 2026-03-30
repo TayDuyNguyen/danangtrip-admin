@@ -10,10 +10,6 @@ export type ValidationErrors = Record<string, string[]>;
  */
 export interface ApiResponse<T = unknown> {
     code: number;
-    /**
-     * Message of the response
-     * (Tin nhắn phản hồi)
-     */
     message: string;
     data?: T;
     errors?: ValidationErrors;
