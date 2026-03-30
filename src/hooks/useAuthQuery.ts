@@ -28,7 +28,10 @@ export const useLoginQuery = () => {
     });
 }
 
-// Register Query
+/**
+ * Register query
+ * (Query để đăng ký)
+ */
 export const useRegisterQuery = () => {
     return useMutation<ApiResponse<RegisterResponse>, Error, RegisterRequest>({
         mutationFn: authApi.register,
@@ -41,7 +44,10 @@ export const useRegisterQuery = () => {
     });
 }
 
-// Logout Query
+/**
+ * Logout query
+ * (Query để đăng xuất)
+ */
 export const useLogoutQuery = () => {
     return useMutation<ApiResponse, Error>({
         mutationFn: authApi.logout,
@@ -54,7 +60,10 @@ export const useLogoutQuery = () => {
     });
 }
 
-// Refresh Token Query
+/**
+ * Refresh token query
+ * (Query để refresh token)
+ */
 export const useRefreshTokenQuery = () => {
     return useMutation<ApiResponse<RefreshTokenResponse>, Error>({
         mutationFn: authApi.refreshToken,

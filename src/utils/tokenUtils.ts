@@ -1,3 +1,9 @@
+import { useUserStore } from "@/store";
+import { getAccessToken, setAccessToken } from "./storage";
+import { authApi } from "@/api";
+import type { RefreshTokenResponse } from "@/dataHelper";
+import type { ApiResponse } from "@/types";
+
 /**
  * Parse JWT payload
  * (Hàm để giải mã payload JWT)
@@ -41,5 +47,38 @@ export const getTokenExpiryMs = (token: string | null): number => {
         return payload.exp * 1000 - Date.now();
     } catch {
         return 0;
+    }
+};
+
+/**
+ * Attempts to obtain a new access token using the stored refresh token
+ * (Cố gắng lấy access token mới bằng cách sử dụng refresh token đã lưu)
+ */
+export const refreshAccessToken = async (): Promise<string | null> => {
+    try {
+        // Check if token exists before making the request
+        // (Kiểm tra token có tồn tại trước khi gửi request)
+        const accessToken = getAccessToken();
+        if (!accessToken) return null;
+
+        const response = (await authApi.refreshToken()) as ApiResponse<RefreshTokenResponse>
+
+        const { token, user } = response?.data || {};
+
+        if (token) {
+            // Persist the new access token to localStorage
+            // (Lưu access token mới vào localStorage)
+            setAccessToken(token);
+
+            // Sync updated user info into global store if provided
+            // (Đồng bộ thông tin user mới vào global store nếu có)
+            if (user) {
+                useUserStore.getState().setUser(user, token);
+            }
+            return token;
+        }
+        return null;
+    } catch {
+        return null;
     }
 };
