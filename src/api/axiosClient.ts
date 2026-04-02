@@ -5,7 +5,7 @@ import { getAccessToken, setAccessToken, clearTokens, getTokenExpiryMs } from "@
 import axios from "axios";
 import type { AxiosError, InternalAxiosRequestConfig } from "axios";
 import type { ErrorResponse, ApiResponse } from "@/types/index";
-import type { User } from "@/types/user";
+import type { User } from "@/types/auth";
 
 /**
  * Creates a pre-configured axios instance with base URL, default headers and timeout
@@ -42,7 +42,7 @@ const processQueue = (error: Error | null, token: string | null = null) => {
  * Clears tokens, resets user state and redirects to login page
  * (Xóa token, reset trạng thái user và chuyển hướng về trang đăng nhập)
  */
-const handleLogout = () => {
+const handleLogout = (onRedirect?: () => void) => {
     // Prevent multiple redirects if already redirecting
     // (Ngăn chuyển hướng nhiều lần nếu đang trong quá trình redirect)
     if (isRedirecting) return;
@@ -51,17 +51,18 @@ const handleLogout = () => {
     // Clear stored tokens from localStorage
     // (Xóa token đã lưu khỏi localStorage)
     clearTokens();
-
-    // Reset user state in global store
-    // (Reset trạng thái user trong global store)
     useUserStore.getState().logout();
 
-    window.location.href = ROUTERS.LOGIN;
+    if (onRedirect) {
+        onRedirect();
+    } else {
+        window.location.replace(ROUTERS.LOGIN);
+    }
 };
 
 /**
- * Attempts to obtain a new access token using the stored refresh token
- * (Cố gắng lấy access token mới bằng cách sử dụng refresh token đã lưu)
+ * Attempts to obtain a new access token using the stored token
+ * (Cố gắng lấy access token mới bằng cách sử dụng token đã lưu)
  */
 const refreshAccessToken = async (): Promise<string | null> => {
     try {
@@ -128,7 +129,7 @@ axiosClient.interceptors.request.use(
 
         // Proactive refresh: if token expires within 10 minutes, refresh before sending
         // (Refresh chủ động: nếu token hết hạn trong 10 phút, refresh trước khi gửi)
-        if (token && getTokenExpiryMs(token) < 600_000 && !isRefreshing) {
+        if (token && getTokenExpiryMs(token) < 5 * 60 * 1000 && !isRefreshing) {
             isRefreshing = true;
             try {
                 const newToken = await refreshAccessToken();
@@ -193,6 +194,9 @@ axiosClient.interceptors.response.use(
         // (Xử lý lỗi 401 Unauthorized — thử làm mới token)
         if (status === 401 || data?.code === 401) {
 
+            if (originalRequest?.url?.includes(API_ENDPOINTS.AUTH.LOGIN)) {
+                return Promise.reject(error);
+            }
             // Prevent infinite loop if the refresh endpoint itself returns 401
             // (Tránh vòng lặp vô hạn nếu chính endpoint refresh trả về 401)
             if (originalRequest?.url?.includes(API_ENDPOINTS.AUTH.REFRESH_TOKEN)) {

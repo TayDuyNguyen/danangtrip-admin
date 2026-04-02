@@ -6,7 +6,7 @@ import { ROUTERS } from './routes';
 
 const Home = React.lazy(() => import('@/pages/Home'));
 const Login = React.lazy(() => import('@/pages/Login'));
-const Register = React.lazy(() => import('@/pages/Register'));
+// const Register = React.lazy(() => import('@/pages/Register'));
 const PageNotFound = React.lazy(() => import('@/pages/PageNotFound'));
 import ErrorPage from '@/pages/ErrorPage';
 
@@ -41,7 +41,7 @@ const router = createBrowserRouter([
         errorElement: <ErrorPage />,
         children: [
             { path: ROUTERS.LOGIN, element: withSuspense(Login) },
-            { path: ROUTERS.REGISTER, element: withSuspense(Register) },
+            // { path: ROUTERS.REGISTER, element: withSuspense(Register) },
         ],
     },
     // Private routes — yêu cầu đăng nhập
