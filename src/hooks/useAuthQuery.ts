@@ -22,7 +22,7 @@ export const useLoginQuery = () => {
 
             // toast.success
         },
-        onError: (_) => {
+        onError: () => {
             // toast.error
         },
     });
@@ -35,10 +35,10 @@ export const useLoginQuery = () => {
 export const useRegisterQuery = () => {
     return useMutation<ApiResponse<RegisterResponse>, Error, RegisterRequest>({
         mutationFn: authApi.register,
-        onSuccess: (_) => {
+        onSuccess: () => {
             // toast.success
         },
-        onError: (_) => {
+        onError: () => {
             // toast.error
         },
     });
@@ -51,10 +51,10 @@ export const useRegisterQuery = () => {
 export const useLogoutQuery = () => {
     return useMutation<ApiResponse, Error>({
         mutationFn: authApi.logout,
-        onSuccess: (_) => {
+        onSuccess: () => {
             // toast.success
         },
-        onError: (_) => {
+        onError: () => {
             // toast.error
         },
     });
@@ -76,7 +76,7 @@ export const useRefreshTokenQuery = () => {
             }
             // toast.success
         },
-        onError: (_) => {
+        onError: () => {
             // toast.error
         },
     });

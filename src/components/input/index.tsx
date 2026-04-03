@@ -1,5 +1,5 @@
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { type ReactNode, type InputHTMLAttributes, type HTMLInputTypeAttribute, forwardRef } from "react";
+import { type ReactNode, type InputHTMLAttributes, type HTMLInputTypeAttribute, forwardRef, memo } from "react";
 
 interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> {
     label?: string;
@@ -33,24 +33,25 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
     const inputType = isPassword ? (showPassword ? 'text' : 'password') : type || 'text';
 
     return (
-        <div className={`w-full ${className}`}>
+        <div className={`w-full group ${className}`}>
             {label && (
-                <label className={`block text-sm bg-transparent font-medium mb-1  transition-colors duration-200
-                    ${isFocused ? 'text-cyan-300' : 'text-transparent'}
-                    ${error ? 'text-red-500' : ''}
+                <label className={`block text-xs font-semibold mb-1 uppercase tracking-wider transition-all duration-300 transform
+                    ${isFocused ? 'text-cyan-400 translate-y-0 opacity-100' : 'text-transparent -translate-y-1 opacity-0'}
+                    ${error ? 'text-red-500 opacity-100 translate-y-0' : ''}
                 `}>
                     {label}
                 </label>
             )}
             <div
                 className={`
-                    flex items-center border-b px-3 gap-2 
-                    transition-colors duration-200
-                    ${error ? 'border-red-500' : isFocused ? 'border-cyan-300' : 'border-gray-500'}
+                    flex items-center border-b px-3 gap-3 
+                    transition-all duration-500 ease-out
+                    ${error ? 'border-red-500' : isFocused ? 'border-cyan-400' : 'border-gray-700'}
+                    ${isFocused ? 'bg-gray-800/20' : 'bg-transparent'}
                 `}
             >
                 {leftIcon && (
-                    <span className={`text-lg ${isFocused ? 'text-cyan-300' : 'text-gray-500'}`}>
+                    <span className={`text-xl transition-colors duration-300 ${isFocused ? 'text-cyan-400' : 'text-gray-500'}`}>
                         {leftIcon}
                     </span>
                 )}
@@ -61,8 +62,10 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
                     onFocus={onFocus}
                     onBlur={onBlur}
                     className={`
-                        w-full py-2 bg-transparent outline-none text-white placeholder-gray-500
+                        w-full py-3 bg-transparent outline-none text-white placeholder-gray-600
+                        transition-all duration-300
                         focus:placeholder-transparent 
+                        text-sm sm:text-base
                         ${leftIcon ? 'pl-1' : ''}
                         ${isPassword ? 'pr-8' : ''}
                     `}
@@ -72,20 +75,23 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
                     <button
                         type="button"
                         onClick={onTogglePassword}
-                        className="text-gray-400 hover:text-gray-600 transition-colors focus:outline-none"
+                        className="p-2 -mr-2 text-gray-500 hover:text-cyan-400 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-cyan-400/50 rounded-full"
                         tabIndex={-1}
+                        aria-label={showPassword ? "Hide password" : "Show password"}
                     >
-                        {showPassword ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
+                        {showPassword ? <FaEyeSlash size={20} /> : <FaEye size={20} />}
                     </button>
                 )}
             </div>
-            {error && (
-                <p className="mt-1 text-sm text-red-500">
-                    {error}
-                </p>
-            )}
+            <div className="h-5 overflow-hidden">
+                {error && (
+                    <p className="mt-1 text-xs text-red-500 animate-in fade-in slide-in-from-top-1 duration-300">
+                        {error}
+                    </p>
+                )}
+            </div>
         </div>
     );
 });
 
-export default Input;
+export default memo(Input);

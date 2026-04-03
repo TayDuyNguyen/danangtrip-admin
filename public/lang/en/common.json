@@ -1,0 +1,42 @@
+{
+    "language": {
+        "vi": "Tiếng Việt",
+        "en": "English",
+        "select": "Select language"
+    },
+    "title": {
+        "welcome": "Welcome back",
+        "subtitle": "Da Nang Trip Admin - Overview Statistics"
+    },
+    "sidebar": {
+        "system": "Admin System",
+        "dashboard": "Dashboard",
+        "articles": "Article Approval",
+        "users": "User Management",
+        "locations": "Location Management",
+        "categories": "Category Management",
+        "finance": "Finance & Points",
+        "reports": "Reports & Analytics",
+        "settings": "Settings"
+    },
+    "header": {
+        "search": "Quick search..."
+    },
+    "right_sidebar": {
+        "title": "Control Panel",
+        "profile": "Profile",
+        "settings": "Quick Settings",
+        "apply_changes": "Save Changes"
+    },
+    "pagination": {
+        "previous": "Previous",
+        "next": "Next",
+        "page": "Page",
+        "of": "of",
+        "items_per_page": "Items per page",
+        "go_to": "Go to",
+        "showing": "Showing",
+        "to": "to",
+        "results": "results"
+    }
+}

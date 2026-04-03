@@ -1,12 +1,12 @@
 import React, { Suspense } from 'react';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom';
 import PublicRoute from './PublicRoute';
 import PrivateRoute from './PrivateRoute';
-import { ROUTERS } from './routes';
+import { ROUTES } from './routes';
+import MainLayout from '@/layouts/MainLayout';
 
-const Home = React.lazy(() => import('@/pages/Home'));
+const Dashboard = React.lazy(() => import('@/pages/Dashboard'));
 const Login = React.lazy(() => import('@/pages/Login'));
-// const Register = React.lazy(() => import('@/pages/Register'));
 const PageNotFound = React.lazy(() => import('@/pages/PageNotFound'));
 import ErrorPage from '@/pages/ErrorPage';
 
@@ -35,13 +35,17 @@ const withSuspense = (Component: React.ComponentType) => (
  * (Component để định nghĩa đường dẫn của ứng dụng)
  */
 const router = createBrowserRouter([
+    {
+        path: '/',
+        element: <Navigate to={ROUTES.LOGIN} replace />,
+        errorElement: <ErrorPage />
+    },
     // Public routes — chỉ truy cập khi chưa đăng nhập
     {
         element: <PublicRoute />,
         errorElement: <ErrorPage />,
         children: [
-            { path: ROUTERS.LOGIN, element: withSuspense(Login) },
-            // { path: ROUTERS.REGISTER, element: withSuspense(Register) },
+            { path: ROUTES.LOGIN, element: withSuspense(Login) },
         ],
     },
     // Private routes — yêu cầu đăng nhập
@@ -49,7 +53,12 @@ const router = createBrowserRouter([
         element: <PrivateRoute />,
         errorElement: <ErrorPage />,
         children: [
-            { path: ROUTERS.HOME, element: withSuspense(Home) },
+            {
+                element: <MainLayout />,
+                children: [
+                    { path: ROUTES.DASHBOARD, element: withSuspense(Dashboard) },
+                ]
+            }
         ],
     },
     {

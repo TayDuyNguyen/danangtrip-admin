@@ -1,6 +1,4 @@
-export const ROUTERS = {
-    HOME: '/',
+export const ROUTES = {
     LOGIN: '/login',
-    REGISTER: '/register',
     DASHBOARD: '/dashboard',
 } as const;

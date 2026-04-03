@@ -1,0 +1,45 @@
+{
+    "stats": {
+        "pending_articles": "Pending Articles",
+        "need_process": "Action required today",
+        "new_users": "New Users",
+        "vs_last_week": "vs last week",
+        "new_locations": "New Shared Spots",
+        "locations_added": "new spots added",
+        "points_revenue": "Points Revenue",
+        "revenue_up": "is growing",
+        "updated_now": "Updated just now"
+    },
+    "charts": {
+        "daily_ratings": "Daily Rating Trends",
+        "rating_overview": "Summary of visitor interests",
+        "category_breakdown": "Location Categories",
+        "location_share": "Distribution of location types",
+        "period_7": "7 Days",
+        "period_30": "30 Days",
+        "period_90": "90 Days",
+        "select_period": "Select period"
+    },
+    "activity": {
+        "title": "Recent Pending Contributions",
+        "subtitle": "Latest updates from the travel community",
+        "header_title": "Article Title",
+        "header_author": "Author",
+        "header_category": "Category",
+        "header_status": "Status",
+        "header_time": "Timestamp"
+    },
+    "status": {
+        "pending": "Pending",
+        "approved": "Approved",
+        "rejected": "Rejected",
+        "loading_dashboard": "LOADING DASHBOARD DATA..."
+    },
+    "common": {
+        "view_all": "View All",
+        "refresh": "Refresh",
+        "refreshing": "Loading...",
+        "filter": "Filters",
+        "actions": "Actions"
+    }
+}

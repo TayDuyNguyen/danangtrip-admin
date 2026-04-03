@@ -1,0 +1,45 @@
+{
+    "stats": {
+        "pending_articles": "Bài viết chờ duyệt",
+        "need_process": "Cần xử lý ngay hôm nay",
+        "new_users": "Người dùng mới",
+        "vs_last_week": "so với tuần trước",
+        "new_locations": "Địa điểm mới",
+        "locations_added": "địa điểm mới được thêm",
+        "points_revenue": "Doanh thu point",
+        "revenue_up": "đang tăng trưởng",
+        "updated_now": "Cập nhật lúc này"
+    },
+    "charts": {
+        "daily_ratings": "Lượt đánh giá theo ngày",
+        "rating_overview": "Tổng quan mức độ quan tâm của du khách",
+        "category_breakdown": "Phân loại địa điểm",
+        "location_share": "Phân bổ tỉ lệ các loại địa điểm",
+        "period_7": "7 ngày",
+        "period_30": "30 ngày",
+        "period_90": "90 ngày",
+        "select_period": "Chọn khoảng thời gian"
+    },
+    "activity": {
+        "title": "Bài viết chờ duyệt gần đây",
+        "subtitle": "Danh sách các đóng góp mới từ cộng đồng du lịch",
+        "header_title": "Tiêu đề bài viết",
+        "header_author": "Tác giả",
+        "header_category": "Danh mục",
+        "header_status": "Trạng thái",
+        "header_time": "Thời gian"
+    },
+    "status": {
+        "pending": "Chờ duyệt",
+        "approved": "Đã duyệt",
+        "rejected": "Từ chối",
+        "loading_dashboard": "ĐANG TẢI DỮ LIỆU DASHBOARD..."
+    },
+    "common": {
+        "view_all": "Xem tất cả",
+        "refresh": "Làm mới",
+        "refreshing": "Đang tải...",
+        "filter": "Bộ lọc",
+        "actions": "Thao tác"
+    }
+}

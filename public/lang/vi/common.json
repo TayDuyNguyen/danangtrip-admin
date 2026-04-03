@@ -1,0 +1,42 @@
+{
+    "language": {
+        "vi": "Tiếng Việt",
+        "en": "English",
+        "select": "Chọn ngôn ngữ"
+    },
+    "title": {
+        "welcome": "Chào mừng trở lại",
+        "subtitle": "Hệ thống quản trị Đà Nẵng Trip - Thông tin tổng quan"
+    },
+    "sidebar": {
+        "system": "Hệ thống quản trị",
+        "dashboard": "Bảng điều khiển",
+        "articles": "Duyệt bài viết",
+        "users": "Quản lý người dùng",
+        "locations": "Quản lý địa điểm",
+        "categories": "Quản lý danh mục",
+        "finance": "Quản lý Point/Giao dịch",
+        "reports": "Báo cáo thống kê",
+        "settings": "Cài đặt"
+    },
+    "header": {
+        "search": "Tìm kiếm nhanh..."
+    },
+    "right_sidebar": {
+        "title": "Bảng điều khiển",
+        "profile": "Hồ sơ",
+        "settings": "Cài đặt nhanh",
+        "apply_changes": "Lưu thay đổi"
+    },
+    "pagination": {
+        "previous": "Trước",
+        "next": "Sau",
+        "page": "Trang",
+        "of": "trên",
+        "items_per_page": "Số dòng mỗi trang",
+        "go_to": "Đến trang",
+        "showing": "Hiển thị",
+        "to": "đến",
+        "results": "kết quả"
+    }
+}
