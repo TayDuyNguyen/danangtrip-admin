@@ -8,11 +8,11 @@ export interface PaginationProps {
     onPageChange: (page: number) => void;
 }
 
-const StandardPagination: React.FC<PaginationProps> = ({
+const StandardPagination = ({
     currentPage,
     totalPages,
     onPageChange
-}) => {
+}: PaginationProps) => {
     const { t } = useTranslation('common');
 
     const generatePageNumbers = () => {

@@ -14,6 +14,7 @@ import i18next from "i18next";
  */
 const axiosClient = axios.create({
     baseURL: import.meta.env.VITE_API_URL,
+    withCredentials: true,
     headers: {
         'Content-Type': 'application/json',
     },
@@ -33,8 +34,6 @@ let isRedirecting = false;
  * (Xử lý tất cả các request trong hàng đợi sau khi refresh token thành công hoặc thất bại)
  */
 const processQueus = (error: Error | null, token: string | null = null) => {
-    // Resolve or reject each queued request based on refresh result
-    // (Resolve hoặc reject từng request trong hàng đợi dựa trên kết quả refresh)
     failedQueue.forEach((prom) => error ? prom.reject(error) : prom.resolve(token));
     failedQueue = [];
 }
@@ -44,58 +43,43 @@ const processQueus = (error: Error | null, token: string | null = null) => {
  * (Xóa token, reset trạng thái user và chuyển hướng về trang đăng nhập)
  */
 const handleLogout = (onRedirect?: () => void) => {
-    // Prevent multiple redirects if already redirecting
-    // (Ngăn chuyển hướng nhiều lần nếu đang trong quá trình redirect)
     if (isRedirecting) return;
+    
+    // Check if we are still in bootstrap phase to avoid aggressive redirects
+    const isAuthReady = useUserStore.getState().authReady;
+    
     isRedirecting = true;
-
-    // Clear stored tokens from localStorage
-    // (Xóa token đã lưu khỏi localStorage)
     clearTokens();
-
-    // Reset user state in global store
-    // (Reset trạng thái user trong global store)
     useUserStore.getState().logout();
 
-    // Redirect to login page
-    // (Chuyển hướng về trang đăng nhập)
     if (onRedirect) {
         onRedirect();
-    } else {
+    } else if (isAuthReady) {
+        // Only redirect standard window if auth bootstrap is finished
         window.location.replace(ROUTES.LOGIN);
     }
 }
 
 /**
- * Attempts to obtain a new access token using the stored token
- * (Cố gắng lấy access token mới bằng cách sử dụng token đã lưu)
+ * Attempts to obtain a new access token using the HttpOnly cookie (silent refresh)
+ * (Cố gắng lấy access token mới bằng cookie HttpOnly - refresh thầm lặng)
  */
-const refreshAccessToken = async (): Promise<string | null> => {
+export const refreshAccessToken = async (): Promise<string | null> => {
     try {
-        // Check if token exists before making the request
-        // (Kiểm tra token có tồn tại trước khi gửi request)
-        const accessToken = getAccessToken();
-        if (!accessToken) return null;
-
+        // We dont send Authorization header here, backend relies on refresh_token cookie
         const response = await axios.post<ApiResponse<{ token: string, user: User }>>(
             `${import.meta.env.VITE_API_URL}${API_ENDPOINTS.AUTH.REFRESH_TOKEN}`,
             {},
-            {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                    "Content-Type": "application/json"
-                }
+            { 
+                withCredentials: true,
+                headers: { 'Content-Type': 'application/json' }
             }
         );
+        
         const { token, user } = response.data?.data || {};
 
         if (token) {
-            // Persist the new access token to localStorage
-            // (Lưu access token mới vào localStorage)
             setAccessToken(token);
-
-            // Sync updated user info into global store if provided
-            // (Đồng bộ thông tin user mới vào global store nếu có)
             if (user) {
                 useUserStore.getState().setUser(user, token);
             }
@@ -109,15 +93,10 @@ const refreshAccessToken = async (): Promise<string | null> => {
 
 /**
  * Applies common headers (Accept-Language, FormData) to a request config
- * (Gắn các header chung vào config request)
  */
 const applyCommonHeaders = (config: InternalAxiosRequestConfig) => {
-    // Set Accept-Language header from stored language preference
-    // (Đặt header Accept-Language từ ngôn ngữ đã lưu)
     config.headers["Accept-Language"] = getLanguage() || "vi";
 
-    // Remove Content-Type for FormData so browser sets the correct boundary
-    // (Xóa Content-Type với FormData để trình duyệt tự đặt boundary đúng)
     if (config.data instanceof FormData) {
         delete config.headers["Content-Type"];
     }
@@ -125,14 +104,13 @@ const applyCommonHeaders = (config: InternalAxiosRequestConfig) => {
 }
 
 /**
- * Request interceptor — attaches auth token and language header to every outgoing request
- * (Interceptor request — gắn token xác thực và header ngôn ngữ vào mỗi request gửi đi)
+ * Request interceptor — attaches auth token and handles proactive refresh
  */
 axiosClient.interceptors.request.use(
     async (config: InternalAxiosRequestConfig) => {
         const token = getAccessToken();
-        // Proactive refresh: if token expires within 10 minutes, refresh before sending
-        // (Refresh chủ động: nếu token hết hạn trong 10 phút, refresh trước khi gửi)
+        
+        // Proactive refresh: if token expires within 5 minutes, refresh before sending
         if (token && getTokenExpiryMs(token) < 5 * 60 * 1000 && !isRefreshing) {
             isRefreshing = true;
             try {
@@ -141,25 +119,22 @@ axiosClient.interceptors.request.use(
                     processQueus(null, newToken);
                     config.headers.Authorization = `Bearer ${newToken}`;
                 } else {
-                    // Refresh failed — logout and block the request
-                    // (Refresh thất bại — đăng xuất và chặn request)
                     processQueus(new Error('Refresh failed'), null);
                     handleLogout();
                     return Promise.reject(new Error('Session expired'));
                 }
-
             } finally {
                 isRefreshing = false;
             }
         } else if (isRefreshing) {
-            // Another refresh is in progress — wait for it to finish
-            // (Đang có refresh khác chạy — chờ cho đến khi xong)
-            await new Promise<string | null>((resolve, reject) => {
+            // Wait for existing refresh to complete
+            return new Promise<string | null>((resolve, reject) => {
                 failedQueue.push({ resolve, reject });
-            })
+            }).then(token => {
+                if (token) config.headers.Authorization = `Bearer ${token}`;
+                return config;
+            });
         } else {
-            // Attach Bearer token if available
-            // (Gắn Bearer token nếu có)
             if (token) {
                 config.headers.Authorization = `Bearer ${token}`;
             }
@@ -170,19 +145,18 @@ axiosClient.interceptors.request.use(
 );
 
 /**
- * Response interceptor — unwraps response data and handles token refresh on 401
- * (Interceptor response — unwrap dữ liệu trả về và xử lý refresh token khi gặp lỗi 401)
+ * Response interceptor — handles token refresh on 401
  */
 axiosClient.interceptors.response.use(
     (response) => {
-        // Return the actual data payload from the server response
-        // (Trả về dữ liệu thực tế từ response của server)
+        if (response.config.responseType === 'blob') {
+            return response as unknown;
+        }
         return response.data;
     },
     async (error: AxiosError<ErrorResponse>) => {
         const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
 
-        // Handle network errors or server unreachable
         if (!error.response) {
             toast.error(i18next.t('translation.network_error', 'Kết nối mạng thất bại'));
             return Promise.reject(error);
@@ -190,16 +164,15 @@ axiosClient.interceptors.response.use(
 
         const { status, data } = error.response;
 
-        // Handle 401 Unauthorized — attempt token refresh
+        // Handle 401 Unauthorized
         if (status === 401 || data?.code === 401) {
-            if(originalRequest?.url?.includes(API_ENDPOINTS.AUTH.LOGIN)){
-                return Promise.reject(error);
-            }
-            if (originalRequest?.url?.includes(API_ENDPOINTS.AUTH.REFRESH_TOKEN)) {
-                handleLogout();
+            // Skip for login or refresh endpoints to avoid loops
+            if(originalRequest?.url?.includes(API_ENDPOINTS.AUTH.LOGIN) || 
+               originalRequest?.url?.includes(API_ENDPOINTS.AUTH.REFRESH_TOKEN)){
                 return Promise.reject(error);
             }
 
+            // Don't retry more than once
             if (originalRequest?._retry) {
                 handleLogout();
                 return Promise.reject(error);
@@ -211,7 +184,7 @@ axiosClient.interceptors.response.use(
                 }).then((token) => {
                     originalRequest.headers!.Authorization = `Bearer ${token}`;
                     return axiosClient(originalRequest);
-                }).catch((error) => Promise.reject(error));
+                }).catch((refreshErr) => Promise.reject(refreshErr));
             }
 
             originalRequest._retry = true;
@@ -219,15 +192,13 @@ axiosClient.interceptors.response.use(
 
             try {
                 const newToken = await refreshAccessToken();
-                if (!newToken) {
-                    throw new Error('Refresh failed');
-                }
+                if (!newToken) throw new Error('Refresh failed');
 
                 processQueus(null, newToken);
                 originalRequest.headers!.Authorization = `Bearer ${newToken}`;
                 return axiosClient(originalRequest);
-            } catch (refreshError) {
-                processQueus(refreshError as Error, null);
+            } catch (refreshErr) {
+                processQueus(refreshErr as Error, null);
                 handleLogout();
                 return Promise.reject(error);
             } finally {
@@ -235,7 +206,6 @@ axiosClient.interceptors.response.use(
             }
         }
         
-        // --- GLOBAL ERROR TOASTS ---
         if (status === 403) {
             toast.warning(i18next.t('translation.permission_denied', 'Bạn không có quyền thực hiện hành động này'));
         }
@@ -246,6 +216,6 @@ axiosClient.interceptors.response.use(
 
         return Promise.reject(error);
     }
-
 );
+
 export default axiosClient;

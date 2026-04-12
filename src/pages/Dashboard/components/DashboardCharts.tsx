@@ -1,211 +1,385 @@
-import React, { useState, useRef, useEffect } from 'react';
-import {
-    BarChart,
-    Bar,
-    XAxis,
-    YAxis,
-    CartesianGrid,
-    Tooltip,
-    ResponsiveContainer,
-    PieChart,
-    Pie,
-    Cell,
-} from 'recharts';
+import { memo, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ChevronDown, Calendar } from 'lucide-react';
-import { ColorChartDashboard } from '@/constants/colors';
+import i18n from 'i18next';
+import {
+    LineChart, Line,
+    BarChart, Bar, Cell,
+    AreaChart, Area,
+    XAxis, YAxis,
+    CartesianGrid, Tooltip,
+    ResponsiveContainer
+} from 'recharts';
+import { RefreshCw } from 'lucide-react';
 import type { DashboardChartsProps } from '@/dataHelper/dashboard.dataHelper';
+import { Skeleton } from '@/components/ui/Skeleton';
 
-// Filter out purple/violet colors to comply with the Purple Ban rule
-const SafeColors = ColorChartDashboard.filter(color => color.toLowerCase() !== '#8b5cf6');
+// Extended props with filter controls
+interface ExtendedDashboardChartsProps extends DashboardChartsProps {
+    // Revenue filter
+    revenuePeriod: 'day' | 'week' | 'month' | 'year';
+    onRevenuePeriodChange: (period: 'day' | 'week' | 'month' | 'year') => void;
+    revenuePeriodOptions: ReadonlyArray<{ labelKey: string; value: string }>;
+    // Booking trend filter
+    bookingTrendDays: 7 | 30 | 90;
+    onBookingTrendDaysChange: (days: 7 | 30 | 90) => void;
+    bookingTrendOptions: ReadonlyArray<{ labelKey: string; value: number }>;
+}
 
-const DashboardCharts: React.FC<DashboardChartsProps> = ({
-    ratings,
-    categories,
-    currentPeriod,
-    onPeriodChange
-}) => {
+// Axis formatters moved inside component to access i18next 't'
+
+// ─── Custom Tooltip ───────────────────────────────────────────────────────
+interface TooltipProps {
+    active?: boolean;
+    payload?: Array<{ value: number; name: string }>;
+    label?: string;
+}
+
+const CustomTooltip = ({ active, payload, label }: TooltipProps) => {
+    if (active && payload && payload.length) {
+        return (
+            <div className="bg-slate-900 text-white px-4 py-3 rounded-2xl shadow-xl text-sm">
+                <p className="font-bold text-slate-400 mb-1 text-[11px] uppercase tracking-widest">{label}</p>
+                {payload.map((p, i) => (
+                    <p key={i} className="font-black">
+                        {Number.isFinite(p.value)
+                            ? p.value.toLocaleString(i18n.language === 'vi' ? 'vi-VN' : 'en-US')
+                            : '0'}{' '}
+                        {p.name}
+                    </p>
+                ))}
+            </div>
+        );
+    }
+    return null;
+};
+
+// ─── Chart Card Wrapper ──────────────────────────────────────────────────
+interface ChartCardProps {
+    title: string;
+    subtitle: string;
+    badge?: string;
+    filter?: ReactNode;
+    refreshTooltip?: string;
+    onRefresh?: () => void;
+    isRefreshing?: boolean;
+    isLoading?: boolean;
+    children: ReactNode;
+}
+
+const ChartCard = ({
+    title, subtitle, badge, filter,
+    refreshTooltip, onRefresh, isRefreshing, isLoading, children,
+}: ChartCardProps) => (
+    <div className="bg-white p-6 rounded-[2.5rem] border border-slate-200/60 shadow-sm h-[380px] flex flex-col hover:shadow-xl transition-all duration-500 group/card">
+        <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+                <div>
+                    <h3 className="text-base font-black text-slate-900 tracking-tighter">{title}</h3>
+                    <p className="text-slate-400 text-[12px] font-bold">{subtitle}</p>
+                </div>
+                {onRefresh && (
+                    <button
+                        onClick={(e) => { e.stopPropagation(); onRefresh(); }}
+                        disabled={isRefreshing}
+                        title={refreshTooltip ?? 'Refresh'}
+                        aria-label={refreshTooltip ?? 'Refresh'}
+                        className={`p-2 rounded-xl bg-slate-50 hover:bg-blue-50 transition-all ${isRefreshing
+                            ? 'opacity-100 text-blue-600 cursor-not-allowed'
+                            : 'text-slate-400 hover:text-blue-600 active:scale-90 group-hover/card:opacity-100 opacity-0 lg:opacity-0'
+                        }`}
+                    >
+                        <RefreshCw size={14} className={isRefreshing ? 'animate-spin' : ''} />
+                    </button>
+                )}
+            </div>
+            <div className="flex items-center gap-2">
+                {filter}
+                {badge && (
+                    <span className="px-3 py-1 bg-blue-50 text-blue-600 text-[11px] font-black rounded-xl border border-blue-100 uppercase tracking-wider">
+                        {badge}
+                    </span>
+                )}
+            </div>
+        </div>
+        <div className="flex-1 min-h-0">
+            {isLoading ? <Skeleton className="w-full h-full rounded-2xl" /> : children}
+        </div>
+    </div>
+);
+
+// ─── Filter Button ────────────────────────────────────────────────────────
+const FilterButton = ({ active, onClick, label }: {
+    active: boolean;
+    onClick: () => void;
+    label: string;
+}) => (
+    <button
+        onClick={onClick}
+        className={`px-3 py-1.5 text-[11px] font-black rounded-lg transition-all ${active
+            ? 'bg-blue-600 text-white shadow-sm'
+            : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100'
+        }`}
+    >
+        {label}
+    </button>
+);
+
+// ─── Main Component ───────────────────────────────────────────────────────
+const DashboardCharts = (props: ExtendedDashboardChartsProps) => {
+    const {
+        dailyRevenueData,
+        bookingTrendData,
+        userGrowthData,
+        orderStatusData,
+        revenuePeriod,
+    } = props;
     const { t } = useTranslation('dashboard');
-    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-    const dropdownRef = useRef<HTMLDivElement>(null);
 
-    const periods = [
-        { value: 7, label: t('charts.period_7') },
-        { value: 30, label: t('charts.period_30') },
-        { value: 90, label: t('charts.period_90') }
-    ];
+    const safeDailyRevenueData = Array.isArray(dailyRevenueData) ? dailyRevenueData : [];
+    const safeBookingTrendData = Array.isArray(bookingTrendData) ? bookingTrendData : [];
+    const safeUserGrowthData   = Array.isArray(userGrowthData)   ? userGrowthData   : [];
+    const safeOrderStatusData  = Array.isArray(orderStatusData)  ? orderStatusData  : [];
 
-    const currentPeriodLabel = periods.find(p => p.value === currentPeriod)?.label || periods[0].label;
+    const revenueSeriesTotal = safeDailyRevenueData.reduce((a, b) => a + (Number(b.revenue) || 0), 0);
+    const bookingTrendTotal  = safeBookingTrendData.reduce((a, b) => a + (Number(b.count) || 0), 0);
+    const userGrowthNewTotal = safeUserGrowthData.reduce((a, b) => a + (Number(b.new_users) || 0), 0);
+    const orderStatusTotal   = safeOrderStatusData.reduce((a, b) => a + (Number(b.value) || 0), 0);
 
-    useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-                setIsDropdownOpen(false);
-            }
-        };
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, []);
+    const fmtInt = (n: number) => (Number.isFinite(n) ? n : 0).toLocaleString(i18n.language === 'vi' ? 'vi-VN' : 'en-US');
+
+    // ─── Y-axis localized formatters ──────────────────────────────────────────
+    const fmtRevenueAxis = (v: number) => {
+        if (!Number.isFinite(v)) return '0';
+        if (v >= 1_000_000) return `${(v / 1_000_000).toFixed(v % 1_000_000 === 0 ? 0 : 1)} ${t('charts.unit_million')}`;
+        if (v >= 1_000) return `${(v / 1_000).toFixed(v % 1_000 === 0 ? 0 : 1)} ${t('charts.unit_thousand')}`;
+        return `${Math.round(v)}`;
+    };
+
+    const fmtCountAxis = (v: number) => {
+        if (!Number.isFinite(v)) return '0';
+        if (v >= 1_000) return `${(v / 1_000).toFixed(v % 1_000 === 0 ? 0 : 1)} ${t('charts.unit_thousand')}`;
+        return `${Math.round(v)}`;
+    };
+
+    /** i18n tooltip for chart refresh buttons */
+    const refreshLabel = t('charts.refresh_chart', { defaultValue: t('refresh') });
 
     return (
-        <div className="flex flex-col md:flex-col-2 gap-8">
-            {/* Bar Chart - Daily Ratings */}
-            <div className="bg-white p-8 rounded-[2.5rem] border border-slate-200/60 shadow-sm flex flex-col h-[480px] transition-all duration-500 hover:shadow-xl hover:shadow-slate-200/30">
-                <div className="flex items-center justify-between mb-8 overflow-visible">
-                    <div>
-                        <h3 className="text-xl font-black text-slate-900 tracking-tighter">{t('charts.daily_ratings')}</h3>
-                        <p className="text-slate-500 text-sm font-bold tracking-tight">{t('charts.rating_overview')}</p>
-                    </div>
-
-                    {/* Premium Period Selector */}
-                    <div className="relative" ref={dropdownRef}>
-                        <button
-                            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                            className="flex items-center gap-2.5 px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-700 hover:bg-white hover:border-blue-500/50 hover:shadow-lg hover:shadow-blue-500/10 transition-all duration-300 group"
-                        >
-                            <Calendar size={16} className="text-blue-500 group-hover:scale-110 transition-transform" />
-                            <span>{currentPeriodLabel}</span>
-                            <ChevronDown
-                                size={14}
-                                className={`text-slate-400 transition-transform duration-300 ${isDropdownOpen ? 'rotate-180' : ''}`}
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+            {/* Chart 1: Daily Revenue (Line) */}
+            <ChartCard
+                title={t('charts.daily_revenue')}
+                subtitle={t(`revenue.${revenuePeriod}`)}
+                badge={t('charts.badge_total_short', { value: `${fmtInt(revenueSeriesTotal)} ${t('charts.unit_currency')}` })}
+                refreshTooltip={refreshLabel}
+                onRefresh={props.onRevenueRefresh}
+                isRefreshing={props.isRevenueFetching}
+                isLoading={props.isRevenueLoading}
+                filter={
+                    <div className="flex items-center bg-slate-100 rounded-lg p-0.5">
+                        {props.revenuePeriodOptions.map((opt) => (
+                            <FilterButton
+                                key={opt.value}
+                                active={props.revenuePeriod === opt.value}
+                                onClick={() => props.onRevenuePeriodChange(opt.value as 'day' | 'week' | 'month' | 'year')}
+                                label={t(opt.labelKey) || opt.value}
                             />
-                        </button>
-
-                        {isDropdownOpen && (
-                            <div className="absolute right-0 mt-3 w-48 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-slate-100 overflow-hidden py-1.5 z-50 animate-in fade-in zoom-in-95 duration-200">
-                                <div className="px-4 py-2 border-b border-slate-50 mb-1">
-                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">
-                                        {t('charts.select_period')}
-                                    </span>
-                                </div>
-                                {periods.map((p) => (
-                                    <button
-                                        key={p.value}
-                                        onClick={() => {
-                                            onPeriodChange(p.value);
-                                            setIsDropdownOpen(false);
-                                        }}
-                                        className={`w-full flex items-center justify-between px-4 py-3 text-sm font-bold transition-all duration-200 hover:bg-blue-50 group ${currentPeriod === p.value ? 'bg-blue-50/50 text-blue-600' : 'text-slate-600 hover:text-blue-600'
-                                            }`}
-                                    >
-                                        <span>{p.label}</span>
-                                        {currentPeriod === p.value && (
-                                            <div className="w-1.5 h-1.5 bg-blue-600 rounded-full shadow-lg shadow-blue-600/50"></div>
-                                        )}
-                                    </button>
-                                ))}
-                            </div>
-                        )}
-                    </div>
-                </div>
-
-                <div className="flex-1 w-full min-h-0">
-                    <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={ratings} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
-                            <defs>
-                                <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="0%" stopColor="#3b82f6" stopOpacity={1} />
-                                    <stop offset="100%" stopColor="#2563eb" stopOpacity={0.8} />
-                                </linearGradient>
-                            </defs>
-                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                            <XAxis
-                                dataKey="day"
-                                axisLine={false}
-                                tickLine={false}
-                                tick={{ fill: '#94a3b8', fontSize: 13, fontWeight: 700 }}
-                                dy={10}
-                                interval={ratings.length > 10 ? Math.floor(ratings.length / 7) : 0}
-                            />
-                            <YAxis
-                                axisLine={false}
-                                tickLine={false}
-                                tick={{ fill: '#94a3b8', fontSize: 13, fontWeight: 700 }}
-                            />
-                            <Tooltip
-                                cursor={{ fill: '#f8fafc', radius: 12 }}
-                                contentStyle={{
-                                    borderRadius: '16px',
-                                    border: 'none',
-                                    boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1)',
-                                    fontWeight: 'bold',
-                                    fontSize: '14px',
-                                    padding: '12px 16px'
-                                }}
-                            />
-                            <Bar
-                                dataKey="ratingCount"
-                                fill="url(#barGradient)"
-                                radius={[8, 8, 4, 4]}
-                                barSize={ratings.length > 7 ? undefined : 40}
-                                animationDuration={1500}
-                                animationEasing="ease-out"
-                            />
-                        </BarChart>
-                    </ResponsiveContainer>
-                </div>
-            </div>
-
-            {/* Pie Chart - Category Breakdown */}
-            <div className="bg-white p-8 rounded-[2.5rem] border border-slate-200/60 shadow-sm flex flex-col h-[480px] transition-all duration-500 hover:shadow-xl hover:shadow-slate-200/30">
-                <div>
-                    <h3 className="text-xl font-black text-slate-900 tracking-tighter">{t('charts.category_breakdown')}</h3>
-                    <p className="text-slate-500 text-sm font-bold tracking-tight">{t('charts.location_share')}</p>
-                </div>
-
-                {/* Chart + Legend: row on large, column on small */}
-                <div className="flex-1 flex flex-col sm:flex-row items-center min-h-0 gap-4 py-4">
-                    {/* Pie Chart */}
-                    <div className="w-full sm:flex-1 h-48 sm:h-full min-h-0">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <PieChart>
-                                <Pie
-                                    data={categories}
-                                    cx="50%"
-                                    cy="50%"
-                                    innerRadius={80}
-                                    outerRadius={110}
-                                    paddingAngle={8}
-                                    dataKey="value"
-                                    stroke="none"
-                                >
-                                    {categories.map((_, index) => (
-                                        <Cell
-                                            key={`cell-${index}`}
-                                            fill={SafeColors[index % SafeColors.length]}
-                                            className="hover:opacity-80 transition-opacity cursor-pointer outline-none"
-                                        />
-                                    ))}
-                                </Pie>
-                                <Tooltip
-                                    contentStyle={{
-                                        borderRadius: '16px',
-                                        border: 'none',
-                                        boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1)',
-                                        fontWeight: 'bold',
-                                        padding: '12px 16px'
-                                    }}
-                                />
-                            </PieChart>
-                        </ResponsiveContainer>
-                    </div>
-
-                    {/* Custom Legend */}
-                    <div className="flex sm:flex-col flex-row flex-wrap justify-center sm:justify-start gap-3 sm:w-40 w-full">
-                        {categories.map((item, index) => (
-                            <div key={index} className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-slate-50 transition-colors group/item">
-                                <div
-                                    className="w-2.5 h-2.5 shrink-0 rounded-full shadow-sm group-hover/item:scale-125 transition-transform"
-                                    style={{ backgroundColor: SafeColors[index % SafeColors.length] }}
-                                ></div>
-                                <span className="text-[12px] font-bold text-slate-600 truncate">{item.name}</span>
-                            </div>
                         ))}
                     </div>
-                </div>
-            </div>
+                }
+            >
+                <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={safeDailyRevenueData} margin={{ left: 10, right: 10 }}>
+                        <defs>
+                            <linearGradient id="lineGrad" x1="0" y1="0" x2="1" y2="0">
+                                <stop offset="0%" stopColor="#3b82f6" />
+                                <stop offset="100%" stopColor="#6366f1" />
+                            </linearGradient>
+                        </defs>
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                        <XAxis
+                            dataKey="date"
+                            axisLine={false}
+                            tickLine={false}
+                            tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 700 }}
+                        />
+                        <YAxis
+                            axisLine={false}
+                            tickLine={false}
+                            tick={{ fill: '#94a3b8', fontSize: 11 }}
+                            tickFormatter={fmtRevenueAxis}
+                            width={56}
+                        />
+                        <Tooltip content={<CustomTooltip />} />
+                        <Line
+                            type="monotone"
+                            dataKey="revenue"
+                            stroke="url(#lineGrad)"
+                            strokeWidth={3}
+                            dot={false}
+                            activeDot={{ r: 6, fill: '#3b82f6', stroke: '#fff', strokeWidth: 2 }}
+                            name={t('charts.unit_currency')}
+                        />
+                    </LineChart>
+                </ResponsiveContainer>
+            </ChartCard>
+
+            {/* Chart 2: Booking Trend (Bar) */}
+            <ChartCard
+                title={t('charts.booking_trend')}
+                subtitle={t('charts.total_orders_count', { count: bookingTrendTotal })}
+                badge={t('charts.badge_total_short', { value: fmtInt(bookingTrendTotal) })}
+                refreshTooltip={refreshLabel}
+                onRefresh={props.onTrendRefresh}
+                isRefreshing={props.isTrendFetching}
+                isLoading={props.isTrendLoading}
+                filter={
+                    <div className="flex items-center bg-slate-100 rounded-lg p-0.5">
+                        {props.bookingTrendOptions.map((opt) => (
+                            <FilterButton
+                                key={opt.value}
+                                active={props.bookingTrendDays === opt.value}
+                                onClick={() => props.onBookingTrendDaysChange(opt.value as 7 | 30 | 90)}
+                                label={t(opt.labelKey) || `${opt.value}d`}
+                            />
+                        ))}
+                    </div>
+                }
+            >
+                <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={safeBookingTrendData} margin={{ left: -10, right: 10 }}>
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                        <XAxis
+                            dataKey="date"
+                            axisLine={false}
+                            tickLine={false}
+                            tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 700 }}
+                            /* Show fewer ticks when range > 7 days to avoid overlap */
+                            interval={props.bookingTrendDays <= 7 ? 0 : Math.ceil(props.bookingTrendDays / 7) - 1}
+                        />
+                        <YAxis
+                            axisLine={false}
+                            tickLine={false}
+                            tick={{ fill: '#94a3b8', fontSize: 11 }}
+                            tickFormatter={fmtCountAxis}
+                            allowDecimals={false}
+                            width={40}
+                        />
+                        <Tooltip content={<CustomTooltip />} />
+                        <Bar
+                            dataKey="count"
+                            fill="#3b82f6"
+                            radius={[6, 6, 0, 0]}
+                            barSize={props.bookingTrendDays <= 7 ? 28 : props.bookingTrendDays <= 30 ? 14 : 8}
+                            name={t('charts.unit_orders')}
+                        />
+                    </BarChart>
+                </ResponsiveContainer>
+            </ChartCard>
+
+            {/* Chart 3: User Growth (Area) */}
+            <ChartCard
+                title={t('charts.user_growth')}
+                subtitle={t('charts.last_12_months')}
+                badge={t('charts.badge_total_short', { value: fmtInt(userGrowthNewTotal) })}
+                refreshTooltip={refreshLabel}
+                onRefresh={props.onGrowthRefresh}
+                isRefreshing={props.isGrowthFetching}
+                isLoading={props.isGrowthLoading}
+            >
+                <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={safeUserGrowthData} margin={{ left: -4, right: 20, top: 10, bottom: 20 }}>
+                        <defs>
+                            <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="5%" stopColor="#6366f1" stopOpacity={0.25} />
+                                <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
+                            </linearGradient>
+                        </defs>
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                        <XAxis
+                            dataKey="month"
+                            axisLine={false}
+                            tickLine={false}
+                            tick={{ fill: '#94a3b8', fontSize: 10, fontWeight: 700 }}
+                            interval={1}
+                        />
+                        <YAxis
+                            axisLine={false}
+                            tickLine={false}
+                            tick={{ fill: '#94a3b8', fontSize: 11 }}
+                            tickFormatter={fmtCountAxis}
+                            allowDecimals={false}
+                            width={40}
+                        />
+                        <Tooltip content={<CustomTooltip />} />
+                        <Area
+                            type="monotone"
+                            dataKey="new_users"
+                            stroke="#6366f1"
+                            strokeWidth={3}
+                            fill="url(#areaGrad)"
+                            dot={{ r: 4, fill: '#6366f1', strokeWidth: 2, stroke: '#fff' }}
+                            activeDot={{ r: 6 }}
+                            name={t('charts.unit_users')}
+                        />
+                    </AreaChart>
+                </ResponsiveContainer>
+            </ChartCard>
+
+            {/* Chart 4: Order Status (Vertical Bar) */}
+            <ChartCard
+                title={t('charts.order_status')}
+                subtitle={t('charts.allocation')}
+                badge={t('charts.badge_total_short', { value: fmtInt(orderStatusTotal) })}
+                refreshTooltip={refreshLabel}
+                onRefresh={props.onStatusRefresh}
+                isRefreshing={props.isStatusFetching}
+                isLoading={props.isStatusLoading}
+            >
+                <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={safeOrderStatusData} margin={{ left: -10, right: 10, top: 10, bottom: 10 }}>
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                        <XAxis
+                            dataKey="name"
+                            axisLine={false}
+                            tickLine={false}
+                            tick={{ fill: '#64748b', fontSize: 11, fontWeight: 700 }}
+                        />
+                        <YAxis
+                            axisLine={false}
+                            tickLine={false}
+                            tick={{ fill: '#94a3b8', fontSize: 11 }}
+                            tickFormatter={fmtCountAxis}
+                            allowDecimals={false}
+                            width={40}
+                        />
+                        <Tooltip
+                            content={({ active, payload }) => {
+                                if (active && payload && payload.length) {
+                                    return (
+                                        <div className="bg-slate-900 text-white px-4 py-3 rounded-2xl shadow-xl text-sm">
+                                            <p className="font-bold text-slate-400 mb-1 text-[11px] uppercase tracking-widest">
+                                                {payload[0].payload.name}
+                                            </p>
+                                            <p className="font-black">
+                                                {Number(payload[0].value).toLocaleString(i18n.language === 'vi' ? 'vi-VN' : 'en-US')} {t('charts.unit_orders')}
+                                            </p>
+                                        </div>
+                                    );
+                                }
+                                return null;
+                            }}
+                        />
+                        <Bar dataKey="value" radius={[6, 6, 0, 0]} barSize={32}>
+                            {safeOrderStatusData.map((entry, index) => (
+                                <Cell key={`cell-${index}`} fill={entry.color} />
+                            ))}
+                        </Bar>
+                    </BarChart>
+                </ResponsiveContainer>
+            </ChartCard>
         </div>
     );
 };
 
-export default React.memo(DashboardCharts);
+export default memo(DashboardCharts);

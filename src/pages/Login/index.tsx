@@ -14,6 +14,8 @@ import type { LoginForm, LoginRequest } from '@/dataHelper';
 import { hasRole } from '@/utils/roleUtils';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
+import { AxiosError } from 'axios';
+import type { ErrorResponse } from '@/types';
 
 const Login = () => {
     const navigate = useNavigate();
@@ -38,7 +40,6 @@ const Login = () => {
         setLoading(true);
         try {
             const res = await authApi.login(data);
-            console.log('user',res.data?.user);
             if (!res.data) throw new Error();
             if(hasRole(res.data.user, 'admin')){
                 useUserStore.getState().setUser(res.data.user, res.data.token);
@@ -48,9 +49,15 @@ const Login = () => {
                 setErr(t('no_admin_permission'));
                 toast.error(t('login_error'), {description: t('no_admin_permission')});
             }
-        } catch {
-            setErr(t('incorrect_credentials'));
-            toast.error(t('incorrect_credentials'), {
+        } catch (error) {
+            const err = error as AxiosError<ErrorResponse>;
+            const errData = err.response?.data;
+            const serverMsg = errData?.errors
+                ? Object.values(errData.errors).flat().join(', ')
+                : (errData?.message || t('incorrect_credentials'));
+            
+            setErr(serverMsg);
+            toast.error(serverMsg, {
                 description: t('check_again'),
             });
         } finally {

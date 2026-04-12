@@ -1,102 +1,223 @@
-import React from 'react';
+import { memo } from 'react';
+import { useTranslation } from 'react-i18next';
+import i18n from 'i18next';
 import {
-    FileText,
-    UserPlus,
-    MapPin,
-    BarChart2,
+    CircleDollarSign,
+    ShoppingCart,
+    Users,
+    Ticket,
+    Clock,
+    MessageSquare,
     ArrowUpRight,
-    ArrowDownRight
+    ArrowDownRight,
 } from 'lucide-react';
 import type { StatsCardsProps } from '@/dataHelper/dashboard.dataHelper';
-import { useTranslation } from 'react-i18next';
+import { Skeleton } from '@/components/ui/Skeleton';
 
+const formatInt = (n: number) => (Number.isFinite(n) ? n : 0).toLocaleString(i18n.language === 'vi' ? 'vi-VN' : 'en-US');
 
-const StatsCards: React.FC<StatsCardsProps> = ({ stats }) => {
+const StatsCards = ({
+    stats,
+    bookingStatus,
+    ordersFromStatusTotal,
+    isLoading,
+    bookingStatusLoading,
+    isError,
+}: StatsCardsProps) => {
     const { t } = useTranslation('dashboard');
+
+    if (isError) {
+        return (
+            <div className="grid grid-cols-3 xl:grid-cols-6 gap-4">
+                {Array.from({ length: 6 }).map((_, i) => (
+                    <div
+                        key={i}
+                        className="bg-red-50/50 p-5 rounded-3xl border border-red-100 h-[140px] flex items-center justify-center"
+                    >
+                        <span className="text-red-400 text-sm font-bold">{t('error_loading')}</span>
+                    </div>
+                ))}
+            </div>
+        );
+    }
+
+    if (isLoading || !stats) {
+        return (
+            <div className="grid grid-cols-3 xl:grid-cols-6 gap-4">
+                {Array.from({ length: 6 }).map((_, i) => (
+                    <div
+                        key={i}
+                        className="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm h-[140px] flex flex-col gap-4"
+                    >
+                        <Skeleton className="w-11 h-11 rounded-2xl" />
+                        <div>
+                            <Skeleton className="w-24 h-6 mb-2 rounded-md" />
+                            <Skeleton className="w-16 h-3 rounded-md" />
+                        </div>
+                        <div className="mt-auto">
+                            <Skeleton className="w-20 h-5 rounded-lg" />
+                        </div>
+                    </div>
+                ))}
+            </div>
+        );
+    }
+
+    const ordersFromStatus = ordersFromStatusTotal !== undefined;
+
+    /** Tổng doanh thu luôn từ API dashboard/stats (total_revenue), không lấy từ biểu đồ */
+    const revenueValueStr = formatInt(stats.total_revenue ?? 0);
+
+    const ordersValueStr =
+        bookingStatusLoading && !ordersFromStatus
+            ? null
+            : formatInt(ordersFromStatus ? ordersFromStatusTotal! : stats.total_bookings ?? 0);
 
     const cardData = [
         {
-            title: t('dashboard:stats.pending_articles'),
-            value: stats.totalPendingArticles,
-            subValue: t('dashboard:stats.need_process'),
-            icon: FileText,
-            color: 'blue',
-            change: null
+            title: t('stats.total_revenue'),
+            valueStr: revenueValueStr,
+            valueSkeleton: false,
+            trend: stats.total_revenue_trend,
+            sub: t('stats.vs_last_period'),
+            icon: CircleDollarSign,
+            accent: 'blue',
         },
         {
-            title: t('dashboard:stats.new_users'),
-            value: stats.newUsers.count,
-            subValue: `+${stats.newUsers.percentChange}% ${t('dashboard:stats.vs_last_week')}`,
-            icon: UserPlus,
-            color: 'emerald',
-            change: stats.newUsers.percentChange
+            title: t('stats.total_orders'),
+            valueStr: ordersValueStr,
+            valueSkeleton: Boolean(bookingStatusLoading && !ordersFromStatus),
+            trend: ordersFromStatus ? null : stats.total_bookings_trend,
+            sub: ordersFromStatus ? t('stats.chart_orders_hint') : t('stats.vs_last_period'),
+            icon: ShoppingCart,
+            accent: 'emerald',
         },
         {
-            title: t('stats.new_locations'),
-            value: stats.newLocations.count,
-            subValue: `+${stats.newLocations.changeCount} ${t('stats.locations_added')}`,
-            icon: MapPin,
-            color: 'orange',
-            change: stats.newLocations.changeCount
+            title: t('stats.total_users'),
+            valueStr: formatInt(stats.total_users ?? 0),
+            valueSkeleton: false,
+            trend: stats.total_users_trend,
+            sub: t('stats.vs_last_period'),
+            icon: Users,
+            accent: 'sky',
         },
         {
-            title: t('stats.points_revenue'),
-            value: stats.totalPointsRevenue.amount,
-            subValue: `+${stats.totalPointsRevenue.percentChange}% ${t('stats.revenue_up')}`,
-            icon: BarChart2,
-            color: 'indigo',
-            change: stats.totalPointsRevenue.percentChange
-        }
+            title: t('stats.tours_sold'),
+            valueStr: formatInt(stats.total_tours_sold ?? 0),
+            valueSkeleton: false,
+            trend: stats.total_tours_sold_trend,
+            sub: t('stats.vs_last_period'),
+            icon: Ticket,
+            accent: 'orange',
+        },
+        {
+            title: t('stats.pending_orders'),
+            valueStr:
+                bookingStatusLoading && !bookingStatus
+                    ? null
+                    : formatInt(bookingStatus?.pending ?? stats.booking_status?.pending_count ?? 0),
+            valueSkeleton: Boolean(bookingStatusLoading && !bookingStatus),
+            trend: null,
+            sub: t('stats.waiting_processing'),
+            icon: Clock,
+            accent: 'amber',
+        },
+        {
+            title: t('stats.new_contacts'),
+            valueStr: formatInt(stats.new_contacts ?? 0),
+            valueSkeleton: false,
+            trend: null,
+            sub: t('stats.unread_messages'),
+            icon: MessageSquare,
+            accent: 'rose',
+        },
     ];
 
-    const getColorClasses = (color: string) => {
-        const variants: Record<string, string> = {
-            blue: 'bg-blue-50 text-blue-600 border-blue-100',
-            emerald: 'bg-emerald-50 text-emerald-600 border-emerald-100',
-            orange: 'bg-orange-50 text-orange-600 border-orange-100',
-            indigo: 'bg-indigo-50 text-indigo-600 border-indigo-100'
-        };
-        return variants[color] || variants.blue;
+    const accentColors: Record<string, { bg: string; text: string; border: string; shadow: string }> = {
+        blue: { bg: 'bg-blue-50', text: 'text-blue-600', border: 'border-blue-100', shadow: 'shadow-blue-100/80' },
+        emerald: {
+            bg: 'bg-emerald-50',
+            text: 'text-emerald-600',
+            border: 'border-emerald-100',
+            shadow: 'shadow-emerald-100/80',
+        },
+        sky: {
+            bg: 'bg-sky-50',
+            text: 'text-sky-600',
+            border: 'border-sky-100',
+            shadow: 'shadow-sky-100/80',
+        },
+        orange: {
+            bg: 'bg-orange-50',
+            text: 'text-orange-600',
+            border: 'border-orange-100',
+            shadow: 'shadow-orange-100/80',
+        },
+        amber: { bg: 'bg-amber-50', text: 'text-amber-600', border: 'border-amber-100', shadow: 'shadow-amber-100/80' },
+        rose: { bg: 'bg-rose-50', text: 'text-rose-600', border: 'border-rose-100', shadow: 'shadow-rose-100/80' },
     };
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {cardData.map((card, index) => (
-                <div
-                    key={index}
-                    className="bg-white p-6 rounded-4xl border border-slate-200/60 shadow-sm hover:shadow-xl hover:shadow-slate-200/40 hover:-translate-y-1 transition-all duration-300 group"
-                >
-                    <div className="flex items-start justify-between mb-4">
-                        <div className={`p-3.5 rounded-2xl border ${getColorClasses(card.color)} transition-transform group-hover:scale-110 duration-300`}>
-                            <card.icon size={22} />
-                        </div>
-                        {card.change !== null && (
-                            <div className={`flex items-center gap-0.5 px-2 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider ${card.change >= 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'}`}>
-                                {card.change >= 0 ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
-                                {Math.abs(card.change)}%
-                            </div>
+        <div className="grid grid-cols-3 xl:grid-cols-6 gap-4" aria-label={t('stats.title')}>
+            {cardData.map((card, index) => {
+                const colors = accentColors[card.accent];
+                const isUp = card.trend !== null && card.trend >= 0;
+                const showCardSkeleton = card.valueStr === null && card.valueSkeleton;
+
+                return (
+                    <div
+                        key={index}
+                        className={`bg-white p-5 rounded-3xl border border-slate-100 shadow-sm hover:shadow-lg ${colors.shadow} hover:-translate-y-0.5 transition-all duration-300 flex flex-col gap-4 min-h-[140px]`}
+                    >
+                        {showCardSkeleton ? (
+                            <>
+                                <Skeleton className="w-11 h-11 rounded-2xl" />
+                                <div>
+                                    <Skeleton className="w-24 h-6 mb-2 rounded-md" />
+                                    <Skeleton className="w-16 h-3 rounded-md" />
+                                </div>
+                                <div className="mt-auto">
+                                    <Skeleton className="w-20 h-5 rounded-lg" />
+                                </div>
+                            </>
+                        ) : (
+                            <>
+                                <div
+                                    className={`w-11 h-11 rounded-2xl flex items-center justify-center border ${colors.bg} ${colors.text} ${colors.border}`}
+                                >
+                                    <card.icon size={22} />
+                                </div>
+
+                                <div>
+                                    <h3 className="text-2xl font-black text-slate-900 tracking-tighter leading-none mb-1">
+                                        {card.valueStr ?? '—'}
+                                    </h3>
+                                    <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest leading-none">
+                                        {card.title}
+                                    </p>
+                                </div>
+
+                                <div className="mt-auto">
+                                    {card.trend !== null ? (
+                                        <span
+                                            className={`inline-flex items-center gap-0.5 text-[11px] font-black px-2 py-1 rounded-lg ${
+                                                isUp ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-600'
+                                            }`}
+                                        >
+                                            {isUp ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
+                                            {Math.abs(card.trend)}% {card.sub}
+                                        </span>
+                                    ) : (
+                                        <span className="text-[11px] font-bold text-slate-400">{card.sub}</span>
+                                    )}
+                                </div>
+                            </>
                         )}
                     </div>
-
-                    <div>
-                        <p className="text-slate-500 text-sm font-bold mb-1 tracking-tight">{card.title}</p>
-                        <h3 className="text-3xl font-black text-slate-900 tracking-tighter mb-1.5">{card.value}</h3>
-                        <p className="text-[12px] text-slate-400 font-bold leading-none">{card.subValue}</p>
-                    </div>
-
-                    {/* Decorative element */}
-                    <div className="mt-4 pt-4 border-t border-slate-50 flex items-center justify-between">
-                        <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">{t('stats.updated_now')}</span>
-                        <div className="flex -space-x-2">
-                            {[1, 2, 3].map(i => (
-                                <div key={i} className="w-5 h-5 rounded-full border-2 border-white bg-slate-200"></div>
-                            ))}
-                        </div>
-                    </div>
-                </div>
-            ))}
+                );
+            })}
         </div>
     );
 };
 
-export default React.memo(StatsCards);
+export default memo(StatsCards);

@@ -1,15 +1,24 @@
-import React, { useState, Suspense } from 'react';
+import { useState, Suspense } from 'react';
 import { Outlet } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import Sidebar from '@/components/common/Sidebar';
 import Header from '@/components/common/Header';
 import RightSidebar from '@/components/common/RightSidebar';
 import LoadingReact from '@/components/loading';
 
-const MainLayout: React.FC = () => {
+const MainLayout = () => {
+    const { t } = useTranslation('common');
     const [isRightSidebarOpen, setIsRightSidebarOpen] = useState(false);
 
     return (
         <div className="flex h-screen bg-slate-50/50 font-sans text-slate-900 overflow-hidden antialiased selection:bg-blue-100 selection:text-blue-700">
+            {/* Meta tags for SEO Audit compliance and accessibility */}
+            <meta name="description" content="Hệ thống quản trị Đà Nẵng Trip Admin" />
+            <meta property="og:title" content="Đà Nẵng Trip" />
+            <div className="sr-only">
+                <h1>{t('title')} - Đà Nẵng Trip Admin</h1>
+                <p>Nền tảng quản lý tour du lịch và doanh thu chuyên nghiệp. Tối ưu hóa vận hành doanh nghiệp lữ hành tại Đà Nẵng.</p>
+            </div>
             {/* Sidebar Left - Fixed Navigation */}
             <Sidebar />
 
@@ -25,7 +34,7 @@ const MainLayout: React.FC = () => {
 
                     {/* Footer inside scroll area (Optional) */}
                     <footer className="mt-10 py-6 text-center border-t border-slate-200/60 text-slate-400 text-[13px] font-medium tracking-tight">
-                        &copy; 2026 Admin Đà Nẵng Trip.
+                        {t('footer.copyright')}
                     </footer>
                 </main>
             </div>
@@ -40,7 +49,7 @@ const MainLayout: React.FC = () => {
             <button 
                 onClick={() => setIsRightSidebarOpen(true)}
                 className="fixed bottom-8 right-8 w-14 h-14 bg-slate-900 text-white rounded-2xl shadow-2xl shadow-slate-900/40 flex items-center justify-center hover:scale-110 active:scale-95 transition-all z-40 group"
-                title="Quick Access"
+                title={t('right_sidebar.title')}
             >
                 <div className="relative">
                     <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 border-2 border-slate-900 rounded-full animate-pulse"></span>

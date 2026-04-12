@@ -1,4 +1,3 @@
-import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
@@ -8,11 +7,11 @@ export interface MinimalPaginationProps {
     onPageChange: (page: number) => void;
 }
 
-const MinimalPagination: React.FC<MinimalPaginationProps> = ({ 
+const MinimalPagination = ({ 
     currentPage, 
     totalPages, 
     onPageChange 
-}) => {
+}: MinimalPaginationProps) => {
     const { t } = useTranslation('common');
 
     return (

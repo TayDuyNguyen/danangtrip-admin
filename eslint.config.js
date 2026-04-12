@@ -19,5 +19,19 @@ export default defineConfig([
       ecmaVersion: 2020,
       globals: globals.browser,
     },
+    rules: {
+      ...reactHooks.configs.recommended.rules,
+      'react-refresh/only-export-components': [
+        'warn',
+        { allowConstantExport: true },
+      ],
+      'no-restricted-syntax': [
+        'warn',
+        {
+          selector: "TSTypeReference[typeName.name='React.FC'], TSTypeReference[typeName.name='FC'], TSTypeReference[typeName.name='React.FunctionComponent'], TSTypeReference[typeName.name='FunctionComponent']",
+          message: "Prefer standard function/arrow components over React.FC for better modern React practices. See PROJECT_RULES.md Section 14.",
+        },
+      ],
+    },
   },
 ])

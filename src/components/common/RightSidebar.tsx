@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
     X,
     Settings,
@@ -16,7 +16,7 @@ interface RightSidebarProps {
     onClose: () => void;
 }
 
-const RightSidebar: React.FC<RightSidebarProps> = ({ isOpen, onClose }) => {
+const RightSidebar = ({ isOpen, onClose }: RightSidebarProps) => {
     const { t } = useTranslation('common');
     const [activeTab, setActiveTab] = useState<'profile' | 'settings'>('profile');
 
@@ -82,21 +82,21 @@ const RightSidebar: React.FC<RightSidebarProps> = ({ isOpen, onClose }) => {
                                     <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 hover:border-blue-200 transition-colors">
                                         <div className="flex items-center gap-3 mb-1">
                                             <AtSign size={16} className="text-blue-500" />
-                                            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Email</span>
+                                            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{t('right_sidebar.info.email')}</span>
                                         </div>
                                         <p className="text-sm font-bold text-slate-700 ml-7">admin@dntrip.vn</p>
                                     </div>
                                     <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 hover:border-blue-200 transition-colors">
                                         <div className="flex items-center gap-3 mb-1">
                                             <Phone size={16} className="text-emerald-500" />
-                                            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Phone</span>
+                                            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{t('right_sidebar.info.phone')}</span>
                                         </div>
                                         <p className="text-sm font-bold text-slate-700 ml-7">+84 123 456 789</p>
                                     </div>
                                     <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 hover:border-blue-200 transition-colors">
                                         <div className="flex items-center gap-3 mb-1">
                                             <Clock size={16} className="text-orange-500" />
-                                            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Joined</span>
+                                            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{t('right_sidebar.info.joined')}</span>
                                         </div>
                                         <p className="text-sm font-bold text-slate-700 ml-7">12/03/2026</p>
                                     </div>
@@ -106,13 +106,13 @@ const RightSidebar: React.FC<RightSidebarProps> = ({ isOpen, onClose }) => {
                             <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-300">
                                 {/* Settings Section */}
                                 <div className="space-y-4">
-                                    <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest pl-2">System Preferences</h4>
+                                    <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest pl-2">{t('right_sidebar.preferences.title')}</h4>
                                     <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                                        <span className="text-sm font-bold text-slate-700">Dark Mode</span>
+                                        <span className="text-sm font-bold text-slate-700">{t('right_sidebar.preferences.dark_mode')}</span>
                                         <ToggleLeft size={24} className="text-slate-300 cursor-not-allowed" />
                                     </div>
                                     <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                                        <span className="text-sm font-bold text-slate-700">Notifications</span>
+                                        <span className="text-sm font-bold text-slate-700">{t('right_sidebar.preferences.notifications')}</span>
                                         <div className="w-10 h-5 bg-emerald-500 rounded-full relative cursor-pointer shadow-inner">
                                             <div className="absolute right-0.5 top-0.5 w-4 h-4 bg-white rounded-full shadow-sm"></div>
                                         </div>
@@ -120,14 +120,14 @@ const RightSidebar: React.FC<RightSidebarProps> = ({ isOpen, onClose }) => {
                                 </div>
 
                                 <div className="space-y-4">
-                                    <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest pl-2">Recent Logs</h4>
+                                    <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest pl-2">{t('right_sidebar.logs.title')}</h4>
                                     <div className="space-y-3">
                                         {[1, 2, 3].map((log) => (
                                             <div key={log} className="flex gap-3 py-2">
                                                 <div className="w-2 h-2 rounded-full bg-blue-500 mt-1.5 shrink-0"></div>
                                                 <div>
-                                                    <p className="text-[13px] font-medium text-slate-700 leading-tight mb-1">Login successfully from Danang, VN</p>
-                                                    <span className="text-[11px] text-slate-400">10 mins ago</span>
+                                                    <p className="text-[13px] font-medium text-slate-700 leading-tight mb-1">{t('right_sidebar.logs.login_success', { location: 'Danang, VN' })}</p>
+                                                    <span className="text-[11px] text-slate-400">{t('right_sidebar.logs.time_ago', { count: 10 })}</span>
                                                 </div>
                                             </div>
                                         ))}

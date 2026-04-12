@@ -12,7 +12,7 @@ export interface DetailedPaginationProps {
     pageSizeOptions?: number[];
 }
 
-const DetailedPagination: React.FC<DetailedPaginationProps> = ({
+const DetailedPagination = ({
     currentPage,
     totalPages,
     pageSize,
@@ -20,7 +20,7 @@ const DetailedPagination: React.FC<DetailedPaginationProps> = ({
     onPageChange,
     onPageSizeChange,
     pageSizeOptions = [10, 20, 50, 100]
-}) => {
+}: DetailedPaginationProps) => {
     const { t } = useTranslation('common');
     const [jumpToPage, setJumpToPage] = useState<string>('');
 
@@ -48,7 +48,9 @@ const DetailedPagination: React.FC<DetailedPaginationProps> = ({
                     <span className="text-sm font-bold text-slate-500 whitespace-nowrap">
                         {t('pagination.items_per_page')}:
                     </span>
+                    <label htmlFor="pageSizeSelect" className="sr-only">{t('pagination.items_per_page')}</label>
                     <select
+                        id="pageSizeSelect"
                         value={pageSize}
                         onChange={(e) => onPageSizeChange(Number(e.target.value))}
                         className="bg-slate-50 border border-slate-200 text-slate-700 text-sm font-bold rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full p-2 outline-none transition-all duration-300"
@@ -135,7 +137,9 @@ const DetailedPagination: React.FC<DetailedPaginationProps> = ({
                 <span className="text-sm font-bold text-slate-500 whitespace-nowrap">
                     {t('pagination.go_to')}:
                 </span>
+                <label htmlFor="jumpToPageInput" className="sr-only">{t('pagination.go_to')}</label>
                 <input
+                    id="jumpToPageInput"
                     type="number"
                     min="1"
                     max={totalPages}

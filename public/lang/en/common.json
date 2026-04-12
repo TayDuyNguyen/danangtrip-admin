@@ -11,22 +11,51 @@
     "sidebar": {
         "system": "Admin System",
         "dashboard": "Dashboard",
+        "tours": "Tours",
+        "tour_list": "Tour List",
+        "tour_categories": "Tour Categories",
+        "tour_schedules": "Tour Schedules",
+        "hotels": "Hotels",
+        "orders": "Orders",
+        "posts": "Posts",
         "articles": "Article Approval",
         "users": "User Management",
         "locations": "Location Management",
         "categories": "Category Management",
         "finance": "Finance & Points",
         "reports": "Reports & Analytics",
-        "settings": "Settings"
+        "notifications": "Notifications",
+        "settings": "Settings",
+        "logout": "Logout"
     },
     "header": {
-        "search": "Quick search..."
+        "search": "Quick search...",
+        "admin_role": "Administrator"
     },
     "right_sidebar": {
         "title": "Control Panel",
         "profile": "Profile",
         "settings": "Quick Settings",
-        "apply_changes": "Save Changes"
+        "apply_changes": "Save Changes",
+        "info": {
+            "email": "Email",
+            "phone": "Phone",
+            "joined": "JoinedDate",
+            "role": "Role"
+        },
+        "preferences": {
+            "title": "System Preferences",
+            "dark_mode": "Dark Mode",
+            "notifications": "Notifications"
+        },
+        "logs": {
+            "title": "Recent Logs",
+            "login_success": "Login successfully from {{location}}",
+            "time_ago": "{{count}} mins ago"
+        }
+    },
+    "footer": {
+        "copyright": "© 2026 Admin Da Nang Trip."
     },
     "pagination": {
         "previous": "Previous",

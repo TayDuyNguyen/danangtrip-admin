@@ -42,6 +42,18 @@ export default defineConfig(({ mode }) => {
     preview: {
       port: getValidPort(env.VITE_PREVIEW_PORT, 4173),
       strictPort: true,
+    },
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+            'recharts': ['recharts'],
+            'lottie': ['lottie-web'],
+            'lucide': ['lucide-react']
+          }
+        }
+      }
     }
   }
 })

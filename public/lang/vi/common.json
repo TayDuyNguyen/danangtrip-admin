@@ -11,22 +11,51 @@
     "sidebar": {
         "system": "Hệ thống quản trị",
         "dashboard": "Bảng điều khiển",
+        "tours": "Quản lý Tour",
+        "tour_list": "Danh sách tour",
+        "tour_categories": "Danh mục tour",
+        "tour_schedules": "Quản lý lịch trình",
+        "hotels": "Quản lý khách sạn",
+        "orders": "Đặt hàng",
+        "posts": "Bài viết",
         "articles": "Duyệt bài viết",
-        "users": "Quản lý người dùng",
+        "users": "Người dùng",
         "locations": "Quản lý địa điểm",
         "categories": "Quản lý danh mục",
-        "finance": "Quản lý Point/Giao dịch",
-        "reports": "Báo cáo thống kê",
-        "settings": "Cài đặt"
+        "finance": "Tài chính & Điểm",
+        "reports": "Báo cáo & Thống kê",
+        "notifications": "Thông báo",
+        "settings": "Cài đặt",
+        "logout": "Đăng xuất"
     },
     "header": {
-        "search": "Tìm kiếm nhanh..."
+        "search": "Tìm kiếm nhanh...",
+        "admin_role": "Quản trị viên"
     },
     "right_sidebar": {
         "title": "Bảng điều khiển",
         "profile": "Hồ sơ",
         "settings": "Cài đặt nhanh",
-        "apply_changes": "Lưu thay đổi"
+        "apply_changes": "Lưu thay đổi",
+        "info": {
+            "email": "Email",
+            "phone": "Số điện thoại",
+            "joined": "Ngày tham gia",
+            "role": "Vai trò"
+        },
+        "preferences": {
+            "title": "Tùy chỉnh hệ thống",
+            "dark_mode": "Chế độ tối",
+            "notifications": "Thông báo"
+        },
+        "logs": {
+            "title": "Hoạt động gần đây",
+            "login_success": "Đăng nhập thành công từ {{location}}",
+            "time_ago": "{{count}} phút trước"
+        }
+    },
+    "footer": {
+        "copyright": "© 2026 Admin Đà Nẵng Trip."
     },
     "pagination": {
         "previous": "Trước",
