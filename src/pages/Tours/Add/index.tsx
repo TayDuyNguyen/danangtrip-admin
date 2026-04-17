@@ -10,6 +10,7 @@ import {
     Calendar,
 } from 'lucide-react';
 import { ROUTES } from '@/routes/routes';
+import CustomSelect from '@/components/ui/CustomSelect';
 
 const AddTour = () => {
     const { t } = useTranslation(['tour', 'common']);
@@ -92,11 +93,15 @@ const AddTour = () => {
 
                             <div className="space-y-2">
                                 <label className="text-[13px] font-black text-slate-700 uppercase tracking-widest ml-1">{t('form.category')}</label>
-                                <select className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-bold text-slate-600 focus:outline-none focus:ring-4 focus:ring-blue-500/10 transition-all cursor-pointer">
-                                    <option>Tour hằng ngày</option>
-                                    <option>Tour biển đảo</option>
-                                    <option>Tour văn hóa</option>
-                                </select>
+                                <CustomSelect 
+                                    options={[
+                                        { value: 'daily', label: t('form.daily_tour') },
+                                        { value: 'island', label: t('form.island_tour') },
+                                        { value: 'culture', label: t('form.culture_tour') }
+                                    ]}
+                                    className="w-full text-sm font-bold text-slate-600 transition-all"
+                                    isSearchable={true}
+                                />
                             </div>
 
                             <div className="space-y-2">
@@ -135,7 +140,7 @@ const AddTour = () => {
                                         type="number" 
                                         className="w-full pl-12 pr-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-black focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500/30 transition-all"
                                     />
-                                    <span className="absolute left-5 top-1/2 -translate-y-1/2 font-black text-emerald-600">đ</span>
+                                    <span className="absolute left-5 top-1/2 -translate-y-1/2 font-black text-emerald-600">{t('currency', { ns: 'common' })}</span>
                                 </div>
                             </div>
                             <div className="space-y-2">
@@ -145,7 +150,7 @@ const AddTour = () => {
                                         type="number" 
                                         className="w-full pl-12 pr-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-black focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500/30 transition-all"
                                     />
-                                    <span className="absolute left-5 top-1/2 -translate-y-1/2 font-black text-emerald-600">đ</span>
+                                    <span className="absolute left-5 top-1/2 -translate-y-1/2 font-black text-emerald-600">{t('currency', { ns: 'common' })}</span>
                                 </div>
                             </div>
                         </div>

@@ -4,6 +4,10 @@
         "en": "English",
         "select": "Select language"
     },
+    "placeholder_select": "Select...",
+    "actions": {
+        "remove": "Remove"
+    },
     "title": {
         "welcome": "Welcome back",
         "subtitle": "Da Nang Trip Admin - Overview Statistics"
@@ -66,6 +70,23 @@
         "go_to": "Go to",
         "showing": "Showing",
         "to": "to",
-        "results": "results"
+        "results": "results",
+        "first_page": "First",
+        "last_page": "Last",
+        "go_button": "GO"
+    },
+    "currency": "VND",
+    "seo": {
+        "description_admin": "DaNang Trip Admin Dashboard",
+        "description_platform": "Professional tour and revenue management platform. Optimizing tour operations in Da Nang."
+    },
+    "validation": {
+        "email_invalid": "Invalid email address",
+        "email_required": "Email is required",
+        "password_required": "Password is required",
+        "password_min": "Password must be at least 6 characters",
+        "required": "This field is required",
+        "number_too_small": "Value is too small",
+        "file_too_large": "File size is too large"
     }
 }

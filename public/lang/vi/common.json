@@ -4,6 +4,11 @@
         "en": "English",
         "select": "Chọn ngôn ngữ"
     },
+    "placeholder_select": "Chọn...",
+
+    "actions": {
+        "remove": "Xóa"
+    },
     "title": {
         "welcome": "Chào mừng trở lại",
         "subtitle": "Hệ thống quản trị Đà Nẵng Trip - Thông tin tổng quan"
@@ -66,6 +71,23 @@
         "go_to": "Đến trang",
         "showing": "Hiển thị",
         "to": "đến",
-        "results": "kết quả"
+        "results": "kết quả",
+        "first_page": "Trang đầu",
+        "last_page": "Trang cuối",
+        "go_button": "OK"
+    },
+    "currency": "đ",
+    "seo": {
+        "description_admin": "Hệ thống quản trị Đà Nẵng Trip Admin",
+        "description_platform": "Nền tảng quản lý tour du lịch và doanh thu chuyên nghiệp. Tối ưu hóa vận hành doanh nghiệp lữ hành tại Đà Nẵng."
+    },
+    "validation": {
+        "email_invalid": "Email không hợp lệ",
+        "email_required": "Vui lòng nhập Email",
+        "password_required": "Vui lòng nhập mật khẩu",
+        "password_min": "Mật khẩu phải từ 6 ký tự trở lên",
+        "required": "Trường này là bắt buộc",
+        "number_too_small": "Giá trị quá nhỏ",
+        "file_too_large": "Kích thước tệp quá lớn"
     }
 }

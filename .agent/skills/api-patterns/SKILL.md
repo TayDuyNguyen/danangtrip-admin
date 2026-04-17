@@ -1,7 +1,6 @@
 ---
 name: api-patterns
 description: API design principles and decision-making. REST vs GraphQL vs tRPC selection, response formats, versioning, pagination.
-allowed-tools: Read, Write, Edit, Glob, Grep
 ---
 
 # API Patterns
@@ -36,9 +35,9 @@ allowed-tools: Read, Write, Edit, Glob, Grep
 
 | Need | Skill |
 |------|-------|
-| API implementation | `@[skills/backend-development]` |
+| API implementation | `nodejs-best-practices` |
 | Data structure | `@[skills/database-design]` |
-| Security details | `@[skills/security-hardening]` |
+| Security details | `vulnerability-scanner` |
 
 ---
 

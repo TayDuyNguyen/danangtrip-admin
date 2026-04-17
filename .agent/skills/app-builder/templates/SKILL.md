@@ -1,7 +1,6 @@
 ---
-name: templates
-description: Project scaffolding templates for new applications. Use when creating new projects from scratch. Contains 12 templates for various tech stacks.
-allowed-tools: Read, Glob, Grep
+name: app-builder-templates
+description: Internal template index for the app-builder skill. Use only when app-builder needs to choose a project scaffold template for a new application.
 ---
 
 # Project Templates

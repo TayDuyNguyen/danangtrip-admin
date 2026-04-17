@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
+import CustomSelect, { type Option } from '@/components/ui/CustomSelect';
 
 export interface DetailedPaginationProps {
     currentPage: number;
@@ -49,18 +50,13 @@ const DetailedPagination = ({
                         {t('pagination.items_per_page')}:
                     </span>
                     <label htmlFor="pageSizeSelect" className="sr-only">{t('pagination.items_per_page')}</label>
-                    <select
+                    <CustomSelect
                         id="pageSizeSelect"
-                        value={pageSize}
-                        onChange={(e) => onPageSizeChange(Number(e.target.value))}
-                        className="bg-slate-50 border border-slate-200 text-slate-700 text-sm font-bold rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full p-2 outline-none transition-all duration-300"
-                    >
-                        {pageSizeOptions.map((option) => (
-                            <option key={option} value={option}>
-                                {option}
-                            </option>
-                        ))}
-                    </select>
+                        options={pageSizeOptions.map(option => ({ value: option, label: option.toString() }))}
+                        value={{ value: pageSize, label: pageSize.toString() }}
+                        onChange={(opt) => onPageSizeChange(Number((opt as Option)?.value))}
+                        className="text-xs w-[85px]"
+                    />
                 </div>
             </div>
 
@@ -151,7 +147,7 @@ const DetailedPagination = ({
                     type="submit"
                     className="p-2 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-600 hover:text-white font-bold text-xs uppercase tracking-wider transition-all duration-300"
                 >
-                    OK
+                    {t('pagination.go_button')}
                 </button>
             </form>
         </div>

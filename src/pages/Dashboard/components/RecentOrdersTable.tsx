@@ -2,6 +2,7 @@ import { memo, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import i18n from 'i18next';
 import { ExternalLink, CheckCircle2, Clock, XCircle, ChevronRight, ChevronLeft, RefreshCw } from 'lucide-react';
+import { clsx } from 'clsx';
 import type { BookingsResponse } from '@/dataHelper/dashboard.dataHelper';
 import { Skeleton } from '@/components/ui/Skeleton';
 
@@ -43,6 +44,7 @@ const RecentOrdersTable = ({
     const perPage = bookings?.meta?.per_page ?? 8;
     const start = (currentPage - 1) * perPage + 1;
     const end = Math.min(start + orders.length - 1, total);
+    const totalPages = Math.max(1, lastPage);
 
     const STATUS_CONFIG: Record<string, { label: string; className: string; icon: ReactNode }> = {
         completed: { label: t('status.completed'), className: 'bg-emerald-50 text-emerald-600 border-emerald-100', icon: <CheckCircle2 size={13} /> },
@@ -112,8 +114,8 @@ const RecentOrdersTable = ({
             </div>
 
             {/* Table */}
-            <div className="overflow-x-auto">
-                <table className="w-full text-left">
+            <div className="max-w-full overflow-x-auto custom-scrollbar-horizontal">
+                <table className="w-full min-w-[980px] text-left">
                     <thead className="bg-slate-50/50 border-b border-slate-100">
                         <tr>
                             <th className="px-6 py-3.5 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('tables.header_order_id')}</th>
@@ -170,7 +172,7 @@ const RecentOrdersTable = ({
 
                                         {/* Amount */}
                                         <td className="px-6 py-4 text-right">
-                                            <span className="text-[13px] font-black text-slate-900">{item.total_amount.toLocaleString(i18n.language === 'vi' ? 'vi-VN' : 'en-US')} đ</span>
+                                            <span className="text-[13px] font-black text-slate-900">{item.total_amount.toLocaleString(i18n.language === 'vi' ? 'vi-VN' : 'en-US')} {t('currency', { ns: 'common' })}</span>
                                         </td>
 
                                         {/* Status */}
@@ -197,7 +199,6 @@ const RecentOrdersTable = ({
                     </tbody>
                 </table>
             </div>
-
             {/* Footer with Pagination */}
             <div className="px-6 py-4 border-t border-slate-100 bg-slate-50/30">
                 <div className="flex items-center justify-between">
@@ -215,35 +216,32 @@ const RecentOrdersTable = ({
                             <ChevronLeft size={14} />
                         </button>
 
-                        <div className="flex items-center gap-1">
-                            {Array.from({ length: Math.min(5, lastPage) }, (_, i) => {
-                                // Show pages around current page
-                                let pageNum = i + 1;
-                                if (lastPage > 5 && currentPage > 3) {
-                                    pageNum = currentPage - 2 + i;
-                                    if (pageNum > lastPage) pageNum = lastPage - (4 - i);
-                                }
-                                if (pageNum < 1 || pageNum > lastPage) return null;
-
-                                return (
-                                    <button
-                                        key={pageNum}
-                                        onClick={() => onPageChange(pageNum)}
-                                        className={`w-8 h-8 rounded-xl text-[11px] font-black transition-all ${
-                                            currentPage === pageNum
-                                                ? 'bg-blue-600 text-white shadow-sm'
-                                                : 'bg-white text-slate-600 border border-slate-200 hover:border-slate-300'
-                                        }`}
-                                    >
-                                        {pageNum}
-                                    </button>
-                                );
-                            })}
+                        <div className="flex items-center gap-1.5">
+                            {Array.from({ length: totalPages }, (_, i) => i + 1)
+                                .filter((p) => p === 1 || p === totalPages || Math.abs(p - currentPage) <= 1)
+                                .map((p, i, arr) => (
+                                    <div key={p} className="flex items-center gap-1.5">
+                                        {i > 0 && arr[i - 1] !== p - 1 && (
+                                            <span className="text-slate-300">...</span>
+                                        )}
+                                        <button
+                                            onClick={() => onPageChange(p)}
+                                            className={clsx(
+                                                'w-8 h-8 rounded-xl text-[11px] font-black transition-all',
+                                                p === currentPage
+                                                    ? 'bg-blue-600 text-white shadow-sm'
+                                                    : 'bg-white text-slate-600 border border-slate-200 hover:border-slate-300'
+                                            )}
+                                        >
+                                            {p}
+                                        </button>
+                                    </div>
+                                ))}
                         </div>
 
                         <button
                             onClick={() => onPageChange(currentPage + 1)}
-                            disabled={currentPage >= lastPage}
+                            disabled={currentPage >= totalPages}
                             className="p-2 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-slate-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                         >
                             <ChevronRight size={14} />

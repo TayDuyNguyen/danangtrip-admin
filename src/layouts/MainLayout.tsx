@@ -13,11 +13,11 @@ const MainLayout = () => {
     return (
         <div className="flex h-screen bg-slate-50/50 font-sans text-slate-900 overflow-hidden antialiased selection:bg-blue-100 selection:text-blue-700">
             {/* Meta tags for SEO Audit compliance and accessibility */}
-            <meta name="description" content="Hệ thống quản trị Đà Nẵng Trip Admin" />
+            <meta name="description" content={t('seo.description_admin')} />
             <meta property="og:title" content="Đà Nẵng Trip" />
             <div className="sr-only">
                 <h1>{t('title')} - Đà Nẵng Trip Admin</h1>
-                <p>Nền tảng quản lý tour du lịch và doanh thu chuyên nghiệp. Tối ưu hóa vận hành doanh nghiệp lữ hành tại Đà Nẵng.</p>
+                <p>{t('seo.description_platform')}</p>
             </div>
             {/* Sidebar Left - Fixed Navigation */}
             <Sidebar />

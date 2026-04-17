@@ -102,5 +102,6 @@
         "inactive": "Inactive",
         "full": "Full",
         "loading": "LOADING DATA..."
-    }
+    },
+    "welcome_back": "Welcome back,"
 }
