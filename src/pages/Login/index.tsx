@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authApi } from '@/api';
 import { useUserStore } from '@/store';
-import { ROUTERS } from '@/routes/routes';
+import { ROUTES } from '@/routes/routes';
 import { useForm } from 'react-hook-form';
 import { MdLock, MdEmail } from 'react-icons/md';
 import Input from '@/components/input';
@@ -12,17 +12,22 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { loginSchema } from '@/validations';
 import type { LoginForm, LoginRequest } from '@/dataHelper';
 import { hasRole } from '@/utils/roleUtils';
+import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
+import { AxiosError } from 'axios';
+import type { ErrorResponse } from '@/types';
 
 const Login = () => {
     const navigate = useNavigate();
-
+    const { t } = useTranslation('login');
+    const schema = useMemo(() => loginSchema(t), [t]);
     const [showPassword, setShowPassword] = useState(false);
     const [rememberMe, setRememberMe] = useState(false);
     const [loading, setLoading] = useState(false);
     const [err, setErr] = useState('');
 
     const { register, handleSubmit, formState: { errors } } = useForm<LoginForm>({
-        resolver: yupResolver(loginSchema),
+        resolver: yupResolver(schema),
         defaultValues: {
             email: '',
             password: ''
@@ -38,22 +43,23 @@ const Login = () => {
             if (!res.data) throw new Error();
             if(hasRole(res.data.user, 'admin')){
                 useUserStore.getState().setUser(res.data.user, res.data.token);
-                navigate(ROUTERS.DASHBOARD);
+                 toast.success(t('login_success'), {description: t('welcome_back')});
+                navigate(ROUTES.DASHBOARD);
             } else {
-                setErr('Bạn không có quyền truy cập vào trang quản trị.');
+                setErr(t('no_admin_permission'));
+                toast.error(t('login_error'), {description: t('no_admin_permission')});
             }
-        } catch (error: any) {
-            if (error?.response?.status === 401) {
-                setErr('Email hoặc mật khẩu không đúng.');
-            } else if (error?.response?.status === 403) {
-                setErr('Tài khoản bị khóa. Vui lòng liên hệ admin.');
-            } else if (error?.code === 'ERR_NETWORK') {
-                setErr('Không thể kết nối đến server. Kiểm tra lại mạng.');
-            } else if (error?.response?.status === 500) {
-                setErr('Lỗi server. Vui lòng thử lại sau.');
-            } else {
-                setErr('Đã có lỗi xảy ra. Vui lòng thử lại.');
-            }
+        } catch (error) {
+            const err = error as AxiosError<ErrorResponse>;
+            const errData = err.response?.data;
+            const serverMsg = errData?.errors
+                ? Object.values(errData.errors).flat().join(', ')
+                : (errData?.message || t('incorrect_credentials'));
+            
+            setErr(serverMsg);
+            toast.error(serverMsg, {
+                description: t('check_again'),
+            });
         } finally {
             setLoading(false);
         }
@@ -74,7 +80,7 @@ const Login = () => {
                     style={{ clipPath: 'polygon(0 0, 100% 0, 20% 100%, 0% 100%)' }}
                 >
                     <h1 className="text-4xl mb-4 font-quicksand font-bold uppercase text-shadow-lg">
-                        Chào mừng bạn<br />trở lại!
+                        {t('welcome_back').split(' ').slice(0, 3).join(' ')}<br />{t('welcome_back').split(' ').slice(3).join(' ')}
                     </h1>
                 </div>
 
@@ -82,23 +88,23 @@ const Login = () => {
                 <div className="flex flex-1 items-center justify-center p-5 sm:p-8 bg-gray-900">
                     <div className="w-full max-w-md">
                         <div className="flex items-center justify-center mb-6 sm:mb-8 lg:hidden">
-                            <span className="font-bold text-cyan-300 text-xl text-shadow-lg text-center">Chào mừng bạn trở lại!</span>
+                            <span className="font-bold text-cyan-300 text-xl text-shadow-lg text-center">{t('welcome_back')}</span>
                         </div>
 
                         <h2 className="text-3xl font-quicksand font-bold uppercase text-white mb-6 text-center text-shadow-xl">
-                            ĐĂNG NHẬP
+                            {t('login_title')}
                         </h2>
 
                         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" noValidate autoComplete="off">
                             <Input
-                                label="Email"
+                                label={t('email')}
                                 leftIcon={<MdEmail size={20} />}
                                 type="email"
-                                placeholder='Email'
+                                placeholder={t('email')}
                                 autoComplete="new-email"
                                 required
                                 isFocused={isFocused('email')}
-                                error={errors.email?.message}
+                                error={errors.email?.message ? t(errors.email.message) : ''}
                                 {...emailReg}
                                 onFocus={emailFocus.onFocus}
                                 onBlur={(e) => {
@@ -108,16 +114,16 @@ const Login = () => {
                             />
 
                             <Input
-                                label="Mật khẩu"
+                                label={t('password')}
                                 leftIcon={<MdLock size={20} />}
-                                placeholder="Mật khẩu"
+                                placeholder={t('password')}
                                 autoComplete="new-password"
                                 required
                                 isPassword
                                 showPassword={showPassword}
                                 onTogglePassword={() => setShowPassword((v) => !v)}
                                 isFocused={isFocused('password')}
-                                error={errors.password?.message}
+                                error={errors.password?.message ? t(errors.password.message) : ''}
                                 {...passwordReg}
                                 onFocus={passwordFocus.onFocus}
                                 onBlur={(e) => {
@@ -134,9 +140,9 @@ const Login = () => {
                                         onChange={(e) => setRememberMe(e.target.checked)}
                                         className="accent-blue-600"
                                     />
-                                    Ghi nhớ đăng nhập
+                                    {t('remember_me')}
                                 </label>
-                                <a href="#" className="text-sm text-cyan-300 hover:underline">Quên mật khẩu?</a>
+                                <a href="#" className="text-sm text-cyan-300 hover:underline">{t('forgot_password')}</a>
                             </div>
                             {/* catch error*/}
                             <div>
@@ -150,7 +156,7 @@ const Login = () => {
                                 from-cyan-300 to-blue-950  hover:from-cyan-500 hover:to-blue-950 disabled:opacity-60 
                                  text-white font-semibold py-3 rounded-lg transition"
                             >
-                                {loading ? 'Đang đăng nhập...' : 'ĐĂNG NHẬP'}
+                                {loading ? t('logging_in') : t('login_btn')}
                             </button>
                         </form>
 

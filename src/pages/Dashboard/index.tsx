@@ -1,0 +1,271 @@
+import { useMemo, useState, useCallback } from 'react';
+import { RefreshCcw, Calendar, TrendingUp, Download } from 'lucide-react';
+import { useTranslation, Trans } from 'react-i18next';
+import { useQueryClient } from '@tanstack/react-query';
+import { useAuth } from '@/store';
+import { 
+    useDashboardStatsQuery,
+    useBookingStatusCountsQuery,
+    useRevenueQuery,
+    useBookingTrendQuery,
+    useUserGrowthQuery,
+    useTopToursQuery,
+    useBookingsQuery,
+    useBookingsExportMutation,
+    dashboardKeys
+} from '@/hooks/useDashboardQueries';
+import StatsCards from './components/StatsCards';
+import DashboardCharts from './components/DashboardCharts';
+import TopToursTable from './components/TopToursTable';
+import RecentOrdersTable from './components/RecentOrdersTable';
+import { toast } from 'sonner';
+
+// Separate filter options
+const REVENUE_PERIOD_OPTIONS = [
+    { labelKey: 'revenue.day', value: 'day' },
+    { labelKey: 'revenue.week', value: 'week' },
+    { labelKey: 'revenue.month', value: 'month' },
+    { labelKey: 'revenue.year', value: 'year' },
+] as const;
+
+const BOOKING_TREND_OPTIONS = [
+    { labelKey: 'period.7', value: 7 },
+    { labelKey: 'period.30', value: 30 },
+    { labelKey: 'period.90', value: 90 },
+] as const;
+
+const Dashboard = () => {
+    const { user } = useAuth();
+    const { t } = useTranslation('dashboard');
+    const queryClient = useQueryClient();
+    const [refreshing, setRefreshing] = useState(false);
+    const exportMutation = useBookingsExportMutation();
+
+    // Filter states
+    const [revenuePeriod, setRevenuePeriod] = useState<'day' | 'week' | 'month' | 'year'>('day');
+    const [bookingTrendDays, setBookingTrendDays] = useState<7 | 30 | 90>(30);
+    const [bookingsPage, setBookingsPage] = useState(1);
+    const [bookingsStatus, setBookingsStatus] = useState<'pending' | 'confirmed' | 'completed' | 'cancelled' | ''>('');
+
+    /**
+     * Helper to calculate date ranges for specific filters
+     */
+    const getDateRange = useCallback((period: 'day' | 'week' | 'month' | 'year' | number) => {
+        const today = new Date();
+        const fromDate = new Date(today);
+        
+        if (typeof period === 'number') {
+            fromDate.setDate(today.getDate() - period);
+        } else {
+            if (period === 'day') fromDate.setHours(0, 0, 0, 0);
+            else if (period === 'week') fromDate.setDate(today.getDate() - 7);
+            else if (period === 'month') fromDate.setMonth(today.getMonth() - 1);
+            else if (period === 'year') fromDate.setFullYear(today.getFullYear() - 1);
+        }
+
+        return {
+            from: fromDate.toISOString().split('T')[0],
+            to: today.toISOString().split('T')[0]
+        };
+    }, []);
+
+    // ─── Independent Queries ───────────────────────────────────────────────
+
+    // 1. Stats Cards
+    const statsQuery = useDashboardStatsQuery();
+
+    // 1b. Booking Status Counts (Order Status chart)
+    const bookingStatusCountsQuery = useBookingStatusCountsQuery();
+
+    // 2. Revenue Chart
+    const revenueRange = useMemo(() => getDateRange(revenuePeriod), [revenuePeriod, getDateRange]);
+    const revenueQuery = useRevenueQuery({
+        period: revenuePeriod,
+        from: revenueRange.from,
+        to: revenueRange.to
+    });
+
+    // 3. Booking Trend
+    const trendQuery = useBookingTrendQuery({ days: bookingTrendDays });
+
+    // 4. User Growth
+    const growthQuery = useUserGrowthQuery({ year: new Date().getFullYear() });
+
+    // 5. Top Tours
+    const toursRange = useMemo(() => getDateRange(bookingTrendDays), [bookingTrendDays, getDateRange]);
+    const topToursQuery = useTopToursQuery({
+        limit: 5,
+        from: toursRange.from,
+        to: toursRange.to
+    });
+
+    // 6. Recent Orders
+    const bookingsQuery = useBookingsQuery({
+        page: bookingsPage,
+        per_page: 8,
+        sort_by: 'booked_at',
+        sort_order: 'desc',
+        booking_status: bookingsStatus || undefined
+    });
+
+    // Handle global refresh
+    const handleRefresh = useCallback(async () => {
+        setRefreshing(true);
+        await queryClient.invalidateQueries({ queryKey: dashboardKeys.all });
+        setRefreshing(false);
+    }, [queryClient]);
+
+    // Handle export report — delegates all API logic to the mutation hook
+    const handleExport = useCallback(() => {
+        const range = getDateRange(revenuePeriod);
+        const fallbackFilename = t('tables.export_bookings_default_filename', {
+            from: range.from,
+            to: range.to,
+        });
+        exportMutation.mutate(
+            { from_date: range.from, to_date: range.to, fallbackFilename },
+            {
+                onSuccess: () => toast.success(t('tables.export_success')),
+                onError: (err) => {
+                    console.error('Export failed:', err);
+                    toast.error(err instanceof Error ? err.message : t('tables.export_failed'));
+                },
+            }
+        );
+    }, [revenuePeriod, getDateRange, t, exportMutation]);
+
+    // Build order status data
+    const orderStatusData = useMemo(() => {
+        const status = bookingStatusCountsQuery.data;
+        if (!status) return [];
+        return [
+            { name: t('status.completed'), value: status.completed, color: '#10b981' },
+            { name: t('status.confirmed'), value: status.confirmed, color: '#3b82f6' },
+            { name: t('status.pending'), value: status.pending, color: '#f59e0b' },
+            { name: t('status.cancelled'), value: status.cancelled, color: '#ef4444' },
+        ];
+    }, [bookingStatusCountsQuery.data, t]);
+
+    /** Tổng đơn = tổng 4 trạng thái (cùng nguồn với biểu đồ trạng thái đơn) */
+    const ordersFromStatusTotal = useMemo(() => {
+        if (bookingStatusCountsQuery.isLoading || bookingStatusCountsQuery.isError) return undefined;
+        const s = bookingStatusCountsQuery.data;
+        if (!s) return undefined;
+        return s.pending + s.confirmed + s.completed + s.cancelled;
+    }, [
+        bookingStatusCountsQuery.isLoading,
+        bookingStatusCountsQuery.isError,
+        bookingStatusCountsQuery.data,
+    ]);
+
+    // We use isolated error and loading states within components to enable progressive rendering
+
+
+    return (
+        <div className="space-y-8 animate-in fade-in duration-700 slide-in-from-bottom-4" aria-label={t('title')}>
+            {/* Header */}
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5 pb-6 border-b border-slate-200/60">
+                <div>
+                    <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1.5 flex items-center gap-1.5">
+                        <TrendingUp size={12} className="text-blue-500" />
+                        {t('title')}
+                    </p>
+                    <h1 className="text-4xl font-black text-slate-900 tracking-tighter leading-none">
+                        <Trans i18nKey="welcome" ns="dashboard" values={{ name: user?.full_name || 'Admin' }}>
+                            Chào mừng trở lại, <span className="text-blue-600">{user?.full_name || 'Admin'}</span> 👋
+                        </Trans>
+                    </h1>
+                    <p className="text-slate-500 font-bold text-sm mt-1.5 flex items-center gap-2">
+                        <Calendar size={14} className="text-slate-400" />
+                        {t('subtitle')}
+                    </p>
+                </div>
+
+                <div className="flex items-center gap-3 flex-wrap">
+                    <button
+                        onClick={handleExport}
+                        disabled={exportMutation.isPending}
+                        title={exportMutation.isPending ? t('exporting') : t('export')}
+                        className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl text-sm font-black transition-all flex items-center gap-2 shadow-xl shadow-emerald-900/20 active:scale-95 disabled:opacity-50"
+                    >
+                        <Download size={16} className={exportMutation.isPending ? 'animate-bounce' : ''} />
+                        {exportMutation.isPending ? t('exporting') : t('export')}
+                    </button>
+
+                    <button
+                        onClick={handleRefresh}
+                        disabled={refreshing}
+                        title={refreshing ? t('refreshing') : t('refresh')}
+                        className={`px-5 py-2.5 rounded-2xl text-sm font-black transition-all flex items-center gap-2 shadow-xl active:scale-95 disabled:opacity-50 ${refreshing ? 'bg-blue-50 text-blue-600 shadow-blue-500/10' : 'bg-slate-900 hover:bg-black text-white shadow-slate-900/20'}`}
+                    >
+                        <RefreshCcw size={16} className={refreshing ? 'animate-spin' : ''} />
+                        {refreshing ? t('refreshing') : t('refresh')}
+                    </button>
+                </div>
+            </div>
+
+            <div className="flex flex-col gap-8">
+                {/* 1. Stats Cards */}
+                <StatsCards 
+                    stats={statsQuery.data} 
+                    bookingStatus={bookingStatusCountsQuery.data}
+                    ordersFromStatusTotal={ordersFromStatusTotal}
+                    isLoading={statsQuery.isLoading}
+                    bookingStatusLoading={bookingStatusCountsQuery.isLoading}
+                    isRefreshing={refreshing || statsQuery.isFetching || bookingStatusCountsQuery.isFetching}
+                    isError={statsQuery.isError}
+                />
+
+                {/* 2. Charts Row */}
+                <DashboardCharts
+                    dailyRevenueData={revenueQuery.data || []}
+                    bookingTrendData={trendQuery.data || []}
+                    userGrowthData={growthQuery.data || []}
+                    orderStatusData={orderStatusData}
+                    // Filter props
+                    revenuePeriod={revenuePeriod}
+                    onRevenuePeriodChange={setRevenuePeriod}
+                    revenuePeriodOptions={REVENUE_PERIOD_OPTIONS}
+                    bookingTrendDays={bookingTrendDays}
+                    onBookingTrendDaysChange={setBookingTrendDays}
+                    bookingTrendOptions={BOOKING_TREND_OPTIONS}
+                    // Refresh handlers
+                    onRevenueRefresh={() => revenueQuery.refetch()}
+                    isRevenueFetching={revenueQuery.isFetching}
+                    isRevenueLoading={revenueQuery.isLoading}
+                    onTrendRefresh={() => trendQuery.refetch()}
+                    isTrendFetching={trendQuery.isFetching}
+                    isTrendLoading={trendQuery.isLoading}
+                    onGrowthRefresh={() => growthQuery.refetch()}
+                    isGrowthFetching={growthQuery.isFetching}
+                    isGrowthLoading={growthQuery.isLoading}
+                    onStatusRefresh={() => bookingStatusCountsQuery.refetch()}
+                    isStatusFetching={bookingStatusCountsQuery.isFetching}
+                    isStatusLoading={bookingStatusCountsQuery.isLoading}
+                />
+
+                {/* 3. Tables Section */}
+                <div className="space-y-8">
+                    <TopToursTable 
+                        topTours={topToursQuery.data || []} 
+                        onRefresh={() => topToursQuery.refetch()}
+                        isRefreshing={topToursQuery.isFetching}
+                        isLoading={topToursQuery.isLoading}
+                    />
+                    <RecentOrdersTable
+                        bookings={bookingsQuery.data}
+                        currentPage={bookingsPage}
+                        onPageChange={setBookingsPage}
+                        statusFilter={bookingsStatus}
+                        onStatusChange={setBookingsStatus}
+                        onRefresh={() => bookingsQuery.refetch()}
+                        isRefreshing={bookingsQuery.isFetching}
+                        isLoading={bookingsQuery.isLoading}
+                    />
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default Dashboard;

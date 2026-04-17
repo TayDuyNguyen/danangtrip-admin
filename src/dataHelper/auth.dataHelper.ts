@@ -43,6 +43,6 @@ export interface RegisterResponse {
  * Refresh token response interface
  * (Interface để lưu trữ thông tin phản hồi refresh token)
  */
-export interface RefreshTokenResponse extends LoginResponse { }
+export type RefreshTokenResponse = LoginResponse;
 
-export interface LoginForm extends LoginRequest {}
+export type LoginForm = LoginRequest;

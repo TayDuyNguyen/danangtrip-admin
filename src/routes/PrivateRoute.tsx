@@ -1,12 +1,18 @@
 import { useAuth } from "@/store"
 import { Navigate, Outlet } from "react-router-dom";
-import { ROUTERS } from "./routes";
+import { ROUTES } from "./routes";
 import { hasRole } from "@/utils/roleUtils";
+import LoadingReact from "@/components/loading";
 
 const PrivateRoute = () => {
-    const { isAuthenticated, user } = useAuth();
+    const { isAuthenticated, user, authReady } = useAuth();
+    
+    if (!authReady) {
+        return <LoadingReact />;
+    }
+
     return (
-        isAuthenticated && hasRole(user, 'admin') ? <Outlet /> : <Navigate to={ROUTERS.LOGIN} />
+        isAuthenticated && hasRole(user, 'admin') ? <Outlet /> : <Navigate to={ROUTES.LOGIN} replace />
     );
 }
 

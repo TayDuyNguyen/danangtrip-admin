@@ -9,8 +9,10 @@ import { clearTokens, getAccessToken, setAccessToken } from '@/utils';
  */
 interface UserState {
     user: User | null;
+    authReady: boolean;
     setUser: (user: User, token: string) => void;
     logout: () => void;
+    setAuthReady: (ready: boolean) => void;
 }
 
 /**
@@ -23,14 +25,16 @@ export const useUserStore = create<UserState>()(
     persist(
         (set) => ({
             user: null,
+            authReady: false,
             setUser: (user, token) => {
                 setAccessToken(token);
                 set({user});
             },
             logout: () => {
                 clearTokens();
-                set({user: null});
-            }
+                set({user: null, authReady: true});
+            },
+            setAuthReady: (ready) => set({ authReady: ready })
         }),
         {
             name: 'user-storage',
@@ -54,9 +58,10 @@ export const useUserStore = create<UserState>()(
  * (Custom hook giúp truy cập trạng thái authentication một cách tiện lợi)
  */
 export const useAuth = () => {
-    const user = useUserStore((state) => state.user);
+    const { user, authReady } = useUserStore();
     return {
         user,
+        authReady,
         isAuthenticated: !!user && !!getAccessToken(),
     }
 }

@@ -13,11 +13,11 @@ i18
     .init({
         fallbackLng: 'vi', // Ngôn ngữ mặc định
         supportedLngs: ['vi', 'en'], // Ngôn ngữ được hỗ trợ
-        defaultNS: 'translation',
-        ns: ['translation', 'login', 'common', 'register', ], // namespace
-        
+        defaultNS: 'dashboard',
+        ns: ['dashboard', 'translation', 'common', 'login'], // namespace
+
         // Cho phép dùng dấu chấm để phân tách namespace (VD: login.key) thay vì dấu :
-        nsSeparator: '.',
+        nsSeparator: ':',
         // Cho phép dùng dấu chấm cho key lồng nhau
         keySeparator: '.',
 

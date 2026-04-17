@@ -1,0 +1,54 @@
+{
+    "title": {
+        "list": "Quản lý Tour",
+        "subtitle": "Danh sách tất cả các tour du lịch trong hệ thống",
+        "add": "Thêm Tour mới",
+        "edit": "Chỉnh sửa Tour",
+        "add_subtitle": "Nhập thông tin chi tiết để tạo tour du lịch mới"
+    },
+    "filters": {
+        "search": "Tìm tên tour...",
+        "all_categories": "Tất cả danh mục",
+        "all_status": "Tất cả trạng thái",
+        "sort_by": "Sắp xếp theo",
+        "newest": "Mới nhất",
+        "price_low": "Giá: Thấp đến Cao",
+        "price_high": "Giá: Cao đến Thấp",
+        "sales": "Bán chạy nhất"
+    },
+    "table": {
+        "header_tour": "Tour du lịch",
+        "header_category": "Danh mục",
+        "header_price": "Đơn giá",
+        "header_sales": "Lượt bán",
+        "header_status": "Trạng thái",
+        "header_actions": "Thao tác"
+    },
+    "status": {
+        "active": "Đang hoạt động",
+        "inactive": "Tạm ngưng",
+        "full": "Hết chỗ"
+    },
+    "form": {
+        "basic_info": "Thông tin cơ bản",
+        "pricing": "Giá cả & Khuyến mãi",
+        "schedule": "Lịch trình tour",
+        "images": "Hình ảnh",
+        "tour_name": "Tên tour du lịch",
+        "tour_name_placeholder": "Nhập tên tour...",
+        "category": "Danh mục tour",
+        "duration": "Thời lượng",
+        "duration_placeholder": "Ví dụ: 1 ngày, 3 ngày 2 đêm...",
+        "price": "Giá gốc",
+        "sale_price": "Giá khuyến mãi",
+        "description": "Mô tả chi tiết",
+        "submit": "Lưu thông tin",
+        "back": "Quay lại",
+        "cancel": "Hủy bỏ"
+    },
+    "messages": {
+        "delete_confirm": "Bạn có chắc chắn muốn xóa tour này?",
+        "delete_success": "Đã xóa tour thành công",
+        "create_success": "Đã thêm tour mới thành công"
+    }
+}

@@ -1,0 +1,28 @@
+{
+  "welcome_back": "Welcome back!",
+  "login_title": "LOGIN",
+  "email": "Email",
+  "password": "Password",
+  "remember_me": "Remember me",
+  "forgot_password": "Forgot password?",
+  "logging_in": "Logging in...",
+  "login_btn": "LOGIN",
+  "or_login_with": "Or login with",
+  "no_account": "Don't have an account?",
+  "register_now": "Register now",
+  "incorrect_credentials": "Incorrect email or password.",
+  "account_banned": "Account has been banned. Please contact admin.",
+  "network_error": "Cannot connect to server. Please check your network.",
+  "server_error": "Server error. Please try again later.",
+  "general_error": "An error occurred. Please try again.",
+  "login_success": "Login success",
+  "login_error": "Login error",
+  "no_admin_permission": "You do not have permission to access the admin portal.",
+  "check_again": "Please check your information.",
+  "validation": {
+    "email_invalid": "Invalid email format",
+    "email_required": "Email is required",
+    "password_min": "Password must be at least 6 characters",
+    "password_required": "Password is required"
+  }
+}

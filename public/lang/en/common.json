@@ -1,0 +1,71 @@
+{
+    "language": {
+        "vi": "Tiếng Việt",
+        "en": "English",
+        "select": "Select language"
+    },
+    "title": {
+        "welcome": "Welcome back",
+        "subtitle": "Da Nang Trip Admin - Overview Statistics"
+    },
+    "sidebar": {
+        "system": "Admin System",
+        "dashboard": "Dashboard",
+        "tours": "Tours",
+        "tour_list": "Tour List",
+        "tour_categories": "Tour Categories",
+        "tour_schedules": "Tour Schedules",
+        "hotels": "Hotels",
+        "orders": "Orders",
+        "posts": "Posts",
+        "articles": "Article Approval",
+        "users": "User Management",
+        "locations": "Location Management",
+        "categories": "Category Management",
+        "finance": "Finance & Points",
+        "reports": "Reports & Analytics",
+        "notifications": "Notifications",
+        "settings": "Settings",
+        "logout": "Logout"
+    },
+    "header": {
+        "search": "Quick search...",
+        "admin_role": "Administrator"
+    },
+    "right_sidebar": {
+        "title": "Control Panel",
+        "profile": "Profile",
+        "settings": "Quick Settings",
+        "apply_changes": "Save Changes",
+        "info": {
+            "email": "Email",
+            "phone": "Phone",
+            "joined": "JoinedDate",
+            "role": "Role"
+        },
+        "preferences": {
+            "title": "System Preferences",
+            "dark_mode": "Dark Mode",
+            "notifications": "Notifications"
+        },
+        "logs": {
+            "title": "Recent Logs",
+            "login_success": "Login successfully from {{location}}",
+            "time_ago": "{{count}} mins ago"
+        }
+    },
+    "footer": {
+        "copyright": "© 2026 Admin Da Nang Trip."
+    },
+    "pagination": {
+        "previous": "Previous",
+        "next": "Next",
+        "page": "Page",
+        "of": "of",
+        "items_per_page": "Items per page",
+        "go_to": "Go to",
+        "showing": "Showing",
+        "to": "to",
+        "results": "results"
+    }
+}

@@ -1,4 +1,4 @@
-import { API_ENDPOINTS } from '@/constant';
+import { API_ENDPOINTS } from '@/constants';
 import type { LoginRequest, LoginResponse, RefreshTokenResponse, RegisterRequest, RegisterResponse } from '@/dataHelper';
 import type { ApiResponse } from '@/types';
 import axiosClient from './axiosClient';

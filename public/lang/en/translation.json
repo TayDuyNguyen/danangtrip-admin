@@ -1,0 +1,6 @@
+{
+  "network_error": "Network connection failed. Please check your connection.",
+  "permission_denied": "You do not have permission to perform this action.",
+  "server_error": "System server error. Please try again later.",
+  "general_error": "An error occurred. Please try again."
+}

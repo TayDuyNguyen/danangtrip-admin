@@ -64,8 +64,28 @@ npm run dev
 |---|---|
 | `npm run dev` | Chạy dev server |
 | `npm run build` | Build production |
+| `npm run typecheck` | Kiểm tra TypeScript (`tsc -b`) |
 | `npm run preview` | Preview bản build |
 | `npm run lint` | Kiểm tra lỗi ESLint |
+| `npm run prepush:check` | Chạy toàn bộ kiểm tra chất lượng (Lint, Type, Build, Console) |
+
+---
+
+## Pre-push Quality Gate
+
+Dự án sử dụng Husky để chặn push nếu code không đạt tiêu chuẩn. Trước khi push, hệ thống sẽ tự động chạy:
+
+1.  **Linting**: Kiểm tra phong cách viết code.
+2.  **Type Checking**: Kiểm tra lỗi TypeScript.
+3.  **Production Build**: Đảm bảo dự án có thể đóng gói thành công.
+4.  **Console Error Testing**: Chạy Playwright để phát hiện lỗi runtime/console trên trình duyệt.
+
+> **Lưu ý**: Để bước `test:console` thành công, bạn cần đảm bảo app đang chạy ở `http://localhost:5173`.
+
+Để chạy thủ công toàn bộ các bước kiểm tra:
+```bash
+npm run prepush:check
+```
 
 ---
 
@@ -84,3 +104,10 @@ cp .env.example .env
 | `VITE_HOST` | Host dev server (`false` hoặc `0.0.0.0`) |
 | `VITE_API_URL` | Base URL của backend API |
 | `VITE_NAME` | Tên ứng dụng |
+
+---
+
+## CI/CD
+
+- CI/CD dùng GitHub Actions cho `dev` và `main`.
+- Xem hướng dẫn chi tiết tại [docs/ci-cd.md](docs/ci-cd.md).
