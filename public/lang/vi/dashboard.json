@@ -20,6 +20,18 @@
         "month": "Tháng này",
         "year": "Năm nay"
     },
+    "profile": {
+        "default_name": "Admin Đà Nẵng",
+        "default_email": "admin@dntrip.vn",
+        "default_phone": "+84 123 456 789",
+        "default_joined": "12/03/2026"
+    },
+    "filters": {
+        "all": "Tất cả"
+    },
+    "logs": {
+        "default_location": "Đà Nẵng, VN"
+    },
     "stats": {
         "chart_period_hint": "Theo kỳ biểu đồ",
         "chart_orders_hint": "Theo đếm trạng thái",

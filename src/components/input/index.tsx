@@ -47,7 +47,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
                     flex items-center border-b px-3 gap-3 
                     transition-all duration-500 ease-out
                     ${error ? 'border-red-500' : isFocused ? 'border-cyan-400' : 'border-gray-700'}
-                    ${isFocused ? 'bg-gray-800/20' : 'bg-transparent'}
+                    bg-transparent
                 `}
             >
                 {leftIcon && (

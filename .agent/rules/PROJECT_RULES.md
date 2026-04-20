@@ -55,6 +55,14 @@ src/
 └── validations/   # Yup schemas
 ```
 
+### Naming conventions
+
+- **React components** (files that primarily export UI): **PascalCase** filenames, e.g. `TourHeader.tsx`, `MainLayout.tsx`.
+- **Hooks**: `use` prefix + **PascalCase** after `use`, e.g. `useTourQueries.ts`.
+- **Utilities, mappers, API modules**: **camelCase** filenames, e.g. `tour.mapper.ts`, `extractTourId.ts`, `tourApi.ts`.
+- **Route-level pages** under `src/pages/`: folder names **PascalCase** or existing project convention per feature (stay consistent within `pages/`).
+- Exported **component names** must match file intent; avoid default-export rename drift when possible.
+
 Notes:
 
 - `@/*` aliases to `src/*`
@@ -71,6 +79,24 @@ Prefer this direction for new code and touched modules:
 4. `axiosClient` handles auth headers and shared response/error behavior
 
 Avoid introducing new direct page-to-API calls unless the change is intentionally temporary and low risk.
+
+### Zustand vs TanStack Query (server state)
+
+- **Default**: Treat **TanStack Query** as the source of truth for data that comes from the API. Do **not** copy query results into Zustand for general caching — that duplicates memory and risks stale UI when the cache updates.
+- **Use Zustand only when** one of the following applies:
+  - **Cross-cutting client state** must be shared across routes or trees that do not share a natural React Query context (e.g. global UI prefs, wizard draft not yet tied to an API id).
+  - **Derived client-only state** that is not a server snapshot (e.g. sidebar collapsed, theme).
+  - **Complex multi-step edits** where holding a draft in the client before a single submit is clearer than many mutations — still **hydrate from** or **sync back to** the API via mutations when persisted.
+- **Anti-pattern**: "Mirroring" list/detail API data from `useQuery` into a store on every fetch. Prefer `queryClient` (`setQueryData`, `invalidateQueries`) and feature hooks.
+
+### API error handling (axios + Sonner)
+
+- Prefer **centralized** handling in `axiosClient` **response/error interceptors**: normalize status codes, optional global toast via **Sonner** for unrecoverable or generic failures (e.g. 401 redirect, 5xx message).
+- **Component-level** toasts or inline error UI are appropriate when:
+  - The UX must be **contextual** (form field errors, banners next to the action).
+  - The error must be **suppressed** globally (e.g. expected 404 on optional resource).
+  - **Validation** responses (422) are mapped to fields rather than a single global message.
+- Avoid duplicating the same generic error toast in **both** an interceptor and every mutation `onError` — pick one primary path unless the mutation adds specific copy.
 
 ## 5. i18n Rules
 
@@ -203,6 +229,8 @@ Skill protocol:
 - Prefer incremental migration over broad rewrites.
 - Do not mix refactors and feature work unless the refactor is necessary for the requested change.
 - Before editing a shared file, check the nearby call sites and dependent layers.
+- Before creating a new helper/utility function, first search `src/utils/`, related feature helpers in `src/dataHelper/`, and shared hooks for an existing implementation.
+- Avoid duplicate utilities with overlapping behavior under different names; prefer reusing or extending an existing helper with backward-compatible options when possible.
 
 ## 14. Architecture: TanStack Query & Strict Data Mode
 
@@ -222,7 +250,9 @@ Follow these three pillars for all data-fetching and state management tasks:
 ### 3. Smart Conditional Rendering
 - **Handle States Globally**: Every component using a data hook MUST handle `isLoading` and `isError` states gracefully.
 - **Empty States**: In the Admin Dashboard, show informative "No data available" or "0" instead of hiding sections (transparency for admins), unless it's a micro-widget.
-- **Progressive Batching**: For complex pages, use the `enabled` flag in `useQuery` to sequence requests (e.g., Batch 1: Stats -> Batch 2: Charts -> Batch 3: Tables) to prevent server bottlenecks.
+- **Parallel vs dependent queries**: For **independent** data (e.g. categories + stats + list filters), prefer **parallel** `useQuery` calls with no artificial `enabled` chain. **Waterfall** loading (each step waits for the previous) hurts perceived performance unless there is a real dependency.
+- **Use `enabled` only for true dependencies**: e.g. `useQuery({ queryKey: ['tour', id], enabled: !!id })` when `id` comes from route params or a parent query. Do not chain `enabled` on unrelated resources "to reduce load" without measuring — batching should be the exception, not the default.
+- **Heavy pages**: If the backend cannot handle many parallel calls, fix with **pagination**, **smaller endpoints**, or **server-side aggregation** before defaulting to long client-side waterfalls.
 
 ## 15. Data Integrity: Mappers & Sanitization
 
@@ -231,7 +261,7 @@ To ensure UI stability and resilient data flows, follow the "Triple-Layer" data 
 ### 1. Mandatory Mappers
 - All API responses that require sanitization, renaming, or logic MUST pass through a mapper in `src/dataHelper/*.mapper.ts`.
 - Components should never consume raw API responses directly if the backend shape is unstable or complex.
-- **Current state**: The Dashboard module fully follows this pattern (`dashboard.mapper.ts`). The Tours module uses `tour.dataHelper.ts` for light typing but does not yet have a dedicated mapper — apply the full mapper pattern when making significant changes to the Tours data layer.
+- **Current state**: Dashboard uses `dashboard.mapper.ts`. Tours uses `tour.mapper.ts` plus `tour.dataHelper.ts` for shared types — keep response shaping in the mapper, not in page components.
 
 ### 2. Safe Converters
 - Use universal helpers (`toNumberSafe`, `toArraySafe`, `toDateLabelSafe`) inside mappers.
@@ -256,6 +286,7 @@ Validation MUST support the project's multi-language requirement:
 - Always check `src/components/ui/` or `src/components/common/` for existing atomic elements (Inputs, Buttons, Skeletons) before writing custom styles.
 - Maintain consistent spacing and shadow tokens defined in Tailwind config.
 
-### 2. Sequential Query Batching
-- For data-intensive pages, prioritize "Above-the-fold" data.
-- Sequence requests using the `enabled` property: `Batch 2` start only when `Batch 1` is successful. This improves perceived speed and reduces initial server peak load.
+### 2. Data loading on complex pages
+- Prioritize **above-the-fold** content in layout and hook design (show skeletons for secondary panels).
+- **Default**: fire **parallel** queries for independent datasets; see **§14** for when `enabled` (dependent queries) is appropriate.
+- **Avoid** unnecessary sequential waterfalls; they often **slow** first paint more than they help the server.

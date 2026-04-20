@@ -185,11 +185,46 @@ export const useTourMutations = () => {
         }
     });
 
+    const createTourMutation = useMutation({
+        mutationFn: (data: Record<string, unknown>) => tourApi.createTour(data),
+        onSuccess: () => {
+            invalidate();
+            toast.success(t('messages.create_success'));
+        },
+        onError: () => {
+            // Error is handled contextually in the page component
+        }
+    });
+
     return {
+        createTourMutation,
         statusMutation,
         featuredMutation,
         hotMutation,
         deleteMutation,
         exportMutation
     };
+};
+
+/**
+ * Upload mutations for tour media (forms should use this instead of calling tourApi directly).
+ */
+export const useTourUploadMutations = () => {
+    const { t } = useTranslation('tour');
+
+    const uploadThumbnailMutation = useMutation({
+        mutationFn: (file: File) => tourApi.uploadImage(file),
+        onError: (error: AxiosError<ErrorResponse>) => {
+            toast.error(error.response?.data?.message || t('messages.upload_error'));
+        }
+    });
+
+    const uploadGalleryMutation = useMutation({
+        mutationFn: (files: File[]) => tourApi.uploadImages(files),
+        onError: (error: AxiosError<ErrorResponse>) => {
+            toast.error(error.response?.data?.message || t('messages.upload_error'));
+        }
+    });
+
+    return { uploadThumbnailMutation, uploadGalleryMutation };
 };

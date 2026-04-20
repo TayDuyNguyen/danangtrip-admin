@@ -5,8 +5,21 @@
         "select": "Select language"
     },
     "placeholder_select": "Select...",
+    "labels": {
+        "all": "All",
+        "loading": "Loading..."
+    },
+    "roles": {
+        "admin": "Administrator",
+        "super_admin": "Super Administrator"
+    },
+    "brand": {
+        "name": "DaNangTrip"
+    },
     "actions": {
-        "remove": "Remove"
+        "remove": "Remove",
+        "dismiss": "Dismiss",
+        "deleting": "Deleting..."
     },
     "title": {
         "welcome": "Welcome back",
@@ -44,7 +57,7 @@
         "info": {
             "email": "Email",
             "phone": "Phone",
-            "joined": "JoinedDate",
+            "joined": "Joined Date",
             "role": "Role"
         },
         "preferences": {

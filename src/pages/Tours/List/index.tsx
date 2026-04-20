@@ -142,11 +142,9 @@ const TourList = () => {
                 onDelete={handleDeleteClick}
                 onToggleFeatured={(id, value) => {
                     featuredMutation.mutate({ id, is_featured: value });
-                    if (value) hotMutation.mutate({ id, is_hot: false });
                 }}
                 onToggleHot={(id, value) => {
                     hotMutation.mutate({ id, is_hot: value });
-                    if (value) featuredMutation.mutate({ id, is_featured: false });
                 }}
                 onStatusChange={(id, status) => {
                     statusMutation.mutate({ id, status });

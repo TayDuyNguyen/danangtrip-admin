@@ -114,11 +114,11 @@ const TourTable = ({
                         <div className="w-[48px] h-[48px] rounded-[10px] overflow-hidden border border-[#E2E8F0] shrink-0 shadow-sm relative group/thumb">
                             <img src={tour.thumbnail || '/images/placeholder-tour.jpg'} alt={tour.name} className="w-full h-full object-cover transition-transform group-hover/thumb:scale-110 duration-500" />
                         </div>
-                        <div className="flex flex-col gap-0.5 min-w-0">
-                            <div className="flex items-center gap-2">
-                                <span className="text-[14px] font-bold text-[#1E293B] whitespace-normal wrap-break-word group-hover:text-[#0066CC] transition-colors leading-snug font-inter">
-                                    {tour.name}
-                                </span>
+                        <div className="flex flex-col gap-1.5 min-w-0 py-1">
+                            <span className="text-[14px] font-bold text-[#1E293B] whitespace-normal wrap-break-word group-hover:text-[#0066CC] transition-colors leading-snug font-inter">
+                                {tour.name}
+                            </span>
+                            <div className="flex flex-wrap items-center gap-1.5">
                                 {tour.is_featured && (
                                     <span className="px-1.5 py-0.5 bg-blue-50 text-blue-600 border border-blue-100 rounded text-[10px] font-black uppercase tracking-wider shrink-0">
                                         {t('filters.featured')}
@@ -135,7 +135,7 @@ const TourTable = ({
                                     </span>
                                 )}
                             </div>
-                            <span className="text-[10px] font-medium text-[#94A3B8] font-inter uppercase tracking-tight truncate">{tour.slug || `TOUR-${tour.id.toString().padStart(3, '0')}`}</span>
+                            <span className="text-[10px] font-medium text-[#94A3B8] font-inter uppercase tracking-tight truncate">{tour.slug || `${t('table.tour_code_prefix')}${tour.id.toString().padStart(3, '0')}`}</span>
                         </div>
                     </div>
                 );

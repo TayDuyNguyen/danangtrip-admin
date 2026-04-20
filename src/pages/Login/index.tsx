@@ -41,13 +41,13 @@ const Login = () => {
         try {
             const res = await authApi.login(data);
             if (!res.data) throw new Error();
-            if(hasRole(res.data.user, 'admin')){
+            if (hasRole(res.data.user, 'admin')) {
                 useUserStore.getState().setUser(res.data.user, res.data.token);
-                 toast.success(t('login_success'), {description: t('welcome_back')});
+                toast.success(t('login_success'), { description: t('welcome_back') });
                 navigate(ROUTES.DASHBOARD);
             } else {
                 setErr(t('no_admin_permission'));
-                toast.error(t('login_error'), {description: t('no_admin_permission')});
+                toast.error(t('login_error'), { description: t('no_admin_permission') });
             }
         } catch (error) {
             const err = error as AxiosError<ErrorResponse>;
@@ -55,7 +55,7 @@ const Login = () => {
             const serverMsg = errData?.errors
                 ? Object.values(errData.errors).flat().join(', ')
                 : (errData?.message || t('incorrect_credentials'));
-            
+
             setErr(serverMsg);
             toast.error(serverMsg, {
                 description: t('check_again'),
@@ -73,32 +73,55 @@ const Login = () => {
 
     return (
         <div className="flex min-h-screen bg-gray-900 justify-center items-center p-4 sm:p-8">
-            <div className="flex w-full max-w-md lg:max-w-4xl lg:w-3/4 xl:w-2/3 h-auto lg:h-[550px] glow-effect rounded-2xl overflow-hidden">
-                {/* Left panel */}
-                <div
-                    className="hidden lg:flex flex-1 bg-linear-to-br from-cyan-500 to-blue-950 flex-col pt-8 pl-5 pr-25 text-white"
-                    style={{ clipPath: 'polygon(0 0, 100% 0, 20% 100%, 0% 100%)' }}
-                >
-                    <h1 className="text-4xl mb-4 font-quicksand font-bold uppercase text-shadow-lg">
-                        {t('welcome_back').split(' ').slice(0, 3).join(' ')}<br />{t('welcome_back').split(' ').slice(3).join(' ')}
-                    </h1>
+            <div className="relative flex w-full max-w-md lg:max-w-4xl lg:w-3/4 xl:w-2/3 h-auto lg:h-[550px] shadow-[0_0_40px_rgba(34,211,238,0.1)] rounded-2xl glow-effect">
+                
+                {/* Animated Border Background */}
+                <div className="absolute inset-[-2px] rounded-[18px] overflow-hidden pointer-events-none z-0">
+                    <div 
+                        className="absolute top-1/2 left-1/2 w-[200%] h-[200%] -translate-x-1/2 -translate-y-1/2 animate-[spin_4s_linear_infinite]" 
+                        style={{ backgroundImage: 'conic-gradient(from 0deg, transparent 0 240deg, rgba(34,211,238,0.3) 300deg, #22d3ee 360deg)' }}
+                    />
                 </div>
 
-                {/* Right panel */}
+                {/* Main Content Container */}
+                <div className="relative z-10 flex w-full h-full rounded-2xl overflow-hidden bg-gray-900 border border-gray-800/50">
+                {/* Left panel - gradient background */}
+                <div
+                    className="hidden lg:flex flex-1 bg-linear-to-br from-cyan-500 to-blue-950 flex-col pt-12 pl-8 pr-16 text-white relative"
+                    style={{ clipPath: "polygon(0 0, 100% 0, 60% 100%, 0% 100%)" }}
+                >
+                    <h1 className="text-4xl mb-4 font-quicksand font-bold uppercase tracking-wide leading-tight">
+                        {t('welcome_back')}
+                    </h1>
+                    <p className="text-cyan-100 text-lg opacity-80">
+                        {t('login_title')}
+                    </p>
+                </div>
+
+                {/* Right panel - form */}
                 <div className="flex flex-1 items-center justify-center p-5 sm:p-8 bg-gray-900">
                     <div className="w-full max-w-md">
+                        {/* Mobile title */}
                         <div className="flex items-center justify-center mb-6 sm:mb-8 lg:hidden">
-                            <span className="font-bold text-cyan-300 text-xl text-shadow-lg text-center">{t('welcome_back')}</span>
+                            <span className="font-bold text-cyan-300 text-xl text-center uppercase tracking-wider">
+                                {t('login_title')}
+                            </span>
                         </div>
 
-                        <h2 className="text-3xl font-quicksand font-bold uppercase text-white mb-6 text-center text-shadow-xl">
+                        <h2 className="hidden lg:block text-3xl font-quicksand font-bold uppercase text-white mb-8 text-center lg:text-left tracking-tight">
                             {t('login_title')}
                         </h2>
 
-                        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" noValidate autoComplete="off">
+                        {err && (
+                            <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm text-center">
+                                {err}
+                            </div>
+                        )}
+
+                        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate autoComplete="off">
                             <Input
                                 label={t('email')}
-                                leftIcon={<MdEmail size={20} />}
+                                leftIcon={<MdEmail className="w-5 h-5 text-cyan-400/70" />}
                                 type="email"
                                 placeholder={t('email')}
                                 autoComplete="new-email"
@@ -115,7 +138,7 @@ const Login = () => {
 
                             <Input
                                 label={t('password')}
-                                leftIcon={<MdLock size={20} />}
+                                leftIcon={<MdLock className="w-5 h-5 text-cyan-400/70" />}
                                 placeholder={t('password')}
                                 autoComplete="new-password"
                                 required
@@ -133,35 +156,41 @@ const Login = () => {
                             />
 
                             <div className="flex items-center justify-between">
-                                <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+                                <label className="flex items-center gap-2 text-sm text-gray-400 cursor-pointer hover:text-white transition-colors duration-200">
                                     <input
                                         type="checkbox"
                                         checked={rememberMe}
                                         onChange={(e) => setRememberMe(e.target.checked)}
-                                        className="accent-blue-600"
+                                        className="accent-cyan-500 w-4 h-4 rounded border-gray-600 focus:ring-cyan-500/20"
                                     />
                                     {t('remember_me')}
                                 </label>
-                                <a href="#" className="text-sm text-cyan-300 hover:underline">{t('forgot_password')}</a>
-                            </div>
-                            {/* catch error*/}
-                            <div>
-                                {err && <p className="text-red-500 text-sm text-center">{err}</p>}
+                                <a href="#" className="text-sm text-cyan-400 hover:text-cyan-300 hover:underline transition-all">
+                                    {t('forgot_password')}
+                                </a>
                             </div>
 
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="w-full flex items-center justify-center gap-2 bg-linear-to-br 
-                                from-cyan-300 to-blue-950  hover:from-cyan-500 hover:to-blue-950 disabled:opacity-60 
-                                 text-white font-semibold py-3 rounded-lg transition"
+                                className="w-full flex items-center justify-center gap-2 bg-linear-to-br from-cyan-400 to-blue-600 hover:from-cyan-500 hover:to-blue-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-lg transition-all duration-300 shadow-lg shadow-cyan-500/25 uppercase tracking-wider"
                             >
-                                {loading ? t('logging_in') : t('login_btn')}
+                                {loading ? (
+                                    <>
+                                        <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                                        </svg>
+                                        {t('logging_in')}
+                                    </>
+                                ) : (
+                                    t('login_btn')
+                                )}
                             </button>
                         </form>
-
                     </div>
                 </div>
+                </div> {/* End of Main Content Container */}
             </div>
         </div>
     );

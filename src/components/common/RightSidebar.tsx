@@ -17,7 +17,7 @@ interface RightSidebarProps {
 }
 
 const RightSidebar = ({ isOpen, onClose }: RightSidebarProps) => {
-    const { t } = useTranslation('common');
+    const { t } = useTranslation(['common', 'dashboard']);
     const [activeTab, setActiveTab] = useState<'profile' | 'settings'>('profile');
 
     return (
@@ -35,7 +35,7 @@ const RightSidebar = ({ isOpen, onClose }: RightSidebarProps) => {
                 <div className="flex flex-col h-full">
                     {/* Header */}
                     <div className="flex items-center justify-between p-6 border-b border-slate-100">
-                        <h2 className="text-xl font-bold text-slate-900 tracking-tight">{t('right_sidebar.title')}</h2>
+                        <h2 className="text-xl font-bold text-slate-900 tracking-tight">{t('common:right_sidebar.title')}</h2>
                         <button onClick={onClose} className="p-2 hover:bg-slate-100 rounded-xl transition-all group">
                             <X size={20} className="text-slate-500 group-hover:rotate-90 duration-300" />
                         </button>
@@ -48,14 +48,14 @@ const RightSidebar = ({ isOpen, onClose }: RightSidebarProps) => {
                             className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-bold transition-all ${activeTab === 'profile' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
                         >
                             <User size={16} />
-                            {t('right_sidebar.profile')}
+                            {t('common:right_sidebar.profile')}
                         </button>
                         <button
                             onClick={() => setActiveTab('settings')}
                             className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-bold transition-all ${activeTab === 'settings' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
                         >
                             <Settings size={16} />
-                            {t('right_sidebar.settings')}
+                            {t('common:right_sidebar.settings')}
                         </button>
                     </div>
 
@@ -73,8 +73,8 @@ const RightSidebar = ({ isOpen, onClose }: RightSidebarProps) => {
                                             <Camera size={14} />
                                         </button>
                                     </div>
-                                    <h3 className="text-lg font-bold text-slate-900 leading-tight">Admin Da Nang</h3>
-                                    <p className="text-sm text-slate-500 font-medium">Super Administrator</p>
+                                    <h3 className="text-lg font-bold text-slate-900 leading-tight">{t('dashboard:profile.default_name')}</h3>
+                                    <p className="text-sm text-slate-500 font-medium">{t('common:roles.super_admin')}</p>
                                 </div>
 
                                 {/* Quick Info */}
@@ -82,23 +82,23 @@ const RightSidebar = ({ isOpen, onClose }: RightSidebarProps) => {
                                     <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 hover:border-blue-200 transition-colors">
                                         <div className="flex items-center gap-3 mb-1">
                                             <AtSign size={16} className="text-blue-500" />
-                                            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{t('right_sidebar.info.email')}</span>
+                                            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{t('common:right_sidebar.info.email')}</span>
                                         </div>
-                                        <p className="text-sm font-bold text-slate-700 ml-7">admin@dntrip.vn</p>
+                                        <p className="text-sm font-bold text-slate-700 ml-7">{t('dashboard:profile.default_email')}</p>
                                     </div>
                                     <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 hover:border-blue-200 transition-colors">
                                         <div className="flex items-center gap-3 mb-1">
                                             <Phone size={16} className="text-emerald-500" />
-                                            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{t('right_sidebar.info.phone')}</span>
+                                            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{t('common:right_sidebar.info.phone')}</span>
                                         </div>
-                                        <p className="text-sm font-bold text-slate-700 ml-7">+84 123 456 789</p>
+                                        <p className="text-sm font-bold text-slate-700 ml-7">{t('dashboard:profile.default_phone')}</p>
                                     </div>
                                     <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 hover:border-blue-200 transition-colors">
                                         <div className="flex items-center gap-3 mb-1">
                                             <Clock size={16} className="text-orange-500" />
-                                            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{t('right_sidebar.info.joined')}</span>
+                                            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{t('common:right_sidebar.info.joined')}</span>
                                         </div>
-                                        <p className="text-sm font-bold text-slate-700 ml-7">12/03/2026</p>
+                                        <p className="text-sm font-bold text-slate-700 ml-7">{t('dashboard:profile.default_joined')}</p>
                                     </div>
                                 </div>
                             </div>
@@ -106,13 +106,13 @@ const RightSidebar = ({ isOpen, onClose }: RightSidebarProps) => {
                             <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-300">
                                 {/* Settings Section */}
                                 <div className="space-y-4">
-                                    <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest pl-2">{t('right_sidebar.preferences.title')}</h4>
+                                    <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest pl-2">{t('common:right_sidebar.preferences.title')}</h4>
                                     <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                                        <span className="text-sm font-bold text-slate-700">{t('right_sidebar.preferences.dark_mode')}</span>
+                                        <span className="text-sm font-bold text-slate-700">{t('common:right_sidebar.preferences.dark_mode')}</span>
                                         <ToggleLeft size={24} className="text-slate-300 cursor-not-allowed" />
                                     </div>
                                     <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                                        <span className="text-sm font-bold text-slate-700">{t('right_sidebar.preferences.notifications')}</span>
+                                        <span className="text-sm font-bold text-slate-700">{t('common:right_sidebar.preferences.notifications')}</span>
                                         <div className="w-10 h-5 bg-emerald-500 rounded-full relative cursor-pointer shadow-inner">
                                             <div className="absolute right-0.5 top-0.5 w-4 h-4 bg-white rounded-full shadow-sm"></div>
                                         </div>
@@ -120,14 +120,14 @@ const RightSidebar = ({ isOpen, onClose }: RightSidebarProps) => {
                                 </div>
 
                                 <div className="space-y-4">
-                                    <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest pl-2">{t('right_sidebar.logs.title')}</h4>
+                                    <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest pl-2">{t('common:right_sidebar.logs.title')}</h4>
                                     <div className="space-y-3">
                                         {[1, 2, 3].map((log) => (
                                             <div key={log} className="flex gap-3 py-2">
                                                 <div className="w-2 h-2 rounded-full bg-blue-500 mt-1.5 shrink-0"></div>
                                                 <div>
-                                                    <p className="text-[13px] font-medium text-slate-700 leading-tight mb-1">{t('right_sidebar.logs.login_success', { location: 'Danang, VN' })}</p>
-                                                    <span className="text-[11px] text-slate-400">{t('right_sidebar.logs.time_ago', { count: 10 })}</span>
+                                                    <p className="text-[13px] font-medium text-slate-700 leading-tight mb-1">{t('common:right_sidebar.logs.login_success', { location: t('dashboard:logs.default_location') })}</p>
+                                                    <span className="text-[11px] text-slate-400">{t('common:right_sidebar.logs.time_ago', { count: 10 })}</span>
                                                 </div>
                                             </div>
                                         ))}

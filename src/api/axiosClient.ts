@@ -158,7 +158,7 @@ axiosClient.interceptors.response.use(
         const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
 
         if (!error.response) {
-            toast.error(i18next.t('translation:network_error', 'Kết nối mạng thất bại'));
+            toast.error(i18next.t('translation:network_error'));
             return Promise.reject(error);
         }
 
@@ -207,11 +207,11 @@ axiosClient.interceptors.response.use(
         }
 
         if (status === 403) {
-            toast.warning(i18next.t('translation:permission_denied', 'Bạn không có quyền thực hiện hành động này'));
+            toast.warning(i18next.t('translation:permission_denied'));
         }
 
         if (status >= 500) {
-            toast.error(i18next.t('translation:server_error', 'Lỗi hệ thống, vui lòng thử lại sau'));
+            toast.error(i18next.t('translation:server_error'));
         }
 
         return Promise.reject(error);

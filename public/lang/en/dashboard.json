@@ -20,6 +20,18 @@
         "month": "This Month",
         "year": "This Year"
     },
+    "profile": {
+        "default_name": "Da Nang Admin",
+        "default_email": "admin@dntrip.vn",
+        "default_phone": "+84 123 456 789",
+        "default_joined": "12/03/2026"
+    },
+    "filters": {
+        "all": "All"
+    },
+    "logs": {
+        "default_location": "Danang, VN"
+    },
     "stats": {
         "chart_period_hint": "Matches chart period",
         "chart_orders_hint": "From status counts",

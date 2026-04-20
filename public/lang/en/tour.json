@@ -5,7 +5,9 @@
         "add": "Add New Tour",
         "add_subtitle": "Create a new travel product with comprehensive details",
         "export": "Export Excel",
-        "breadcrumb_parent": "Tour Management"
+        "breadcrumb_parent": "Tour Management",
+        "breadcrumb_list": "Tour list",
+        "breadcrumb_create": "Create new"
     },
     "stats": {
         "title": "Tour Statistics",
@@ -53,7 +55,8 @@
         "bulk_delete": "Delete",
         "showing_summary": "Showing {{start}}–{{end}} / {{total}} tours",
         "items_per_page": "{{count}} / page",
-        "refresh": "Refresh table"
+        "refresh": "Refresh table",
+        "tour_code_prefix": "TOUR-"
     },
     "status": {
         "active": "Active",
@@ -68,7 +71,8 @@
         "delete_warning": "Related data (reviews, schedules) will also be affected.",
         "button_cancel": "Cancel",
         "button_delete": "Delete Tour",
-        "button_bulk_delete": "Delete all"
+        "button_bulk_delete": "Delete all",
+        "loading_delete": "Deleting..."
     },
     "messages": {
         "delete_success": "Tour deleted successfully",
@@ -79,29 +83,171 @@
         "featured_update_error": "Error updating featured status",
         "hot_update_success": "Hot status updated successfully",
         "hot_update_error": "Error updating hot status",
+        "create_success": "Tour created successfully",
+        "create_error": "Error creating tour",
         "export_success": "Preparing export file...",
         "export_error": "Error exporting Excel file",
         "no_data": "No tours found",
-        "no_data_subtitle": "Try changing filters or create a new tour"
+        "no_data_subtitle": "Try changing filters or create a new tour",
+        "upload_error": "Failed to upload image",
+        "create_error_title": "Could not create tour"
     },
     "form": {
-        "basic_info": "Basic Information",
-        "pricing": "Pricing & Revenue",
-        "images": "Tour Gallery",
-        "schedule": "Tour Schedule",
-        "cancel": "Cancel",
-        "submit": "Save Tour",
-        "tour_name": "Tour Name",
-        "tour_name_placeholder": "Enter tour name (e.g., Ba Na Hills 1 Day Tour)",
-        "category": "Tour Category",
-        "daily_tour": "Daily Tour",
-        "island_tour": "Island & Beach Tour",
-        "culture_tour": "Culture Tour",
-        "duration": "Tour Duration (Day/Night)",
-        "duration_placeholder": "e.g., 1 Day, 3 Days 2 Nights",
-        "description": "Detailed Description",
-        "price": "Regular Price (VND)",
-        "sale_price": "Sale Price (if any)",
-        "add_image": "Add Image"
+        "sections": {
+            "basic": "Basic Information",
+            "pricing": "Pricing & Capacity",
+            "schedule": "Departure Schedule",
+            "itinerary": "Tour Itinerary",
+            "inclusions": "Inclusions & Exclusions",
+            "media": "Images & Video"
+        },
+        "section_descriptions": {
+            "basic": "Tour name, category, and overview description",
+            "pricing": "Set price tiers and guest capacity limits",
+            "schedule": "Period when the tour can be booked",
+            "itinerary": "Build a detailed day-by-day itinerary",
+            "inclusions": "What is and is not included in the tour price",
+            "media": "Upload cover image and gallery photos for the tour"
+        },
+        "categories": {
+            "loading": "Loading categories...",
+            "error": "Could not load categories.",
+            "retry": "Try again"
+        },
+        "page_subtitle": "Fill in all information to add the tour to the system",
+        "inclusions_fields": {
+            "included_label": "Included services",
+            "excluded_label": "Excluded services",
+            "included_placeholder": "e.g. Transfers, guide, entrance tickets...",
+            "excluded_placeholder": "e.g. VAT, personal expenses, tips...",
+            "line_hint": "One line = one item"
+        },
+        "basic": {
+            "name": "Tour Name",
+            "name_placeholder": "Enter tour name (e.g., Ba Na Hills 1 Day Tour)",
+            "slug": "URL Slug",
+            "slug_placeholder": "tour-ba-na-hills-1-day",
+            "category": "Tour Category",
+            "category_placeholder": "Select category",
+            "duration": "Tour Duration",
+            "duration_placeholder": "e.g., 1 Day, 3 Days 2 Nights",
+            "short_desc": "Short Description",
+            "short_desc_placeholder": "Summary of tour highlights...",
+            "description": "Detailed Description",
+            "description_placeholder": "Enter detailed tour content...",
+            "slug_auto": "Auto",
+            "description_helper": "Basic Markdown supported",
+            "short_desc_counter": "{{current}}/300",
+            "duration_suggestions": [
+                "Half day",
+                "1 day",
+                "2 days 1 night",
+                "3 days 2 nights",
+                "4 days 3 nights",
+                "5 days 4 nights"
+            ]
+        },
+        "pricing": {
+            "price_adult": "Adult Price (VND)",
+            "price_child": "Child Price (VND)",
+            "price_infant": "Infant Price (VND)",
+            "discount": "Discount (%)",
+            "max_people": "Max People",
+            "min_people": "Min People",
+            "start_time": "Departure Time",
+            "meeting_point": "Meeting Point",
+            "meeting_point_placeholder": "e.g., Da Nang Airport or Hotel...",
+            "currency": "VND",
+            "currency_suffix": "đ",
+            "price_after_discount": "Price after discount (estimate)",
+            "helper_price_adult": "Base price / adult",
+            "helper_price_child": "Leave empty if not applicable",
+            "helper_price_infant": "Under 2 years old",
+            "helper_max_people": "Max per departure",
+            "helper_min_people": "Minimum to run the tour",
+            "helper_start_time": "Time when the group starts moving"
+        },
+        "schedule": {
+            "available_from": "Available From",
+            "available_to": "Available To",
+            "placeholder": "Select date",
+            "helper_from": "First day bookings are accepted",
+            "helper_to": "Last day bookings are accepted",
+            "info_notice": "After creating the tour, you can add specific departures in the Departure schedule section.",
+            "info_link": "View guide →"
+        },
+        "itinerary": {
+            "add_day": "Add New Day",
+            "day": "Day {{num}}",
+            "title": "Day Title",
+            "title_placeholder": "e.g., Discover Ba Na Hills",
+            "content": "Detailed Activities",
+            "content_placeholder": "Describe activities for this day...",
+            "remove_day": "Remove Day"
+        },
+        "media": {
+            "thumbnail": "Thumbnail Image",
+            "gallery": "Image Gallery",
+            "video_url": "Video URL (YouTube/Vimeo)",
+            "video_placeholder": "https://www.youtube.com/watch?v=...",
+            "upload_hint": "Drag and drop or click to upload",
+            "upload_limit": "Max 10 images, 5MB per image",
+            "change_image": "Change image",
+            "formats_hint": "JPG, PNG, WEBP supported",
+            "add_image": "Add image",
+            "thumbnail_alt": "Tour thumbnail",
+            "gallery_item_alt": "Gallery image {{index}}"
+        },
+        "sidebar": {
+            "publish_title": "Publish Settings",
+            "status": "Status",
+            "is_featured": "Set as Featured Tour",
+            "is_hot": "Set as Hot Tour",
+            "checklist_title": "Completion Status",
+            "locations_title": "Related Locations",
+            "locations_search": "Search locations...",
+            "instructions_title": "Input Instructions",
+            "instructions_content": "Please fill in all required information to ensure the tour is displayed correctly on the website.",
+            "locations_coming_soon": "This feature is under development",
+            "view_docs": "View detailed documentation",
+            "status_public": "Visible to the public",
+            "status_hidden": "Hidden from the site",
+            "status_sold_out_hint": "Not accepting bookings",
+            "featured_helper": "Show in Featured tours",
+            "hot_helper": "Show in Hot tours",
+            "completion_label": "{{percent}}% complete",
+            "checklist_name": "Tour name",
+            "checklist_category": "Tour category",
+            "checklist_short_desc": "Short description",
+            "checklist_description": "Detailed description",
+            "checklist_price_adult": "Adult price",
+            "checklist_duration": "Duration",
+            "checklist_thumbnail": "Thumbnail",
+            "checklist_itinerary": "Itinerary",
+            "checklist_inclusions": "Inclusions / Exclusions",
+            "tips_title": "💡 Tips",
+            "tip_1": "Keep the tour name short, memorable, and keyword-rich",
+            "tip_2": "The thumbnail drives most click-throughs",
+            "tip_3": "A clear itinerary description improves booking conversion",
+            "tip_4": "Add specific departures after the tour is created"
+        },
+        "actions": {
+            "cancel": "Cancel",
+            "submit": "Save Tour",
+            "saving": "Saving...",
+            "save_draft": "Save draft",
+            "create_tour": "Create tour",
+            "creating": "Creating..."
+        }
+    },
+    "validation": {
+        "required": "{{field}} is required",
+        "min_length": "{{field}} must be at least {{min}} characters",
+        "max_length": "{{field}} must be at most {{max}} characters",
+        "number": "{{field}} must be a number",
+        "positive": "{{field}} must be a positive number",
+        "url": "Invalid URL format",
+        "max_gte_min": "Maximum people must be greater than or equal to minimum people",
+        "date_after": "End date must be after or equal to start date"
     }
 }

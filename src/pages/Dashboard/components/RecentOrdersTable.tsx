@@ -20,7 +20,7 @@ interface RecentOrdersTableProps {
 }
 
 const STATUS_OPTIONS = [
-    { value: '', labelKey: 'status.all', color: 'bg-slate-100 text-slate-600' },
+    { value: '', labelKey: 'filters.all', color: 'bg-slate-100 text-slate-600' },
     { value: 'pending', labelKey: 'status.pending', color: 'bg-amber-50 text-amber-600 border-amber-100' },
     { value: 'confirmed', labelKey: 'status.confirmed', color: 'bg-blue-50 text-blue-600 border-blue-100' },
     { value: 'completed', labelKey: 'status.completed', color: 'bg-emerald-50 text-emerald-600 border-emerald-100' },
@@ -108,7 +108,7 @@ const RecentOrdersTable = ({
                     ))}
                     <div className="sr-only">
                         <label htmlFor="bookingStatusFilter">{t('status.filter')}</label>
-                        <select id="bookingStatusFilter" defaultValue="all"><option value="all">All</option></select>
+                        <select id="bookingStatusFilter" defaultValue="all"><option value="all">{t('filters.all')}</option></select>
                     </div>
                 </div>
             </div>

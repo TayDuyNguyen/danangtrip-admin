@@ -11,7 +11,7 @@ const Header = () => {
     const { t } = useTranslation('common');
 
     return (
-        <header className="h-20 border-b border-slate-200/60 bg-white/95 backdrop-blur-md sticky top-0 z-30 flex items-center justify-between px-8 py-3 transition-all duration-300">
+        <header className="h-20 border-b border-slate-200/60 bg-white/95 backdrop-blur-md sticky top-0 z-50 flex items-center justify-between px-8 py-3 transition-all duration-300">
             {/* Search Bar */}
             <div className="flex-1 flex items-center max-w-xl">
                 <div className="relative group w-full">
