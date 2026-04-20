@@ -18,7 +18,7 @@ const axiosClient = axios.create({
     headers: {
         'Content-Type': 'application/json',
     },
-    timeout: 15000,
+    timeout: 60000,
 })
 
 /**
@@ -44,10 +44,10 @@ const processQueus = (error: Error | null, token: string | null = null) => {
  */
 const handleLogout = (onRedirect?: () => void) => {
     if (isRedirecting) return;
-    
+
     // Check if we are still in bootstrap phase to avoid aggressive redirects
     const isAuthReady = useUserStore.getState().authReady;
-    
+
     isRedirecting = true;
     clearTokens();
     useUserStore.getState().logout();
@@ -70,12 +70,12 @@ export const refreshAccessToken = async (): Promise<string | null> => {
         const response = await axios.post<ApiResponse<{ token: string, user: User }>>(
             `${import.meta.env.VITE_API_URL}${API_ENDPOINTS.AUTH.REFRESH_TOKEN}`,
             {},
-            { 
+            {
                 withCredentials: true,
                 headers: { 'Content-Type': 'application/json' }
             }
         );
-        
+
         const { token, user } = response.data?.data || {};
 
         if (token) {
@@ -109,7 +109,7 @@ const applyCommonHeaders = (config: InternalAxiosRequestConfig) => {
 axiosClient.interceptors.request.use(
     async (config: InternalAxiosRequestConfig) => {
         const token = getAccessToken();
-        
+
         // Proactive refresh: if token expires within 5 minutes, refresh before sending
         if (token && getTokenExpiryMs(token) < 5 * 60 * 1000 && !isRefreshing) {
             isRefreshing = true;
@@ -158,7 +158,7 @@ axiosClient.interceptors.response.use(
         const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
 
         if (!error.response) {
-            toast.error(i18next.t('translation.network_error', 'Kết nối mạng thất bại'));
+            toast.error(i18next.t('translation:network_error', 'Kết nối mạng thất bại'));
             return Promise.reject(error);
         }
 
@@ -167,8 +167,8 @@ axiosClient.interceptors.response.use(
         // Handle 401 Unauthorized
         if (status === 401 || data?.code === 401) {
             // Skip for login or refresh endpoints to avoid loops
-            if(originalRequest?.url?.includes(API_ENDPOINTS.AUTH.LOGIN) || 
-               originalRequest?.url?.includes(API_ENDPOINTS.AUTH.REFRESH_TOKEN)){
+            if (originalRequest?.url?.includes(API_ENDPOINTS.AUTH.LOGIN) ||
+                originalRequest?.url?.includes(API_ENDPOINTS.AUTH.REFRESH_TOKEN)) {
                 return Promise.reject(error);
             }
 
@@ -205,13 +205,13 @@ axiosClient.interceptors.response.use(
                 isRefreshing = false;
             }
         }
-        
+
         if (status === 403) {
-            toast.warning(i18next.t('translation.permission_denied', 'Bạn không có quyền thực hiện hành động này'));
+            toast.warning(i18next.t('translation:permission_denied', 'Bạn không có quyền thực hiện hành động này'));
         }
-        
+
         if (status >= 500) {
-            toast.error(i18next.t('translation.server_error', 'Lỗi hệ thống, vui lòng thử lại sau'));
+            toast.error(i18next.t('translation:server_error', 'Lỗi hệ thống, vui lòng thử lại sau'));
         }
 
         return Promise.reject(error);

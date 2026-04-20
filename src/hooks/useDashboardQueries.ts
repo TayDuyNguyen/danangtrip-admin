@@ -3,12 +3,12 @@ import { dashboardApi } from '@/api/dashboardApi';
 import axiosClient from '@/api/axiosClient';
 import { API_ENDPOINTS } from '@/constants';
 import { prepareSpreadsheetDownload, downloadBlobFile } from '@/utils';
-import { 
-    mapStats, 
-    mapRevenue, 
-    mapBookingTrend, 
-    mapUserGrowth, 
-    mapTopTours, 
+import {
+    mapStats,
+    mapRevenue,
+    mapBookingTrend,
+    mapUserGrowth,
+    mapTopTours,
     mapBookings,
     mapBookingStatusCounts
 } from '@/dataHelper/dashboard.mapper';
@@ -43,12 +43,11 @@ export const dashboardKeys = {
  * if they are missing from the main stats response.
  */
 const resolveStatsWithFallback = async (stats: DashboardStats): Promise<DashboardStats> => {
-    // If stats already have these fields, no need to fetch fallback
     if (stats.pending_ratings !== undefined && stats.new_contacts !== undefined) {
         return stats;
     }
 
-    const [ratingsRes, contactsRes] = await Promise.all([
+    const [ratingsResult, contactsResult] = await Promise.allSettled([
         stats.pending_ratings === undefined
             ? axiosClient.get(API_ENDPOINTS.RATINGS.LIST, { params: { status: 'pending', per_page: 1 } })
             : Promise.resolve(null),
@@ -57,21 +56,23 @@ const resolveStatsWithFallback = async (stats: DashboardStats): Promise<Dashboar
             : Promise.resolve(null),
     ]);
 
-    const getCount = (res: unknown): number => {
-        const responseData = (res as { data?: Record<string, unknown> })?.data;
+    const getCount = (result: PromiseSettledResult<unknown>): number => {
+        if (result.status === 'rejected') return 0; // Fallback to 0 if API request fails
+
+        const responseData = (result.value as { data?: Record<string, unknown> })?.data;
         if (!responseData) return 0;
-        
+
         // Unwrap nested { data: { data: ... } } if present
         const data = (responseData.data as Record<string, unknown>) || responseData;
-        
+
         const total = data.total ?? (data.meta as Record<string, unknown>)?.total ?? (data.pagination as Record<string, unknown>)?.total ?? 0;
         return typeof total === 'number' ? total : 0;
     };
 
     return {
         ...stats,
-        pending_ratings: stats.pending_ratings ?? getCount(ratingsRes),
-        new_contacts: stats.new_contacts ?? getCount(contactsRes),
+        pending_ratings: stats.pending_ratings ?? getCount(ratingsResult),
+        new_contacts: stats.new_contacts ?? getCount(contactsResult),
     };
 };
 
@@ -79,7 +80,7 @@ const resolveStatsWithFallback = async (stats: DashboardStats): Promise<Dashboar
  * Independent Hooks
  */
 
-export const useDashboardStatsQuery = () => {
+export const useDashboardStatsQuery = (enabled = true) => {
     return useQuery({
         queryKey: dashboardKeys.stats(),
         queryFn: async () => {
@@ -88,10 +89,11 @@ export const useDashboardStatsQuery = () => {
             return resolveStatsWithFallback(initialMap);
         },
         staleTime: 1000 * 60 * 5, // 5 minutes
+        enabled,
     });
 };
 
-export const useBookingStatusCountsQuery = (params?: BookingStatusCountsParams) => {
+export const useBookingStatusCountsQuery = (params?: BookingStatusCountsParams, enabled = true) => {
     return useQuery({
         queryKey: dashboardKeys.bookingStatusCounts(params),
         queryFn: async () => {
@@ -99,10 +101,11 @@ export const useBookingStatusCountsQuery = (params?: BookingStatusCountsParams) 
             return mapBookingStatusCounts(response.data);
         },
         staleTime: 1000 * 30,
+        enabled,
     });
 };
 
-export const useRevenueQuery = (params: RevenueParams) => {
+export const useRevenueQuery = (params: RevenueParams, enabled = true) => {
     return useQuery({
         queryKey: dashboardKeys.revenue(params),
         queryFn: async () => {
@@ -110,10 +113,11 @@ export const useRevenueQuery = (params: RevenueParams) => {
             return mapRevenue(response.data as unknown);
         },
         staleTime: 1000 * 60 * 2,
+        enabled,
     });
 };
 
-export const useBookingTrendQuery = (params: BookingTrendParams) => {
+export const useBookingTrendQuery = (params: BookingTrendParams, enabled = true) => {
     return useQuery({
         queryKey: dashboardKeys.bookingTrend(params),
         queryFn: async () => {
@@ -121,10 +125,11 @@ export const useBookingTrendQuery = (params: BookingTrendParams) => {
             return mapBookingTrend(response.data);
         },
         staleTime: 1000 * 60 * 2,
+        enabled,
     });
 };
 
-export const useUserGrowthQuery = (params: UserGrowthParams) => {
+export const useUserGrowthQuery = (params: UserGrowthParams, enabled = true) => {
     return useQuery({
         queryKey: dashboardKeys.userGrowth(params),
         queryFn: async () => {
@@ -132,10 +137,11 @@ export const useUserGrowthQuery = (params: UserGrowthParams) => {
             return mapUserGrowth(response.data as unknown, params.year);
         },
         staleTime: 1000 * 60 * 10,
+        enabled,
     });
 };
 
-export const useTopToursQuery = (params: TopToursParams) => {
+export const useTopToursQuery = (params: TopToursParams, enabled = true) => {
     return useQuery({
         queryKey: dashboardKeys.topTours(params),
         queryFn: async () => {
@@ -143,10 +149,11 @@ export const useTopToursQuery = (params: TopToursParams) => {
             return mapTopTours(response.data);
         },
         staleTime: 1000 * 60 * 5,
+        enabled,
     });
 };
 
-export const useBookingsQuery = (params: BookingsParams) => {
+export const useBookingsQuery = (params: BookingsParams, enabled = true) => {
     return useQuery({
         queryKey: dashboardKeys.bookings(params),
         queryFn: async () => {
@@ -154,6 +161,7 @@ export const useBookingsQuery = (params: BookingsParams) => {
             return mapBookings(response.data);
         },
         staleTime: 1000 * 30,
+        enabled,
     });
 };
 

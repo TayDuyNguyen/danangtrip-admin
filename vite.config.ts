@@ -27,7 +27,7 @@ export default defineConfig(({ mode }) => {
     server: {
       port: getValidPort(env.VITE_PORT),
       strictPort: true,
-      host: env.VITE_HOST ?? false,
+      host: env.VITE_HOST === 'true' ? true : env.VITE_HOST === 'false' ? false : env.VITE_HOST ?? false,
       proxy: env.VITE_API_URL
         ? {
           '/api': {

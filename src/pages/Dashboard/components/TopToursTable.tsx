@@ -14,7 +14,6 @@ interface Props {
 
 const TopToursTable = ({ topTours, onRefresh, isRefreshing, isLoading }: Props) => {
     const { t } = useTranslation('dashboard');
-
     return (
         <div className="bg-white rounded-[2.5rem] border border-slate-200/60 shadow-sm overflow-hidden group/card transition-all duration-300">
             <div className="p-6 border-b border-slate-100 flex items-center justify-between">
@@ -40,8 +39,8 @@ const TopToursTable = ({ topTours, onRefresh, isRefreshing, isLoading }: Props) 
                 </button>
             </div>
 
-            <div className="overflow-x-auto">
-                <table className="w-full text-left">
+            <div className="max-w-full overflow-x-auto custom-scrollbar-horizontal">
+                <table className="w-full min-w-[860px] text-left">
                     <thead className="bg-slate-50/50">
                         <tr>
                             <th className="px-6 py-3 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('tables.header_rank')}</th>
@@ -96,7 +95,7 @@ const TopToursTable = ({ topTours, onRefresh, isRefreshing, isLoading }: Props) 
                                         <span className="text-[13px] font-black text-slate-700">{tour.sales_count.toLocaleString(i18n.language === 'vi' ? 'vi-VN' : 'en-US')}</span>
                                     </td>
                                     <td className="px-6 py-4 text-right">
-                                        <span className="text-[13px] font-black text-slate-900">{tour.revenue.toLocaleString(i18n.language === 'vi' ? 'vi-VN' : 'en-US')} đ</span>
+                                        <span className="text-[13px] font-black text-slate-900">{tour.revenue.toLocaleString(i18n.language === 'vi' ? 'vi-VN' : 'en-US')} {t('currency', { ns: 'common' })}</span>
                                     </td>
                                     <td className="px-6 py-4 text-center">
                                         {tour.rating ? (

@@ -1,54 +1,107 @@
 {
     "title": {
-        "list": "Quản lý Tour",
-        "subtitle": "Danh sách tất cả các tour du lịch trong hệ thống",
+        "list": "Danh sách Tour",
+        "subtitle": "Quản lý toàn bộ sản phẩm tour du lịch",
         "add": "Thêm Tour mới",
-        "edit": "Chỉnh sửa Tour",
-        "add_subtitle": "Nhập thông tin chi tiết để tạo tour du lịch mới"
+        "add_subtitle": "Tạo sản phẩm du lịch mới với đầy đủ thông tin chi tiết",
+        "export": "Xuất Excel",
+        "breadcrumb_parent": "Quản lý Tour"
+    },
+    "stats": {
+        "title": "Thống kê tour",
+        "total_label": "TỔNG TOUR",
+        "active_label": "ĐANG HOẠT ĐỘNG",
+        "featured_label": "NỔI BẬT",
+        "sold_out_label": "HẾT CHỖ"
     },
     "filters": {
-        "search": "Tìm tên tour...",
+        "search": "Tìm theo tên tour, mã tour...",
+        "search_placeholder": "Tìm theo tên tour, mã tour...",
         "all_categories": "Tất cả danh mục",
         "all_status": "Tất cả trạng thái",
-        "sort_by": "Sắp xếp theo",
-        "newest": "Mới nhất",
-        "price_low": "Giá: Thấp đến Cao",
-        "price_high": "Giá: Cao đến Thấp",
-        "sales": "Bán chạy nhất"
+        "all_types": "Tất cả loại",
+        "featured": "Nổi bật",
+        "hot": "Tour Hot",
+        "normal": "Thường",
+        "button_filter": "Lọc",
+        "button_apply": "Lọc",
+        "button_reset": "Đặt lại",
+        "category_label": "Danh mục",
+        "status_label": "Trạng thái",
+        "unknown_category": "Chưa phân loại",
+        "active_filtering": "Đang áp dụng:"
     },
     "table": {
+        "title": "Danh sách Tour",
+        "header_stt": "#",
         "header_tour": "Tour du lịch",
         "header_category": "Danh mục",
         "header_price": "Đơn giá",
+        "header_schedule": "Lịch trình",
+        "header_rating": "Đánh giá",
         "header_sales": "Lượt bán",
         "header_status": "Trạng thái",
-        "header_actions": "Thao tác"
+        "header_featured": "Nổi bật",
+        "header_hot": "Hot",
+        "header_actions": "Thao tác",
+        "per_person": "/ người",
+        "no_schedule": "Hết lịch",
+        "schedules_count": "{{count}} lịch",
+        "bulk_selected": "Đã chọn {{count}}",
+        "bulk_activate": "Kích hoạt",
+        "bulk_deactivate": "Tạm ngưng",
+        "bulk_delete": "Xóa",
+        "showing_summary": "Hiển thị {{start}}–{{end}} / {{total}} tour",
+        "items_per_page": "{{count}} / trang",
+        "refresh": "Tải lại bảng"
     },
     "status": {
         "active": "Đang hoạt động",
         "inactive": "Tạm ngưng",
-        "full": "Hết chỗ"
+        "sold_out": "Hết chỗ"
+    },
+    "dialog": {
+        "delete_title": "Xóa tour này?",
+        "bulk_delete_title": "Xác nhận xóa hàng loạt",
+        "delete_confirm": "Hành động này không thể hoàn tác. Bạn có chắc chắn muốn xóa tour \"{{name}}\"?",
+        "bulk_delete_confirm": "Bạn có chắc chắn muốn xóa {{count}} tour đã chọn?",
+        "delete_warning": "Dữ liệu liên quan đến tour này (đánh giá, lịch trình) cũng sẽ bị ảnh hưởng.",
+        "button_cancel": "Hủy",
+        "button_delete": "Xóa tour",
+        "button_bulk_delete": "Xóa tất cả"
+    },
+    "messages": {
+        "delete_success": "Đã xóa tour thành công",
+        "delete_error": "Lỗi khi xóa tour",
+        "status_update_success": "Cập nhật trạng thái thành công",
+        "status_update_error": "Lỗi khi cập nhật trạng thái",
+        "featured_update_success": "Cập nhật trạng thái nổi bật thành công",
+        "featured_update_error": "Lỗi khi cập nhật trạng thái nổi bật",
+        "hot_update_success": "Cập nhật trạng thái Hot thành công",
+        "hot_update_error": "Lỗi khi cập nhật trạng thái Hot",
+        "export_success": "Đang chuẩn bị tệp xuất bản...",
+        "export_error": "Lỗi khi tải tệp Excel",
+        "no_data": "Không tìm thấy tour nào",
+        "no_data_subtitle": "Thử thay đổi bộ lọc hoặc tạo tour mới"
     },
     "form": {
         "basic_info": "Thông tin cơ bản",
-        "pricing": "Giá cả & Khuyến mãi",
+        "pricing": "Giá bán & Doanh thu",
+        "images": "Hình ảnh mô phỏng",
         "schedule": "Lịch trình tour",
-        "images": "Hình ảnh",
+        "cancel": "Hủy bỏ",
+        "submit": "Lưu Tour",
         "tour_name": "Tên tour du lịch",
-        "tour_name_placeholder": "Nhập tên tour...",
-        "category": "Danh mục tour",
-        "duration": "Thời lượng",
-        "duration_placeholder": "Ví dụ: 1 ngày, 3 ngày 2 đêm...",
-        "price": "Giá gốc",
-        "sale_price": "Giá khuyến mãi",
-        "description": "Mô tả chi tiết",
-        "submit": "Lưu thông tin",
-        "back": "Quay lại",
-        "cancel": "Hủy bỏ"
-    },
-    "messages": {
-        "delete_confirm": "Bạn có chắc chắn muốn xóa tour này?",
-        "delete_success": "Đã xóa tour thành công",
-        "create_success": "Đã thêm tour mới thành công"
+        "tour_name_placeholder": "Nhập tên tour (ví dụ: Tour Bà Nà Hills 1 ngày)",
+        "category": "Danh mục sản phẩm",
+        "daily_tour": "Tour hằng ngày",
+        "island_tour": "Tour biển đảo",
+        "culture_tour": "Tour văn hóa",
+        "duration": "Thời lượng tour (ngày/đêm)",
+        "duration_placeholder": "Ví dụ: 1 ngày, 3 ngày 2 đêm",
+        "description": "Mô tả chi tiết tour",
+        "price": "Giá niêm yết (VNĐ)",
+        "sale_price": "Giá khuyến mãi (nếu có)",
+        "add_image": "Thêm hình ảnh"
     }
 }

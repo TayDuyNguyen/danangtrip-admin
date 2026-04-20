@@ -1,9 +1,9 @@
 import { useMemo, useState, useCallback } from 'react';
 import { RefreshCcw, Calendar, TrendingUp, Download } from 'lucide-react';
-import { useTranslation, Trans } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '@/store';
-import { 
+import {
     useDashboardStatsQuery,
     useBookingStatusCountsQuery,
     useRevenueQuery,
@@ -53,7 +53,7 @@ const Dashboard = () => {
     const getDateRange = useCallback((period: 'day' | 'week' | 'month' | 'year' | number) => {
         const today = new Date();
         const fromDate = new Date(today);
-        
+
         if (typeof period === 'number') {
             fromDate.setDate(today.getDate() - period);
         } else {
@@ -69,44 +69,40 @@ const Dashboard = () => {
         };
     }, []);
 
-    // ─── Independent Queries ───────────────────────────────────────────────
-
-    // 1. Stats Cards
+    // 1. Stats Cards (High Priority - Batch 1)
     const statsQuery = useDashboardStatsQuery();
-
-    // 1b. Booking Status Counts (Order Status chart)
     const bookingStatusCountsQuery = useBookingStatusCountsQuery();
 
-    // 2. Revenue Chart
+    // 2. Charts (Medium Priority - Batch 2)
+    const isBatch1Success = statsQuery.isSuccess && bookingStatusCountsQuery.isSuccess;
+
     const revenueRange = useMemo(() => getDateRange(revenuePeriod), [revenuePeriod, getDateRange]);
     const revenueQuery = useRevenueQuery({
         period: revenuePeriod,
         from: revenueRange.from,
         to: revenueRange.to
-    });
+    }, isBatch1Success);
 
-    // 3. Booking Trend
-    const trendQuery = useBookingTrendQuery({ days: bookingTrendDays });
+    const trendQuery = useBookingTrendQuery({ days: bookingTrendDays }, isBatch1Success);
+    const growthQuery = useUserGrowthQuery({ year: new Date().getFullYear() }, isBatch1Success);
 
-    // 4. User Growth
-    const growthQuery = useUserGrowthQuery({ year: new Date().getFullYear() });
+    // 3. Tables (Low Priority - Batch 3)
+    const isBatch2Success = revenueQuery.isSuccess && growthQuery.isSuccess;
 
-    // 5. Top Tours
     const toursRange = useMemo(() => getDateRange(bookingTrendDays), [bookingTrendDays, getDateRange]);
     const topToursQuery = useTopToursQuery({
         limit: 5,
         from: toursRange.from,
         to: toursRange.to
-    });
+    }, isBatch2Success);
 
-    // 6. Recent Orders
     const bookingsQuery = useBookingsQuery({
         page: bookingsPage,
         per_page: 8,
         sort_by: 'booked_at',
         sort_order: 'desc',
         booking_status: bookingsStatus || undefined
-    });
+    }, isBatch2Success);
 
     // Handle global refresh
     const handleRefresh = useCallback(async () => {
@@ -162,7 +158,7 @@ const Dashboard = () => {
 
 
     return (
-        <div className="space-y-8 animate-in fade-in duration-700 slide-in-from-bottom-4" aria-label={t('title')}>
+        <div className="space-y-8 animate-in fade-in duration-700 slide-in-from-bottom-4 overflow-x-hidden min-w-0" aria-label={t('title')}>
             {/* Header */}
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5 pb-6 border-b border-slate-200/60">
                 <div>
@@ -171,9 +167,7 @@ const Dashboard = () => {
                         {t('title')}
                     </p>
                     <h1 className="text-4xl font-black text-slate-900 tracking-tighter leading-none">
-                        <Trans i18nKey="welcome" ns="dashboard" values={{ name: user?.full_name || 'Admin' }}>
-                            Chào mừng trở lại, <span className="text-blue-600">{user?.full_name || 'Admin'}</span> 👋
-                        </Trans>
+                        {t('welcome_back')} <span className="text-blue-600">{user?.full_name || 'Admin'}</span> 👋
                     </h1>
                     <p className="text-slate-500 font-bold text-sm mt-1.5 flex items-center gap-2">
                         <Calendar size={14} className="text-slate-400" />
@@ -204,10 +198,10 @@ const Dashboard = () => {
                 </div>
             </div>
 
-            <div className="flex flex-col gap-8">
+            <div className="flex flex-col gap-8 min-w-0">
                 {/* 1. Stats Cards */}
-                <StatsCards 
-                    stats={statsQuery.data} 
+                <StatsCards
+                    stats={statsQuery.data}
                     bookingStatus={bookingStatusCountsQuery.data}
                     ordersFromStatusTotal={ordersFromStatusTotal}
                     isLoading={statsQuery.isLoading}
@@ -246,8 +240,8 @@ const Dashboard = () => {
 
                 {/* 3. Tables Section */}
                 <div className="space-y-8">
-                    <TopToursTable 
-                        topTours={topToursQuery.data || []} 
+                    <TopToursTable
+                        topTours={topToursQuery.data || []}
                         onRefresh={() => topToursQuery.refetch()}
                         isRefreshing={topToursQuery.isFetching}
                         isLoading={topToursQuery.isLoading}

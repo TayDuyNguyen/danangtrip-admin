@@ -189,7 +189,7 @@ const DashboardCharts = (props: ExtendedDashboardChartsProps) => {
                 }
             >
                 <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={safeDailyRevenueData} margin={{ left: 10, right: 10 }}>
+                    <LineChart data={safeDailyRevenueData} margin={{ left: 4, right: 10 }}>
                         <defs>
                             <linearGradient id="lineGrad" x1="0" y1="0" x2="1" y2="0">
                                 <stop offset="0%" stopColor="#3b82f6" />
@@ -247,7 +247,7 @@ const DashboardCharts = (props: ExtendedDashboardChartsProps) => {
                 }
             >
                 <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={safeBookingTrendData} margin={{ left: -10, right: 10 }}>
+                    <BarChart data={safeBookingTrendData} margin={{ left: 4, right: 10 }}>
                         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                         <XAxis
                             dataKey="date"
@@ -288,7 +288,7 @@ const DashboardCharts = (props: ExtendedDashboardChartsProps) => {
                 isLoading={props.isGrowthLoading}
             >
                 <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={safeUserGrowthData} margin={{ left: -4, right: 20, top: 10, bottom: 20 }}>
+                    <AreaChart data={safeUserGrowthData} margin={{ left: 4, right: 20, top: 10, bottom: 20 }}>
                         <defs>
                             <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
                                 <stop offset="5%" stopColor="#6366f1" stopOpacity={0.25} />
@@ -337,7 +337,7 @@ const DashboardCharts = (props: ExtendedDashboardChartsProps) => {
                 isLoading={props.isStatusLoading}
             >
                 <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={safeOrderStatusData} margin={{ left: -10, right: 10, top: 10, bottom: 10 }}>
+                    <BarChart data={safeOrderStatusData} margin={{ left: 4, right: 10, top: 10, bottom: 10 }}>
                         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                         <XAxis
                             dataKey="name"
