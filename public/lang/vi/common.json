@@ -5,9 +5,21 @@
         "select": "Chọn ngôn ngữ"
     },
     "placeholder_select": "Chọn...",
-
+    "labels": {
+        "all": "Tất cả",
+        "loading": "Đang tải..."
+    },
+    "roles": {
+        "admin": "Quản trị viên",
+        "super_admin": "Quản trị viên cấp cao"
+    },
+    "brand": {
+        "name": "DaNangTrip"
+    },
     "actions": {
-        "remove": "Xóa"
+        "remove": "Xóa",
+        "dismiss": "Đóng",
+        "deleting": "Đang xóa..."
     },
     "title": {
         "welcome": "Chào mừng trở lại",

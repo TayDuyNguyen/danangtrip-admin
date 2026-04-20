@@ -56,13 +56,13 @@ const TourDeleteDialog = ({ isOpen, onClose, onConfirm, tourName, isDeleting, is
                                 </div>
 
                                 <Dialog.Title as="h3" className="text-[20px] font-bold text-[#1E293B] leading-tight mb-3 font-inter">
-                                    {isBulk ? t('dialog.bulk_delete_title', 'Xác nhận xóa hàng loạt') : t('dialog.delete_title')}
+                                    {isBulk ? t('dialog.bulk_delete_title') : t('dialog.delete_title')}
                                 </Dialog.Title>
 
                                 <div className="space-y-4">
                                     <p className="text-[14px] text-[#64748B] leading-relaxed font-inter">
                                         {isBulk 
-                                            ? t('dialog.bulk_delete_confirm', `Bạn có chắc chắn muốn xóa ${count} tour đã chọn?`, { count })
+                                            ? t('dialog.bulk_delete_confirm', { count })
                                             : t('dialog.delete_confirm', { name: tourName })}
                                     </p>
                                     <div className="p-4 bg-red-50 border border-red-100 rounded-[12px]">
@@ -86,7 +86,7 @@ const TourDeleteDialog = ({ isOpen, onClose, onConfirm, tourName, isDeleting, is
                                         className="flex-1 px-4 h-[48px] bg-[#EF4444] hover:bg-[#DC2626] text-white text-[14px] font-bold rounded-[12px] shadow-lg shadow-red-500/20 transition-all active:scale-95 disabled:opacity-50"
                                         onClick={onConfirm}
                                     >
-                                        {isDeleting ? '...' : (isBulk ? t('dialog.button_bulk_delete', 'Xóa tất cả') : t('dialog.button_delete'))}
+                                        {isDeleting ? t('dialog.loading_delete') : (isBulk ? t('dialog.button_bulk_delete') : t('dialog.button_delete'))}
                                     </button>
                                 </div>
                             </Dialog.Panel>

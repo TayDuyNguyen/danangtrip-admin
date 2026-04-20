@@ -1,5 +1,7 @@
 import axiosClient from './axiosClient';
 import type { TourListData, TourFilters, TourStats, TourCategory } from '@/dataHelper/tour.dataHelper';
+import { tourMapper, type RawTour } from '@/dataHelper/tour.mapper';
+import { toNumberSafe } from '@/utils/safeConverters';
 
 export const tourApi = {
     getTours: async (filters: TourFilters, page: number = 1, limit: number = 10): Promise<TourListData> => {
@@ -29,12 +31,20 @@ export const tourApi = {
         if (filters.order) params.order = filters.order;
 
         const response = await axiosClient.get('/tours', { params });
-        const result = response.data as unknown as TourListData;
-        return result;
+        const rawData = response.data as unknown as Record<string, unknown>;
+        const listCandidate = rawData.data;
+        const rows: unknown[] = Array.isArray(listCandidate) ? listCandidate : [];
+
+        return {
+            data: rows.map((item) => tourMapper.mapFromRaw(item as RawTour)),
+            total: toNumberSafe(rawData.total),
+            current_page: toNumberSafe(rawData.current_page, page),
+            per_page: toNumberSafe(rawData.per_page, limit),
+            last_page: toNumberSafe(rawData.last_page, 1)
+        };
     },
 
     getTourStats: async (): Promise<TourStats> => {
-        // Implement robust requests to handle individual failures (e.g. 422 on sold_out)
         const fetchCount = async (params: Record<string, unknown>) => {
             try {
                 const response = await axiosClient.get('/tours', { params });
@@ -50,7 +60,7 @@ export const tourApi = {
             fetchCount({ per_page: 1 }),
             fetchCount({ status: 'active', per_page: 1 }),
             fetchCount({ is_featured: 1, per_page: 1 }),
-            fetchCount({ status: 'sold_out', per_page: 1 }), // Kept for logic, but fetchCount handles the 422
+            fetchCount({ status: 'sold_out', per_page: 1 }),
         ]);
 
         return {
@@ -64,6 +74,12 @@ export const tourApi = {
     getTourCategories: async (): Promise<TourCategory[]> => {
         const response = await axiosClient.get('/tour-categories');
         return response.data?.data || response.data;
+    },
+
+    createTour: async (data: Record<string, unknown>): Promise<Record<string, unknown>> => {
+        const payload = tourMapper.mapToRaw(data);
+        const response = await axiosClient.post('/admin/tours', payload);
+        return response.data;
     },
 
     updateStatus: async (id: number | string, status: string): Promise<boolean> => {
@@ -86,6 +102,20 @@ export const tourApi = {
         return response.data?.code === 200;
     },
 
+    uploadImage: async (file: File): Promise<string> => {
+        const formData = new FormData();
+        formData.append('image', file);
+        const response = await axiosClient.post('/upload/image', formData);
+        return response.data?.data?.url || response.data?.url;
+    },
+
+    uploadImages: async (files: File[]): Promise<string[]> => {
+        const formData = new FormData();
+        files.forEach(file => formData.append('images[]', file));
+        const response = await axiosClient.post('/upload/images', formData);
+        return (response.data?.data || []).map((item: { url: string }) => item.url);
+    },
+
     exportExcel: async (filters: Partial<TourFilters>): Promise<void> => {
         const cleanedFilters: Partial<TourFilters> = {};
         (Object.keys(filters) as Array<keyof TourFilters>).forEach((key) => {
@@ -100,7 +130,7 @@ export const tourApi = {
             responseType: 'blob'
         });
 
-        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const url = window.URL.createObjectURL(new Blob([response.data as BlobPart]));
         const link = document.createElement('a');
         link.href = url;
         link.setAttribute('download', 'danh-sach-tour.xlsx');

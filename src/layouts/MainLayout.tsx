@@ -27,7 +27,7 @@ const MainLayout = () => {
                 <Header />
 
                 {/* Main Content Area - Scrollable */}
-                <main className="flex-1 p-6 md:p-8 lg:p-10 max-w-screen-2xl mx-auto w-full overflow-y-auto transition-all duration-300 custom-scrollbar">
+                <main className="flex-1 px-6 pb-6 max-w-screen-2xl mx-auto w-full overflow-y-auto transition-all duration-300 custom-scrollbar">
                     <Suspense fallback={<LoadingReact />}>
                         <Outlet context={{ setIsRightSidebarOpen }} />
                     </Suspense>
