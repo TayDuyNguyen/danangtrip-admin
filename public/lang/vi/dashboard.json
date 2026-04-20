@@ -1,0 +1,119 @@
+{
+    "title": "Tổng quan hệ thống",
+    "welcome": "Chào mừng trở lại, <1>{{name}}</1> 👋",
+    "subtitle": "Chúc một ngày làm việc hiệu quả. Đây là tổng quan hôm nay của bạn.",
+    "loading": "Đang tải dữ liệu...",
+    "refresh": "Làm mới",
+    "refreshing": "Đang tải...",
+    "export": "Xuất báo cáo",
+    "exporting": "Đang xuất...",
+    "error_loading": "Đã xảy ra lỗi khi tải dữ liệu",
+    "retry": "Thử lại",
+    "period": {
+        "7": "7 ngày",
+        "30": "30 ngày",
+        "90": "90 ngày"
+    },
+    "revenue": {
+        "day": "Hôm nay",
+        "week": "Tuần này",
+        "month": "Tháng này",
+        "year": "Năm nay"
+    },
+    "profile": {
+        "default_name": "Admin Đà Nẵng",
+        "default_email": "admin@dntrip.vn",
+        "default_phone": "+84 123 456 789",
+        "default_joined": "12/03/2026"
+    },
+    "filters": {
+        "all": "Tất cả"
+    },
+    "logs": {
+        "default_location": "Đà Nẵng, VN"
+    },
+    "stats": {
+        "chart_period_hint": "Theo kỳ biểu đồ",
+        "chart_orders_hint": "Theo đếm trạng thái",
+        "total_revenue": "Tổng doanh thu",
+        "total_orders": "Tổng đơn hàng",
+        "total_users": "Tổng người dùng",
+        "tours_sold": "Tour đã bán",
+        "pending_orders": "Đơn đang chờ",
+        "new_contacts": "Liên hệ mới",
+        "vs_last_period": "so với kỳ trước",
+        "waiting_approval": "chờ phê duyệt",
+        "waiting_processing": "chờ xử lý",
+        "unread_messages": "tin nhắn chưa đọc"
+    },
+    "charts": {
+        "badge_total_short": "Tổng {{value}}",
+        "daily_revenue": "Doanh thu",
+        "total_period": "Tổng kỳ báo cáo {{days}} ngày",
+        "booking_trend": "Xu hướng đặt tour",
+        "total_orders_count": "Tổng {{count}} đơn hàng",
+        "user_growth": "Tăng trưởng người dùng",
+        "last_12_months": "Xu hướng 12 tháng gần nhất",
+        "order_status": "Trạng thái đơn hàng",
+        "allocation": "Phân bổ theo trạng thái hiện tại",
+        "unit_orders": "Đơn",
+        "unit_users": "Người dùng",
+        "unit_currency": "VNĐ",
+        "unit_million": "Tr.",
+        "unit_thousand": "K",
+        "refresh_chart": "Làm mới biểu đồ"
+    },
+    "tables": {
+        "top_tours": "Top 5 Tour bán chạy",
+        "recent_orders": "Đơn hàng gần đây",
+        "recent_reviews": "Đánh giá mới nhất",
+        "subtitle_top_tours": "Trong kỳ báo cáo hiện tại",
+        "subtitle_recent_orders": "Hiển thị {{start}}–{{end}} trong số {{total}} đơn hàng",
+        "subtitle_recent_reviews": "Phản hồi từ khách hàng",
+        "manage_reviews": "Quản lý đánh giá",
+        "manage_orders": "Quản lý đơn hàng",
+        "view_all": "Xem tất cả",
+        "header_rank": "#",
+        "header_tour": "Tour",
+        "header_sales": "Lượt bán",
+        "header_revenue": "Doanh thu",
+        "header_rating": "Đánh giá",
+        "header_comment": "Bình luận",
+        "header_trend": "Xu hướng",
+        "header_order_id": "Mã đơn",
+        "header_customer": "Khách hàng",
+        "header_amount": "Số tiền",
+        "header_status": "Trạng thái",
+        "header_date": "Ngày đặt",
+        "export_success": "Xuất báo cáo thành công!",
+        "export_failed": "Xuất báo cáo thất bại. Vui lòng thử lại.",
+        "export_bookings_default_filename": "Báo cáo đặt tour {{from}}–{{to}}.xlsx"
+    },
+    "pagination": {
+        "showing": "Hiển thị {{start}}–{{end}} / {{total}}",
+        "showing_summary": "Hiển thị {{start}} - {{end}} trên {{total}} kết quả",
+        "page": "Trang",
+        "previous": "Trước",
+        "next": "Tiếp theo",
+        "go_to": "Đi tới"
+    },
+    "activities": {
+        "title": "Hoạt động gần đây",
+        "view_all": "Xem tất cả",
+        "no_activities": "Không có hoạt động"
+    },
+    "status": {
+        "all": "Tất cả",
+        "paid": "Đã thanh toán",
+        "processing": "Đang xử lý",
+        "pending": "Đang chờ",
+        "cancelled": "Đã hủy",
+        "completed": "Hoàn thành",
+        "confirmed": "Đã xác nhận",
+        "active": "Hoạt động",
+        "inactive": "Tạm ngưng",
+        "full": "Đã đầy",
+        "loading": "ĐANG TẢI DỮ LIỆU..."
+    },
+    "welcome_back": "Chào mừng trở lại,"
+}

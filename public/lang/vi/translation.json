@@ -1,0 +1,6 @@
+{
+  "network_error": "Không thể kết nối mạng. Vui lòng kiểm tra lại đường truyền.",
+  "permission_denied": "Bạn không có quyền thực hiện hành động này.",
+  "server_error": "Lỗi máy chủ hệ thống. Vui lòng thử lại sau.",
+  "general_error": "Đã có lỗi xảy ra. Vui lòng thử lại."
+}

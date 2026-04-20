@@ -1,73 +1,113 @@
-# React + TypeScript + Vite
+# Đà Nẵng Trip — Frontend Admin
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Ứng dụng quản trị cho dự án Đà Nẵng Trip, xây dựng với React + TypeScript + Vite.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Tech Stack
 
-## React Compiler
+| Thư viện | Phiên bản | Mục đích |
+|---|---|---|
+| [React](https://react.dev) | ^19 | UI framework |
+| [React DOM](https://react.dev) | ^19 | Render React vào DOM |
+| [React Router DOM](https://reactrouter.com) | ^7 | Routing, navigation |
+| [Axios](https://axios-http.com) | ^1 | HTTP client, gọi API |
+| [Zustand](https://zustand-demo.pmnd.rs) | ^5 | Global state management |
+| [TanStack Query](https://tanstack.com/query) | ^5 | Server state, caching, async data fetching |
+| [React Icons](https://react-icons.github.io/react-icons) | ^5 | Icon library |
+| [Tailwind CSS](https://tailwindcss.com) | ^4 | Utility-first CSS framework |
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Dev Dependencies
 
-## Expanding the ESLint configuration
+| Thư viện | Mục đích |
+|---|---|
+| [Vite](https://vite.dev) | Build tool, dev server |
+| [TypeScript](https://www.typescriptlang.org) | Type safety |
+| [ESLint](https://eslint.org) | Linting |
+| [PostCSS](https://postcss.org) | CSS processing |
+| [Autoprefixer](https://github.com/postcss/autoprefixer) | CSS vendor prefixes |
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+---
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Cài đặt
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+1. Clone repo
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+git clone <repo-url>
+cd <tên-thư-mục>
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+2. Cài dependencies
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
 ```
+
+3. Tạo file môi trường
+
+```bash
+cp .env.example .env
+```
+
+4. Chạy dev server
+
+```bash
+npm run dev
+```
+
+---
+
+## Các câu lệnh
+
+| Lệnh | Mô tả |
+|---|---|
+| `npm run dev` | Chạy dev server |
+| `npm run build` | Build production |
+| `npm run typecheck` | Kiểm tra TypeScript (`tsc -b`) |
+| `npm run preview` | Preview bản build |
+| `npm run lint` | Kiểm tra lỗi ESLint |
+| `npm run prepush:check` | Chạy toàn bộ kiểm tra chất lượng (Lint, Type, Build, Console) |
+
+---
+
+## Pre-push Quality Gate
+
+Dự án sử dụng Husky để chặn push nếu code không đạt tiêu chuẩn. Trước khi push, hệ thống sẽ tự động chạy:
+
+1.  **Linting**: Kiểm tra phong cách viết code.
+2.  **Type Checking**: Kiểm tra lỗi TypeScript.
+3.  **Production Build**: Đảm bảo dự án có thể đóng gói thành công.
+4.  **Console Error Testing**: Chạy Playwright để phát hiện lỗi runtime/console trên trình duyệt.
+
+> **Lưu ý**: Để bước `test:console` thành công, bạn cần đảm bảo app đang chạy ở `http://localhost:5173`.
+
+Để chạy thủ công toàn bộ các bước kiểm tra:
+```bash
+npm run prepush:check
+```
+
+---
+
+## Biến môi trường
+
+Tạo file `.env` từ `.env.example`:
+
+```bash
+cp .env.example .env
+```
+
+| Biến | Mô tả |
+|---|---|
+| `VITE_PORT` | Port dev server (mặc định: 5173) |
+| `VITE_PREVIEW_PORT` | Port preview server (mặc định: 4173) |
+| `VITE_HOST` | Host dev server (`false` hoặc `0.0.0.0`) |
+| `VITE_API_URL` | Base URL của backend API |
+| `VITE_NAME` | Tên ứng dụng |
+
+---
+
+## CI/CD
+
+- CI/CD dùng GitHub Actions cho `dev` và `main`.
+- Xem hướng dẫn chi tiết tại [docs/ci-cd.md](docs/ci-cd.md).

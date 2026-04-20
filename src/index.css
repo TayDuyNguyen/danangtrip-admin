@@ -1,1 +1,77 @@
 @import "tailwindcss";
+
+@theme {
+  /* Primary sans-serif font - clean and modern */
+  /* (Font sans-serif chính - sạch sẽ và hiện đại) */
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+
+  /* Elegant serif font for headings */
+  /* (Font serif sang trọng cho tiêu đề và heading) */
+  --font-serif: "Playfair Display", Georgia, serif;
+
+  /* Friendly rounded font for UI elements */
+  /* (Font tròn trịa, thân thiện cho button và UI) */
+  --font-quicksand: "Quicksand", "Inter", sans-serif;
+
+  /* Decorative script font for accents */
+  /* (Font viết tay nghệ thuật cho điểm nhấn trang trí) */
+  --font-script: "Imperial Script", cursive;
+
+  /* Classic readable font for long content */
+  /* (Font cổ điển dễ đọc cho nội dung dài) */
+  --font-neuton: "Neuton", serif;
+}
+
+@layer components {
+  .glow-effect {
+    /* Tạo bóng nhiều lớp để có độ sâu */
+    box-shadow:
+      0 0 10px rgba(89, 151, 250, 0.6),
+      /* Bóng gần */
+      0 0 20px rgba(88, 149, 247, 0.4),
+      /* Bóng xa */
+      0 0 30px rgba(59, 130, 246, 0.2);
+    /* Bóng mờ nhất */
+
+    /* Hiệu ứng chuyển cảnh mượt khi hover */
+    transition: box-shadow 0.3s ease-in-out;
+  }
+
+  /* Tùy chọn: Sáng hơn khi hover */
+  .glow-effect:hover {
+    box-shadow:
+      0 0 20px rgba(59, 130, 246, 0.8),
+      0 0 40px rgba(49, 110, 209, 0.5),
+      0 0 50px rgba(59, 130, 246, 0.3);
+  }
+
+  html,
+  body {
+    overflow: hidden;
+    /* (Prevent body scroll - Chặn cuộn body) */
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Custom horizontal scrollbar for tables */
+  .custom-scrollbar-horizontal::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  .custom-scrollbar-horizontal::-webkit-scrollbar-track {
+    background: #F1F5F9;
+    border-radius: 10px;
+  }
+
+  .custom-scrollbar-horizontal::-webkit-scrollbar-thumb {
+    background: #CBD5E1;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+  }
+
+  .custom-scrollbar-horizontal::-webkit-scrollbar-thumb:hover {
+    background: #0066CC;
+  }
+}
