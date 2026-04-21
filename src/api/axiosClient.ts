@@ -1,4 +1,5 @@
 import { API_ENDPOINTS } from "@/constants";
+import { apiClientEnv } from "@/config/env";
 import { ROUTES } from "@/routes/routes";
 import { useUserStore } from "@/store/useUserStore";
 import { type ApiResponse, type ErrorResponse, type User } from "@/types";
@@ -7,26 +8,35 @@ import axios, { AxiosError, type InternalAxiosRequestConfig } from "axios";
 import { toast } from "sonner";
 import i18next from "i18next";
 
+const normalizeBaseForFailover = (url: string | undefined): string => {
+    if (!url) return "";
+    return url.trim().replace(/\/+$/, "");
+};
+
+/**
+ * Sticky active API base (primary or last successful failover).
+ */
+let currentBaseUrl = apiClientEnv.baseChain[0] ?? "";
 
 /**
  * Creates a pre-configured axios instance with base URL, default headers and timeout
  * (Tạo một axios instance với base URL, headers mặc định và timeout)
  */
 const axiosClient = axios.create({
-    baseURL: import.meta.env.VITE_API_URL,
+    baseURL: currentBaseUrl,
     withCredentials: true,
     headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
     },
-    timeout: 60000,
-})
+    timeout: apiClientEnv.timeoutMs,
+});
 
 /**
  * Queue management — holds pending requests while token is being refreshed
  * (Quản lý hàng đợi — giữ các request đang chờ trong khi token đang được làm mới)
  */
 let isRefreshing = false;
-let failedQueue: Array<{ resolve: (token: string | null) => void, reject: (e: unknown) => void }> = [];
+let failedQueue: Array<{ resolve: (token: string | null) => void; reject: (e: unknown) => void }> = [];
 let isRedirecting = false;
 
 /**
@@ -34,9 +44,9 @@ let isRedirecting = false;
  * (Xử lý tất cả các request trong hàng đợi sau khi refresh token thành công hoặc thất bại)
  */
 const processQueus = (error: Error | null, token: string | null = null) => {
-    failedQueue.forEach((prom) => error ? prom.reject(error) : prom.resolve(token));
+    failedQueue.forEach((prom) => (error ? prom.reject(error) : prom.resolve(token)));
     failedQueue = [];
-}
+};
 
 /**
  * Clears tokens, resets user state and redirects to login page
@@ -58,7 +68,7 @@ const handleLogout = (onRedirect?: () => void) => {
         // Only redirect standard window if auth bootstrap is finished
         window.location.replace(ROUTES.LOGIN);
     }
-}
+};
 
 /**
  * Attempts to obtain a new access token using the HttpOnly cookie (silent refresh)
@@ -67,12 +77,13 @@ const handleLogout = (onRedirect?: () => void) => {
 export const refreshAccessToken = async (): Promise<string | null> => {
     try {
         // We dont send Authorization header here, backend relies on refresh_token cookie
-        const response = await axios.post<ApiResponse<{ token: string, user: User }>>(
-            `${import.meta.env.VITE_API_URL}${API_ENDPOINTS.AUTH.REFRESH_TOKEN}`,
+        const response = await axios.post<ApiResponse<{ token: string; user: User }>>(
+            `${currentBaseUrl}${API_ENDPOINTS.AUTH.REFRESH_TOKEN}`,
             {},
             {
                 withCredentials: true,
-                headers: { 'Content-Type': 'application/json' }
+                headers: { "Content-Type": "application/json" },
+                timeout: apiClientEnv.timeoutMs,
             }
         );
 
@@ -89,7 +100,7 @@ export const refreshAccessToken = async (): Promise<string | null> => {
     } catch {
         return null;
     }
-}
+};
 
 /**
  * Applies common headers (Accept-Language, FormData) to a request config
@@ -101,13 +112,18 @@ const applyCommonHeaders = (config: InternalAxiosRequestConfig) => {
         delete config.headers["Content-Type"];
     }
     return config;
-}
+};
 
 /**
  * Request interceptor — attaches auth token and handles proactive refresh
  */
 axiosClient.interceptors.request.use(
     async (config: InternalAxiosRequestConfig) => {
+        const isAbsoluteUrl = typeof config.url === "string" && /^https?:\/\//i.test(config.url);
+        if (!isAbsoluteUrl) {
+            config.baseURL = currentBaseUrl;
+        }
+
         const token = getAccessToken();
 
         // Proactive refresh: if token expires within 5 minutes, refresh before sending
@@ -119,9 +135,9 @@ axiosClient.interceptors.request.use(
                     processQueus(null, newToken);
                     config.headers.Authorization = `Bearer ${newToken}`;
                 } else {
-                    processQueus(new Error('Refresh failed'), null);
+                    processQueus(new Error("Refresh failed"), null);
                     handleLogout();
-                    return Promise.reject(new Error('Session expired'));
+                    return Promise.reject(new Error("Session expired"));
                 }
             } finally {
                 isRefreshing = false;
@@ -130,7 +146,7 @@ axiosClient.interceptors.request.use(
             // Wait for existing refresh to complete
             return new Promise<string | null>((resolve, reject) => {
                 failedQueue.push({ resolve, reject });
-            }).then(token => {
+            }).then((token) => {
                 if (token) config.headers.Authorization = `Bearer ${token}`;
                 return config;
             });
@@ -145,30 +161,66 @@ axiosClient.interceptors.request.use(
 );
 
 /**
- * Response interceptor — handles token refresh on 401
+ * Response interceptor — handles token refresh on 401 and client-side API failover
  */
 axiosClient.interceptors.response.use(
     (response) => {
-        if (response.config.responseType === 'blob') {
+        if (response.config.responseType === "blob") {
             return response as unknown;
         }
         return response.data;
     },
     async (error: AxiosError<ErrorResponse>) => {
-        const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
+        const originalRequest = error.config as InternalAxiosRequestConfig | undefined;
 
-        if (!error.response) {
-            toast.error(i18next.t('translation:network_error'));
+        if (!error.response && !axios.isCancel(error)) {
+            if (originalRequest?.__isFailoverRetry) {
+                return Promise.reject(error);
+            }
+            if (!originalRequest) {
+                toast.error(i18next.t("translation:network_error"));
+                return Promise.reject(error);
+            }
+
+            const failedNorm =
+                normalizeBaseForFailover(originalRequest?.baseURL) ||
+                normalizeBaseForFailover(currentBaseUrl);
+            const candidates = apiClientEnv.baseChain.filter(
+                (b) => normalizeBaseForFailover(b) !== failedNorm
+            );
+
+            for (const base of candidates) {
+                try {
+                    const res = await axiosClient.request({
+                        ...originalRequest,
+                        baseURL: base,
+                        __isFailoverRetry: true,
+                    });
+                    currentBaseUrl = base;
+                    axiosClient.defaults.baseURL = base;
+                    return res;
+                } catch {
+                    /* try next base */
+                }
+            }
+
+            toast.error(i18next.t("translation:network_error"));
             return Promise.reject(error);
         }
 
-        const { status, data } = error.response;
+        if (!originalRequest) {
+            return Promise.reject(error);
+        }
+
+        const { status, data } = error.response!;
 
         // Handle 401 Unauthorized
         if (status === 401 || data?.code === 401) {
             // Skip for login or refresh endpoints to avoid loops
-            if (originalRequest?.url?.includes(API_ENDPOINTS.AUTH.LOGIN) ||
-                originalRequest?.url?.includes(API_ENDPOINTS.AUTH.REFRESH_TOKEN)) {
+            if (
+                originalRequest?.url?.includes(API_ENDPOINTS.AUTH.LOGIN) ||
+                originalRequest?.url?.includes(API_ENDPOINTS.AUTH.REFRESH_TOKEN)
+            ) {
                 return Promise.reject(error);
             }
 
@@ -181,10 +233,12 @@ axiosClient.interceptors.response.use(
             if (isRefreshing) {
                 return new Promise((resolve, reject) => {
                     failedQueue.push({ resolve, reject });
-                }).then((token) => {
-                    originalRequest.headers!.Authorization = `Bearer ${token}`;
-                    return axiosClient(originalRequest);
-                }).catch((refreshErr) => Promise.reject(refreshErr));
+                })
+                    .then((token) => {
+                        originalRequest.headers!.Authorization = `Bearer ${token}`;
+                        return axiosClient(originalRequest);
+                    })
+                    .catch((refreshErr) => Promise.reject(refreshErr));
             }
 
             originalRequest._retry = true;
@@ -192,7 +246,7 @@ axiosClient.interceptors.response.use(
 
             try {
                 const newToken = await refreshAccessToken();
-                if (!newToken) throw new Error('Refresh failed');
+                if (!newToken) throw new Error("Refresh failed");
 
                 processQueus(null, newToken);
                 originalRequest.headers!.Authorization = `Bearer ${newToken}`;
@@ -207,11 +261,11 @@ axiosClient.interceptors.response.use(
         }
 
         if (status === 403) {
-            toast.warning(i18next.t('translation:permission_denied'));
+            toast.warning(i18next.t("translation:permission_denied"));
         }
 
         if (status >= 500) {
-            toast.error(i18next.t('translation:server_error'));
+            toast.error(i18next.t("translation:server_error"));
         }
 
         return Promise.reject(error);
