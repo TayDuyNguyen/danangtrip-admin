@@ -26,8 +26,13 @@ const parseTimeoutMs = (raw: string | undefined, fallback: number): number => {
     return Number.isFinite(n) && n > 0 ? n : fallback;
 };
 
-const primaryNorm = normalizeApiBaseUrl(import.meta.env.VITE_API_URL ?? "");
+const primaryNorm = normalizeApiBaseUrl(
+    import.meta.env.VITE_API_URL || "https://danangtrip-api.onrender.com/api/v1"
+);
+
+
 const fallbackUrls = parseFallbackUrls(import.meta.env.VITE_API_FALLBACK_URLS, primaryNorm);
+
 
 const seenChain = new Set<string>();
 const baseChain: string[] = [];
