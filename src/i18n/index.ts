@@ -25,8 +25,10 @@ i18
             loadPath: '/lang/{{lng}}/{{ns}}.json', // đường dẫn file json
         },
 
+        lng: 'vi', // Mặc định tiếng Việt khi chưa chọn ngôn ngữ
+
         detection: {
-            order: ['localStorage', 'querystring', 'cookie', 'navigator'], // thứ tự ưu tiên detect ngôn ngữ
+            order: ['localStorage', 'cookie', 'querystring', 'navigator'], // thứ tự ưu tiên detect ngôn ngữ
             caches: ['localStorage', 'cookie'], // cache ngôn ngữ
             lookupLocalStorage: 'i18nextLng',
             lookupCookie: 'i18nextLng',
