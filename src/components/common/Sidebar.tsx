@@ -168,11 +168,17 @@ const Sidebar = () => {
                     <div className="bg-slate-800/50 rounded-2xl p-4 flex items-center justify-between group cursor-pointer hover:bg-slate-800 transition-colors">
                         <div className="flex items-center gap-3 min-w-0">
                             <div className="w-10 h-10 rounded-xl bg-slate-700 border border-slate-600 flex items-center justify-center text-white font-black shrink-0 shadow-sm relative overflow-hidden">
-                                <img 
-                                    src={user?.avatar || "https://i.pravatar.cc/150?u=a042581f4e29026024d"} 
-                                    alt={user?.full_name || t('labels.admin_fallback')} 
-                                    className="w-full h-full object-cover" 
-                                />
+                                {user?.avatar ? (
+                                    <img
+                                        src={user.avatar}
+                                        alt={user?.full_name || t('labels.admin_fallback')}
+                                        className="w-full h-full object-cover"
+                                    />
+                                ) : (
+                                    <span className="text-white text-xs font-black">
+                                        {(user?.full_name || t('labels.admin_fallback')).charAt(0).toUpperCase()}
+                                    </span>
+                                )}
                             </div>
                             <div className="flex-1 min-w-0">
                                 <p className="text-white text-sm font-black truncate">{user?.full_name || t('labels.admin_fallback')}</p>
@@ -186,11 +192,17 @@ const Sidebar = () => {
                 ) : (
                     <div className="flex flex-col items-center gap-4 py-2">
                         <div className="w-10 h-10 rounded-xl bg-slate-700 border border-slate-600 flex items-center justify-center text-white font-black shrink-0 shadow-sm relative overflow-hidden" title={user?.full_name || t('labels.admin_fallback')}>
-                            <img 
-                                src={user?.avatar || "https://i.pravatar.cc/150?u=a042581f4e29026024d"} 
-                                alt={user?.full_name || t('labels.admin_fallback')} 
-                                className="w-full h-full object-cover" 
-                            />
+                            {user?.avatar ? (
+                                <img
+                                    src={user.avatar}
+                                    alt={user?.full_name || t('labels.admin_fallback')}
+                                    className="w-full h-full object-cover"
+                                />
+                            ) : (
+                                <span className="text-white text-xs font-black">
+                                    {(user?.full_name || t('labels.admin_fallback')).charAt(0).toUpperCase()}
+                                </span>
+                            )}
                         </div>
                         <button className="text-slate-500 hover:text-red-400 transition-colors shrink-0 p-2 hover:bg-slate-800 rounded-lg" title={t('sidebar.logout')}>
                             <LogOut size={20} />

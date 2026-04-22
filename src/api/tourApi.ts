@@ -19,7 +19,7 @@ export const tourApi = {
 
         if (filters.q) params.q = filters.q;
         if (filters.tour_category_id && filters.tour_category_id !== 'all') {
-            params.tour_category_id = filters.tour_category_id;
+            params.tour_category_id = toNumberSafe(filters.tour_category_id);
         }
         if (filters.status && filters.status !== 'all') {
             params.status = filters.status;
