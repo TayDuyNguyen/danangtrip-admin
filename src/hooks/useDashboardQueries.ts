@@ -10,7 +10,8 @@ import {
     mapUserGrowth,
     mapTopTours,
     mapBookings,
-    mapBookingStatusCounts
+    mapBookingStatusCounts,
+    toNumberSafe
 } from '@/dataHelper/dashboard.mapper';
 import type {
     DashboardStats,
@@ -65,8 +66,8 @@ const resolveStatsWithFallback = async (stats: DashboardStats): Promise<Dashboar
         // Unwrap nested { data: { data: ... } } if present
         const data = (responseData.data as Record<string, unknown>) || responseData;
 
-        const total = data.total ?? (data.meta as Record<string, unknown>)?.total ?? (data.pagination as Record<string, unknown>)?.total ?? 0;
-        return typeof total === 'number' ? total : 0;
+        const total = data.total ?? (data.meta as Record<string, unknown>)?.total ?? (data.pagination as Record<string, unknown>)?.total;
+        return toNumberSafe(total);
     };
 
     return {

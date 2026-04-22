@@ -69,32 +69,28 @@ const Dashboard = () => {
         };
     }, []);
 
-    // 1. Stats Cards (High Priority - Batch 1)
+    // 1. Stats Cards
     const statsQuery = useDashboardStatsQuery();
     const bookingStatusCountsQuery = useBookingStatusCountsQuery();
 
-    // 2. Charts (Medium Priority - Batch 2)
-    const isBatch1Success = statsQuery.isSuccess && bookingStatusCountsQuery.isSuccess;
-
+    // 2. Charts
     const revenueRange = useMemo(() => getDateRange(revenuePeriod), [revenuePeriod, getDateRange]);
     const revenueQuery = useRevenueQuery({
         period: revenuePeriod,
         from: revenueRange.from,
         to: revenueRange.to
-    }, isBatch1Success);
+    });
 
-    const trendQuery = useBookingTrendQuery({ days: bookingTrendDays }, isBatch1Success);
-    const growthQuery = useUserGrowthQuery({ year: new Date().getFullYear() }, isBatch1Success);
+    const bookingTrendQuery = useBookingTrendQuery({ days: bookingTrendDays });
+    const userGrowthQuery = useUserGrowthQuery({ year: new Date().getFullYear() });
 
-    // 3. Tables (Low Priority - Batch 3)
-    const isBatch2Success = revenueQuery.isSuccess && growthQuery.isSuccess;
-
+    // 3. Tables
     const toursRange = useMemo(() => getDateRange(bookingTrendDays), [bookingTrendDays, getDateRange]);
     const topToursQuery = useTopToursQuery({
         limit: 5,
         from: toursRange.from,
         to: toursRange.to
-    }, isBatch2Success);
+    });
 
     const bookingsQuery = useBookingsQuery({
         page: bookingsPage,
@@ -102,7 +98,7 @@ const Dashboard = () => {
         sort_by: 'booked_at',
         sort_order: 'desc',
         booking_status: bookingsStatus || undefined
-    }, isBatch2Success);
+    });
 
     // Handle global refresh
     const handleRefresh = useCallback(async () => {
@@ -111,7 +107,7 @@ const Dashboard = () => {
         setRefreshing(false);
     }, [queryClient]);
 
-    // Handle export report — delegates all API logic to the mutation hook
+    // Handle export report
     const handleExport = useCallback(() => {
         const range = getDateRange(revenuePeriod);
         const fallbackFilename = t('tables.export_bookings_default_filename', {
@@ -123,7 +119,6 @@ const Dashboard = () => {
             {
                 onSuccess: () => toast.success(t('tables.export_success')),
                 onError: (err) => {
-                    console.error('Export failed:', err);
                     toast.error(err instanceof Error ? err.message : t('tables.export_failed'));
                 },
             }
@@ -154,9 +149,6 @@ const Dashboard = () => {
         bookingStatusCountsQuery.data,
     ]);
 
-    // We use isolated error and loading states within components to enable progressive rendering
-
-
     return (
         <div className="space-y-8 animate-in fade-in duration-700 slide-in-from-bottom-4 overflow-x-hidden min-w-0" aria-label={t('title')}>
             {/* Header */}
@@ -167,7 +159,7 @@ const Dashboard = () => {
                         {t('title')}
                     </p>
                     <h1 className="text-4xl font-black text-slate-900 tracking-tighter leading-none">
-                        {t('welcome_back')} <span className="text-blue-600">{user?.full_name || 'Admin'}</span> 👋
+                        {t('welcome_back', { name: user?.full_name || t('welcome_fallback_name') })}
                     </h1>
                     <p className="text-slate-500 font-bold text-sm mt-1.5 flex items-center gap-2">
                         <Calendar size={14} className="text-slate-400" />
@@ -208,13 +200,14 @@ const Dashboard = () => {
                     bookingStatusLoading={bookingStatusCountsQuery.isLoading}
                     isRefreshing={refreshing || statsQuery.isFetching || bookingStatusCountsQuery.isFetching}
                     isError={statsQuery.isError}
+                    bookingStatusError={bookingStatusCountsQuery.isError}
                 />
 
                 {/* 2. Charts Row */}
                 <DashboardCharts
                     dailyRevenueData={revenueQuery.data || []}
-                    bookingTrendData={trendQuery.data || []}
-                    userGrowthData={growthQuery.data || []}
+                    bookingTrendData={bookingTrendQuery.data || []}
+                    userGrowthData={userGrowthQuery.data || []}
                     orderStatusData={orderStatusData}
                     // Filter props
                     revenuePeriod={revenuePeriod}
@@ -223,28 +216,33 @@ const Dashboard = () => {
                     bookingTrendDays={bookingTrendDays}
                     onBookingTrendDaysChange={setBookingTrendDays}
                     bookingTrendOptions={BOOKING_TREND_OPTIONS}
-                    // Refresh handlers
+                    // State props
                     onRevenueRefresh={() => revenueQuery.refetch()}
                     isRevenueFetching={revenueQuery.isFetching}
                     isRevenueLoading={revenueQuery.isLoading}
-                    onTrendRefresh={() => trendQuery.refetch()}
-                    isTrendFetching={trendQuery.isFetching}
-                    isTrendLoading={trendQuery.isLoading}
-                    onGrowthRefresh={() => growthQuery.refetch()}
-                    isGrowthFetching={growthQuery.isFetching}
-                    isGrowthLoading={growthQuery.isLoading}
+                    isRevenueError={revenueQuery.isError}
+                    onTrendRefresh={() => bookingTrendQuery.refetch()}
+                    isTrendFetching={bookingTrendQuery.isFetching}
+                    isTrendLoading={bookingTrendQuery.isLoading}
+                    isTrendError={bookingTrendQuery.isError}
+                    onGrowthRefresh={() => userGrowthQuery.refetch()}
+                    isGrowthFetching={userGrowthQuery.isFetching}
+                    isGrowthLoading={userGrowthQuery.isLoading}
+                    isGrowthError={userGrowthQuery.isError}
                     onStatusRefresh={() => bookingStatusCountsQuery.refetch()}
                     isStatusFetching={bookingStatusCountsQuery.isFetching}
                     isStatusLoading={bookingStatusCountsQuery.isLoading}
+                    isStatusError={bookingStatusCountsQuery.isError}
                 />
 
                 {/* 3. Tables Section */}
-                <div className="space-y-8">
+                <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
                     <TopToursTable
                         topTours={topToursQuery.data || []}
                         onRefresh={() => topToursQuery.refetch()}
                         isRefreshing={topToursQuery.isFetching}
                         isLoading={topToursQuery.isLoading}
+                        isError={topToursQuery.isError}
                     />
                     <RecentOrdersTable
                         bookings={bookingsQuery.data}
@@ -255,6 +253,7 @@ const Dashboard = () => {
                         onRefresh={() => bookingsQuery.refetch()}
                         isRefreshing={bookingsQuery.isFetching}
                         isLoading={bookingsQuery.isLoading}
+                        isError={bookingsQuery.isError}
                     />
                 </div>
             </div>

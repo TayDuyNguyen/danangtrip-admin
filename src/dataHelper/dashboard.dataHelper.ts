@@ -277,15 +277,19 @@ export interface DashboardChartsProps {
     onRevenueRefresh?: () => void;
     isRevenueFetching?: boolean;
     isRevenueLoading?: boolean;
+    isRevenueError?: boolean;
     onTrendRefresh?: () => void;
     isTrendFetching?: boolean;
     isTrendLoading?: boolean;
+    isTrendError?: boolean;
     onGrowthRefresh?: () => void;
     isGrowthFetching?: boolean;
     isGrowthLoading?: boolean;
+    isGrowthError?: boolean;
     onStatusRefresh?: () => void;
     isStatusFetching?: boolean;
     isStatusLoading?: boolean;
+    isStatusError?: boolean;
 }
 
 export interface StatsCardsProps {
@@ -296,4 +300,5 @@ export interface StatsCardsProps {
     bookingStatusLoading?: boolean;
     isRefreshing?: boolean;
     isError?: boolean;
+    bookingStatusError?: boolean;
 }
