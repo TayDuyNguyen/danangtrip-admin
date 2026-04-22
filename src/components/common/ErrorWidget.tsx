@@ -23,7 +23,7 @@ const ErrorWidget = ({
                 <AlertCircle size={24} />
             </div>
             <h4 className="text-sm font-black text-red-900 leading-tight">
-                {title || t('error_states.title')}
+                {title || t('dashboard:error_states.title')}
             </h4>
             {message && <p className="text-[11px] font-bold text-red-400 mt-1 max-w-[240px] leading-relaxed">{message}</p>}
             {onRetry && (
@@ -32,7 +32,7 @@ const ErrorWidget = ({
                     className="mt-4 px-4 py-2 bg-white border border-red-100 text-red-600 text-xs font-black rounded-xl hover:bg-red-50 transition-colors flex items-center gap-2 shadow-sm active:scale-95"
                 >
                     <RefreshCw size={12} />
-                    {t('retry')}
+                    {t('dashboard:retry')}
                 </button>
             )}
         </div>

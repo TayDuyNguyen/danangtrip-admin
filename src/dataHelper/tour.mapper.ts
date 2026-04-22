@@ -75,27 +75,32 @@ export const tourMapper = {
             slug: raw.slug || '',
             tour_category_id: toNumberSafe(raw.tour_category_id),
             description: raw.description || '',
-            short_desc: raw.short_desc,
-            itinerary: Array.isArray(raw.itinerary) ? raw.itinerary : [],
-            inclusions: inclusionsToFormField(raw.inclusions),
-            exclusions: inclusionsToFormField(raw.exclusions),
-            price_adult: String(raw.price_adult || '0'),
-            price_child: String(raw.price_child || '0'),
-            price_infant: String(raw.price_infant || '0'),
+            short_desc: raw.short_desc || '',
+            itinerary: Array.isArray(raw.itinerary) 
+                ? raw.itinerary.map((item: Record<string, unknown>, index) => ({
+                    ...item,
+                    day: toNumberSafe(item.day) || index + 1
+                  })) as Array<{ day: number; title: string; content: string }>
+                : [],
+            inclusions: inclusionsToFormField(raw.inclusions) || '',
+            exclusions: inclusionsToFormField(raw.exclusions) || '',
+            price_adult: toNumberSafe(raw.price_adult),
+            price_child: raw.price_child !== null ? toNumberSafe(raw.price_child) : null,
+            price_infant: raw.price_infant !== null ? toNumberSafe(raw.price_infant) : null,
             discount_percent: toNumberSafe(raw.discount_percent),
             duration: raw.duration || '',
-            start_time: raw.start_time,
-            meeting_point: raw.meeting_point,
-            max_people: toNumberSafe(raw.max_people),
-            min_people: toNumberSafe(raw.min_people),
-            available_from: raw.available_from,
-            available_to: raw.available_to,
-            thumbnail: raw.thumbnail,
+            start_time: raw.start_time || '',
+            meeting_point: raw.meeting_point || '',
+            max_people: raw.max_people !== null ? toNumberSafe(raw.max_people) : null,
+            min_people: raw.min_people !== null ? toNumberSafe(raw.min_people) : null,
+            available_from: raw.available_from || '',
+            available_to: raw.available_to || '',
+            thumbnail: raw.thumbnail || '',
             images: toArraySafe<string>(raw.images),
-            video_url: raw.video_url,
+            video_url: raw.video_url || null,
             status: raw.status || 'inactive',
-            is_featured: Boolean(raw.is_featured),
-            is_hot: Boolean(raw.is_hot),
+            is_featured: !!raw.is_featured,
+            is_hot: !!raw.is_hot,
             view_count: toNumberSafe(raw.view_count),
             booking_count: toNumberSafe(raw.booking_count),
             created_by:
@@ -105,41 +110,57 @@ export const tourMapper = {
             created_at: raw.created_at || '',
             updated_at: raw.updated_at || '',
             categoryName: raw.category?.name,
-            location_ids: Array.isArray(raw.location_ids) ? raw.location_ids : [],
+            location_ids: Array.isArray(raw.location_ids) ? raw.location_ids.map(id => toNumberSafe(id)) : [],
         };
     },
 
     /** Form / UI → API request body */
     mapToRaw(form: Partial<TourViewModel>): Partial<RawTour> {
-        return {
-            name: form.name,
-            slug: form.slug,
-            tour_category_id: toNumberSafe(form.tour_category_id),
-            description: form.description,
-            short_desc: form.short_desc,
-            itinerary: form.itinerary,
-            inclusions: splitLines(form.inclusions),
-            exclusions: splitLines(form.exclusions),
-            price_adult: toNumberSafe(form.price_adult),
-            price_child: optionalNumericPayload(form.price_child) as number | string,
-            price_infant: optionalNumericPayload(form.price_infant) as number | string,
-            discount_percent: toNumberSafe(form.discount_percent),
-            duration: form.duration,
-            start_time: form.start_time,
-            meeting_point: form.meeting_point,
-            max_people: optionalNumericPayload(form.max_people) as number | string,
-            min_people: optionalNumericPayload(form.min_people) as number | string,
-            available_from: form.available_from,
-            available_to: form.available_to,
-            thumbnail: form.thumbnail,
-            images: form.images,
-            video_url: form.video_url,
-            status: form.status,
-            is_featured: !!form.is_featured,
-            is_hot: !!form.is_hot,
-            location_ids: Array.isArray(form.location_ids) && form.location_ids.length > 0
-                ? form.location_ids
-                : []
+        const result: Partial<RawTour> = {};
+
+        // Helper to map field only if it exists in the form object
+        const ifExists = (key: keyof TourViewModel, mapper: (v: unknown) => unknown) => {
+            if (key in form) {
+                (result as Record<string, unknown>)[key] = mapper(form[key]);
+            }
         };
+
+        // Strings / Simple types
+        const pass = (v: unknown) => v;
+        const bool = (v: unknown) => !!v;
+        const num = (v: unknown) => toNumberSafe(v);
+
+        ifExists('name', pass);
+        ifExists('slug', pass);
+        ifExists('tour_category_id', num);
+        ifExists('description', pass);
+        ifExists('short_desc', pass);
+        ifExists('itinerary', pass);
+        ifExists('inclusions', (v) => splitLines(v as string));
+        ifExists('exclusions', (v) => splitLines(v as string));
+        ifExists('price_adult', num);
+        ifExists('price_child', optionalNumericPayload);
+        ifExists('price_infant', optionalNumericPayload);
+        ifExists('discount_percent', num);
+        ifExists('duration', pass);
+        ifExists('start_time', pass);
+        ifExists('meeting_point', pass);
+        ifExists('max_people', optionalNumericPayload);
+        ifExists('min_people', optionalNumericPayload);
+        ifExists('available_from', pass);
+        ifExists('available_to', pass);
+        ifExists('thumbnail', pass);
+        ifExists('images', pass);
+        ifExists('video_url', pass);
+        ifExists('status', pass);
+        ifExists('is_featured', bool);
+        ifExists('is_hot', bool);
+        
+        // Special mapping for location_ids to avoid sending [] if not touched
+        if ('location_ids' in form) {
+            result.location_ids = Array.isArray(form.location_ids) ? form.location_ids : [];
+        }
+
+        return result;
     }
 };

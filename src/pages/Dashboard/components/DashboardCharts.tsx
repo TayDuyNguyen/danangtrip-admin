@@ -111,14 +111,14 @@ const ChartCard = ({
                     <Skeleton className="w-full h-full rounded-2xl" />
                 ) : isError ? (
                     <ErrorWidget 
-                        title={t('error_states.title')}
-                        message={t('error_states.desc')}
+                        title={t('dashboard:error_states.title')}
+                        message={t('dashboard:error_states.desc')}
                         onRetry={onRefresh}
                     />
                 ) : isEmpty ? (
                     <EmptyState 
-                        title={t('empty_states.no_data')}
-                        description={t('empty_states.no_data_desc')}
+                        title={t('dashboard:empty_states.no_data')}
+                        description={t('dashboard:empty_states.no_data_desc')}
                         className="h-full"
                     />
                 ) : (
@@ -338,7 +338,7 @@ const DashboardCharts = (props: ExtendedDashboardChartsProps) => {
                             tickLine={false}
                             tick={{ fill: '#94a3b8', fontSize: 10, fontWeight: 700 }}
                             interval={1}
-                            tickFormatter={(v) => t('short_month', { month: v })}
+                            tickFormatter={(v) => t('dashboard:short_month', { month: v })}
                         />
                         <YAxis
                             axisLine={false}

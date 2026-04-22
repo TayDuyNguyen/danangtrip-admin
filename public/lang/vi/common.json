@@ -7,7 +7,8 @@
     "placeholder_select": "Chọn...",
     "labels": {
         "all": "Tất cả",
-        "loading": "Đang tải..."
+        "loading": "Đang tải...",
+        "admin_fallback": "Admin"
     },
     "roles": {
         "admin": "Quản trị viên",
@@ -17,10 +18,15 @@
         "name": "DaNangTrip"
     },
     "actions": {
+        "edit": "Chỉnh sửa",
+        "close": "Đóng",
         "remove": "Xóa",
         "dismiss": "Đóng",
-        "deleting": "Đang xóa..."
+        "deleting": "Đang xóa...",
+        "saving": "Đang lưu..."
     },
+    "loading": "Đang tải...",
+    "error_occurred": "Đã có lỗi xảy ra. Vui lòng thử lại.",
     "title": {
         "welcome": "Chào mừng trở lại",
         "subtitle": "Hệ thống quản trị Đà Nẵng Trip - Thông tin tổng quan"

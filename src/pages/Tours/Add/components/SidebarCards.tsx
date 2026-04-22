@@ -14,9 +14,10 @@ interface SidebarCardsProps {
     watch: UseFormWatch<CreateTourInput>;
     onPublish: () => void;
     isSubmitting: boolean;
+    submitLabel?: string;
 }
 
-const SidebarCards = ({ register, watch, onPublish, isSubmitting }: SidebarCardsProps) => {
+const SidebarCards = ({ register, watch, onPublish, isSubmitting, submitLabel }: SidebarCardsProps) => {
     const { t } = useTranslation('tour');
 
     const formValues = watch();
@@ -170,7 +171,7 @@ const SidebarCards = ({ register, watch, onPublish, isSubmitting }: SidebarCards
                             {isSubmitting ? (
                                 <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                             ) : null}
-                            {isSubmitting ? t('form.actions.creating') : t('form.actions.create_tour')}
+                            {isSubmitting ? t('form.actions.saving') : (submitLabel || t('form.actions.submit'))}
                         </button>
                     </div>
                 </div>

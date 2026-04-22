@@ -4,10 +4,13 @@
         "subtitle": "Manage all travel tour products",
         "add": "Add New Tour",
         "add_subtitle": "Create a new travel product with comprehensive details",
+        "edit": "Edit Tour",
+        "edit_subtitle": "Update detailed information for the tour",
         "export": "Export Excel",
         "breadcrumb_parent": "Tour Management",
         "breadcrumb_list": "Tour list",
-        "breadcrumb_create": "Create new"
+        "breadcrumb_create": "Create new",
+        "breadcrumb_edit": "Edit"
     },
     "stats": {
         "title": "Tour Statistics",
@@ -85,6 +88,9 @@
         "hot_update_error": "Error updating hot status",
         "create_success": "Tour created successfully",
         "create_error": "Error creating tour",
+        "update_success": "Tour updated successfully",
+        "update_error": "Error updating tour",
+        "fetch_error": "Could not load tour information",
         "export_success": "Preparing export file...",
         "export_error": "Error exporting Excel file",
         "no_data": "No tours found",
@@ -115,6 +121,7 @@
             "retry": "Try again"
         },
         "page_subtitle": "Fill in all information to add the tour to the system",
+        "edit_subtitle": "Update the latest changes for the tour",
         "inclusions_fields": {
             "included_label": "Included services",
             "excluded_label": "Excluded services",
@@ -130,12 +137,15 @@
             "category": "Tour Category",
             "category_placeholder": "Select category",
             "duration": "Tour Duration",
+            "people_unit": "guests",
             "duration_placeholder": "e.g., 1 Day, 3 Days 2 Nights",
             "short_desc": "Short Description",
             "short_desc_placeholder": "Summary of tour highlights...",
             "description": "Detailed Description",
             "description_placeholder": "Enter detailed tour content...",
             "slug_auto": "Auto",
+            "slug_manual": "Manual",
+            "slug_warning": "Changing the slug will break existing direct links to this tour. Use with caution.",
             "description_helper": "Basic Markdown supported",
             "short_desc_counter": "{{current}}/300",
             "duration_suggestions": [
@@ -231,9 +241,15 @@
             "tip_3": "A clear itinerary description improves booking conversion",
             "tip_4": "Add specific departures after the tour is created"
         },
+        "danger_zone": {
+            "title": "Danger Zone",
+            "description": "Permanently remove this tour from the system. This action cannot be undone and will affect all related data.",
+            "delete_button": "Permanently Delete This Tour"
+        },
         "actions": {
             "cancel": "Cancel",
             "submit": "Save Tour",
+            "save_changes": "Save Changes",
             "saving": "Saving...",
             "save_draft": "Save draft",
             "create_tour": "Create tour",

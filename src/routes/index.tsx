@@ -10,6 +10,7 @@ const Login = React.lazy(() => import('@/pages/Login'));
 const PageNotFound = React.lazy(() => import('@/pages/PageNotFound'));
 const TourList = React.lazy(() => import('@/pages/Tours/List'));
 const AddTour = React.lazy(() => import('@/pages/Tours/Add'));
+const EditTour = React.lazy(() => import('@/pages/Tours/Edit'));
 import ErrorPage from '@/pages/ErrorPage';
 
 /**
@@ -61,6 +62,7 @@ const router = createBrowserRouter([
                     { path: ROUTES.DASHBOARD, element: withSuspense(Dashboard) },
                     { path: ROUTES.TOURS_LIST, element: withSuspense(TourList) },
                     { path: ROUTES.TOURS_CREATE, element: withSuspense(AddTour) },
+                    { path: ROUTES.TOURS_EDIT, element: withSuspense(EditTour) },
                 ]
             }
         ],

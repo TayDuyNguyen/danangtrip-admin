@@ -32,5 +32,25 @@ export const API_ENDPOINTS = {
     EXPORT: {
         BOOKINGS: '/admin/bookings/export',
         PAYMENTS: '/admin/payments/export',
+        TOURS: '/admin/tours/export',
+    },
+    // Tours management
+    TOURS: {
+        LIST: '/admin/tours',
+        DETAIL: (id: string | number) => `/admin/tours/${id}`,
+        CREATE: '/admin/tours',
+        UPDATE: (id: string | number) => `/admin/tours/${id}`,
+        DELETE: (id: string | number) => `/admin/tours/${id}`,
+        CATEGORIES: '/tour-categories',
+        ADMIN_CATEGORIES: '/admin/tour-categories',
+        PATCH_STATUS: (id: string | number) => `/admin/tours/${id}/status`,
+        PATCH_FEATURED: (id: string | number) => `/admin/tours/${id}/featured`,
+        PATCH_HOT: (id: string | number) => `/admin/tours/${id}/hot`,
+    },
+    // Media upload
+    UPLOAD: {
+        IMAGE: '/upload/image',
+        IMAGES: '/upload/images',
+        DELETE: '/upload/image',
     }
 } as const;

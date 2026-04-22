@@ -48,15 +48,15 @@ const TopToursTable = ({ topTours, onRefresh, isRefreshing, isLoading, isError }
             <div className="max-w-full overflow-x-auto custom-scrollbar-horizontal min-h-[200px] relative">
                 {isError ? (
                     <ErrorWidget 
-                        title={t('error_states.title')}
-                        message={t('error_states.desc')}
+                        title={t('dashboard:error_states.title')}
+                        message={t('dashboard:error_states.desc')}
                         onRetry={onRefresh}
                         className="m-6 rounded-4xl"
                     />
                 ) : isEmpty ? (
                     <EmptyState 
-                        title={t('empty_states.no_tours')}
-                        description={t('empty_states.no_data_desc')}
+                        title={t('dashboard:empty_states.no_tours')}
+                        description={t('dashboard:empty_states.no_data_desc')}
                         className="py-12"
                     />
                 ) : (

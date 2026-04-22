@@ -122,20 +122,20 @@ const RecentOrdersTable = ({
             <div className="max-w-full overflow-x-auto custom-scrollbar-horizontal min-h-[300px] relative">
                 {isError ? (
                     <div className="flex flex-col items-center justify-center p-12 text-center h-full">
-                        <p className="text-sm font-black text-red-500 uppercase tracking-widest mb-2">{t('error_states.title')}</p>
-                        <p className="text-xs text-slate-400 mb-4 max-w-[280px]">{t('error_states.desc')}</p>
+                        <p className="text-sm font-black text-red-500 uppercase tracking-widest mb-2">{t('dashboard:error_states.title')}</p>
+                        <p className="text-xs text-slate-400 mb-4 max-w-[280px]">{t('dashboard:error_states.desc')}</p>
                         <button 
                             onClick={onRefresh}
                             className="bg-slate-900 text-white px-5 py-2 rounded-xl text-[11px] font-black uppercase tracking-widest hover:bg-black transition-all active:scale-95 flex items-center gap-2"
                         >
                             <RefreshCw size={14} />
-                            {t('retry')}
+                            {t('dashboard:retry')}
                         </button>
                     </div>
                 ) : isEmpty ? (
                     <EmptyState 
-                        title={t('empty_states.no_bookings')}
-                        description={t('empty_states.no_data_desc')}
+                        title={t('dashboard:empty_states.no_bookings')}
+                        description={t('dashboard:empty_states.no_data_desc')}
                         className="py-16"
                     />
                 ) : (
