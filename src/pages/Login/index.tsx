@@ -1,12 +1,11 @@
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { authApi } from '@/api';
-import { useUserStore } from '@/store';
 import { ROUTES } from '@/routes/routes';
 import { useForm } from 'react-hook-form';
 import { MdLock, MdEmail } from 'react-icons/md';
 import Input from '@/components/input';
-import { useFieldFocus } from '@/hooks';
+import { useFieldFocus, useLoginQuery } from '@/hooks';
+import { useUserStore } from '@/store';
 import type { LoginField } from '@/types';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { loginSchema } from '@/validations';
@@ -23,8 +22,9 @@ const Login = () => {
     const schema = useMemo(() => loginSchema(t), [t]);
     const [showPassword, setShowPassword] = useState(false);
     const [rememberMe, setRememberMe] = useState(false);
-    const [loading, setLoading] = useState(false);
     const [err, setErr] = useState('');
+
+    const loginMutation = useLoginQuery();
 
     const { register, handleSubmit, formState: { errors } } = useForm<LoginForm>({
         resolver: yupResolver(schema),
@@ -37,15 +37,18 @@ const Login = () => {
     const { isFocused, getFocusProps } = useFieldFocus<LoginField>();
 
     const onSubmit = async (data: LoginRequest) => {
-        setLoading(true);
+        setErr('');
         try {
-            const res = await authApi.login(data);
+            const res = await loginMutation.mutateAsync(data);
             if (!res.data) throw new Error();
+
             if (hasRole(res.data.user, 'admin')) {
-                useUserStore.getState().setUser(res.data.user, res.data.token);
+                // Store logic is already handled in mutation's onSuccess (as per useAuthQuery.ts)
                 toast.success(t('login_success'), { description: t('welcome_back') });
                 navigate(ROUTES.DASHBOARD);
             } else {
+                // Clear tokens and store to avoid unauthorized session persistence
+                useUserStore.getState().logout();
                 setErr(t('no_admin_permission'));
                 toast.error(t('login_error'), { description: t('no_admin_permission') });
             }
@@ -60,10 +63,10 @@ const Login = () => {
             toast.error(serverMsg, {
                 description: t('check_again'),
             });
-        } finally {
-            setLoading(false);
         }
     }
+
+    const loading = loginMutation.isPending;
 
     const emailReg = register('email');
     const emailFocus = getFocusProps('email');

@@ -33,6 +33,7 @@ interface Props {
     onPageChange: (page: number) => void;
     onLimitChange: (limit: number) => void;
     onEdit: (id: number) => void;
+    onView: (tour: TourItem) => void;
     onDelete: (id: number, name: string) => void;
     onToggleFeatured: (id: number, value: boolean) => void;
     onToggleHot: (id: number, value: boolean) => void;
@@ -57,6 +58,7 @@ const TourTable = ({
     onPageChange,
     onLimitChange,
     onEdit,
+    onView,
     onDelete,
     onToggleFeatured,
     onToggleHot,
@@ -236,6 +238,7 @@ const TourTable = ({
             cell: info => (
                 <div className="flex items-center justify-end gap-1.5 pr-2">
                     <button 
+                        onClick={() => onView(info.row.original)}
                         title={t('actions.view', { ns: 'common' })}
                         className="w-[30px] h-[30px] flex items-center justify-center bg-[#F8FAFC] border border-[#E2E8F0] rounded-[6px] text-[#64748B] hover:text-[#0066CC] hover:border-[#0066CC] transition-all group/btn"
                     >
@@ -258,7 +261,7 @@ const TourTable = ({
                 </div>
             ),
         }),
-    ], [t, i18n.language, page, limit, categories, onEdit, onDelete, onToggleFeatured, onToggleHot]);
+    ], [t, i18n.language, page, limit, categories, onEdit, onView, onDelete, onToggleFeatured, onToggleHot]);
 
     // eslint-disable-next-line react-hooks/incompatible-library
     const table = useReactTable({

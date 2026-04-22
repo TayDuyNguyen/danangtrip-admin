@@ -40,13 +40,13 @@ const Header = () => {
 
                 <div className="flex items-center gap-3 group cursor-pointer pl-2">
                     <div className="flex flex-col items-end text-right">
-                        <span className="text-sm font-black text-slate-900 leading-tight">{user?.full_name || 'Admin'}</span>
+                        <span className="text-sm font-black text-slate-900 leading-tight">{user?.full_name || t('labels.admin_fallback')}</span>
                         <span className="text-[11px] text-slate-500 font-bold uppercase tracking-widest leading-tight mt-0.5">{t('header.admin_role')}</span>
                     </div>
                     <div className="w-12 h-12 rounded-full border-2 border-white bg-slate-100 flex items-center justify-center text-white shadow-lg shadow-slate-200/50 group-hover:scale-105 transition-transform shrink-0 overflow-hidden">
                         <img 
                             src={user?.avatar || "https://i.pravatar.cc/150?u=a042581f4e29026024d"} 
-                            alt={user?.full_name || "Admin"} 
+                            alt={user?.full_name || t('labels.admin_fallback')} 
                             className="w-full h-full object-cover" 
                         />
                     </div>

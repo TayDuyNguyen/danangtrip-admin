@@ -236,7 +236,7 @@ const Dashboard = () => {
                 />
 
                 {/* 3. Tables Section */}
-                <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+                <div className="grid grid-cols-1 gap-8">
                     <TopToursTable
                         topTours={topToursQuery.data || []}
                         onRefresh={() => topToursQuery.refetch()}

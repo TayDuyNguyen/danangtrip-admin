@@ -31,6 +31,8 @@ const ItineraryBuilder = ({ control, register, errors }: ItineraryBuilderProps) 
                             <span className="font-semibold text-slate-800">
                                 {t('form.itinerary.day', { num: index + 1 })}
                             </span>
+                            {/* Hidden field to register 'day' for validation */}
+                            <input type="hidden" {...register(`itinerary.${index}.day`)} />
                         </div>
                         <button
                             type="button"

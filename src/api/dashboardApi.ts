@@ -49,4 +49,11 @@ export const dashboardApi = {
             params,
             responseType: 'blob',
         }) as Promise<AxiosResponse<Blob>>,
+
+    // Fallback methods for missing stats
+    getPendingRatingsFallback: (): Promise<ApiResponse> =>
+        axiosClient.get(API_ENDPOINTS.RATINGS.LIST, { params: { status: 'pending', per_page: 1 } }),
+
+    getNewContactsFallback: (): Promise<ApiResponse> =>
+        axiosClient.get(API_ENDPOINTS.CONTACTS.LIST, { params: { status: 'new', per_page: 1 } }),
 };

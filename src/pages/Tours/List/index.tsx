@@ -10,8 +10,10 @@ import TourStats from './components/TourStats';
 import TourFilter from './components/TourFilter';
 import TourTable from './components/TourTable';
 import TourDeleteDialog from './components/TourDeleteDialog';
+import TourDetailModal from './components/TourDetailModal';
 import { ROUTES } from '@/routes/routes';
 import { toast } from 'sonner';
+import type { TourItem } from '@/dataHelper/tour.dataHelper';
 
 const TourList = () => {
     const { t } = useTranslation('tour');
@@ -19,6 +21,9 @@ const TourList = () => {
     const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(10);
     const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+    
+    // View state
+    const [viewTour, setViewTour] = useState<TourItem | null>(null);
 
     const [filters, setFilters] = useState<TourFilters>({
         q: '',
@@ -139,6 +144,7 @@ const TourList = () => {
                 onRefresh={handleRefresh}
                 isRefreshing={isToursFetching && !isListLoading}
                 onEdit={(id) => navigate(`${ROUTES.TOURS_EDIT.replace(':id', id.toString())}`)}
+                onView={setViewTour}
                 onDelete={handleDeleteClick}
                 onToggleFeatured={(id, value) => {
                     featuredMutation.mutate({ id, is_featured: value });
@@ -163,6 +169,16 @@ const TourList = () => {
                 onClose={() => setDeleteConfig(null)}
                 onConfirm={handleConfirmDelete}
                 isDeleting={deleteMutation.isPending}
+            />
+
+            <TourDetailModal
+                isOpen={!!viewTour}
+                onClose={() => setViewTour(null)}
+                tour={viewTour}
+                onEdit={(id) => {
+                    setViewTour(null);
+                    navigate(`${ROUTES.TOURS_EDIT.replace(':id', id.toString())}`);
+                }}
             />
         </div>
     );

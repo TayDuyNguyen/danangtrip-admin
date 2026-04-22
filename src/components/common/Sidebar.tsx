@@ -170,12 +170,12 @@ const Sidebar = () => {
                             <div className="w-10 h-10 rounded-xl bg-slate-700 border border-slate-600 flex items-center justify-center text-white font-black shrink-0 shadow-sm relative overflow-hidden">
                                 <img 
                                     src={user?.avatar || "https://i.pravatar.cc/150?u=a042581f4e29026024d"} 
-                                    alt={user?.full_name || "Admin"} 
+                                    alt={user?.full_name || t('labels.admin_fallback')} 
                                     className="w-full h-full object-cover" 
                                 />
                             </div>
                             <div className="flex-1 min-w-0">
-                                <p className="text-white text-sm font-black truncate">{user?.full_name || 'Admin'}</p>
+                                <p className="text-white text-sm font-black truncate">{user?.full_name || t('labels.admin_fallback')}</p>
                                 <p className="text-slate-500 text-[11px] font-bold uppercase tracking-widest truncate mt-0.5">{t('header.admin_role')}</p>
                             </div>
                         </div>
@@ -185,10 +185,10 @@ const Sidebar = () => {
                     </div>
                 ) : (
                     <div className="flex flex-col items-center gap-4 py-2">
-                        <div className="w-10 h-10 rounded-xl bg-slate-700 border border-slate-600 flex items-center justify-center text-white font-black shrink-0 shadow-sm relative overflow-hidden" title={user?.full_name || 'Admin'}>
+                        <div className="w-10 h-10 rounded-xl bg-slate-700 border border-slate-600 flex items-center justify-center text-white font-black shrink-0 shadow-sm relative overflow-hidden" title={user?.full_name || t('labels.admin_fallback')}>
                             <img 
                                 src={user?.avatar || "https://i.pravatar.cc/150?u=a042581f4e29026024d"} 
-                                alt={user?.full_name || "Admin"} 
+                                alt={user?.full_name || t('labels.admin_fallback')} 
                                 className="w-full h-full object-cover" 
                             />
                         </div>
