@@ -10,6 +10,7 @@ import {
     MessageSquare,
     ArrowUpRight,
     ArrowDownRight,
+    AlertCircle,
 } from 'lucide-react';
 import type { StatsCardsProps } from '@/dataHelper/dashboard.dataHelper';
 import { Skeleton } from '@/components/ui/Skeleton';
@@ -23,89 +24,52 @@ const StatsCards = ({
     isLoading,
     bookingStatusLoading,
     isError,
+    bookingStatusError,
 }: StatsCardsProps) => {
     const { t } = useTranslation('dashboard');
 
-    if (isError) {
-        return (
-            <div className="grid grid-cols-3 xl:grid-cols-6 gap-4">
-                {Array.from({ length: 6 }).map((_, i) => (
-                    <div
-                        key={i}
-                        className="bg-red-50/50 p-5 rounded-3xl border border-red-100 h-[140px] flex items-center justify-center"
-                    >
-                        <span className="text-red-400 text-sm font-bold">{t('error_loading')}</span>
-                    </div>
-                ))}
-            </div>
-        );
-    }
-
-    if (isLoading || !stats) {
-        return (
-            <div className="grid grid-cols-3 xl:grid-cols-6 gap-4">
-                {Array.from({ length: 6 }).map((_, i) => (
-                    <div
-                        key={i}
-                        className="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm h-[140px] flex flex-col gap-4"
-                    >
-                        <Skeleton className="w-11 h-11 rounded-2xl" />
-                        <div>
-                            <Skeleton className="w-24 h-6 mb-2 rounded-md" />
-                            <Skeleton className="w-16 h-3 rounded-md" />
-                        </div>
-                        <div className="mt-auto">
-                            <Skeleton className="w-20 h-5 rounded-lg" />
-                        </div>
-                    </div>
-                ))}
-            </div>
-        );
-    }
-
     const ordersFromStatus = ordersFromStatusTotal !== undefined;
-
-    /** Tổng doanh thu luôn từ API dashboard/stats (total_revenue), không lấy từ biểu đồ */
-    const revenueValueStr = formatInt(stats.total_revenue ?? 0);
-
-    const ordersValueStr =
-        bookingStatusLoading && !ordersFromStatus
-            ? null
-            : formatInt(ordersFromStatus ? ordersFromStatusTotal! : stats.total_bookings ?? 0);
 
     const cardData = [
         {
             title: t('stats.total_revenue'),
-            valueStr: revenueValueStr,
-            valueSkeleton: false,
-            trend: stats.total_revenue_trend,
+            valueStr: stats ? formatInt(stats.total_revenue ?? 0) : null,
+            isLoading: isLoading,
+            isError: isError,
+            trend: stats?.total_revenue_trend ?? null,
             sub: t('stats.vs_last_period'),
             icon: CircleDollarSign,
             accent: 'blue',
         },
         {
             title: t('stats.total_orders'),
-            valueStr: ordersValueStr,
-            valueSkeleton: Boolean(bookingStatusLoading && !ordersFromStatus),
-            trend: ordersFromStatus ? null : stats.total_bookings_trend,
+            valueStr:
+                bookingStatusLoading && !ordersFromStatus
+                    ? null
+                    : formatInt(ordersFromStatus ? ordersFromStatusTotal! : stats?.total_bookings ?? 0),
+            isLoading: bookingStatusLoading && !ordersFromStatus,
+            isError: bookingStatusError,
+            trend: ordersFromStatus ? null : stats?.total_bookings_trend ?? null,
             sub: ordersFromStatus ? t('stats.chart_orders_hint') : t('stats.vs_last_period'),
             icon: ShoppingCart,
             accent: 'emerald',
         },
         {
             title: t('stats.total_users'),
-            valueStr: formatInt(stats.total_users ?? 0),
-            valueSkeleton: false,
-            trend: stats.total_users_trend,
+            valueStr: stats ? formatInt(stats.total_users ?? 0) : null,
+            isLoading: isLoading,
+            isError: isError,
+            trend: stats?.total_users_trend ?? null,
             sub: t('stats.vs_last_period'),
             icon: Users,
             accent: 'sky',
         },
         {
             title: t('stats.tours_sold'),
-            valueStr: formatInt(stats.total_tours_sold ?? 0),
-            valueSkeleton: false,
-            trend: stats.total_tours_sold_trend,
+            valueStr: stats ? formatInt(stats.total_tours_sold ?? 0) : null,
+            isLoading: isLoading,
+            isError: isError,
+            trend: stats?.total_tours_sold_trend ?? null,
             sub: t('stats.vs_last_period'),
             icon: Ticket,
             accent: 'orange',
@@ -115,8 +79,9 @@ const StatsCards = ({
             valueStr:
                 bookingStatusLoading && !bookingStatus
                     ? null
-                    : formatInt(bookingStatus?.pending ?? stats.booking_status?.pending_count ?? 0),
-            valueSkeleton: Boolean(bookingStatusLoading && !bookingStatus),
+                    : formatInt(bookingStatus?.pending ?? stats?.booking_status?.pending_count ?? 0),
+            isLoading: bookingStatusLoading && !bookingStatus,
+            isError: bookingStatusError,
             trend: null,
             sub: t('stats.waiting_processing'),
             icon: Clock,
@@ -124,8 +89,9 @@ const StatsCards = ({
         },
         {
             title: t('stats.new_contacts'),
-            valueStr: formatInt(stats.new_contacts ?? 0),
-            valueSkeleton: false,
+            valueStr: stats ? formatInt(stats.new_contacts ?? 0) : null,
+            isLoading: isLoading,
+            isError: isError,
             trend: null,
             sub: t('stats.unread_messages'),
             icon: MessageSquare,
@@ -162,14 +128,13 @@ const StatsCards = ({
             {cardData.map((card, index) => {
                 const colors = accentColors[card.accent];
                 const isUp = card.trend !== null && card.trend >= 0;
-                const showCardSkeleton = card.valueStr === null && card.valueSkeleton;
 
                 return (
                     <div
                         key={index}
                         className={`bg-white p-5 rounded-3xl border border-slate-100 shadow-sm hover:shadow-lg ${colors.shadow} hover:-translate-y-0.5 transition-all duration-300 flex flex-col gap-4 min-h-[140px]`}
                     >
-                        {showCardSkeleton ? (
+                        {card.isLoading ? (
                             <>
                                 <Skeleton className="w-11 h-11 rounded-2xl" />
                                 <div>
@@ -180,6 +145,13 @@ const StatsCards = ({
                                     <Skeleton className="w-20 h-5 rounded-lg" />
                                 </div>
                             </>
+                        ) : card.isError ? (
+                            <div className="flex flex-col items-center justify-center h-full gap-2 py-2">
+                                <AlertCircle size={20} className="text-red-400" />
+                                <span className="text-[10px] font-black text-red-500 uppercase tracking-widest text-center">
+                                    {t('error_loading')}
+                                </span>
+                            </div>
                         ) : (
                             <>
                                 <div
@@ -188,11 +160,11 @@ const StatsCards = ({
                                     <card.icon size={22} />
                                 </div>
 
-                                <div>
-                                    <h3 className="text-2xl font-black text-slate-900 tracking-tighter leading-none mb-1">
-                                        {card.valueStr ?? '—'}
+                                <div className="min-w-0">
+                                    <h3 className="text-2xl font-black text-slate-900 tracking-tighter leading-none mb-1 truncate">
+                                        {card.valueStr ?? '0'}
                                     </h3>
-                                    <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest leading-none">
+                                    <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest leading-none truncate">
                                         {card.title}
                                     </p>
                                 </div>
@@ -208,7 +180,9 @@ const StatsCards = ({
                                             {Math.abs(card.trend)}% {card.sub}
                                         </span>
                                     ) : (
-                                        <span className="text-[11px] font-bold text-slate-400">{card.sub}</span>
+                                        <span className="text-[11px] font-bold text-slate-400 truncate block">
+                                            {card.sub}
+                                        </span>
                                     )}
                                 </div>
                             </>
