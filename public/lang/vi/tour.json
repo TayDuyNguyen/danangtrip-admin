@@ -144,6 +144,7 @@
             "description": "Mô tả chi tiết tour",
             "description_placeholder": "Nhập nội dung mô tả chi tiết...",
             "slug_auto": "Tự động",
+            "slug_auto_helper": "Tự động tạo từ tên",
             "slug_manual": "Thủ công",
             "slug_warning": "Thay đổi slug sẽ phá vỡ các liên kết trực tiếp hiện có đến tour này. Hãy cẩn trọng.",
             "description_helper": "Hỗ trợ Markdown cơ bản",
@@ -253,8 +254,15 @@
             "saving": "Đang lưu...",
             "save_draft": "Lưu nháp",
             "create_tour": "Tạo tour",
-            "creating": "Đang tạo..."
+            "creating": "Đang tạo...",
+            "retry": "Thử lại"
         }
+    },
+    "status": {
+        "active": "Đang hoạt động",
+        "inactive": "Tạm ẩn",
+        "sold_out": "Hết chỗ",
+        "all": "Tất cả trạng thái"
     },
     "validation": {
         "required": "{{field}} không được để trống",
@@ -265,5 +273,47 @@
         "url": "Định dạng URL không hợp lệ",
         "max_gte_min": "Số người tối đa phải lớn hơn hoặc bằng số người tối thiểu",
         "date_after": "Ngày kết thúc phải sau hoặc bằng ngày bắt đầu"
+    },
+    "categories": {
+        "title": "Quản lý Danh mục Tour",
+        "subtitle": "Phân loại và quản lý các nhóm sản phẩm tour du lịch",
+        "add": "Thêm danh mục",
+        "edit": "Sửa danh mục",
+        "breadcrumb_list": "Danh mục tour",
+        "table": {
+            "header_index": "STT",
+            "header_icon": "Biểu tượng",
+            "header_name": "Tên danh mục",
+            "header_slug": "Đường dẫn",
+            "header_tour_count": "Số lượng Tour",
+            "header_order": "Thứ tự",
+            "header_status": "Trạng thái"
+        },
+        "form": {
+            "name": "Tên danh mục",
+            "name_placeholder": "Ví dụ: Tour Biển Đảo",
+            "slug": "Đường dẫn (Slug)",
+            "slug_placeholder": "tour-bien-dao",
+            "icon": "Biểu tượng (Lucide Icon)",
+            "icon_placeholder": "Waves, Landmark, etc.",
+            "description": "Mô tả danh mục",
+            "description_placeholder": "Nhập mô tả ngắn về danh mục này...",
+            "status": "Trạng thái hoạt động",
+            "order": "Thứ tự hiển thị",
+            "icon_background": "Màu nền icon",
+            "icon_helper": "Nhập tên icon hoặc Emoji"
+        },
+        "messages": {
+            "create_success": "Đã tạo danh mục thành công",
+            "create_error": "Lỗi khi tạo danh mục",
+            "update_success": "Đã cập nhật danh mục thành công",
+            "update_error": "Lỗi khi cập nhật danh mục",
+            "delete_success": "Đã xóa danh mục thành công",
+            "delete_error": "Lỗi khi xóa danh mục",
+            "delete_confirm_title": "Xóa danh mục này?",
+            "delete_confirm_desc": "Bạn có chắc chắn muốn xóa danh mục \"{{name}}\"? Hành động này không thể hoàn tác.",
+            "load_error": "Lỗi tải dữ liệu",
+            "load_error_subtitle": "Chúng tôi không thể tải danh sách danh mục lúc này. Vui lòng thử lại sau."
+        }
     }
-}
+}

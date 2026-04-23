@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { Dialog, DialogPanel, DialogTitle, Transition, TransitionChild } from '@headlessui/react';
-import { X, Edit2, MapPin, Clock, Users, Info, Map } from 'lucide-react';
+import { X, Edit2, MapPin, Clock, Users, Info, Map, ImageOff } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import type { TourItem } from '@/dataHelper/tour.dataHelper';
 import StatusBadge from './StatusBadge';
@@ -90,12 +90,21 @@ const TourDetailModal = ({ isOpen, onClose, tour, onEdit }: Props) => {
                                             {/* Gallery Preview */}
                                             <div className="lg:col-span-7 space-y-4">
                                                 <div className="aspect-video relative rounded-3xl overflow-hidden border border-slate-200 bg-slate-50 group">
-                                                    <img 
-                                                        src={tour.thumbnail || '/images/placeholder-tour.jpg'} 
-                                                        alt={tour.name} 
-                                                        className="w-full h-full object-cover"
-                                                    />
-                                                    <div className="absolute inset-0 bg-linear-to-t from-black/20 to-transparent" />
+                                                    {tour.thumbnail ? (
+                                                        <>
+                                                            <img
+                                                                src={tour.thumbnail}
+                                                                alt={tour.name}
+                                                                className="w-full h-full object-cover"
+                                                            />
+                                                            <div className="absolute inset-0 bg-linear-to-t from-black/20 to-transparent" />
+                                                        </>
+                                                    ) : (
+                                                        <div className="w-full h-full flex flex-col items-center justify-center text-slate-300">
+                                                            <ImageOff size={40} />
+                                                            <p className="mt-2 text-xs font-bold text-slate-400">{t('messages.no_data')}</p>
+                                                        </div>
+                                                    )}
                                                 </div>
                                                 {tour.images && tour.images.length > 0 && (
                                                     <div className="grid grid-cols-4 gap-4">
