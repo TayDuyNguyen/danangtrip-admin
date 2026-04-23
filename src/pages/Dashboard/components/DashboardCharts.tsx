@@ -12,6 +12,8 @@ import {
 import { RefreshCw } from 'lucide-react';
 import type { DashboardChartsProps } from '@/dataHelper/dashboard.dataHelper';
 import { Skeleton } from '@/components/ui/Skeleton';
+import EmptyState from '@/components/common/EmptyState';
+import ErrorWidget from '@/components/common/ErrorWidget';
 
 // Extended props with filter controls
 interface ExtendedDashboardChartsProps extends DashboardChartsProps {
@@ -24,8 +26,6 @@ interface ExtendedDashboardChartsProps extends DashboardChartsProps {
     onBookingTrendDaysChange: (days: 7 | 30 | 90) => void;
     bookingTrendOptions: ReadonlyArray<{ labelKey: string; value: number }>;
 }
-
-// Axis formatters moved inside component to access i18next 't'
 
 // ─── Custom Tooltip ───────────────────────────────────────────────────────
 interface TooltipProps {
@@ -63,49 +63,71 @@ interface ChartCardProps {
     onRefresh?: () => void;
     isRefreshing?: boolean;
     isLoading?: boolean;
+    isError?: boolean;
+    isEmpty?: boolean;
     children: ReactNode;
 }
 
 const ChartCard = ({
     title, subtitle, badge, filter,
-    refreshTooltip, onRefresh, isRefreshing, isLoading, children,
-}: ChartCardProps) => (
-    <div className="bg-white p-6 rounded-[2.5rem] border border-slate-200/60 shadow-sm h-[380px] flex flex-col hover:shadow-xl transition-all duration-500 group/card">
-        <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-3">
-                <div>
-                    <h3 className="text-base font-black text-slate-900 tracking-tighter">{title}</h3>
-                    <p className="text-slate-400 text-[12px] font-bold">{subtitle}</p>
+    refreshTooltip, onRefresh, isRefreshing, isLoading, isError, isEmpty, children,
+}: ChartCardProps) => {
+    const { t } = useTranslation('dashboard');
+    
+    return (
+        <div className="bg-white p-6 rounded-[2.5rem] border border-slate-200/60 shadow-sm h-[400px] flex flex-col hover:shadow-xl transition-all duration-500 group/card">
+            <div className="flex items-center justify-between mb-4 shrink-0">
+                <div className="flex items-center gap-3">
+                    <div>
+                        <h3 className="text-base font-black text-slate-900 tracking-tighter">{title}</h3>
+                        <p className="text-slate-400 text-[12px] font-bold">{subtitle}</p>
+                    </div>
+                    {onRefresh && (
+                        <button
+                            onClick={(e) => { e.stopPropagation(); onRefresh(); }}
+                            disabled={isRefreshing}
+                            title={refreshTooltip ?? t('refresh')}
+                            aria-label={refreshTooltip ?? t('refresh')}
+                            className={`p-2 rounded-xl bg-slate-50 hover:bg-blue-50 transition-all ${isRefreshing
+                                ? 'opacity-100 text-blue-600 cursor-not-allowed'
+                                : 'text-slate-400 hover:text-blue-600 active:scale-90 group-hover/card:opacity-100 opacity-0 lg:opacity-0'
+                            }`}
+                        >
+                            <RefreshCw size={14} className={isRefreshing ? 'animate-spin' : ''} />
+                        </button>
+                    )}
                 </div>
-                {onRefresh && (
-                    <button
-                        onClick={(e) => { e.stopPropagation(); onRefresh(); }}
-                        disabled={isRefreshing}
-                        title={refreshTooltip ?? 'Refresh'}
-                        aria-label={refreshTooltip ?? 'Refresh'}
-                        className={`p-2 rounded-xl bg-slate-50 hover:bg-blue-50 transition-all ${isRefreshing
-                            ? 'opacity-100 text-blue-600 cursor-not-allowed'
-                            : 'text-slate-400 hover:text-blue-600 active:scale-90 group-hover/card:opacity-100 opacity-0 lg:opacity-0'
-                        }`}
-                    >
-                        <RefreshCw size={14} className={isRefreshing ? 'animate-spin' : ''} />
-                    </button>
-                )}
+                <div className="flex items-center gap-2">
+                    {filter}
+                    {badge && (
+                        <span className="px-3 py-1 bg-blue-50 text-blue-600 text-[11px] font-black rounded-xl border border-blue-100 uppercase tracking-wider">
+                            {badge}
+                        </span>
+                    )}
+                </div>
             </div>
-            <div className="flex items-center gap-2">
-                {filter}
-                {badge && (
-                    <span className="px-3 py-1 bg-blue-50 text-blue-600 text-[11px] font-black rounded-xl border border-blue-100 uppercase tracking-wider">
-                        {badge}
-                    </span>
+            <div className="flex-1 min-h-0 relative">
+                {isLoading ? (
+                    <Skeleton className="w-full h-full rounded-2xl" />
+                ) : isError ? (
+                    <ErrorWidget 
+                        title={t('dashboard:error_states.title')}
+                        message={t('dashboard:error_states.desc')}
+                        onRetry={onRefresh}
+                    />
+                ) : isEmpty ? (
+                    <EmptyState 
+                        title={t('dashboard:empty_states.no_data')}
+                        description={t('dashboard:empty_states.no_data_desc')}
+                        className="h-full"
+                    />
+                ) : (
+                    children
                 )}
             </div>
         </div>
-        <div className="flex-1 min-h-0">
-            {isLoading ? <Skeleton className="w-full h-full rounded-2xl" /> : children}
-        </div>
-    </div>
-);
+    );
+};
 
 // ─── Filter Button ────────────────────────────────────────────────────────
 const FilterButton = ({ active, onClick, label }: {
@@ -163,6 +185,13 @@ const DashboardCharts = (props: ExtendedDashboardChartsProps) => {
 
     /** i18n tooltip for chart refresh buttons */
     const refreshLabel = t('charts.refresh_chart', { defaultValue: t('refresh') });
+    
+    // Animation settings
+    const animProps = {
+        isAnimationActive: true,
+        animationDuration: 800,
+        animationEasing: 'ease-out' as const
+    };
 
     return (
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
@@ -175,6 +204,8 @@ const DashboardCharts = (props: ExtendedDashboardChartsProps) => {
                 onRefresh={props.onRevenueRefresh}
                 isRefreshing={props.isRevenueFetching}
                 isLoading={props.isRevenueLoading}
+                isError={props.isRevenueError}
+                isEmpty={safeDailyRevenueData.length === 0}
                 filter={
                     <div className="flex items-center bg-slate-100 rounded-lg p-0.5">
                         {props.revenuePeriodOptions.map((opt) => (
@@ -219,6 +250,7 @@ const DashboardCharts = (props: ExtendedDashboardChartsProps) => {
                             dot={false}
                             activeDot={{ r: 6, fill: '#3b82f6', stroke: '#fff', strokeWidth: 2 }}
                             name={t('charts.unit_currency')}
+                            {...animProps}
                         />
                     </LineChart>
                 </ResponsiveContainer>
@@ -231,8 +263,10 @@ const DashboardCharts = (props: ExtendedDashboardChartsProps) => {
                 badge={t('charts.badge_total_short', { value: fmtInt(bookingTrendTotal) })}
                 refreshTooltip={refreshLabel}
                 onRefresh={props.onTrendRefresh}
-                isRefreshing={props.isTrendFetching}
+                isRefreshing={props.onTrendRefresh ? props.isTrendFetching : undefined}
                 isLoading={props.isTrendLoading}
+                isError={props.isTrendError}
+                isEmpty={safeBookingTrendData.length === 0}
                 filter={
                     <div className="flex items-center bg-slate-100 rounded-lg p-0.5">
                         {props.bookingTrendOptions.map((opt) => (
@@ -254,7 +288,6 @@ const DashboardCharts = (props: ExtendedDashboardChartsProps) => {
                             axisLine={false}
                             tickLine={false}
                             tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 700 }}
-                            /* Show fewer ticks when range > 7 days to avoid overlap */
                             interval={props.bookingTrendDays <= 7 ? 0 : Math.ceil(props.bookingTrendDays / 7) - 1}
                         />
                         <YAxis
@@ -272,6 +305,7 @@ const DashboardCharts = (props: ExtendedDashboardChartsProps) => {
                             radius={[6, 6, 0, 0]}
                             barSize={props.bookingTrendDays <= 7 ? 28 : props.bookingTrendDays <= 30 ? 14 : 8}
                             name={t('charts.unit_orders')}
+                            {...animProps}
                         />
                     </BarChart>
                 </ResponsiveContainer>
@@ -286,6 +320,8 @@ const DashboardCharts = (props: ExtendedDashboardChartsProps) => {
                 onRefresh={props.onGrowthRefresh}
                 isRefreshing={props.isGrowthFetching}
                 isLoading={props.isGrowthLoading}
+                isError={props.isGrowthError}
+                isEmpty={safeUserGrowthData.length === 0}
             >
                 <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={safeUserGrowthData} margin={{ left: 4, right: 20, top: 10, bottom: 20 }}>
@@ -302,6 +338,7 @@ const DashboardCharts = (props: ExtendedDashboardChartsProps) => {
                             tickLine={false}
                             tick={{ fill: '#94a3b8', fontSize: 10, fontWeight: 700 }}
                             interval={1}
+                            tickFormatter={(v) => t('dashboard:short_month', { month: v })}
                         />
                         <YAxis
                             axisLine={false}
@@ -321,6 +358,7 @@ const DashboardCharts = (props: ExtendedDashboardChartsProps) => {
                             dot={{ r: 4, fill: '#6366f1', strokeWidth: 2, stroke: '#fff' }}
                             activeDot={{ r: 6 }}
                             name={t('charts.unit_users')}
+                            {...animProps}
                         />
                     </AreaChart>
                 </ResponsiveContainer>
@@ -335,6 +373,8 @@ const DashboardCharts = (props: ExtendedDashboardChartsProps) => {
                 onRefresh={props.onStatusRefresh}
                 isRefreshing={props.isStatusFetching}
                 isLoading={props.isStatusLoading}
+                isError={props.isStatusError}
+                isEmpty={safeOrderStatusData.length === 0 || orderStatusTotal === 0}
             >
                 <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={safeOrderStatusData} margin={{ left: 4, right: 10, top: 10, bottom: 10 }}>
@@ -370,7 +410,7 @@ const DashboardCharts = (props: ExtendedDashboardChartsProps) => {
                                 return null;
                             }}
                         />
-                        <Bar dataKey="value" radius={[6, 6, 0, 0]} barSize={32}>
+                        <Bar dataKey="value" radius={[6, 6, 0, 0]} barSize={32} {...animProps}>
                             {safeOrderStatusData.map((entry, index) => (
                                 <Cell key={`cell-${index}`} fill={entry.color} />
                             ))}

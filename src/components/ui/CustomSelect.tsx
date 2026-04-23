@@ -13,8 +13,7 @@ export interface Option {
 
 interface CustomSelectProps extends Omit<SelectProps<Option, false, GroupBase<Option>>, 'styles' | 'theme'> {
     containerClassName?: string;
-    // Helper to accept simple values and handle internal conversion if needed
-    // but for now, we'll stick closer to react-select API for power
+    leftIcon?: React.ReactNode;
 }
 
 const CustomSelect: React.FC<CustomSelectProps> = ({ 
@@ -25,6 +24,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
     onChange,
     placeholder = "Chọn...",
     isSearchable = false,
+    leftIcon,
     ...props 
 }) => {
     const { t } = useTranslation('common');
@@ -34,11 +34,11 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
     const customStyles: StylesConfig<Option, false> = {
         control: (provided, state) => ({
             ...provided,
-            minHeight: '48px',
+            minHeight: '52px',
             backgroundColor: '#F8FAFC',
             borderColor: state.isFocused ? '#0066CC' : '#E2E8F0',
-            borderRadius: '12px',
-            boxShadow: state.isFocused ? '0 0 0 3px rgba(0, 102, 204, 0.1)' : 'none',
+            borderRadius: '16px',
+            boxShadow: state.isFocused ? '0 0 0 4px rgba(0, 102, 204, 0.08)' : 'none',
             '&:hover': {
                 borderColor: state.isFocused ? '#0066CC' : '#CBD5E1',
                 backgroundColor: '#F1F5F9',
@@ -46,10 +46,11 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
             transition: 'all 0.2s ease',
             cursor: 'pointer',
             borderWidth: '1px',
+            paddingLeft: leftIcon ? '32px' : '4px',
         }),
         valueContainer: (provided) => ({
             ...provided,
-            padding: '0 16px',
+            padding: leftIcon ? '0 12px' : '0 20px',
         }),
         input: (provided) => ({
             ...provided,
@@ -140,7 +141,12 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
     };
 
     return (
-        <div className={twMerge("min-w-0 font-inter", containerClassName)}>
+        <div className={twMerge("min-w-0 font-inter relative", containerClassName)}>
+            {leftIcon && (
+                <div className="absolute left-4 top-1/2 -translate-y-1/2 z-10 pointer-events-none text-slate-400">
+                    {leftIcon}
+                </div>
+            )}
             <Select
                 options={options}
                 value={value}

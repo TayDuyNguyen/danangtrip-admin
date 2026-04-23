@@ -115,7 +115,7 @@ export const createTourSchema = (t: TFunction) => yup.object({
 
     itinerary: yup.array().of(
         yup.object({
-            day: yup.number(),
+            day: yup.number().required(),
             title: yup.string().required(t("tour:validation.required", { field: t("tour:form.itinerary.title") })),
             content: yup.string().required(t("tour:validation.required", { field: t("tour:form.itinerary.content") }))
         })

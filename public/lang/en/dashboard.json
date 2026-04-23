@@ -115,5 +115,17 @@
         "full": "Full",
         "loading": "LOADING DATA..."
     },
-    "welcome_back": "Welcome back,"
+    "welcome_back": "Welcome back, {{name}} 👋",
+    "welcome_fallback_name": "Admin",
+    "short_month": "M{{month}}",
+    "empty_states": {
+        "no_data": "No data available",
+        "no_data_desc": "There is currently no information to display in this section.",
+        "no_tours": "No tours found",
+        "no_bookings": "No bookings found"
+    },
+    "error_states": {
+        "title": "Failed to load data",
+        "desc": "An error occurred while connecting to the server. Please try again later."
+    }
 }

@@ -33,10 +33,10 @@ export const useToursQuery = (filters: TourFilters, page: number = 1, limit: num
 /**
  * Hook for fetching tour categories
  */
-export const useTourCategoriesQuery = () => {
+export const useTourCategoriesQuery = (scope: 'public' | 'admin' = 'public') => {
     return useQuery({
-        queryKey: tourKeys.categories(),
-        queryFn: () => tourApi.getTourCategories(),
+        queryKey: [...tourKeys.categories(), scope],
+        queryFn: () => tourApi.getTourCategories(scope),
         staleTime: 1000 * 60 * 30, // 30 minutes
     });
 };
@@ -48,6 +48,17 @@ export const useTourStatsQuery = () => {
     return useQuery({
         queryKey: tourKeys.stats(),
         queryFn: () => tourApi.getTourStats(),
+    });
+};
+
+/**
+ * Hook for fetching a single tour detail
+ */
+export const useTourDetailQuery = (id: string | number | undefined) => {
+    return useQuery({
+        queryKey: tourKeys.detail(id || ''),
+        queryFn: () => tourApi.getTour(id!),
+        enabled: !!id,
     });
 };
 
@@ -185,6 +196,18 @@ export const useTourMutations = () => {
         }
     });
 
+    const updateTourMutation = useMutation({
+        mutationFn: ({ id, data }: { id: string | number; data: Record<string, unknown> }) => tourApi.updateTour(id, data),
+        onSuccess: (_data, variables) => {
+            queryClient.invalidateQueries({ queryKey: tourKeys.detail(variables.id) });
+            invalidate();
+            toast.success(t('messages.update_success'));
+        },
+        onError: (error: AxiosError<ErrorResponse>) => {
+            toast.error(error.response?.data?.message || t('messages.update_error'));
+        }
+    });
+
     const createTourMutation = useMutation({
         mutationFn: (data: Record<string, unknown>) => tourApi.createTour(data),
         onSuccess: () => {
@@ -198,6 +221,7 @@ export const useTourMutations = () => {
 
     return {
         createTourMutation,
+        updateTourMutation,
         statusMutation,
         featuredMutation,
         hotMutation,
@@ -226,5 +250,16 @@ export const useTourUploadMutations = () => {
         }
     });
 
-    return { uploadThumbnailMutation, uploadGalleryMutation };
+    const deleteImageMutation = useMutation({
+        mutationFn: (public_id: string) => tourApi.deleteUploadedImage(public_id),
+        onSuccess: () => {
+            // Usually we don't need a toast for silent background cleanup,
+            // but for explicit user action it can be helpful.
+        },
+        onError: (error: AxiosError<ErrorResponse>) => {
+            toast.error(error.response?.data?.message || t('messages.delete_error'));
+        }
+    });
+
+    return { uploadThumbnailMutation, uploadGalleryMutation, deleteImageMutation };
 };

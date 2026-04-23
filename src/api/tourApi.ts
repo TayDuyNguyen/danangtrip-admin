@@ -1,7 +1,14 @@
+import { API_ENDPOINTS } from '@/constants';
 import axiosClient from './axiosClient';
 import type { TourListData, TourFilters, TourStats, TourCategory } from '@/dataHelper/tour.dataHelper';
-import { tourMapper, type RawTour } from '@/dataHelper/tour.mapper';
+import { tourMapper, type RawTour, type TourViewModel } from '@/dataHelper/tour.mapper';
 import { toNumberSafe } from '@/utils/safeConverters';
+
+export interface ImageUploadResponse {
+    url: string;
+    public_id: string;
+    asset_id: string;
+}
 
 export const tourApi = {
     getTours: async (filters: TourFilters, page: number = 1, limit: number = 10): Promise<TourListData> => {
@@ -10,16 +17,14 @@ export const tourApi = {
             per_page: limit,
         };
 
-        // Mapping filters according to spec
         if (filters.q) params.q = filters.q;
         if (filters.tour_category_id && filters.tour_category_id !== 'all') {
-            params.tour_category_id = filters.tour_category_id;
+            params.tour_category_id = toNumberSafe(filters.tour_category_id);
         }
         if (filters.status && filters.status !== 'all') {
             params.status = filters.status;
         }
 
-        // Handle 'type' filter (featured, hot, normal)
         if (filters.type === 'featured') params.is_featured = 1;
         else if (filters.type === 'hot') params.is_hot = 1;
         else if (filters.type === 'normal') {
@@ -30,7 +35,7 @@ export const tourApi = {
         if (filters.sort) params.sort = filters.sort;
         if (filters.order) params.order = filters.order;
 
-        const response = await axiosClient.get('/tours', { params });
+        const response = await axiosClient.get(API_ENDPOINTS.TOURS.LIST, { params });
         const rawData = response.data as unknown as Record<string, unknown>;
         const listCandidate = rawData.data;
         const rows: unknown[] = Array.isArray(listCandidate) ? listCandidate : [];
@@ -47,11 +52,10 @@ export const tourApi = {
     getTourStats: async (): Promise<TourStats> => {
         const fetchCount = async (params: Record<string, unknown>) => {
             try {
-                const response = await axiosClient.get('/tours', { params });
+                const response = await axiosClient.get(API_ENDPOINTS.TOURS.LIST, { params });
                 const data = response.data as Record<string, unknown>;
                 return (data?.total as number) || (response as unknown as Record<string, unknown>)?.total as number || 0;
-            } catch (error) {
-                console.error(`Failed to fetch stats for ${JSON.stringify(params)}:`, error);
+            } catch {
                 return 0;
             }
         };
@@ -71,49 +75,70 @@ export const tourApi = {
         };
     },
 
-    getTourCategories: async (): Promise<TourCategory[]> => {
-        const response = await axiosClient.get('/tour-categories');
+    getTourCategories: async (scope: 'public' | 'admin' = 'public'): Promise<TourCategory[]> => {
+        const endpoint = scope === 'admin' ? API_ENDPOINTS.TOURS.ADMIN_CATEGORIES : API_ENDPOINTS.TOURS.CATEGORIES;
+        const response = await axiosClient.get(endpoint);
         return response.data?.data || response.data;
     },
 
     createTour: async (data: Record<string, unknown>): Promise<Record<string, unknown>> => {
         const payload = tourMapper.mapToRaw(data);
-        const response = await axiosClient.post('/admin/tours', payload);
+        const response = await axiosClient.post(API_ENDPOINTS.TOURS.CREATE, payload);
+        return response.data;
+    },
+
+    getTour: async (id: number | string): Promise<TourViewModel> => {
+        const response = await axiosClient.get(API_ENDPOINTS.TOURS.DETAIL(id));
+        const data = response.data?.data || response.data;
+        return tourMapper.mapFromRaw(data as RawTour);
+    },
+
+    updateTour: async (id: number | string, data: Record<string, unknown>): Promise<Record<string, unknown>> => {
+        const payload = tourMapper.mapToRaw(data);
+        const response = await axiosClient.put(API_ENDPOINTS.TOURS.UPDATE(id), payload);
         return response.data;
     },
 
     updateStatus: async (id: number | string, status: string): Promise<boolean> => {
-        const response = await axiosClient.patch(`/admin/tours/${id}/status`, { status });
+        const response = await axiosClient.patch(API_ENDPOINTS.TOURS.PATCH_STATUS(id), { status });
         return response.data?.code === 200;
     },
 
     toggleFeatured: async (id: number | string, is_featured: boolean): Promise<boolean> => {
-        const response = await axiosClient.patch(`/admin/tours/${id}/featured`, { is_featured });
+        const response = await axiosClient.patch(API_ENDPOINTS.TOURS.PATCH_FEATURED(id), { is_featured });
         return response.data?.code === 200;
     },
 
     toggleHot: async (id: number | string, is_hot: boolean): Promise<boolean> => {
-        const response = await axiosClient.patch(`/admin/tours/${id}/hot`, { is_hot });
+        const response = await axiosClient.patch(API_ENDPOINTS.TOURS.PATCH_HOT(id), { is_hot });
         return response.data?.code === 200;
     },
 
     deleteTour: async (id: number | string): Promise<boolean> => {
-        const response = await axiosClient.delete(`/admin/tours/${id}`);
-        return response.data?.code === 200;
+        const response = await axiosClient.delete(API_ENDPOINTS.TOURS.DELETE(id));
+        return response.status === 200 || response.data?.code === 200;
     },
 
-    uploadImage: async (file: File): Promise<string> => {
+    uploadImage: async (file: File): Promise<ImageUploadResponse> => {
         const formData = new FormData();
         formData.append('image', file);
-        const response = await axiosClient.post('/upload/image', formData);
-        return response.data?.data?.url || response.data?.url;
+        const response = await axiosClient.post(API_ENDPOINTS.UPLOAD.IMAGE, formData);
+        return response.data?.data || response.data;
     },
 
-    uploadImages: async (files: File[]): Promise<string[]> => {
+    uploadImages: async (files: File[]): Promise<ImageUploadResponse[]> => {
         const formData = new FormData();
         files.forEach(file => formData.append('images[]', file));
-        const response = await axiosClient.post('/upload/images', formData);
-        return (response.data?.data || []).map((item: { url: string }) => item.url);
+        const response = await axiosClient.post(API_ENDPOINTS.UPLOAD.IMAGES, formData);
+        const data = response.data?.data || response.data;
+        return Array.isArray(data?.items) ? data.items : (Array.isArray(data) ? data : []);
+    },
+
+    deleteUploadedImage: async (public_id: string): Promise<boolean> => {
+        const response = await axiosClient.delete(API_ENDPOINTS.UPLOAD.DELETE, {
+            data: { public_id }
+        });
+        return response.status === 200 || response.data?.code === 200;
     },
 
     exportExcel: async (filters: Partial<TourFilters>): Promise<void> => {
@@ -125,15 +150,18 @@ export const tourApi = {
             }
         });
 
-        const response = await axiosClient.get('/admin/tours/export', {
+        const response = await axiosClient.get(API_ENDPOINTS.EXPORT.TOURS, {
             params: cleanedFilters,
             responseType: 'blob'
         });
 
+        const dateStr = new Date().toISOString().split('T')[0];
+        const filename = `danh-sach-tour_${dateStr}.xlsx`;
+
         const url = window.URL.createObjectURL(new Blob([response.data as BlobPart]));
         const link = document.createElement('a');
         link.href = url;
-        link.setAttribute('download', 'danh-sach-tour.xlsx');
+        link.setAttribute('download', filename);
         document.body.appendChild(link);
         link.click();
         link.remove();

@@ -7,7 +7,8 @@
     "placeholder_select": "Select...",
     "labels": {
         "all": "All",
-        "loading": "Loading..."
+        "loading": "Loading...",
+        "admin_fallback": "Admin"
     },
     "roles": {
         "admin": "Administrator",
@@ -17,10 +18,15 @@
         "name": "DaNangTrip"
     },
     "actions": {
+        "edit": "Edit",
+        "close": "Close",
         "remove": "Remove",
         "dismiss": "Dismiss",
-        "deleting": "Deleting..."
+        "deleting": "Deleting...",
+        "saving": "Saving..."
     },
+    "loading": "Loading...",
+    "error_occurred": "An error occurred. Please try again.",
     "title": {
         "welcome": "Welcome back",
         "subtitle": "Da Nang Trip Admin - Overview Statistics"

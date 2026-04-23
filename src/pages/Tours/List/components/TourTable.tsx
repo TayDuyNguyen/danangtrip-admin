@@ -14,6 +14,7 @@ import {
     ChevronRight,
     Eye,
     RefreshCw,
+    ImageOff,
 } from 'lucide-react';
 import { clsx } from 'clsx';
 
@@ -33,6 +34,7 @@ interface Props {
     onPageChange: (page: number) => void;
     onLimitChange: (limit: number) => void;
     onEdit: (id: number) => void;
+    onView: (tour: TourItem) => void;
     onDelete: (id: number, name: string) => void;
     onToggleFeatured: (id: number, value: boolean) => void;
     onToggleHot: (id: number, value: boolean) => void;
@@ -57,6 +59,7 @@ const TourTable = ({
     onPageChange,
     onLimitChange,
     onEdit,
+    onView,
     onDelete,
     onToggleFeatured,
     onToggleHot,
@@ -112,7 +115,17 @@ const TourTable = ({
                 return (
                     <div className="flex items-center gap-[12px] min-w-[250px] py-1">
                         <div className="w-[48px] h-[48px] rounded-[10px] overflow-hidden border border-[#E2E8F0] shrink-0 shadow-sm relative group/thumb">
-                            <img src={tour.thumbnail || '/images/placeholder-tour.jpg'} alt={tour.name} className="w-full h-full object-cover transition-transform group-hover/thumb:scale-110 duration-500" />
+                            {tour.thumbnail ? (
+                                <img
+                                    src={tour.thumbnail}
+                                    alt={tour.name}
+                                    className="w-full h-full object-cover transition-transform group-hover/thumb:scale-110 duration-500"
+                                />
+                            ) : (
+                                <div className="w-full h-full bg-slate-100 flex items-center justify-center text-slate-300">
+                                    <ImageOff size={16} />
+                                </div>
+                            )}
                         </div>
                         <div className="flex flex-col gap-1.5 min-w-0 py-1">
                             <span className="text-[14px] font-bold text-[#1E293B] whitespace-normal wrap-break-word group-hover:text-[#0066CC] transition-colors leading-snug font-inter">
@@ -236,6 +249,7 @@ const TourTable = ({
             cell: info => (
                 <div className="flex items-center justify-end gap-1.5 pr-2">
                     <button 
+                        onClick={() => onView(info.row.original)}
                         title={t('actions.view', { ns: 'common' })}
                         className="w-[30px] h-[30px] flex items-center justify-center bg-[#F8FAFC] border border-[#E2E8F0] rounded-[6px] text-[#64748B] hover:text-[#0066CC] hover:border-[#0066CC] transition-all group/btn"
                     >
@@ -258,7 +272,7 @@ const TourTable = ({
                 </div>
             ),
         }),
-    ], [t, i18n.language, page, limit, categories, onEdit, onDelete, onToggleFeatured, onToggleHot]);
+    ], [t, i18n.language, page, limit, categories, onEdit, onView, onDelete, onToggleFeatured, onToggleHot]);
 
     // eslint-disable-next-line react-hooks/incompatible-library
     const table = useReactTable({

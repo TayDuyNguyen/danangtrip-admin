@@ -8,15 +8,15 @@ export interface TourItem {
     itinerary: Array<{ day: number; title: string; content: string }> | null;
     inclusions: string | null;
     exclusions: string | null;
-    price_adult: string; // backend returns string
-    price_child: string;
-    price_infant: string;
+    price_adult: number; 
+    price_child: number | null;
+    price_infant: number | null;
     discount_percent: number;
     duration: string;
     start_time: string | null;
     meeting_point: string | null;
-    max_people: number;
-    min_people: number;
+    max_people: number | null;
+    min_people: number | null;
     available_from: string | null;
     available_to: string | null;
     thumbnail: string | null;

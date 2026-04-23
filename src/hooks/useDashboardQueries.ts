@@ -1,7 +1,5 @@
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { dashboardApi } from '@/api/dashboardApi';
-import axiosClient from '@/api/axiosClient';
-import { API_ENDPOINTS } from '@/constants';
 import { prepareSpreadsheetDownload, downloadBlobFile } from '@/utils';
 import {
     mapStats,
@@ -10,7 +8,8 @@ import {
     mapUserGrowth,
     mapTopTours,
     mapBookings,
-    mapBookingStatusCounts
+    mapBookingStatusCounts,
+    toNumberSafe
 } from '@/dataHelper/dashboard.mapper';
 import type {
     DashboardStats,
@@ -49,10 +48,10 @@ const resolveStatsWithFallback = async (stats: DashboardStats): Promise<Dashboar
 
     const [ratingsResult, contactsResult] = await Promise.allSettled([
         stats.pending_ratings === undefined
-            ? axiosClient.get(API_ENDPOINTS.RATINGS.LIST, { params: { status: 'pending', per_page: 1 } })
+            ? dashboardApi.getPendingRatingsFallback()
             : Promise.resolve(null),
         stats.new_contacts === undefined
-            ? axiosClient.get(API_ENDPOINTS.CONTACTS.LIST, { params: { status: 'new', per_page: 1 } })
+            ? dashboardApi.getNewContactsFallback()
             : Promise.resolve(null),
     ]);
 
@@ -65,8 +64,8 @@ const resolveStatsWithFallback = async (stats: DashboardStats): Promise<Dashboar
         // Unwrap nested { data: { data: ... } } if present
         const data = (responseData.data as Record<string, unknown>) || responseData;
 
-        const total = data.total ?? (data.meta as Record<string, unknown>)?.total ?? (data.pagination as Record<string, unknown>)?.total ?? 0;
-        return typeof total === 'number' ? total : 0;
+        const total = data.total ?? (data.meta as Record<string, unknown>)?.total ?? (data.pagination as Record<string, unknown>)?.total;
+        return toNumberSafe(total);
     };
 
     return {
