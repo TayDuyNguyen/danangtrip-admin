@@ -1,0 +1,84 @@
+{
+    "title": "Lịch khởi hành",
+    "subtitle": "Quản lý toàn bộ lịch khởi hành của các tour",
+    "breadcrumb": "Quản lý Tour / Lịch khởi hành",
+    "status": {
+        "available": "Còn chỗ",
+        "full": "Đầy chỗ",
+        "cancelled": "Đã hủy"
+    },
+    "fields": {
+        "capacity": "Sức chứa",
+        "price_follows_tour": "Theo tour",
+        "start_date": "Ngày khởi hành",
+        "end_date": "Ngày kết thúc",
+        "max_people": "Số người tối đa",
+        "booked_max": "Đặt / Tối đa",
+        "price_adult": "Giá người lớn",
+        "price_child": "Giá trẻ em",
+        "price_infant": "Giá em bé",
+        "status": "Trạng thái",
+        "preview": "Xem trước"
+    },
+    "validation": {
+        "start_date_future": "Ngày khởi hành phải từ hôm nay trở đi",
+        "end_date_after": "Ngày kết thúc phải sau hoặc bằng ngày khởi hành"
+    },
+    "notices": {
+        "price_override_help": "Nếu bạn để trống các ô giá, hệ thống sẽ tự động sử dụng giá mặc định từ tour gốc cho lịch khởi hành này."
+    },
+    "filters": {
+        "search_label": "Tìm kiếm",
+        "search_placeholder": "Tìm theo tên tour…",
+        "status_label": "Trạng thái",
+        "status_placeholder": "Tất cả trạng thái",
+        "date_label": "Khoảng thời gian",
+        "tour_label": "Tour",
+        "tour_placeholder": "Tất cả tour",
+        "from": "Từ ngày",
+        "to": "Đến ngày"
+    },
+    "stats": {
+        "total": "Tổng lịch",
+        "available": "Còn chỗ",
+        "full": "Đầy chỗ",
+        "cancelled": "Đã hủy"
+    },
+    "actions": {
+        "add_new": "Thêm lịch",
+        "load_more": "Tải thêm kết quả",
+        "view_tour": "Xem tour",
+        "edit_tour": "Sửa tour",
+        "bulk_activate": "Còn chỗ",
+        "bulk_cancel": "Hủy lịch",
+        "selected_count": "Đã chọn {{count}}",
+        "sort_start": "Ngày khởi hành"
+    },
+    "table": {
+        "tour": "Tour",
+        "start": "Ngày KH",
+        "end": "Ngày KT",
+        "price": "Giá riêng",
+        "capacity": "Đặt / Tối đa",
+        "status": "Trạng thái",
+        "actions": "Thao tác",
+        "showing_summary": "Hiển thị {{start}}–{{end}} trong tổng số {{total}} lịch",
+        "per_page": "Hiển thị",
+        "upcoming": "Sắp tới",
+        "stt": "#"
+    },
+    "delete": {
+        "title": "Xóa lịch khởi hành này?",
+        "body": "Lịch {{date}} của tour “{{tour}}” sẽ bị xóa vĩnh viễn.",
+        "warning": "Nếu đã có đơn đặt cho lịch này, hãy hủy các đơn trước khi xóa.",
+        "confirm": "Xóa lịch"
+    },
+    "no_data": {
+        "title": "Không có lịch khởi hành",
+        "description": "Thử thay đổi bộ lọc hoặc thêm lịch mới từ trang tour."
+    },
+    "card": {
+        "untitled_tour": "Tour chưa đặt tên",
+        "image_alt_fallback": "Ảnh tour"
+    }
+}

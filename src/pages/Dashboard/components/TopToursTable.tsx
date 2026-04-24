@@ -25,7 +25,12 @@ const TopToursTable = ({ topTours, onRefresh, isRefreshing, isLoading, isError }
             <div className="p-6 border-b border-slate-100 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                     <div>
-                        <h3 className="text-base font-black text-slate-900 tracking-tighter">{t('tables.top_tours')}</h3>
+                        <div className="flex items-center gap-2">
+                            <h3 className="text-base font-black text-slate-900 tracking-tighter">{t('tables.top_tours')}</h3>
+                            {(isLoading || isRefreshing) && (
+                                <RefreshCw className="w-3.5 h-3.5 text-[#0066CC] animate-spin" />
+                            )}
+                        </div>
                         <p className="text-slate-400 text-[12px] font-bold">{t('tables.subtitle_top_tours')}</p>
                     </div>
                     {onRefresh && (
@@ -72,7 +77,7 @@ const TopToursTable = ({ topTours, onRefresh, isRefreshing, isLoading, isError }
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-50">
-                            {isLoading ? (
+                            {(isLoading && topTours.length === 0) ? (
                                 Array.from({ length: 5 }).map((_, i) => (
                                     <tr key={i}>
                                         <td className="px-6 py-4"><Skeleton className="w-7 h-7 rounded-xl" /></td>

@@ -277,6 +277,24 @@
     "categories": {
         "title": "Quản lý Danh mục Tour",
         "subtitle": "Phân loại và quản lý các nhóm sản phẩm tour du lịch",
+        "badge_new": "MỚI",
+        "search_placeholder": "Tìm kiếm danh mục...",
+        "reorder": {
+            "disabled_title": "Vui lòng xóa tìm kiếm/lọc để sắp xếp",
+            "button_sorting": "Đang sắp xếp",
+            "button_sort": "Sắp xếp",
+            "results_label": "Kết quả:",
+            "bar_title": "Chế độ sắp xếp",
+            "bar_hint": "Kéo thả các thẻ để thay đổi thứ tự",
+            "cancel": "Hủy",
+            "save": "Lưu thứ tự mới"
+        },
+        "icon_browser": {
+            "title": "Thư viện biểu tượng",
+            "search_placeholder": "Tìm biểu tượng...",
+            "more_prefix": "Tìm thêm tại",
+            "more_link_label": "lucide.dev"
+        },
         "add": "Thêm danh mục",
         "edit": "Sửa danh mục",
         "breadcrumb_list": "Danh mục tour",
@@ -300,6 +318,8 @@
             "description_placeholder": "Nhập mô tả ngắn về danh mục này...",
             "status": "Trạng thái hoạt động",
             "order": "Thứ tự hiển thị",
+            "order_placeholder_auto": "Tự động",
+            "order_drag_hint": "Sử dụng kéo thả để đổi",
             "icon_background": "Màu nền icon",
             "icon_helper": "Nhập tên icon hoặc Emoji"
         },
@@ -316,4 +336,4 @@
             "load_error_subtitle": "Chúng tôi không thể tải danh sách danh mục lúc này. Vui lòng thử lại sau."
         }
     }
-}
+}

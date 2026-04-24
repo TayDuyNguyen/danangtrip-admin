@@ -12,9 +12,11 @@ export interface ImageUploadResponse {
 
 export const tourApi = {
     getTours: async (filters: TourFilters, page: number = 1, limit: number = 10): Promise<TourListData> => {
+        const safeLimit = Math.min(Math.max(limit, 1), 100);
+
         const params: Record<string, unknown> = {
             page,
-            per_page: limit,
+            per_page: safeLimit,
         };
 
         if (filters.q) params.q = filters.q;
@@ -44,7 +46,7 @@ export const tourApi = {
             data: rows.map((item) => tourMapper.mapFromRaw(item as RawTour)),
             total: toNumberSafe(rawData.total),
             current_page: toNumberSafe(rawData.current_page, page),
-            per_page: toNumberSafe(rawData.per_page, limit),
+            per_page: toNumberSafe(rawData.per_page, safeLimit),
             last_page: toNumberSafe(rawData.last_page, 1)
         };
     },

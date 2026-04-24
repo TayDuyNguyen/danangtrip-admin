@@ -14,6 +14,7 @@ export interface Option {
 interface CustomSelectProps extends Omit<SelectProps<Option, false, GroupBase<Option>>, 'styles' | 'theme'> {
     containerClassName?: string;
     leftIcon?: React.ReactNode;
+    size?: 'sm' | 'md' | 'lg';
 }
 
 const CustomSelect: React.FC<CustomSelectProps> = ({ 
@@ -22,22 +23,23 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
     options,
     value,
     onChange,
-    placeholder = "Chọn...",
+    placeholder,
     isSearchable = false,
     leftIcon,
+    size = 'md',
     ...props 
 }) => {
     const { t } = useTranslation('common');
-    const finalPlaceholder = placeholder === "Chọn..." ? t('placeholder_select') : placeholder;
+    const finalPlaceholder = placeholder ?? t('placeholder_select');
     
 
     const customStyles: StylesConfig<Option, false> = {
         control: (provided, state) => ({
             ...provided,
-            minHeight: '52px',
+            minHeight: size === 'sm' ? '36px' : size === 'lg' ? '60px' : '52px',
             backgroundColor: '#F8FAFC',
             borderColor: state.isFocused ? '#0066CC' : '#E2E8F0',
-            borderRadius: '16px',
+            borderRadius: size === 'sm' ? '8px' : '16px',
             boxShadow: state.isFocused ? '0 0 0 4px rgba(0, 102, 204, 0.08)' : 'none',
             '&:hover': {
                 borderColor: state.isFocused ? '#0066CC' : '#CBD5E1',
@@ -46,11 +48,11 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
             transition: 'all 0.2s ease',
             cursor: 'pointer',
             borderWidth: '1px',
-            paddingLeft: leftIcon ? '32px' : '4px',
+            paddingLeft: leftIcon ? (size === 'sm' ? '28px' : '32px') : '4px',
         }),
         valueContainer: (provided) => ({
             ...provided,
-            padding: leftIcon ? '0 12px' : '0 20px',
+            padding: leftIcon ? '0 12px' : (size === 'sm' ? '0 8px' : '0 20px'),
         }),
         input: (provided) => ({
             ...provided,
@@ -62,14 +64,14 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
         singleValue: (provided) => ({
             ...provided,
             color: '#1E293B',
-            fontSize: '14px',
+            fontSize: size === 'sm' ? '13px' : '14px',
             fontWeight: '700',
             fontFamily: 'Inter, sans-serif',
         }),
         placeholder: (provided) => ({
             ...provided,
             color: '#94A3B8',
-            fontSize: '14px',
+            fontSize: size === 'sm' ? '13px' : '14px',
             fontWeight: '500',
         }),
         indicatorSeparator: () => ({
@@ -78,7 +80,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
         dropdownIndicator: (provided, state) => ({
             ...provided,
             color: state.isFocused ? '#0066CC' : '#94A3B8',
-            paddingRight: '12px',
+            paddingRight: size === 'sm' ? '8px' : '12px',
             transition: 'transform 0.3s ease, color 0.2s ease',
             transform: state.selectProps.menuIsOpen ? 'rotate(180deg)' : 'none',
             '&:hover': {
@@ -120,9 +122,9 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
                         ? '#F8FAFC' 
                         : 'transparent',
                 color: state.isSelected ? '#FFFFFF' : '#475569',
-                fontSize: '14px',
+                fontSize: size === 'sm' ? '13px' : '14px',
                 fontWeight: state.isSelected ? '700' : '500',
-                padding: '10px 12px',
+                padding: size === 'sm' ? '6px 10px' : '10px 12px',
                 borderRadius: '8px',
                 marginBottom: '2px',
                 cursor: 'pointer',

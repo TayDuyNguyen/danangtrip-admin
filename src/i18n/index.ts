@@ -14,7 +14,7 @@ i18
         fallbackLng: 'vi', // Ngôn ngữ mặc định
         supportedLngs: ['vi', 'en'], // Ngôn ngữ được hỗ trợ
         defaultNS: 'dashboard',
-        ns: ['dashboard', 'tour', 'translation', 'common', 'login', 'register'], // namespace
+        ns: ['dashboard', 'tour', 'translation', 'common', 'login', 'register', 'schedules'], // namespace
 
         // Cho phép dùng dấu chấm để phân tách namespace (VD: login.key) thay vì dấu :
         nsSeparator: ':',

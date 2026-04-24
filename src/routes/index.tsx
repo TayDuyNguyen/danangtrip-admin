@@ -8,10 +8,12 @@ import MainLayout from '@/layouts/MainLayout';
 const Dashboard = React.lazy(() => import('@/pages/Dashboard'));
 const Login = React.lazy(() => import('@/pages/Login'));
 const PageNotFound = React.lazy(() => import('@/pages/PageNotFound'));
-const TourList = React.lazy(() => import('@/pages/Tours/List'));
-const AddTour = React.lazy(() => import('@/pages/Tours/Add'));
-const EditTour = React.lazy(() => import('@/pages/Tours/Edit'));
-const TourCategories = React.lazy(() => import('@/pages/Tours/Categories'));
+const TourList = React.lazy(() => import('@/pages/Tours/TourList'));
+const AddTour = React.lazy(() => import('@/pages/Tours/TourCreate'));
+const EditTour = React.lazy(() => import('@/pages/Tours/TourEdit'));
+const TourCategories = React.lazy(() => import('@/pages/Tours/TourCategories'));
+const Schedules = React.lazy(() => import('@/pages/Tours/TourSchedules'));
+const TourScheduleCreate = React.lazy(() => import('@/pages/Tours/TourScheduleCreate'));
 import ErrorPage from '@/pages/ErrorPage';
 
 /**
@@ -65,6 +67,8 @@ const router = createBrowserRouter([
                     { path: ROUTES.TOURS_CREATE, element: withSuspense(AddTour) },
                     { path: ROUTES.TOURS_EDIT, element: withSuspense(EditTour) },
                     { path: ROUTES.TOURS_CATEGORIES, element: withSuspense(TourCategories) },
+                    { path: ROUTES.TOURS_SCHEDULES, element: withSuspense(Schedules) },
+                    { path: ROUTES.TOURS_SCHEDULE_CREATE, element: withSuspense(TourScheduleCreate) },
                 ]
             }
         ],

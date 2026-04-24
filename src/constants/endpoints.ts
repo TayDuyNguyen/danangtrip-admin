@@ -52,5 +52,15 @@ export const API_ENDPOINTS = {
         IMAGE: '/upload/image',
         IMAGES: '/upload/images',
         DELETE: '/upload/image',
+    },
+    // Schedule management
+    SCHEDULES: {
+        LIST: '/admin/tour-schedules',
+        STATUS_COUNTS: '/admin/tour-schedules/status-counts',
+        DETAIL: (id: string | number) => `/admin/tour-schedules/${id}`,
+        CREATE: (tourId: string | number) => `/admin/tours/${tourId}/schedules`,
+        UPDATE: (id: string | number) => `/admin/tour-schedules/${id}`,
+        DELETE: (id: string | number) => `/admin/tour-schedules/${id}`,
+        PATCH_STATUS: (id: string | number) => `/admin/tour-schedules/${id}/status`,
     }
 } as const;
