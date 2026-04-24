@@ -28,8 +28,8 @@ const navItems = [
         icon: Map, label: 'sidebar.tours', path: '/admin/tours',
         subItems: [
             { label: 'sidebar.tour_list', path: ROUTES.TOURS_LIST },
-            { label: 'sidebar.tour_categories', path: '/admin/tours/categories' },
-            { label: 'sidebar.tour_schedules', path: '/admin/tours/schedules' },
+            { label: 'sidebar.tour_categories', path: ROUTES.TOURS_CATEGORIES },
+            { label: 'sidebar.tour_schedules', path: ROUTES.TOURS_SCHEDULES },
         ]
     },
     { icon: Hotel, label: 'sidebar.hotels', path: '/admin/hotels' },

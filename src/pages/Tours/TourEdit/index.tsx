@@ -31,12 +31,12 @@ import { TextInput } from '@/components/ui/TextInput';
 import { CurrencyInput } from '@/components/ui/CurrencyInput';
 import { TextareaField } from '@/components/ui/TextareaField';
 import ErrorWidget from '@/components/common/ErrorWidget';
-import SectionHeader from '../Add/components/SectionHeader';
-import ItineraryBuilder from '../Add/components/ItineraryBuilder';
-import ImageGallery from '../Add/components/ImageGallery';
+import SectionHeader from '../TourCreate/components/SectionHeader';
+import ItineraryBuilder from '../TourCreate/components/ItineraryBuilder';
+import ImageGallery from '../TourCreate/components/ImageGallery';
 import { tourMapper } from '@/dataHelper/tour.mapper';
-import SidebarCards from '../Add/components/SidebarCards';
-import TourDeleteDialog from '../List/components/TourDeleteDialog';
+import SidebarCards from '../TourCreate/components/SidebarCards';
+import TourDeleteDialog from '../TourList/components/TourDeleteDialog';
 
 const SCROLL_FIELD_ORDER: string[] = [
     'name',

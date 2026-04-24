@@ -1,0 +1,84 @@
+{
+    "title": "Departure schedules",
+    "subtitle": "Manage all departure schedules across tours",
+    "breadcrumb": "Tours / Schedules",
+    "status": {
+        "available": "Available",
+        "full": "Full",
+        "cancelled": "Cancelled"
+    },
+    "fields": {
+        "capacity": "Capacity",
+        "price_follows_tour": "Tour default",
+        "start_date": "Start date",
+        "end_date": "End date",
+        "max_people": "Max people",
+        "booked_max": "Booked / Max",
+        "price_adult": "Adult price",
+        "price_child": "Child price",
+        "price_infant": "Infant price",
+        "status": "Status",
+        "preview": "Preview"
+    },
+    "validation": {
+        "start_date_future": "Start date must be today or in the future",
+        "end_date_after": "End date must be after or equal to start date"
+    },
+    "notices": {
+        "price_override_help": "If you leave the price fields empty, the system will automatically use the default prices from the base tour for this schedule."
+    },
+    "filters": {
+        "search_label": "Search",
+        "search_placeholder": "Search by tour name…",
+        "status_label": "Status",
+        "status_placeholder": "All statuses",
+        "date_label": "Date range",
+        "tour_label": "Tour",
+        "tour_placeholder": "All tours",
+        "from": "From",
+        "to": "To"
+    },
+    "stats": {
+        "total": "Total schedules",
+        "available": "Available",
+        "full": "Full",
+        "cancelled": "Cancelled"
+    },
+    "actions": {
+        "add_new": "Add schedule",
+        "load_more": "Load more",
+        "view_tour": "View tour",
+        "edit_tour": "Edit tour",
+        "bulk_activate": "Set available",
+        "bulk_cancel": "Cancel schedules",
+        "selected_count": "Selected {{count}}",
+        "sort_start": "Start date"
+    },
+    "table": {
+        "tour": "Tour",
+        "start": "Start",
+        "end": "End",
+        "price": "Price",
+        "capacity": "Booked / max",
+        "status": "Status",
+        "actions": "Actions",
+        "showing_summary": "Showing {{start}}–{{end}} of {{total}} schedules",
+        "per_page": "Per page",
+        "upcoming": "Soon",
+        "stt": "#"
+    },
+    "delete": {
+        "title": "Delete this schedule?",
+        "body": "The schedule on {{date}} for tour “{{tour}}” will be permanently removed.",
+        "warning": "If there are bookings for this schedule, cancel orders before deleting.",
+        "confirm": "Delete schedule"
+    },
+    "no_data": {
+        "title": "No schedules found",
+        "description": "Try changing filters or add a new schedule from a tour."
+    },
+    "card": {
+        "untitled_tour": "Untitled tour",
+        "image_alt_fallback": "Tour image"
+    }
+}

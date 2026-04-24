@@ -5,4 +5,6 @@ export const ROUTES = {
     TOURS_CREATE: '/admin/tours/create',
     TOURS_EDIT: '/admin/tours/edit/:id',
     TOURS_CATEGORIES: '/admin/tours/categories',
+    TOURS_SCHEDULES: '/admin/tours/schedules',
+    TOURS_SCHEDULE_CREATE: '/admin/tours/:id/schedules/create',
 } as const;

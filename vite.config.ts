@@ -24,6 +24,17 @@ export default defineConfig(({ mode }) => {
         '@': path.resolve(__dirname, './src'),
       },
     },
+    css: {
+      transformer: 'lightningcss',
+      lightningcss: {
+        targets: {
+          // Compile for older browsers to convert oklch and color-mix
+          chrome: 87 << 16, // Chrome 87+
+          safari: 14 << 16, // Safari 14+
+          firefox: 78 << 16, // Firefox 78+
+        }
+      }
+    },
     server: {
       port: getValidPort(env.VITE_PORT),
       strictPort: true,
@@ -44,6 +55,7 @@ export default defineConfig(({ mode }) => {
       strictPort: true,
     },
     build: {
+      cssMinify: 'lightningcss',
       rollupOptions: {
         output: {
           manualChunks: {

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ComponentType } from 'react';
 import { useForm, Controller, useWatch } from 'react-hook-form';
 import CustomSelect from '@/components/ui/CustomSelect';
 import Drawer from '@/components/ui/Drawer';
@@ -129,7 +129,7 @@ const CategoryDialog = ({ isOpen, onClose, onSubmit, initialData, nextSortOrder 
             onClose={onClose}
             title={initialData ? t('categories.edit') : t('categories.add')}
             subtitle={initialData ? t('form.edit_subtitle') : t('form.page_subtitle')}
-            badge={!initialData ? "MỚI" : undefined}
+            badge={!initialData ? t('categories.badge_new') : undefined}
             width="max-w-md"
         >
             <form onSubmit={handleSubmit((data) => onSubmit(data))} className="space-y-6 pb-20">
@@ -141,7 +141,7 @@ const CategoryDialog = ({ isOpen, onClose, onSubmit, initialData, nextSortOrder 
                     <input
                         {...register('name')}
                         type="text"
-                        placeholder="Ví dụ: Tham quan & Du lịch"
+                        placeholder={t('categories.form.name_placeholder')}
                         className="w-full px-5 py-3.5 rounded-2xl bg-slate-50 border border-slate-200 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-hidden transition-all font-bold text-slate-900 placeholder:text-slate-400"
                     />
                     {errors.name && (
@@ -188,7 +188,7 @@ const CategoryDialog = ({ isOpen, onClose, onSubmit, initialData, nextSortOrder 
                             onClick={() => setIsIconBrowserOpen(!isIconBrowserOpen)}
                         >
                             {(() => {
-                                const IconComp = (Icons as unknown as Record<string, React.ComponentType<{ size?: number; className?: string }>>)[selectedIcon] || Icons.Map;
+                                const IconComp = (Icons as unknown as Record<string, ComponentType<{ size?: number; className?: string }>>)[selectedIcon] || Icons.Map;
                                 return <IconComp size={32} className={cn("transition-transform", isIconBrowserOpen ? "scale-110" : "group-hover:scale-110")} />;
                             })()}
                             {!isIconBrowserOpen && (
@@ -218,7 +218,7 @@ const CategoryDialog = ({ isOpen, onClose, onSubmit, initialData, nextSortOrder 
                                 className="p-5 bg-white rounded-[32px] border border-slate-200 shadow-2xl shadow-slate-900/5 z-20"
                             >
                                 <div className="flex items-center justify-between mb-4">
-                                    <p className="text-[11px] font-black text-slate-900 uppercase tracking-widest">Thư viện biểu tượng</p>
+                                    <p className="text-[11px] font-black text-slate-900 uppercase tracking-widest">{t('categories.icon_browser.title')}</p>
                                     <button 
                                         type="button" 
                                         onClick={() => setIsIconBrowserOpen(false)}
@@ -233,7 +233,7 @@ const CategoryDialog = ({ isOpen, onClose, onSubmit, initialData, nextSortOrder 
                                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={14} />
                                     <input 
                                         type="text"
-                                        placeholder="Tìm biểu tượng..."
+                                        placeholder={t('categories.icon_browser.search_placeholder')}
                                         className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold outline-hidden focus:bg-white focus:border-blue-500 transition-all"
                                         onChange={(e) => setIconSearch(e.target.value)}
                                     />
@@ -244,7 +244,7 @@ const CategoryDialog = ({ isOpen, onClose, onSubmit, initialData, nextSortOrder 
                                     {iconSuggestions
                                         .filter(name => name.toLowerCase().includes(iconSearch.toLowerCase()))
                                         .map((name) => {
-                                            const IconComp = (Icons as unknown as Record<string, React.ComponentType<{ size?: number; className?: string }>>)[name] || Icons.HelpCircle;
+                                            const IconComp = (Icons as unknown as Record<string, ComponentType<{ size?: number; className?: string }>>)[name] || Icons.HelpCircle;
                                             const isSelected = selectedIcon === name;
                                             return (
                                                 <button
@@ -270,7 +270,10 @@ const CategoryDialog = ({ isOpen, onClose, onSubmit, initialData, nextSortOrder 
                                 
                                 <div className="mt-4 pt-4 border-t border-slate-100">
                                     <p className="text-[10px] font-medium text-slate-400 text-center">
-                                        Tìm thêm tại <a href="https://lucide.dev/icons" target="_blank" rel="noreferrer" className="text-blue-600 hover:underline">lucide.dev</a>
+                                        {t('categories.icon_browser.more_prefix')}{' '}
+                                        <a href="https://lucide.dev/icons" target="_blank" rel="noreferrer" className="text-blue-600 hover:underline">
+                                            {t('categories.icon_browser.more_link_label')}
+                                        </a>
                                     </p>
                                 </div>
                             </motion.div>
@@ -324,12 +327,12 @@ const CategoryDialog = ({ isOpen, onClose, onSubmit, initialData, nextSortOrder 
                                 type="number"
                                 disabled
                                 className="w-full px-5 py-3.5 rounded-2xl bg-slate-100 border border-slate-200 font-bold text-slate-400 cursor-not-allowed opacity-70"
-                                placeholder={initialData ? "" : "Tự động"}
+                                placeholder={initialData ? '' : t('categories.form.order_placeholder_auto')}
                             />
                             {initialData && (
                                 <div className="absolute right-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
                                     <span className="text-[10px] font-bold text-slate-400 bg-white px-2 py-1 rounded-md border border-slate-100 shadow-sm">
-                                        Sử dụng kéo thả để đổi
+                                        {t('categories.form.order_drag_hint')}
                                     </span>
                                 </div>
                             )}

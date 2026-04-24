@@ -277,6 +277,24 @@
     "categories": {
         "title": "Tour Category Management",
         "subtitle": "Categorize and manage travel tour groups",
+        "badge_new": "NEW",
+        "search_placeholder": "Search categories...",
+        "reorder": {
+            "disabled_title": "Clear search and filters to reorder",
+            "button_sorting": "Reordering",
+            "button_sort": "Reorder",
+            "results_label": "Results:",
+            "bar_title": "Reorder mode",
+            "bar_hint": "Drag cards to change display order",
+            "cancel": "Cancel",
+            "save": "Save new order"
+        },
+        "icon_browser": {
+            "title": "Icon library",
+            "search_placeholder": "Search icons...",
+            "more_prefix": "Browse more at",
+            "more_link_label": "lucide.dev"
+        },
         "add": "Add category",
         "edit": "Edit category",
         "breadcrumb_list": "Tour categories",
@@ -300,6 +318,8 @@
             "description_placeholder": "Enter a short description...",
             "status": "Active Status",
             "order": "Display Order",
+            "order_placeholder_auto": "Auto",
+            "order_drag_hint": "Use drag and drop to change",
             "icon_background": "Icon Background",
             "icon_helper": "Enter icon name or Emoji"
         },

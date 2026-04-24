@@ -40,7 +40,7 @@ const RecentOrdersTable = ({
     isLoading,
     isError,
 }: RecentOrdersTableProps) => {
-    const { t } = useTranslation('dashboard');
+    const { t } = useTranslation(['dashboard', 'common']);
     const orders = bookings?.data ?? [];
     const total = bookings?.meta?.total ?? 0;
     const lastPage = bookings?.meta?.last_page ?? 1;
@@ -171,6 +171,11 @@ const RecentOrdersTable = ({
                                 orders.map((item, idx) => {
                                     const statusCfg = STATUS_CONFIG[item.status] ?? STATUS_CONFIG.pending;
                                     const avatarColor = AVATAR_COLORS[idx % AVATAR_COLORS.length];
+                                    const customerName = item.customer.name.trim();
+                                    const tourTitle = item.tour_title.trim();
+                                    const displayCustomer = customerName || t('common:labels.not_available');
+                                    const displayTour = tourTitle || t('common:labels.not_available');
+                                    const initial = customerName ? customerName.charAt(0).toUpperCase() : '—';
 
                                     return (
                                         <tr key={item.id} className="hover:bg-slate-50/40 transition-colors group cursor-pointer">
@@ -180,13 +185,13 @@ const RecentOrdersTable = ({
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center gap-2.5 min-w-[150px]">
                                                     <div className={`w-8 h-8 rounded-full flex items-center justify-center text-[12px] font-black border shrink-0 ${avatarColor}`}>
-                                                        {item.customer.name.charAt(0)}
+                                                        {initial}
                                                     </div>
-                                                    <span className="text-[13px] font-bold text-slate-800 line-clamp-1">{item.customer.name}</span>
+                                                    <span className="text-[13px] font-bold text-slate-800 line-clamp-1">{displayCustomer}</span>
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4">
-                                                <span className="text-[13px] font-bold text-slate-600 line-clamp-1 max-w-[180px] block">{item.tour_title}</span>
+                                                <span className="text-[13px] font-bold text-slate-600 line-clamp-1 max-w-[180px] block">{displayTour}</span>
                                             </td>
                                             <td className="px-6 py-4 text-right">
                                                 <span className="text-[13px] font-black text-slate-900">{item.total_amount.toLocaleString(i18n.language === 'vi' ? 'vi-VN' : 'en-US')} {t('charts.unit_currency')}</span>

@@ -95,7 +95,6 @@ const TourCategories = () => {
             sort_order: formData.sort_order,
             status: formData.status
         };
-        console.log('Submitting data:', apiData);
 
         if (editingCategory) {
             updateMutation.mutate({ id: editingCategory.id, data: apiData }, {
@@ -190,7 +189,7 @@ const TourCategories = () => {
                         </div>
                         <input 
                             type="text"
-                            placeholder="Tìm kiếm danh mục..."
+                            placeholder={t('categories.search_placeholder')}
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             className="w-full pl-14 pr-6 py-4 rounded-[22px] bg-slate-50/50 border-none focus:bg-white focus:ring-4 focus:ring-blue-500/5 outline-hidden transition-all font-bold text-slate-900"
@@ -226,15 +225,15 @@ const TourCategories = () => {
                                 ? "bg-orange-50 border-orange-200 text-orange-600 ring-4 ring-orange-500/5"
                                 : "bg-white border-slate-200 text-slate-600 hover:border-slate-300 active:scale-95 disabled:opacity-50 disabled:grayscale"
                         )}
-                        title={searchQuery !== '' || statusFilter !== undefined ? "Vui lòng xóa tìm kiếm/lọc để sắp xếp" : ""}
+                        title={searchQuery !== '' || statusFilter !== undefined ? t('categories.reorder.disabled_title') : undefined}
                     >
                         <RefreshCcw size={20} className={cn(isReorderMode && "animate-spin-slow")} />
-                        <span>{isReorderMode ? "Đang sắp xếp" : "Sắp xếp"}</span>
+                        <span>{isReorderMode ? t('categories.reorder.button_sorting') : t('categories.reorder.button_sort')}</span>
                     </button>
                 </div>
 
                 <div className="flex items-center gap-3 px-6 py-4 bg-slate-50/50 rounded-[22px] shrink-0 border border-slate-100/50">
-                    <span className="text-[13px] font-black text-slate-500 uppercase tracking-widest">KẾT QUẢ:</span>
+                    <span className="text-[13px] font-black text-slate-500 uppercase tracking-widest">{t('categories.reorder.results_label')}</span>
                     <span className="px-3 h-8 flex items-center justify-center bg-white rounded-lg border border-slate-200 text-sm font-black text-slate-900 shadow-sm min-w-[32px]">
                         {data?.meta?.total ?? categories.length}
                     </span>
@@ -264,8 +263,8 @@ const TourCategories = () => {
                                 <RefreshCcw size={20} />
                             </div>
                             <div>
-                                <p className="text-sm font-black tracking-tight">Chế độ sắp xếp</p>
-                                <p className="text-[11px] text-slate-400 font-medium">Kéo thả các thẻ để thay đổi thứ tự</p>
+                                <p className="text-sm font-black tracking-tight">{t('categories.reorder.bar_title')}</p>
+                                <p className="text-[11px] text-slate-400 font-medium">{t('categories.reorder.bar_hint')}</p>
                             </div>
                         </div>
 
@@ -274,7 +273,7 @@ const TourCategories = () => {
                                 onClick={() => setIsReorderMode(false)}
                                 className="px-6 py-3 rounded-xl font-black text-slate-400 hover:text-white hover:bg-white/10 transition-all"
                             >
-                                Hủy
+                                {t('categories.reorder.cancel')}
                             </button>
                             <button
                                 onClick={handleReorderSave}
@@ -286,7 +285,7 @@ const TourCategories = () => {
                                 ) : (
                                     <CheckCircle2 size={18} />
                                 )}
-                                <span>Lưu thứ tự mới</span>
+                                <span>{t('categories.reorder.save')}</span>
                             </button>
                         </div>
                     </motion.div>

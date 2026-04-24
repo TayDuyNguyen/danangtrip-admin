@@ -8,7 +8,18 @@
     "labels": {
         "all": "Tất cả",
         "loading": "Đang tải...",
-        "admin_fallback": "Admin"
+        "admin_fallback": "Admin",
+        "not_available": "Không có dữ liệu",
+        "new": "Mới"
+    },
+    "units": {
+        "people": "người"
+    },
+    "notices": {
+        "important": "Lưu ý quan trọng"
+    },
+    "helpers": {
+        "date_range_tip": "Ngày kết thúc thường là ngày tour kết thúc thực tế."
     },
     "roles": {
         "admin": "Quản trị viên",
@@ -18,12 +29,31 @@
         "name": "DaNangTrip"
     },
     "actions": {
+        "view": "Xem",
+        "filter": "Lọc",
         "edit": "Chỉnh sửa",
         "close": "Đóng",
         "remove": "Xóa",
         "dismiss": "Đóng",
         "deleting": "Đang xóa...",
-        "saving": "Đang lưu..."
+        "saving": "Đang lưu...",
+        "reset": "Đặt lại",
+        "cancel": "Hủy"
+    },
+    "confirm_delete": "Bạn có chắc muốn xóa mục này?",
+    "error": {
+        "fetch": "Không tải được dữ liệu",
+        "try_again": "Vui lòng thử lại sau.",
+        "create": "Không thể tạo mục",
+        "update": "Không thể cập nhật",
+        "delete": "Không thể xóa",
+        "update_bulk": "Không thể cập nhật các mục đã chọn"
+    },
+    "success": {
+        "create": "Tạo thành công",
+        "update": "Cập nhật thành công",
+        "delete": "Xóa thành công",
+        "update_bulk": "Đã cập nhật các mục đã chọn"
     },
     "loading": "Đang tải...",
     "error_occurred": "Đã có lỗi xảy ra. Vui lòng thử lại.",
@@ -88,6 +118,7 @@
         "items_per_page": "Số dòng mỗi trang",
         "go_to": "Đến trang",
         "showing": "Hiển thị",
+        "showing_range": "Hiển thị {{from}}–{{to}} / {{total}}",
         "to": "đến",
         "results": "kết quả",
         "first_page": "Trang đầu",

@@ -223,8 +223,8 @@ export const mapBookings = (raw: RawBookingsResponse | unknown): BookingsRespons
     
     const mappedData: Booking[] = items.map(item => ({
         id: String(item.booking_code || ''),
-        customer: { name: item.customer_name || 'Guest' },
-        tour_title: item.tour_name || 'Unknown Tour',
+        customer: { name: item.customer_name ?? '' },
+        tour_title: item.tour_name ?? '',
         booked_at: String(item.booked_at || ''),
         status: (item.booking_status as Booking['status']) || 'pending',
         total_amount: toNumberSafe(item.total_amount)
