@@ -115,7 +115,7 @@ const TourList = () => {
     };
 
     return (
-        <div className="p-4 lg:p-10 max-w-[1600px] mx-auto min-h-screen bg-[#F8FAFC] font-inter">
+        <div className="p-4 lg:p-10 mx-auto min-h-screen bg-white font-sans">
             <TourHeader
                 onExport={() => exportMutation.mutate(filters)}
                 isExporting={exportMutation.isPending}

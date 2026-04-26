@@ -82,7 +82,7 @@ const TourSchedulesTable = ({
             <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 px-6 py-4 border-b border-[#E2E8F0]">
                 <div className="flex items-center gap-3">
                     {selectedIds.length > 0 && (
-                        <span className="text-[13px] font-semibold text-[#0066CC]">
+                            <span className="text-[13px] font-semibold text-[#14b8a6]">
                             Đã chọn {selectedIds.length}
                         </span>
                     )}
@@ -90,7 +90,7 @@ const TourSchedulesTable = ({
                 <div className="flex flex-wrap items-center gap-4 sm:ml-auto">
                     {isLoading && (
                         <div className="animate-fade-in">
-                            <RefreshCw className="w-3.5 h-3.5 text-[#0066CC] animate-spin" />
+                            <RefreshCw className="w-3.5 h-3.5 text-[#14b8a6] animate-spin" />
                         </div>
                     )}
                     <span className="text-[13px] font-medium text-[#94A3B8]">
@@ -121,7 +121,7 @@ const TourSchedulesTable = ({
                                 <div className="flex justify-center">
                                     <input
                                         type="checkbox"
-                                        className="w-4 h-4 rounded border-[#E2E8F0] text-[#0066CC] accent-[#0066CC] cursor-pointer"
+                                        className="w-4 h-4 rounded border-[#E2E8F0] text-[#14b8a6] accent-[#14b8a6] cursor-pointer"
                                         checked={allPageSelected}
                                         onChange={(e) => onToggleAllPage(e.target.checked)}
                                     />
@@ -137,7 +137,7 @@ const TourSchedulesTable = ({
                                 <button
                                     type="button"
                                     onClick={() => onSortChange('start_date')}
-                                    className="inline-flex items-center gap-1 text-[#94A3B8] hover:text-[#0066CC]"
+                                    className="inline-flex items-center gap-1 text-[#94A3B8] hover:text-[#14b8a6]"
                                 >
                                     {t('schedules:table.start')}
                                     <ArrowUpDown className="w-3.5 h-3.5" />
@@ -165,7 +165,7 @@ const TourSchedulesTable = ({
                         {(isLoading && data.length === 0) ? (
                             <tr>
                                 <td colSpan={9} className="py-20 text-center">
-                                    <LoadingReact type="spokes" height={48} width={48} color="#0066CC" />
+                                    <LoadingReact type="spokes" height={48} width={48} color="#14B8A6" />
                                 </td>
                             </tr>
                         ) : data.length === 0 ? (
@@ -187,14 +187,14 @@ const TourSchedulesTable = ({
                                         key={row.id}
                                         className={clsx(
                                             'border-b border-[#F1F5F9] hover:bg-[#F8FAFC] transition-colors',
-                                            selected && 'bg-[#EFF6FF] border-l-[3px] border-l-[#0066CC]',
+                                            selected && 'bg-[#dff7f4] border-l-[3px] border-l-[#14b8a6]',
                                         )}
                                     >
                                         <td className="px-3 py-3">
                                             <div className="flex justify-center">
                                                 <input
                                                     type="checkbox"
-                                                    className="w-4 h-4 rounded border-[#E2E8F0] text-[#0066CC] accent-[#0066CC] cursor-pointer"
+                                                    className="w-4 h-4 rounded border-[#E2E8F0] text-[#14b8a6] accent-[#14b8a6] cursor-pointer"
                                                     checked={selected}
                                                     onChange={() => onToggleRow(idNum)}
                                                 />
@@ -227,13 +227,13 @@ const TourSchedulesTable = ({
                                                                 ),
                                                             )
                                                         }
-                                                        className="text-left text-[14px] font-semibold text-[#1E293B] hover:text-[#0066CC] line-clamp-2"
+                                                    className="text-left text-[14px] font-semibold text-[#1E293B] hover:text-[#14b8a6] line-clamp-2"
                                                     >
                                                         {row.tourName || '—'}
                                                     </button>
                                                     {row.categoryName && (
                                                         <span 
-                                                            className="inline-block max-w-[110px] truncate align-bottom text-[11px] font-bold uppercase tracking-wide px-2 py-0.5 mt-1 rounded-full bg-[#EFF6FF] text-[#0066CC] border border-[#B3D9FF]"
+                                                            className="inline-block max-w-[110px] truncate align-bottom text-[11px] font-bold uppercase tracking-wide px-2 py-0.5 mt-1 rounded-full bg-[#dff7f4] text-[#0f766e] border border-[#ccfbf1]"
                                                             title={row.categoryName}
                                                         >
                                                             {row.categoryName}
@@ -253,7 +253,7 @@ const TourSchedulesTable = ({
                                                     {formatAdminShortDate(row.startDate, i18n.language)}
                                                 </span>
                                                 {soon ? (
-                                                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#EFF6FF] text-[#0066CC]">
+                                                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#dff7f4] text-[#0f766e]">
                                                         {t('schedules:table.upcoming')}
                                                     </span>
                                                 ) : null}
@@ -358,7 +358,7 @@ const TourSchedulesTable = ({
                         type="button"
                         onClick={() => onPageChange(page - 1)}
                         disabled={page <= 1}
-                        className="w-8 h-8 flex items-center justify-center rounded-lg bg-white border border-[#E2E8F0] text-[#64748B] hover:border-[#0066CC] hover:text-[#0066CC] disabled:opacity-40"
+                                className="w-8 h-8 flex items-center justify-center rounded-lg bg-white border border-[#E2E8F0] text-[#64748B] hover:border-[#14b8a6] hover:text-[#14b8a6] disabled:opacity-40"
                     >
                         <ChevronLeft size={16} />
                     </button>
@@ -382,8 +382,8 @@ const TourSchedulesTable = ({
                                 className={clsx(
                                     "w-8 h-8 flex items-center justify-center rounded-lg border text-[13px] font-semibold transition-colors",
                                     p === page 
-                                        ? "bg-[#0066CC] text-white border-[#0066CC]" 
-                                        : "bg-white border-[#E2E8F0] text-[#64748B] hover:border-[#0066CC] hover:text-[#0066CC]"
+                                        ? "bg-[#14b8a6] text-white border-[#14b8a6]" 
+                                        : "bg-white border-[#E2E8F0] text-[#64748B] hover:border-[#14b8a6] hover:text-[#14b8a6]"
                                 )}
                             >
                                 {p}
@@ -395,7 +395,7 @@ const TourSchedulesTable = ({
                         type="button"
                         onClick={() => onPageChange(page + 1)}
                         disabled={page >= lastPage}
-                        className="w-8 h-8 flex items-center justify-center rounded-lg bg-white border border-[#E2E8F0] text-[#64748B] hover:border-[#0066CC] hover:text-[#0066CC] disabled:opacity-40"
+                        className="w-8 h-8 flex items-center justify-center rounded-lg bg-white border border-[#E2E8F0] text-[#64748B] hover:border-[#14b8a6] hover:text-[#14b8a6] disabled:opacity-40"
                     >
                         <ChevronRight size={16} />
                     </button>

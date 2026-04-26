@@ -147,7 +147,7 @@ const FilterBar = ({ tourOptions, filters, onApply, onReset, hasActiveFilters }:
                 <button
                     type="button"
                     onClick={handleApplyClick}
-                    className="h-[48px] px-5 bg-[#0066CC] hover:bg-[#0052a3] text-white rounded-xl flex items-center gap-2 font-bold text-sm transition-all"
+                    className="h-[48px] px-5 bg-[#14b8a6] hover:bg-[#0f766e] text-white rounded-xl flex items-center gap-2 font-bold text-sm transition-all"
                 >
                     <Filter className="w-4 h-4" />
                     {t('common:actions.filter')}

@@ -50,7 +50,7 @@ const TourDetailModal = ({ isOpen, onClose, tour, onEdit }: Props) => {
                                 {/* Header */}
                                 <div className="sticky top-0 z-20 flex items-center justify-between border-b border-slate-100 bg-white/80 backdrop-blur-md px-6 py-4">
                                     <div className="flex items-center gap-4 flex-1 min-w-0">
-                                        <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 shrink-0">
+                                        <div className="w-10 h-10 rounded-xl bg-[#dff7f4] flex items-center justify-center text-[#14b8a6] shrink-0">
                                             <Info size={20} />
                                         </div>
                                         <div className="min-w-0">
@@ -58,7 +58,7 @@ const TourDetailModal = ({ isOpen, onClose, tour, onEdit }: Props) => {
                                                 {tour.name}
                                             </DialogTitle>
                                             <div className="flex items-center gap-2 mt-0.5">
-                                                <span className="text-xs font-medium text-slate-400 font-inter uppercase tracking-wider">
+                                                <span className="text-xs font-medium text-slate-400 font-sans uppercase tracking-wider">
                                                     {t('table.tour_code_prefix')}{tour.id.toString().padStart(3, '0')}
                                                 </span>
                                                 <div className="w-1 h-1 rounded-full bg-slate-300" />
@@ -69,7 +69,7 @@ const TourDetailModal = ({ isOpen, onClose, tour, onEdit }: Props) => {
                                     <div className="flex items-center gap-3">
                                         <button
                                             onClick={() => onEdit(tour.id)}
-                                            className="inline-flex items-center gap-2 rounded-xl bg-amber-50 px-4 py-2 text-sm font-bold text-amber-600 hover:bg-amber-100 transition-all border border-amber-100 active:scale-95"
+                                            className="inline-flex items-center gap-2 rounded-xl bg-[#dff7f4] px-4 py-2 text-sm font-bold text-[#0f766e] hover:bg-[#ccfbf1] transition-all border border-[#ccfbf1] active:scale-95"
                                         >
                                             <Edit2 size={16} />
                                             <span>{t('actions.edit', { ns: 'common' })}</span>
@@ -123,7 +123,7 @@ const TourDetailModal = ({ isOpen, onClose, tour, onEdit }: Props) => {
                                                     <div className="space-y-1">
                                                         <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">{t('table.header_price')}</p>
                                                         <div className="flex items-baseline gap-2">
-                                                            <span className="text-3xl font-black text-blue-600 font-inter">
+                                                            <span className="text-3xl font-black text-[#14b8a6] font-sans">
                                                                 {formattedPrice} {t('currency', { ns: 'common' })}
                                                             </span>
                                                             <span className="text-sm font-medium text-slate-400 italic">{t('table.per_person')}</span>
@@ -132,7 +132,7 @@ const TourDetailModal = ({ isOpen, onClose, tour, onEdit }: Props) => {
 
                                                     <div className="grid grid-cols-1 gap-4">
                                                         <div className="flex items-center gap-3 p-3 bg-white rounded-2xl border border-slate-100 shadow-xs">
-                                                            <div className="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center text-orange-600 shrink-0">
+                                                            <div className="w-10 h-10 rounded-xl bg-[#f4fce3] flex items-center justify-center text-[#0f766e] shrink-0">
                                                                 <Clock size={18} />
                                                             </div>
                                                             <div>
@@ -141,7 +141,7 @@ const TourDetailModal = ({ isOpen, onClose, tour, onEdit }: Props) => {
                                                             </div>
                                                         </div>
                                                         <div className="flex items-center gap-3 p-3 bg-white rounded-2xl border border-slate-100 shadow-xs">
-                                                            <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 shrink-0">
+                                                            <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center text-[#0f766e] shrink-0">
                                                                 <Users size={18} />
                                                             </div>
                                                             <div>
@@ -150,7 +150,7 @@ const TourDetailModal = ({ isOpen, onClose, tour, onEdit }: Props) => {
                                                             </div>
                                                         </div>
                                                         <div className="flex items-center gap-3 p-3 bg-white rounded-2xl border border-slate-100 shadow-xs">
-                                                            <div className="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center text-purple-600 shrink-0">
+                                                            <div className="w-10 h-10 rounded-xl bg-[#dff7f4] flex items-center justify-center text-[#14b8a6] shrink-0">
                                                                 <MapPin size={18} />
                                                             </div>
                                                             <div>
@@ -163,12 +163,12 @@ const TourDetailModal = ({ isOpen, onClose, tour, onEdit }: Props) => {
 
                                                 <div className="flex flex-wrap gap-2">
                                                     {tour.is_featured && (
-                                                        <span className="px-3 py-1 bg-blue-50 text-blue-600 border border-blue-100 rounded-lg text-xs font-black uppercase tracking-wider">
+                                                        <span className="px-3 py-1 bg-[#dff7f4] text-[#0f766e] border border-[#ccfbf1] rounded-lg text-xs font-black uppercase tracking-wider">
                                                             {t('filters.featured')}
                                                         </span>
                                                     )}
                                                     {tour.is_hot && (
-                                                        <span className="px-3 py-1 bg-orange-50 text-orange-600 border border-orange-100 rounded-lg text-xs font-black uppercase tracking-wider">
+                                                        <span className="px-3 py-1 bg-[#f4fce3] text-[#0f766e] border border-[#d9f99d] rounded-lg text-xs font-black uppercase tracking-wider">
                                                             {t('filters.hot')}
                                                         </span>
                                                     )}
@@ -179,10 +179,10 @@ const TourDetailModal = ({ isOpen, onClose, tour, onEdit }: Props) => {
                                         {/* Description Section */}
                                         <div className="space-y-4">
                                             <div className="flex items-center gap-2 text-slate-900">
-                                                <div className="w-1 h-6 bg-blue-600 rounded-full" />
+                                                <div className="w-1 h-6 bg-[#14b8a6] rounded-full" />
                                                 <h3 className="text-xl font-black uppercase tracking-tight italic">{t('form.basic.description')}</h3>
                                             </div>
-                                            <div className="prose prose-slate max-w-none text-slate-600 leading-relaxed font-inter">
+                                            <div className="prose prose-slate max-w-none text-slate-600 leading-relaxed font-sans">
                                                 {tour.description ? (
                                                     <div dangerouslySetInnerHTML={{ __html: tour.description }} />
                                                 ) : (
@@ -194,7 +194,7 @@ const TourDetailModal = ({ isOpen, onClose, tour, onEdit }: Props) => {
                                         {/* Itinerary Section */}
                                         <div className="space-y-6">
                                             <div className="flex items-center gap-2 text-slate-900">
-                                                <div className="w-1 h-6 bg-blue-600 rounded-full" />
+                                                <div className="w-1 h-6 bg-[#14b8a6] rounded-full" />
                                                 <h3 className="text-xl font-black uppercase tracking-tight italic">{t('form.itinerary.title_placeholder').replace(': ', '')}</h3>
                                             </div>
                                             
@@ -202,11 +202,11 @@ const TourDetailModal = ({ isOpen, onClose, tour, onEdit }: Props) => {
                                                 <div className="space-y-4 relative before:absolute before:left-[19px] before:top-4 before:bottom-4 before:w-0.5 before:bg-slate-100">
                                                     {(tour.itinerary as Array<{ day: number; title: string; content: string }>).map((item, idx) => (
                                                         <div key={idx} className="relative pl-12">
-                                                            <div className="absolute left-0 top-0 w-10 h-10 rounded-full bg-white border-2 border-blue-600 flex items-center justify-center text-blue-600 font-bold shadow-lg shadow-blue-100 z-10">
+                                                            <div className="absolute left-0 top-0 w-10 h-10 rounded-full bg-white border-2 border-[#14b8a6] flex items-center justify-center text-[#14b8a6] font-bold shadow-lg shadow-[#14b8a6]/20 z-10">
                                                                 {item.day || idx + 1}
                                                             </div>
                                                             <div className="bg-slate-50/50 border border-slate-100 rounded-2xl p-5 hover:bg-white transition-all hover:shadow-md group/it">
-                                                                <h4 className="text-md font-bold text-slate-800 mb-2 group-hover/it:text-blue-600 transition-colors">{item.title}</h4>
+                                                                <h4 className="text-md font-bold text-slate-800 mb-2 group-hover/it:text-[#14b8a6] transition-colors">{item.title}</h4>
                                                                 <p className="text-sm text-slate-600 leading-relaxed">{item.content}</p>
                                                             </div>
                                                         </div>

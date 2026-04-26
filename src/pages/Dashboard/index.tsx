@@ -130,9 +130,9 @@ const Dashboard = () => {
         const status = bookingStatusCountsQuery.data;
         if (!status) return [];
         return [
-            { name: t('status.completed'), value: status.completed, color: '#10b981' },
-            { name: t('status.confirmed'), value: status.confirmed, color: '#3b82f6' },
-            { name: t('status.pending'), value: status.pending, color: '#f59e0b' },
+            { name: t('status.completed'), value: status.completed, color: '#14b8a6' },
+            { name: t('status.confirmed'), value: status.confirmed, color: '#0f172a' },
+            { name: t('status.pending'), value: status.pending, color: '#94a3b8' },
             { name: t('status.cancelled'), value: status.cancelled, color: '#ef4444' },
         ];
     }, [bookingStatusCountsQuery.data, t]);
@@ -152,10 +152,10 @@ const Dashboard = () => {
     return (
         <div className="space-y-8 animate-in fade-in duration-700 slide-in-from-bottom-4 overflow-x-hidden min-w-0" aria-label={t('title')}>
             {/* Header */}
-            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5 pb-6 border-b border-slate-200/60">
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5 pb-6 border-b border-slate-100">
                 <div>
                     <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1.5 flex items-center gap-1.5">
-                        <TrendingUp size={12} className="text-blue-500" />
+                        <TrendingUp size={12} className="text-[#14b8a6]" />
                         {t('title')}
                     </p>
                     <h1 className="text-4xl font-black text-slate-900 tracking-tighter leading-none">
@@ -172,7 +172,7 @@ const Dashboard = () => {
                         onClick={handleExport}
                         disabled={exportMutation.isPending}
                         title={exportMutation.isPending ? t('exporting') : t('export')}
-                        className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl text-sm font-black transition-all flex items-center gap-2 shadow-xl shadow-emerald-900/20 active:scale-95 disabled:opacity-50"
+                        className="px-5 py-2.5 bg-[#14b8a6] hover:bg-[#0f766e] text-white rounded-2xl text-sm font-black transition-all flex items-center gap-2 shadow-xl shadow-[#14b8a6]/20 active:scale-95 disabled:opacity-50"
                     >
                         <Download size={16} className={exportMutation.isPending ? 'animate-bounce' : ''} />
                         {exportMutation.isPending ? t('exporting') : t('export')}
@@ -182,7 +182,7 @@ const Dashboard = () => {
                         onClick={handleRefresh}
                         disabled={refreshing}
                         title={refreshing ? t('refreshing') : t('refresh')}
-                        className={`px-5 py-2.5 rounded-2xl text-sm font-black transition-all flex items-center gap-2 shadow-xl active:scale-95 disabled:opacity-50 ${refreshing ? 'bg-blue-50 text-blue-600 shadow-blue-500/10' : 'bg-slate-900 hover:bg-black text-white shadow-slate-900/20'}`}
+                        className={`px-5 py-2.5 rounded-2xl text-sm font-black transition-all flex items-center gap-2 shadow-xl active:scale-95 disabled:opacity-50 ${refreshing ? 'bg-[#dff7f4] text-slate-900 shadow-black/5' : 'bg-slate-900 hover:bg-black text-white shadow-slate-900/20'}`}
                     >
                         <RefreshCcw size={16} className={refreshing ? 'animate-spin' : ''} />
                         {refreshing ? t('refreshing') : t('refresh')}

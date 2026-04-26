@@ -11,7 +11,7 @@ export const Toaster= ({...props}: ToasterProps) => {
         visibleToasts={5} // số toast tối đa hiện thị cùng lúc
         className="sonner-toast"
         toastOptions={{
-            className: 'rounded-xl shadow-xl border border-gray-200 dark:border-gray-700',
+            className: 'rounded-xl shadow-xl border border-slate-200',
             style: {
                 padding: '16px 20px'
             }

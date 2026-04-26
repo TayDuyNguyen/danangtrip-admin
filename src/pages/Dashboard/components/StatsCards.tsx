@@ -39,7 +39,7 @@ const StatsCards = ({
             trend: stats?.total_revenue_trend ?? null,
             sub: t('stats.vs_last_period'),
             icon: CircleDollarSign,
-            accent: 'blue',
+            accent: 'teal',
         },
         {
             title: t('stats.total_orders'),
@@ -52,7 +52,7 @@ const StatsCards = ({
             trend: ordersFromStatus ? null : stats?.total_bookings_trend ?? null,
             sub: ordersFromStatus ? t('stats.chart_orders_hint') : t('stats.vs_last_period'),
             icon: ShoppingCart,
-            accent: 'emerald',
+            accent: 'tealSoft',
         },
         {
             title: t('stats.total_users'),
@@ -62,7 +62,7 @@ const StatsCards = ({
             trend: stats?.total_users_trend ?? null,
             sub: t('stats.vs_last_period'),
             icon: Users,
-            accent: 'sky',
+            accent: 'slate',
         },
         {
             title: t('stats.tours_sold'),
@@ -72,7 +72,7 @@ const StatsCards = ({
             trend: stats?.total_tours_sold_trend ?? null,
             sub: t('stats.vs_last_period'),
             icon: Ticket,
-            accent: 'orange',
+            accent: 'tealSoft',
         },
         {
             title: t('stats.pending_orders'),
@@ -85,7 +85,7 @@ const StatsCards = ({
             trend: null,
             sub: t('stats.waiting_processing'),
             icon: Clock,
-            accent: 'amber',
+            accent: 'slate',
         },
         {
             title: t('stats.new_contacts'),
@@ -95,32 +95,24 @@ const StatsCards = ({
             trend: null,
             sub: t('stats.unread_messages'),
             icon: MessageSquare,
-            accent: 'rose',
+            accent: 'teal',
         },
     ];
 
     const accentColors: Record<string, { bg: string; text: string; border: string; shadow: string }> = {
-        blue: { bg: 'bg-blue-50', text: 'text-blue-600', border: 'border-blue-100', shadow: 'shadow-blue-100/80' },
-        emerald: {
-            bg: 'bg-emerald-50',
-            text: 'text-emerald-600',
-            border: 'border-emerald-100',
-            shadow: 'shadow-emerald-100/80',
+        teal: { bg: 'bg-[#dff7f4]', text: 'text-[#0f766e]', border: 'border-[#ccfbf1]', shadow: 'shadow-[#14b8a6]/10' },
+        tealSoft: {
+            bg: 'bg-[#f4fce3]',
+            text: 'text-[#0f766e]',
+            border: 'border-[#e5f8cf]',
+            shadow: 'shadow-[#14b8a6]/10',
         },
-        sky: {
-            bg: 'bg-sky-50',
-            text: 'text-sky-600',
-            border: 'border-sky-100',
-            shadow: 'shadow-sky-100/80',
+        slate: {
+            bg: 'bg-slate-50',
+            text: 'text-slate-700',
+            border: 'border-slate-100',
+            shadow: 'shadow-black/5',
         },
-        orange: {
-            bg: 'bg-orange-50',
-            text: 'text-orange-600',
-            border: 'border-orange-100',
-            shadow: 'shadow-orange-100/80',
-        },
-        amber: { bg: 'bg-amber-50', text: 'text-amber-600', border: 'border-amber-100', shadow: 'shadow-amber-100/80' },
-        rose: { bg: 'bg-rose-50', text: 'text-rose-600', border: 'border-rose-100', shadow: 'shadow-rose-100/80' },
     };
 
     return (
@@ -173,7 +165,7 @@ const StatsCards = ({
                                     {card.trend !== null ? (
                                         <span
                                             className={`inline-flex items-center gap-0.5 text-[11px] font-black px-2 py-1 rounded-lg ${
-                                                isUp ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-600'
+                                                isUp ? 'bg-[#dff7f4] text-[#0f766e]' : 'bg-red-50 text-red-600'
                                             }`}
                                         >
                                             {isUp ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}

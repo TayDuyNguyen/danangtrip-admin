@@ -142,7 +142,7 @@ const CategoryDialog = ({ isOpen, onClose, onSubmit, initialData, nextSortOrder 
                         {...register('name')}
                         type="text"
                         placeholder={t('categories.form.name_placeholder')}
-                        className="w-full px-5 py-3.5 rounded-2xl bg-slate-50 border border-slate-200 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-hidden transition-all font-bold text-slate-900 placeholder:text-slate-400"
+                        className="w-full px-5 py-3.5 rounded-2xl bg-slate-50 border border-slate-200 focus:bg-white focus:border-[#14b8a6] focus:ring-4 focus:ring-[#14b8a6]/10 outline-hidden transition-all font-bold text-slate-900 placeholder:text-slate-400"
                     />
                     {errors.name && (
                         <p className="text-red-500 text-xs font-bold flex items-center gap-1 mt-1.5 ml-1">
@@ -158,14 +158,14 @@ const CategoryDialog = ({ isOpen, onClose, onSubmit, initialData, nextSortOrder 
                         <label className="text-[11px] font-black uppercase tracking-widest text-slate-500 ml-1">
                             {t('categories.form.slug')}
                         </label>
-                        <span className="px-2 py-0.5 bg-blue-50 text-blue-600 text-[10px] font-black rounded-md uppercase tracking-wider">
+                        <span className="px-2 py-0.5 bg-[#dff7f4] text-[#0f766e] text-[10px] font-black rounded-md uppercase tracking-wider">
                             {t('form.basic.slug_auto')}
                         </span>
                     </div>
                     <input
                         {...register('slug')}
                         type="text"
-                        className="w-full px-5 py-3.5 rounded-2xl bg-slate-50 border border-slate-200 focus:bg-white focus:border-blue-500 transition-all font-bold text-slate-900"
+                        className="w-full px-5 py-3.5 rounded-2xl bg-slate-50 border border-slate-200 focus:bg-white focus:border-[#14b8a6] transition-all font-bold text-slate-900"
                     />
                     <p className="text-[11px] font-medium text-slate-400 ml-1 italic">{t('form.basic.slug_auto_helper')}</p>
                 </div>
@@ -181,8 +181,8 @@ const CategoryDialog = ({ isOpen, onClose, onSubmit, initialData, nextSortOrder 
                         <button
                             type="button"
                             className={cn(
-                                "w-16 h-16 rounded-[22px] flex items-center justify-center shrink-0 border-2 transition-all group relative overflow-hidden",
-                                isIconBrowserOpen ? "border-blue-500 bg-white ring-4 ring-blue-500/10" : "border-slate-200 bg-slate-50/50 hover:border-blue-500 hover:bg-white"
+                                "w-16 h-16 rounded-3xl flex items-center justify-center shrink-0 border-2 transition-all group relative overflow-hidden",
+                                isIconBrowserOpen ? "border-[#14b8a6] bg-white ring-4 ring-[#14b8a6]/10" : "border-slate-200 bg-slate-50/50 hover:border-[#14b8a6] hover:bg-white"
                             )}
                             style={{ backgroundColor: selectedColor + (isIconBrowserOpen ? '10' : '20'), color: selectedColor === '#000000' ? '#000000' : selectedColor }}
                             onClick={() => setIsIconBrowserOpen(!isIconBrowserOpen)}
@@ -192,8 +192,8 @@ const CategoryDialog = ({ isOpen, onClose, onSubmit, initialData, nextSortOrder 
                                 return <IconComp size={32} className={cn("transition-transform", isIconBrowserOpen ? "scale-110" : "group-hover:scale-110")} />;
                             })()}
                             {!isIconBrowserOpen && (
-                                <div className="absolute inset-0 bg-blue-600/0 group-hover:bg-blue-600/5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all">
-                                    <Plus size={16} className="text-blue-600" />
+                                <div className="absolute inset-0 bg-[#14b8a6]/0 group-hover:bg-[#14b8a6]/5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all">
+                                    <Plus size={16} className="text-[#14b8a6]" />
                                 </div>
                             )}
                         </button>
@@ -203,7 +203,7 @@ const CategoryDialog = ({ isOpen, onClose, onSubmit, initialData, nextSortOrder 
                                 {...register('icon')}
                                 type="text"
                                 placeholder={t('categories.form.icon_placeholder')}
-                                className="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-200 focus:bg-white focus:border-blue-500 transition-all font-bold text-slate-900 shadow-sm"
+                                className="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-200 focus:bg-white focus:border-[#14b8a6] transition-all font-bold text-slate-900 shadow-sm"
                             />
                         </div>
                     </div>
@@ -234,7 +234,7 @@ const CategoryDialog = ({ isOpen, onClose, onSubmit, initialData, nextSortOrder 
                                     <input 
                                         type="text"
                                         placeholder={t('categories.icon_browser.search_placeholder')}
-                                        className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold outline-hidden focus:bg-white focus:border-blue-500 transition-all"
+                                        className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold outline-hidden focus:bg-white focus:border-[#14b8a6] transition-all"
                                         onChange={(e) => setIconSearch(e.target.value)}
                                     />
                                 </div>
@@ -257,7 +257,7 @@ const CategoryDialog = ({ isOpen, onClose, onSubmit, initialData, nextSortOrder 
                                                     className={cn(
                                                         "aspect-square flex items-center justify-center rounded-xl transition-all border",
                                                         isSelected
-                                                            ? "bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-600/20 scale-110 z-10"
+                                                            ? "bg-[#14b8a6] border-[#14b8a6] text-white shadow-lg shadow-[#14b8a6]/20 scale-110 z-10"
                                                             : "bg-slate-50 border-transparent text-slate-400 hover:bg-white hover:border-slate-200 hover:text-slate-600"
                                                     )}
                                                     title={name}
@@ -271,7 +271,7 @@ const CategoryDialog = ({ isOpen, onClose, onSubmit, initialData, nextSortOrder 
                                 <div className="mt-4 pt-4 border-t border-slate-100">
                                     <p className="text-[10px] font-medium text-slate-400 text-center">
                                         {t('categories.icon_browser.more_prefix')}{' '}
-                                        <a href="https://lucide.dev/icons" target="_blank" rel="noreferrer" className="text-blue-600 hover:underline">
+                                        <a href="https://lucide.dev/icons" target="_blank" rel="noreferrer" className="text-[#14b8a6] hover:underline">
                                             {t('categories.icon_browser.more_link_label')}
                                         </a>
                                     </p>
@@ -294,7 +294,7 @@ const CategoryDialog = ({ isOpen, onClose, onSubmit, initialData, nextSortOrder 
                                 onClick={() => setValue('icon_background', color)}
                                 className={cn(
                                     "w-8 h-8 rounded-full transition-all border-2",
-                                    selectedColor === color ? "border-blue-600 scale-110 shadow-lg shadow-blue-500/20" : "border-transparent hover:scale-105"
+                                    selectedColor === color ? "border-[#14b8a6] scale-110 shadow-lg shadow-[#14b8a6]/20" : "border-transparent hover:scale-105"
                                 )}
                                 style={{ backgroundColor: color }}
                             />
@@ -311,7 +311,7 @@ const CategoryDialog = ({ isOpen, onClose, onSubmit, initialData, nextSortOrder 
                         {...register('description')}
                         placeholder={t('categories.form.description_placeholder')}
                         rows={4}
-                        className="w-full px-5 py-3.5 rounded-2xl bg-slate-50 border border-slate-200 focus:bg-white focus:border-blue-500 transition-all font-bold text-slate-900 placeholder:text-slate-400 resize-none"
+                        className="w-full px-5 py-3.5 rounded-2xl bg-slate-50 border border-slate-200 focus:bg-white focus:border-[#14b8a6] transition-all font-bold text-slate-900 placeholder:text-slate-400 resize-none"
                     />
                 </div>
 
@@ -374,7 +374,7 @@ const CategoryDialog = ({ isOpen, onClose, onSubmit, initialData, nextSortOrder 
                     <button
                         type="submit"
                         disabled={isLoading}
-                        className="flex items-center gap-2 bg-blue-600 text-white px-10 py-3.5 rounded-2xl font-black hover:bg-blue-700 hover:scale-105 active:scale-95 transition-all shadow-xl shadow-blue-600/20 disabled:opacity-50"
+                        className="flex items-center gap-2 bg-[#14b8a6] text-white px-10 py-3.5 rounded-2xl font-black hover:bg-[#0f766e] hover:scale-105 active:scale-95 transition-all shadow-xl shadow-[#14b8a6]/20 disabled:opacity-50"
                     >
                         {isLoading ? (
                             <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />

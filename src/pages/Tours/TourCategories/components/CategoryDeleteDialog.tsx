@@ -16,7 +16,7 @@ const CategoryDeleteDialog = ({ isOpen, categoryName, onClose, onConfirm, isDele
 
     return (
         <div className="fixed inset-0 z-110 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
-            <div className="bg-white w-full max-w-md rounded-[40px] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300 border border-slate-100">
+            <div className="bg-white w-full max-w-md rounded-[32px] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300 border border-slate-100">
                 <div className="p-10 text-center">
                     <div className="w-24 h-24 bg-red-50 rounded-[32px] flex items-center justify-center mx-auto mb-8 animate-pulse">
                         <AlertTriangle size={48} className="text-red-500" />

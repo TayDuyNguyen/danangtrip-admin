@@ -210,7 +210,7 @@ function EditTour() {
         return (
             <div className="flex items-center justify-center min-h-[60vh]">
                 <div className="flex flex-col items-center gap-4">
-                    <div className="w-10 h-10 border-4 border-blue-100 border-t-blue-600 rounded-full animate-spin" />
+                    <div className="w-10 h-10 border-4 border-[#ccfbf1] border-t-[#14b8a6] rounded-full animate-spin" />
                     <p className="text-slate-500 font-medium">{t('common:loading')}</p>
                 </div>
             </div>
@@ -219,7 +219,7 @@ function EditTour() {
 
     if (tourError) {
         return (
-            <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 py-12">
+            <div className="w-full px-4 sm:px-6 lg:px-10 py-12">
                 <ErrorWidget
                     title={t('messages.fetch_error')}
                     message={t('common:error_occurred')}
@@ -239,11 +239,11 @@ function EditTour() {
     }) as string[];
 
     return (
-        <form onSubmit={onSubmit} className="min-h-screen bg-[#F8FAFC] pb-20 font-inter" noValidate>
+        <form onSubmit={onSubmit} className="min-h-screen bg-[#F8FAFC] pb-20 font-sans" noValidate>
             <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200 transition-all duration-300 shadow-sm rounded-b-2xl">
                 <div
                     className={cn(
-                        'max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between transition-all duration-300',
+                        'w-full px-4 sm:px-6 lg:px-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between transition-all duration-300',
                         isScrolled ? 'py-3' : 'py-5 lg:py-6'
                     )}
                 >
@@ -276,7 +276,7 @@ function EditTour() {
                                 {t('title.edit')}
                             </h1>
                             {isScrolled && (
-                                <span className="hidden md:inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-[#EFF6FF] text-[#0066CC] animate-in fade-in slide-in-from-left-2 duration-300">
+                                <span className="hidden md:inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-[#dff7f4] text-[#0f766e] animate-in fade-in slide-in-from-left-2 duration-300">
                                     {t('title.breadcrumb_edit')}
                                 </span>
                             )}
@@ -295,14 +295,14 @@ function EditTour() {
                         <button
                             type="button"
                             onClick={() => navigate(ROUTES.TOURS_LIST)}
-                            className="px-5 py-2.5 text-sm font-semibold rounded-[10px] border border-[#E2E8F0] bg-white text-[#64748B] hover:border-[#EF4444] hover:text-[#EF4444] transition-colors"
+                            className="px-5 py-2.5 text-sm font-semibold rounded-md border border-[#E2E8F0] bg-white text-[#64748B] hover:border-[#EF4444] hover:text-[#EF4444] transition-colors"
                         >
                             {t('form.actions.cancel')}
                         </button>
                         <button
                             type="submit"
                             disabled={busy}
-                            className="flex items-center gap-2 px-5 py-2.5 rounded-[10px] bg-[#0066CC] hover:bg-[#004999] disabled:bg-[#3385D6] text-white text-sm font-semibold shadow-sm transition-colors"
+                            className="flex items-center gap-2 px-5 py-2.5 rounded-md bg-[#14b8a6] hover:bg-[#0f766e] disabled:bg-[#5dd4c7] text-white text-sm font-semibold shadow-sm transition-colors"
                         >
                             {busy ? (
                                 <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -315,7 +315,7 @@ function EditTour() {
                 </div>
             </div>
 
-            <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 pt-8">
+            <div className="w-full px-4 sm:px-6 lg:px-10 pt-8">
                 <div className="flex flex-col lg:flex-row gap-8 items-start">
                     <div className="w-full lg:flex-1 space-y-6">
                         <div
@@ -351,7 +351,7 @@ function EditTour() {
                                         <div className="flex items-center gap-2">
                                             <label className="text-sm font-semibold text-slate-700">{t('form.basic.slug')}</label>
                                             {autoSlug && (
-                                                <span className="text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full bg-[#EFF6FF] text-[#0066CC] border border-[#B3D9FF]">
+                                                <span className="text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full bg-[#dff7f4] text-[#0f766e] border border-[#ccfbf1]">
                                                     {t('form.basic.slug_auto')}
                                                 </span>
                                             )}
@@ -359,7 +359,7 @@ function EditTour() {
                                         <button
                                             type="button"
                                             onClick={() => setAutoSlug(!autoSlug)}
-                                            className="text-xs font-semibold text-[#0066CC] hover:underline"
+                                            className="text-xs font-semibold text-[#14b8a6] hover:underline"
                                         >
                                             {autoSlug ? t('form.basic.slug_manual') : t('form.basic.slug_auto')}
                                         </button>
@@ -374,9 +374,9 @@ function EditTour() {
                                         )}
                                     />
                                     {!autoSlug && (
-                                        <div className="flex gap-2 p-3 rounded-xl bg-amber-50 border border-amber-100 mt-2">
-                                            <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
-                                            <p className="text-[11px] leading-relaxed text-amber-800 italic">
+                                        <div className="flex gap-2 p-3 rounded-xl bg-[#f4fce3] border border-[#d9f99d] mt-2">
+                                            <AlertTriangle className="w-4 h-4 text-[#0f766e] shrink-0 mt-0.5" />
+                                            <p className="text-[11px] leading-relaxed text-[#365314] italic">
                                                 {t('form.basic.slug_warning')}
                                             </p>
                                         </div>
@@ -573,7 +573,7 @@ function EditTour() {
                                     <label className="text-sm font-semibold text-slate-700">
                                         {t('form.pricing.price_after_discount')}
                                     </label>
-                                    <div className="w-full px-4 py-3 bg-[#F8FAFC] border border-slate-200 rounded-xl text-[#0066CC] text-base font-bold">
+                                    <div className="w-full px-4 py-3 bg-[#F8FAFC] border border-slate-200 rounded-xl text-[#14b8a6] text-base font-bold">
                                         {priceAfterDiscount.toLocaleString('vi-VN')} {t('form.pricing.currency_suffix')}
                                     </div>
                                 </div>
@@ -672,13 +672,13 @@ function EditTour() {
                                         <p className="text-xs text-red-500 font-medium">{errors.available_to.message}</p>
                                     )}
                                 </div>
-                                <div className="sm:col-span-2 flex gap-3 rounded-[10px] border border-amber-200/80 bg-[#FEF3C7] p-3.5 text-[13px] text-[#92400E]">
-                                    <Info className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
+                                <div className="sm:col-span-2 flex gap-3 rounded-md border border-[#d9f99d] bg-[#f4fce3] p-3.5 text-[13px] text-[#365314]">
+                                    <Info className="w-5 h-5 text-[#0f766e] shrink-0 mt-0.5" />
                                     <div>
                                         <p>{t('form.schedule.info_notice')}</p>
                                         <button
                                             type="button"
-                                            className="mt-2 text-[13px] font-semibold text-[#0066CC] hover:underline"
+                                            className="mt-2 text-[13px] font-semibold text-[#14b8a6] hover:underline"
                                             onClick={() => navigate(ROUTES.TOURS_LIST)}
                                         >
                                             {t('form.schedule.info_link')}

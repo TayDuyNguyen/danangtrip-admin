@@ -21,7 +21,7 @@ const StatusBadge = ({ status, className }: Props) => {
 
     return (
         <span className={twMerge(
-            'inline-flex items-center justify-center px-2.5 py-1 rounded-full text-[11px] font-bold uppercase border leading-none font-inter whitespace-nowrap',
+            'inline-flex items-center justify-center px-2.5 py-1 rounded-full text-[11px] font-bold uppercase border leading-none font-sans whitespace-nowrap',
             currentStyle,
             className
         )}>

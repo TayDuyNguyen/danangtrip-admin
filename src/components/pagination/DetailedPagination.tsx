@@ -42,7 +42,7 @@ const DetailedPagination = ({
             {/* Left: Summary and Page Size */}
             <div className="flex flex-col sm:flex-row items-center gap-6 w-full lg:w-auto">
                 <p className="text-sm font-bold text-slate-500 whitespace-nowrap">
-                    {t('pagination.showing')} <span className="text-blue-600">{startItem}</span> {t('pagination.to')} <span className="text-blue-600">{endItem}</span> {t('pagination.of')} <span className="text-slate-900">{totalItems}</span> {t('pagination.results')}
+                    {t('pagination.showing')} <span className="text-[#14b8a6]">{startItem}</span> {t('pagination.to')} <span className="text-[#14b8a6]">{endItem}</span> {t('pagination.of')} <span className="text-slate-900">{totalItems}</span> {t('pagination.results')}
                 </p>
 
                 <div className="flex items-center gap-3">
@@ -65,7 +65,7 @@ const DetailedPagination = ({
                 <button
                     onClick={() => onPageChange(1)}
                     disabled={currentPage === 1}
-                    className="p-2 rounded-xl border border-transparent text-slate-400 hover:bg-slate-50 hover:text-blue-600 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                    className="p-2 rounded-xl border border-transparent text-slate-400 hover:bg-slate-50 hover:text-[#14b8a6] disabled:opacity-30 disabled:cursor-not-allowed transition-all"
                     title={t('pagination.first_page')}
                 >
                     <ChevronsLeft size={18} />
@@ -74,7 +74,7 @@ const DetailedPagination = ({
                 <button
                     onClick={() => onPageChange(currentPage - 1)}
                     disabled={currentPage === 1}
-                    className="flex items-center gap-2 px-3 sm:px-4 py-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-blue-500 hover:text-blue-600 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-300 shadow-sm active:scale-95 mx-1"
+                    className="flex items-center gap-2 px-3 sm:px-4 py-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-[#14b8a6] hover:text-[#14b8a6] disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-300 shadow-sm active:scale-95 mx-1"
                 >
                     <ChevronLeft size={16} />
                     <span className="hidden sm:inline text-sm font-bold tracking-tight">
@@ -97,8 +97,8 @@ const DetailedPagination = ({
                                 onClick={() => onPageChange(pageNum)}
                                 className={`w-9 h-9 rounded-xl font-bold text-sm transition-all duration-300 ${
                                     currentPage === pageNum
-                                        ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30 ring-2 ring-blue-600/20'
-                                        : 'text-slate-600 hover:bg-slate-50 hover:text-blue-600'
+                                        ? 'bg-[#14b8a6] text-white shadow-lg shadow-[#14b8a6]/30 ring-2 ring-[#14b8a6]/20'
+                                        : 'text-slate-600 hover:bg-slate-50 hover:text-[#14b8a6]'
                                 }`}
                             >
                                 {pageNum}
@@ -110,7 +110,7 @@ const DetailedPagination = ({
                 <button
                     onClick={() => onPageChange(currentPage + 1)}
                     disabled={currentPage === totalPages}
-                    className="flex items-center gap-2 px-3 sm:px-4 py-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-blue-500 hover:text-blue-600 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-300 shadow-sm active:scale-95 mx-1"
+                    className="flex items-center gap-2 px-3 sm:px-4 py-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-[#14b8a6] hover:text-[#14b8a6] disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-300 shadow-sm active:scale-95 mx-1"
                 >
                     <span className="hidden sm:inline text-sm font-bold tracking-tight">
                         {t('pagination.next')}
@@ -121,7 +121,7 @@ const DetailedPagination = ({
                 <button
                     onClick={() => onPageChange(totalPages)}
                     disabled={currentPage === totalPages}
-                    className="p-2 rounded-xl border border-transparent text-slate-400 hover:bg-slate-50 hover:text-blue-600 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                    className="p-2 rounded-xl border border-transparent text-slate-400 hover:bg-slate-50 hover:text-[#14b8a6] disabled:opacity-30 disabled:cursor-not-allowed transition-all"
                     title={t('pagination.last_page')}
                 >
                     <ChevronsRight size={18} />
@@ -141,11 +141,11 @@ const DetailedPagination = ({
                     max={totalPages}
                     value={jumpToPage}
                     onChange={(e) => setJumpToPage(e.target.value)}
-                    className="w-16 p-2 bg-white border border-slate-200 rounded-xl text-center text-sm font-bold text-slate-700 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                    className="w-16 p-2 bg-white border border-slate-200 rounded-xl text-center text-sm font-bold text-slate-700 focus:ring-[#14b8a6] focus:border-[#14b8a6] outline-none transition-all"
                 />
                 <button
                     type="submit"
-                    className="p-2 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-600 hover:text-white font-bold text-xs uppercase tracking-wider transition-all duration-300"
+                    className="p-2 bg-[#dff7f4] text-[#0f766e] rounded-xl hover:bg-[#14b8a6] hover:text-white font-bold text-xs uppercase tracking-wider transition-all duration-300"
                 >
                     {t('pagination.go_button')}
                 </button>

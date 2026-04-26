@@ -18,7 +18,7 @@ const CategoryGrid = ({ categories, onEdit, onDelete, onStatusChange, isReorderM
 
     if (categories.length === 0) {
         return (
-            <div className="py-20 flex flex-col items-center justify-center text-center bg-white rounded-[40px] border border-dashed border-slate-200">
+            <div className="py-20 flex flex-col items-center justify-center text-center bg-white rounded-[32px] border border-dashed border-slate-200">
                 <div className="w-24 h-24 bg-slate-50 rounded-[32px] flex items-center justify-center mb-6">
                     <Icons.FolderOpen size={48} className="text-slate-200" />
                 </div>
@@ -34,7 +34,7 @@ const CategoryGrid = ({ categories, onEdit, onDelete, onStatusChange, isReorderM
                 axis="y" 
                 values={categories} 
                 onReorder={onReorderChange}
-                className="flex flex-col gap-4 max-w-2xl mx-auto" // Chuyển sang dạng List dọc để kéo thả mượt hơn
+                className="flex w-full flex-col gap-4" // Chuyển sang dạng List dọc để kéo thả mượt hơn
             >
                 {categories.map((category) => (
                     <Reorder.Item 

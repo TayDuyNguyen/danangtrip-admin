@@ -36,7 +36,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
         <div className={`w-full group ${className}`}>
             {label && (
                 <label className={`block text-xs font-semibold mb-1 uppercase tracking-wider transition-all duration-300 transform
-                    ${isFocused ? 'text-cyan-400 translate-y-0 opacity-100' : 'text-transparent -translate-y-1 opacity-0'}
+                    ${isFocused ? 'text-[#14b8a6] translate-y-0 opacity-100' : 'text-transparent -translate-y-1 opacity-0'}
                     ${error ? 'text-red-500 opacity-100 translate-y-0' : ''}
                 `}>
                     {label}
@@ -46,12 +46,12 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
                 className={`
                     flex items-center border-b px-3 gap-3 
                     transition-all duration-500 ease-out
-                    ${error ? 'border-red-500' : isFocused ? 'border-cyan-400' : 'border-gray-700'}
+                    ${error ? 'border-red-500' : isFocused ? 'border-[#14b8a6]' : 'border-slate-200'}
                     bg-transparent
                 `}
             >
                 {leftIcon && (
-                    <span className={`text-xl transition-colors duration-300 ${isFocused ? 'text-cyan-400' : 'text-gray-500'}`}>
+                    <span className={`text-xl transition-colors duration-300 ${isFocused ? 'text-[#14b8a6]' : 'text-gray-500'}`}>
                         {leftIcon}
                     </span>
                 )}
@@ -62,7 +62,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
                     onFocus={onFocus}
                     onBlur={onBlur}
                     className={`
-                        w-full py-3 bg-transparent outline-none text-white placeholder-gray-600
+                        w-full py-3 bg-transparent outline-none text-slate-900 placeholder-slate-400
                         transition-all duration-300
                         focus:placeholder-transparent 
                         text-sm sm:text-base
@@ -75,7 +75,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
                     <button
                         type="button"
                         onClick={onTogglePassword}
-                        className="p-2 -mr-2 text-gray-500 hover:text-cyan-400 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-cyan-400/50 rounded-full"
+                        className="p-2 -mr-2 text-gray-500 hover:text-[#14b8a6] transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[#14b8a6]/30 rounded-full"
                         tabIndex={-1}
                         aria-label={showPassword ? "Hide password" : "Show password"}
                     >

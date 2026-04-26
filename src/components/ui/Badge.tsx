@@ -1,4 +1,4 @@
-import React from 'react';
+import type { HTMLAttributes } from 'react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -6,23 +6,23 @@ function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
 }
 
-interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
+interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
     variant?: 'default' | 'success' | 'warning' | 'error' | 'outline' | 'neutral';
 }
 
-const Badge: React.FC<BadgeProps> = ({ 
+const Badge = ({ 
     children, 
     variant = 'default', 
     className, 
     ...props 
-}) => {
+}: BadgeProps) => {
     const variants = {
-        default: 'bg-blue-100 text-blue-700',
-        success: 'bg-green-100 text-green-700',
-        warning: 'bg-yellow-100 text-yellow-700',
-        error: 'bg-red-100 text-red-700',
-        neutral: 'bg-gray-100 text-gray-700',
-        outline: 'border border-gray-200 text-gray-600 bg-transparent',
+        default: 'bg-blue-100 text-[#0f172a]',
+        success: 'bg-[#f4fce3] text-[#166534]',
+        warning: 'bg-[#fef3c7] text-[#92400e]',
+        error: 'bg-[#fee2e2] text-[#b91c1c]',
+        neutral: 'bg-[#f8fafc] text-[#64748b]',
+        outline: 'border border-[#f1f5f9] text-[#64748b] bg-transparent',
     };
 
     return (

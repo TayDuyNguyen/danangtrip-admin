@@ -3,6 +3,7 @@ import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, RotateCcw, Refresh
 import { useSchedules } from '@/hooks/useScheduleQueries';
 import { clsx } from 'clsx';
 import { ScheduleStatus } from '@/types/schedule';
+import { useTranslation } from 'react-i18next';
 
 type Props = {
     tourId?: string | number;
@@ -23,10 +24,9 @@ const formatYMD = (d: Date) => {
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 };
 
-const WEEKDAYS = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
-
 const SchedulesCalendar = ({ tourId, selectedDate, onSelectDate }: Props) => {
     const [currentDate, setCurrentDate] = useState(new Date());
+    const { t } = useTranslation(['schedules', 'common']);
 
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
@@ -74,7 +74,7 @@ const SchedulesCalendar = ({ tourId, selectedDate, onSelectDate }: Props) => {
         return { days: daysArr, startDateStr: start, endDateStr: end };
     }, [year, month]);
 
-    const { data, isFetching } = useSchedules({
+    const { data, isFetching, isError } = useSchedules({
         start_date: startDateStr,
         end_date: endDateStr,
         limit: 100, // Fetch up to 100 for the month view
@@ -104,30 +104,31 @@ const SchedulesCalendar = ({ tourId, selectedDate, onSelectDate }: Props) => {
     }, [data?.data]);
 
     const todayStr = formatYMD(new Date());
+    const weekdayLabels = t('schedules:calendar.weekdays', { returnObjects: true }) as string[];
 
     return (
         <div className="bg-white border border-[#E2E8F0] rounded-2xl p-5 md:p-6 shadow-sm overflow-hidden">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                 <div className="flex flex-wrap items-center gap-4">
                     <div className="flex items-center gap-2">
-                        <CalendarIcon className="w-5 h-5 text-[#0066CC]" />
+                        <CalendarIcon className="w-5 h-5 text-[#14b8a6]" />
                         <h2 className="text-[16px] font-bold text-[#1E293B]">
-                            Tháng {month + 1}, {year}
+                            {t('schedules:calendar.month_year', { month: month + 1, year })}
                         </h2>
                         {isFetching && (
                             <div className="ml-1">
-                                <RefreshCw className="w-3.5 h-3.5 text-[#0066CC] animate-spin" />
+                                <RefreshCw className="w-3.5 h-3.5 text-[#14b8a6] animate-spin" />
                             </div>
                         )}
                     </div>
                     <div className="flex items-center gap-4 ml-0 sm:ml-4 px-3 py-1.5 bg-[#F8FAFC] rounded-lg border border-[#E2E8F0] text-[12px] font-medium text-[#64748B]">
                         <div className="flex items-center gap-1.5">
-                            <div className="w-2 h-2 rounded-full bg-[#0066CC]" />
-                            <span>Còn chỗ</span>
+                            <div className="w-2 h-2 rounded-full bg-[#14b8a6]" />
+                            <span>{t('schedules:calendar.available')}</span>
                         </div>
                         <div className="flex items-center gap-1.5">
                             <div className="w-2 h-2 rounded-full bg-[#EF4444]" />
-                            <span>Đầy/Hủy</span>
+                            <span>{t('schedules:calendar.full_or_cancelled')}</span>
                         </div>
                     </div>
                 </div>
@@ -138,19 +139,19 @@ const SchedulesCalendar = ({ tourId, selectedDate, onSelectDate }: Props) => {
                             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[13px] font-bold text-[#EF4444] bg-[#FEE2E2] hover:bg-[#FECACA] transition-colors"
                         >
                             <RotateCcw className="w-3.5 h-3.5" />
-                            Đặt lại
+                            {t('common:actions.reset')}
                         </button>
                     )}
                     <div className="flex items-center gap-1.5 bg-[#F8FAFC] border border-[#E2E8F0] rounded-lg p-1">
                         <button
                             onClick={prevMonth}
-                            className="w-7 h-7 flex items-center justify-center rounded-md text-[#64748B] hover:bg-white hover:text-[#0066CC] hover:shadow-sm transition-all"
+                            className="w-7 h-7 flex items-center justify-center rounded-md text-[#64748B] hover:bg-white hover:text-[#14b8a6] hover:shadow-sm transition-all"
                         >
                             <ChevronLeft className="w-4 h-4" />
                         </button>
                         <button
                             onClick={nextMonth}
-                            className="w-7 h-7 flex items-center justify-center rounded-md text-[#64748B] hover:bg-white hover:text-[#0066CC] hover:shadow-sm transition-all"
+                            className="w-7 h-7 flex items-center justify-center rounded-md text-[#64748B] hover:bg-white hover:text-[#14b8a6] hover:shadow-sm transition-all"
                         >
                             <ChevronRight className="w-4 h-4" />
                         </button>
@@ -159,8 +160,13 @@ const SchedulesCalendar = ({ tourId, selectedDate, onSelectDate }: Props) => {
             </div>
 
             <div className="border border-[#E2E8F0] rounded-xl overflow-hidden bg-white">
+                {isError ? (
+                    <div className="px-4 py-3 text-sm text-[#B91C1C] bg-[#FEF2F2] border-b border-[#FECACA]">
+                        {t('common:error.fetch')} - {t('common:error.try_again')}
+                    </div>
+                ) : null}
                 <div className="grid grid-cols-7 border-b border-[#E2E8F0] bg-[#F8FAFC]">
-                    {WEEKDAYS.map((day, idx) => (
+                    {weekdayLabels.map((day, idx) => (
                         <div 
                             key={day} 
                             className={clsx(
@@ -190,13 +196,13 @@ const SchedulesCalendar = ({ tourId, selectedDate, onSelectDate }: Props) => {
                                     "min-h-[90px] p-2 border-b border-[#E2E8F0] relative flex flex-col items-center cursor-pointer transition-colors hover:bg-[#F8FAFC]",
                                     (i % 7 !== 0) && "border-l border-[#E2E8F0]",
                                     !dayObj.isCurrentMonth && "bg-[#F8FAFC] opacity-60",
-                                    isSelected && "bg-[#EFF6FF] hover:bg-[#EFF6FF]"
+                                    isSelected && "bg-[#dff7f4] hover:bg-[#dff7f4]"
                                 )}
                             >
                                 <span className={clsx(
                                     "text-[14px] font-semibold flex items-center justify-center w-8 h-8 rounded-full mb-2",
-                                    isSelected ? "bg-[#0066CC] text-white" : 
-                                    isToday ? "bg-[#F1F5F9] text-[#0066CC]" : 
+                                    isSelected ? "bg-[#14b8a6] text-white" : 
+                                    isToday ? "bg-[#F1F5F9] text-[#14b8a6]" : 
                                     !dayObj.isCurrentMonth ? "text-[#CBD5E1]" : 
                                     isWeekend ? "text-[#EF4444]" : "text-[#1E293B]"
                                 )}>
@@ -206,10 +212,10 @@ const SchedulesCalendar = ({ tourId, selectedDate, onSelectDate }: Props) => {
                                 {status && (
                                     <div className="mt-auto flex gap-1 items-center justify-center w-full pb-1">
                                         {status.hasAvailable && (
-                                            <div className="w-1.5 h-1.5 rounded-full bg-[#0066CC]" title="Còn chỗ" />
+                                            <div className="w-1.5 h-1.5 rounded-full bg-[#14b8a6]" title={t('schedules:calendar.available')} />
                                         )}
                                         {status.hasFullOrCancelled && (
-                                            <div className="w-1.5 h-1.5 rounded-full bg-[#EF4444]" title="Đầy chỗ / Đã hủy" />
+                                            <div className="w-1.5 h-1.5 rounded-full bg-[#EF4444]" title={t('schedules:calendar.full_or_cancelled_title')} />
                                         )}
                                     </div>
                                 )}

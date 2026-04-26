@@ -18,7 +18,7 @@ export const ScheduleForm = () => {
             value: 'AVAILABLE',
             label: (
                 <div className="flex items-center gap-2">
-                    <span className="h-2 w-2 rounded-full bg-emerald-500" />
+                    <span className="h-2 w-2 rounded-full bg-[#14b8a6]" />
                     {t('schedules:status.available')}
                 </div>
             ),
@@ -27,7 +27,7 @@ export const ScheduleForm = () => {
             value: 'FULL',
             label: (
                 <div className="flex items-center gap-2">
-                    <span className="h-2 w-2 rounded-full bg-rose-500" />
+                    <span className="h-2 w-2 rounded-full bg-red-500" />
                     {t('schedules:status.full')}
                 </div>
             ),
@@ -46,14 +46,14 @@ export const ScheduleForm = () => {
     return (
         <div className="space-y-6">
             <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#dff7f4] text-[#14b8a6]">
                     <i className="ri-calendar-todo-line text-lg" />
                 </div>
                 <div className="flex items-center gap-2">
                     <h3 className="text-[15px] font-semibold text-slate-800">
                         {t('schedules:fields.start_date')} & {t('schedules:fields.end_date')}
                     </h3>
-                    <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-600 uppercase">
+                    <span className="rounded-full bg-[#dff7f4] px-2 py-0.5 text-[10px] font-bold text-[#0f766e] uppercase">
                         {t('common:new')}
                     </span>
                 </div>

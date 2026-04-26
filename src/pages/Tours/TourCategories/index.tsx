@@ -125,7 +125,7 @@ const TourCategories = () => {
 
     if (isError) {
         return (
-            <div className="container mx-auto py-20 px-4 flex flex-col items-center justify-center text-center">
+            <div className="w-full py-20 px-4 flex flex-col items-center justify-center text-center">
                 <div className="w-24 h-24 bg-red-50 rounded-[32px] flex items-center justify-center mb-6 text-red-500 animate-bounce">
                     <AlertCircle size={48} />
                 </div>
@@ -135,7 +135,7 @@ const TourCategories = () => {
                 </p>
                 <button 
                     onClick={() => refetch()}
-                    className="mt-8 px-8 py-3.5 bg-blue-600 text-white rounded-2xl font-black hover:bg-blue-700 hover:scale-105 active:scale-95 transition-all shadow-xl shadow-blue-600/20 flex items-center gap-2"
+                    className="mt-8 px-8 py-3.5 bg-[#14b8a6] text-white rounded-2xl font-black hover:bg-[#0f766e] hover:scale-105 active:scale-95 transition-all shadow-xl shadow-[#14b8a6]/20 flex items-center gap-2"
                 >
                     <RefreshCcw size={20} />
                     <span>{t('form.actions.retry')}</span>
@@ -145,13 +145,13 @@ const TourCategories = () => {
     }
 
     return (
-        <div className="container mx-auto py-8 px-4 animate-in fade-in slide-in-from-bottom-4 duration-700 max-w-7xl">
+        <div className="w-full py-8 px-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
             <CategoryHeader onAdd={handleAddClick} />
             
             {/* Stats Row */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <div className="bg-white p-7 rounded-[32px] border border-slate-200/60 shadow-sm flex items-center gap-5 group hover:shadow-xl hover:shadow-blue-500/5 transition-all">
-                    <div className="w-14 h-14 bg-blue-50 rounded-[22px] flex items-center justify-center text-blue-600 group-hover:scale-110 transition-transform">
+                <div className="bg-white p-7 rounded-[32px] border border-slate-200/60 shadow-sm flex items-center gap-5 group hover:shadow-xl hover:shadow-[#14b8a6]/5 transition-all">
+                    <div className="w-14 h-14 bg-[#dff7f4] rounded-3xl flex items-center justify-center text-[#14b8a6] group-hover:scale-110 transition-transform">
                         <LayoutGrid size={28} />
                     </div>
                     <div>
@@ -159,8 +159,8 @@ const TourCategories = () => {
                         <p className="text-3xl font-black text-slate-900">{stats.total}</p>
                     </div>
                 </div>
-                <div className="bg-white p-7 rounded-[32px] border border-slate-200/60 shadow-sm flex items-center gap-5 group hover:shadow-xl hover:shadow-emerald-500/5 transition-all">
-                    <div className="w-14 h-14 bg-emerald-50 rounded-[22px] flex items-center justify-center text-emerald-600 group-hover:scale-110 transition-transform">
+                <div className="bg-white p-7 rounded-[32px] border border-slate-200/60 shadow-sm flex items-center gap-5 group hover:shadow-xl hover:shadow-[#14b8a6]/5 transition-all">
+                    <div className="w-14 h-14 bg-blue-100 rounded-3xl flex items-center justify-center text-[#0f766e] group-hover:scale-110 transition-transform">
                         <CheckCircle2 size={28} />
                     </div>
                     <div>
@@ -169,7 +169,7 @@ const TourCategories = () => {
                     </div>
                 </div>
                 <div className="bg-white p-7 rounded-[32px] border border-slate-200/60 shadow-sm flex items-center gap-5 group hover:shadow-xl hover:shadow-slate-500/5 transition-all">
-                    <div className="w-14 h-14 bg-slate-50 rounded-[22px] flex items-center justify-center text-slate-600 group-hover:scale-110 transition-transform">
+                    <div className="w-14 h-14 bg-slate-50 rounded-3xl flex items-center justify-center text-slate-600 group-hover:scale-110 transition-transform">
                         <XCircle size={28} />
                     </div>
                     <div>
@@ -180,11 +180,11 @@ const TourCategories = () => {
             </div>
 
             {/* Filter Area - Figma Style */}
-            <div className="flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-4 mb-8 bg-white p-4 rounded-[28px] border border-slate-100 shadow-sm">
+            <div className="flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-4 mb-8 bg-white p-4 rounded-[32px] border border-slate-100 shadow-sm">
                 <div className="flex flex-col md:flex-row items-center gap-4 flex-1">
                     {/* Search */}
                     <div className="relative flex-1 w-full group">
-                        <div className="absolute left-5 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center text-slate-400 group-focus-within:text-blue-600 transition-colors">
+                        <div className="absolute left-5 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center text-slate-400 group-focus-within:text-[#14b8a6] transition-colors">
                             <Search size={20} />
                         </div>
                         <input 
@@ -192,7 +192,7 @@ const TourCategories = () => {
                             placeholder={t('categories.search_placeholder')}
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full pl-14 pr-6 py-4 rounded-[22px] bg-slate-50/50 border-none focus:bg-white focus:ring-4 focus:ring-blue-500/5 outline-hidden transition-all font-bold text-slate-900"
+                            className="w-full pl-14 pr-6 py-4 rounded-3xl bg-slate-50/50 border-none focus:bg-white focus:ring-4 focus:ring-[#14b8a6]/10 outline-hidden transition-all font-bold text-slate-900"
                         />
                     </div>
                     
@@ -222,7 +222,7 @@ const TourCategories = () => {
                         className={cn(
                             "h-[58px] px-6 rounded-2xl flex items-center gap-3 font-black transition-all border shrink-0",
                             isReorderMode 
-                                ? "bg-orange-50 border-orange-200 text-orange-600 ring-4 ring-orange-500/5"
+                                ? "bg-[#f4fce3] border-[#d9f99d] text-[#0f766e] ring-4 ring-[#14b8a6]/10"
                                 : "bg-white border-slate-200 text-slate-600 hover:border-slate-300 active:scale-95 disabled:opacity-50 disabled:grayscale"
                         )}
                         title={searchQuery !== '' || statusFilter !== undefined ? t('categories.reorder.disabled_title') : undefined}
@@ -232,7 +232,7 @@ const TourCategories = () => {
                     </button>
                 </div>
 
-                <div className="flex items-center gap-3 px-6 py-4 bg-slate-50/50 rounded-[22px] shrink-0 border border-slate-100/50">
+                <div className="flex items-center gap-3 px-6 py-4 bg-slate-50/50 rounded-3xl shrink-0 border border-slate-100/50">
                     <span className="text-[13px] font-black text-slate-500 uppercase tracking-widest">{t('categories.reorder.results_label')}</span>
                     <span className="px-3 h-8 flex items-center justify-center bg-white rounded-lg border border-slate-200 text-sm font-black text-slate-900 shadow-sm min-w-[32px]">
                         {data?.meta?.total ?? categories.length}
@@ -259,7 +259,7 @@ const TourCategories = () => {
                         className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white px-8 py-5 rounded-[32px] shadow-2xl flex items-center gap-8 border border-slate-800"
                     >
                         <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center animate-bounce">
+                            <div className="w-10 h-10 bg-[#14b8a6] rounded-xl flex items-center justify-center animate-bounce">
                                 <RefreshCcw size={20} />
                             </div>
                             <div>
@@ -278,7 +278,7 @@ const TourCategories = () => {
                             <button
                                 onClick={handleReorderSave}
                                 disabled={reorderMutation.isPending}
-                                className="px-8 py-3 bg-blue-600 text-white rounded-xl font-black hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/20 flex items-center gap-2"
+                                className="px-8 py-3 bg-[#14b8a6] text-white rounded-xl font-black hover:bg-[#0f766e] transition-all shadow-lg shadow-[#14b8a6]/20 flex items-center gap-2"
                             >
                                 {reorderMutation.isPending ? (
                                     <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
