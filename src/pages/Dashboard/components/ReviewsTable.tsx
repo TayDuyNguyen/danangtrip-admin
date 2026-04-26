@@ -20,7 +20,7 @@ const ReviewsTable = ({ reviews }: ReviewsTableProps) => {
             <div className="flex items-center justify-between mb-6">
                 <div>
                     <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest flex items-center gap-2">
-                        <MessageSquare size={16} className="text-blue-500" />
+                        <MessageSquare size={16} className="text-[#14b8a6]" />
                         {t('tables.recent_reviews')}
                     </h3>
                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">{t('tables.subtitle_recent_reviews')}</p>
@@ -46,7 +46,7 @@ const ReviewsTable = ({ reviews }: ReviewsTableProps) => {
                             <tr key={review.id} className="group hover:bg-slate-50/50 transition-colors">
                                 <td className="py-4">
                                     <div className="flex items-center gap-3">
-                                        <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-black text-xs">
+                                        <div className="w-8 h-8 rounded-full bg-[#dff7f4] flex items-center justify-center text-[#14b8a6] font-black text-xs">
                                             {review.customer.name.charAt(0)}
                                         </div>
                                         <span className="text-xs font-bold text-slate-900">{review.customer.name}</span>
@@ -61,7 +61,7 @@ const ReviewsTable = ({ reviews }: ReviewsTableProps) => {
                                             <Star
                                                 key={i}
                                                 size={12}
-                                                className={i < review.rating ? 'fill-amber-400 text-amber-400' : 'text-slate-200'}
+                                                className={i < review.rating ? 'fill-[#14b8a6] text-[#14b8a6]' : 'text-slate-200'}
                                             />
                                         ))}
                                     </div>

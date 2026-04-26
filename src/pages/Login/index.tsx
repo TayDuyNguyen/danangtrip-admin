@@ -75,48 +75,48 @@ const Login = () => {
     const passwordFocus = getFocusProps('password');
 
     return (
-        <div className="flex min-h-screen bg-gray-900 justify-center items-center p-4 sm:p-8">
-            <div className="relative flex w-full max-w-md lg:max-w-4xl lg:w-3/4 xl:w-2/3 h-auto lg:h-[550px] shadow-[0_0_40px_rgba(34,211,238,0.1)] rounded-2xl glow-effect">
+        <div className="flex min-h-screen bg-white justify-center items-center p-4 sm:p-8">
+            <div className="relative flex w-full max-w-md lg:max-w-4xl lg:w-3/4 xl:w-2/3 h-auto lg:h-[550px] shadow-[0_20px_40px_rgba(0,0,0,0.06)] rounded-3xl glow-effect">
                 
                 {/* Animated Border Background */}
-                <div className="absolute inset-[-2px] rounded-[18px] overflow-hidden pointer-events-none z-0">
+                <div className="absolute inset-[-2px] rounded-3xl overflow-hidden pointer-events-none z-0">
                     <div 
                         className="absolute top-1/2 left-1/2 w-[200%] h-[200%] -translate-x-1/2 -translate-y-1/2 animate-[spin_4s_linear_infinite]" 
-                        style={{ backgroundImage: 'conic-gradient(from 0deg, transparent 0 240deg, rgba(34,211,238,0.3) 300deg, #22d3ee 360deg)' }}
+                        style={{ backgroundImage: 'conic-gradient(from 0deg, transparent 0 240deg, rgba(20,184,166,0.24) 300deg, #14b8a6 360deg)' }}
                     />
                 </div>
 
                 {/* Main Content Container */}
-                <div className="relative z-10 flex w-full h-full rounded-2xl overflow-hidden bg-gray-900 border border-gray-800/50">
+                <div className="relative z-10 flex w-full h-full rounded-3xl overflow-hidden bg-white border border-slate-100">
                 {/* Left panel - gradient background */}
                 <div
-                    className="hidden lg:flex flex-1 bg-linear-to-br from-cyan-500 to-blue-950 flex-col pt-12 pl-8 pr-16 text-white relative"
+                    className="hidden lg:flex flex-1 bg-linear-to-br from-[#14b8a6] to-slate-900 flex-col pt-12 pl-8 pr-16 text-white relative"
                     style={{ clipPath: "polygon(0 0, 100% 0, 60% 100%, 0% 100%)" }}
                 >
                     <h1 className="text-4xl mb-4 font-quicksand font-bold uppercase tracking-wide leading-tight">
                         {t('welcome_back')}
                     </h1>
-                    <p className="text-cyan-100 text-lg opacity-80">
+                    <p className="text-white/80 text-lg opacity-80">
                         {t('login_title')}
                     </p>
                 </div>
 
                 {/* Right panel - form */}
-                <div className="flex flex-1 items-center justify-center p-5 sm:p-8 bg-gray-900">
+                <div className="flex flex-1 items-center justify-center p-5 sm:p-8 bg-white">
                     <div className="w-full max-w-md">
                         {/* Mobile title */}
                         <div className="flex items-center justify-center mb-6 sm:mb-8 lg:hidden">
-                            <span className="font-bold text-cyan-300 text-xl text-center uppercase tracking-wider">
+                            <span className="font-bold text-[#14b8a6] text-xl text-center uppercase tracking-wider">
                                 {t('login_title')}
                             </span>
                         </div>
 
-                        <h2 className="hidden lg:block text-3xl font-quicksand font-bold uppercase text-white mb-8 text-center lg:text-left tracking-tight">
+                        <h2 className="hidden lg:block text-3xl font-sans font-bold uppercase text-slate-900 mb-8 text-center lg:text-left tracking-tight">
                             {t('login_title')}
                         </h2>
 
                         {err && (
-                            <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm text-center">
+                            <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-md text-red-400 text-sm text-center">
                                 {err}
                             </div>
                         )}
@@ -124,7 +124,7 @@ const Login = () => {
                         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate autoComplete="off">
                             <Input
                                 label={t('email')}
-                                leftIcon={<MdEmail className="w-5 h-5 text-cyan-400/70" />}
+                                leftIcon={<MdEmail className="w-5 h-5 text-[#14b8a6]/70" />}
                                 type="email"
                                 placeholder={t('email')}
                                 autoComplete="new-email"
@@ -141,7 +141,7 @@ const Login = () => {
 
                             <Input
                                 label={t('password')}
-                                leftIcon={<MdLock className="w-5 h-5 text-cyan-400/70" />}
+                                leftIcon={<MdLock className="w-5 h-5 text-[#14b8a6]/70" />}
                                 placeholder={t('password')}
                                 autoComplete="new-password"
                                 required
@@ -159,16 +159,16 @@ const Login = () => {
                             />
 
                             <div className="flex items-center justify-between">
-                                <label className="flex items-center gap-2 text-sm text-gray-400 cursor-pointer hover:text-white transition-colors duration-200">
+                                <label className="flex items-center gap-2 text-sm text-slate-400 cursor-pointer hover:text-slate-900 transition-colors duration-200">
                                     <input
                                         type="checkbox"
                                         checked={rememberMe}
                                         onChange={(e) => setRememberMe(e.target.checked)}
-                                        className="accent-cyan-500 w-4 h-4 rounded border-gray-600 focus:ring-cyan-500/20"
+                                        className="accent-[#14b8a6] w-4 h-4 rounded border-slate-300 focus:ring-[#14b8a6]/20"
                                     />
                                     {t('remember_me')}
                                 </label>
-                                <a href="#" className="text-sm text-cyan-400 hover:text-cyan-300 hover:underline transition-all">
+                                <a href="#" className="text-sm text-[#14b8a6] hover:text-[#0f766e] hover:underline transition-all">
                                     {t('forgot_password')}
                                 </a>
                             </div>
@@ -176,7 +176,7 @@ const Login = () => {
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="w-full flex items-center justify-center gap-2 bg-linear-to-br from-cyan-400 to-blue-600 hover:from-cyan-500 hover:to-blue-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-lg transition-all duration-300 shadow-lg shadow-cyan-500/25 uppercase tracking-wider"
+                                className="w-full flex items-center justify-center gap-2 bg-[#14b8a6] hover:bg-[#0f766e] disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-full border border-transparent transition-all duration-300 shadow-sm shadow-[#14b8a6]/25 uppercase tracking-wider"
                             >
                                 {loading ? (
                                     <>

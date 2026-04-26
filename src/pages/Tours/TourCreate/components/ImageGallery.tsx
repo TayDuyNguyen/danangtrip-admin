@@ -126,7 +126,7 @@ const ImageGallery = ({ setValue, watch }: ImageGalleryProps) => {
                     className={`relative w-full aspect-video md:w-80 rounded-2xl border-2 border-dashed flex flex-col items-center justify-center transition-all overflow-hidden ${
                         thumbnail
                             ? 'border-transparent cursor-pointer'
-                            : 'border-slate-200 hover:border-blue-400 hover:bg-blue-50 cursor-pointer'
+                            : 'border-slate-200 hover:border-[#14b8a6] hover:bg-[#dff7f4] cursor-pointer'
                     } ${thumbPending ? 'pointer-events-none opacity-70' : ''}`}
                 >
                     {thumbnail ? (
@@ -160,7 +160,7 @@ const ImageGallery = ({ setValue, watch }: ImageGalleryProps) => {
                     ) : (
                         <div className="text-center px-6">
                             {thumbPending ? (
-                                <Loader2 className="w-10 h-10 text-blue-600 animate-spin mx-auto mb-3" />
+                                <Loader2 className="w-10 h-10 text-[#14b8a6] animate-spin mx-auto mb-3" />
                             ) : (
                                 <ImageIcon className="w-10 h-10 text-slate-300 mx-auto mb-3" />
                             )}
@@ -206,10 +206,10 @@ const ImageGallery = ({ setValue, watch }: ImageGalleryProps) => {
                     )}
                     <div
                         onClick={() => !galleryPending && galleryInputRef.current?.click()}
-                        className={`aspect-square rounded-xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition-all text-slate-400 ${galleryPending ? 'pointer-events-none opacity-70' : ''}`}
+                        className={`aspect-square rounded-xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center cursor-pointer hover:border-[#14b8a6] hover:bg-[#dff7f4] transition-all text-slate-400 ${galleryPending ? 'pointer-events-none opacity-70' : ''}`}
                     >
                         {galleryPending ? (
-                            <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
+                            <Loader2 className="w-6 h-6 animate-spin text-[#14b8a6]" />
                         ) : (
                             <>
                                 <Plus className="w-6 h-6 mb-1" />

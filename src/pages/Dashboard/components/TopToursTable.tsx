@@ -21,15 +21,12 @@ const TopToursTable = ({ topTours, onRefresh, isRefreshing, isLoading, isError }
     const isEmpty = !isLoading && !isError && topTours.length === 0;
 
     return (
-        <div className="bg-white rounded-[2.5rem] border border-slate-200/60 shadow-sm overflow-hidden group/card transition-all duration-300">
+        <div className="bg-white rounded-[32px] border border-slate-200/60 shadow-sm overflow-hidden group/card transition-all duration-300">
             <div className="p-6 border-b border-slate-100 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                     <div>
                         <div className="flex items-center gap-2">
                             <h3 className="text-base font-black text-slate-900 tracking-tighter">{t('tables.top_tours')}</h3>
-                            {(isLoading || isRefreshing) && (
-                                <RefreshCw className="w-3.5 h-3.5 text-[#0066CC] animate-spin" />
-                            )}
                         </div>
                         <p className="text-slate-400 text-[12px] font-bold">{t('tables.subtitle_top_tours')}</p>
                     </div>
@@ -39,13 +36,13 @@ const TopToursTable = ({ topTours, onRefresh, isRefreshing, isLoading, isError }
                             disabled={isRefreshing}
                             title={t('charts.refresh_chart')}
                             aria-label={t('charts.refresh_chart')}
-                            className={`p-2 rounded-xl bg-slate-50 hover:bg-blue-50 transition-all ${isRefreshing ? 'opacity-100 text-blue-600 cursor-not-allowed' : 'text-slate-400 hover:text-blue-600 active:scale-90 group-hover/card:opacity-100 opacity-0 lg:opacity-0'}`}
+                            className={`p-2 rounded-xl bg-slate-50 hover:bg-[#dff7f4] transition-all ${isRefreshing ? 'opacity-100 text-[#14b8a6] cursor-not-allowed' : 'text-slate-400 hover:text-[#14b8a6] active:scale-90 group-hover/card:opacity-100 opacity-0 lg:opacity-0'}`}
                         >
                             <RefreshCw size={14} className={isRefreshing ? 'animate-spin' : ''} />
                         </button>
                     )}
                 </div>
-                <button className="text-xs font-black text-blue-600 flex items-center gap-1 hover:underline">
+                <button className="text-xs font-black text-[#14b8a6] flex items-center gap-1 hover:underline">
                     {t('tables.view_all')} <ExternalLink size={12} />
                 </button>
             </div>
@@ -99,9 +96,9 @@ const TopToursTable = ({ topTours, onRefresh, isRefreshing, isLoading, isError }
                                     <tr key={tour.id} className="hover:bg-slate-50/40 transition-colors group">
                                         <td className="px-6 py-4">
                                             <span className={`w-7 h-7 flex items-center justify-center rounded-xl text-[12px] font-black 
-                                                ${index === 0 ? 'bg-amber-50 text-amber-600' : 
+                                                ${index === 0 ? 'bg-[#dff7f4] text-[#14b8a6]' : 
                                                   index === 1 ? 'bg-slate-100 text-slate-600' :
-                                                  index === 2 ? 'bg-orange-50 text-orange-600' : 'bg-slate-50 text-slate-400'}`}>
+                                                  index === 2 ? 'bg-blue-100 text-[#0f766e]' : 'bg-slate-50 text-slate-400'}`}>
                                                 {index + 1}
                                             </span>
                                         </td>
@@ -130,7 +127,7 @@ const TopToursTable = ({ topTours, onRefresh, isRefreshing, isLoading, isError }
                                         </td>
                                         <td className="px-6 py-4 text-center">
                                             {tour.rating ? (
-                                                <span className="inline-flex items-center gap-0.5 text-[11px] font-black px-2 py-1 rounded-lg bg-amber-50 text-amber-600">
+                                                <span className="inline-flex items-center gap-0.5 text-[11px] font-black px-2 py-1 rounded-lg bg-[#f4fce3] text-[#0f766e]">
                                                     <Star size={12} className="fill-current" />
                                                     {tour.rating}
                                                 </span>
@@ -141,8 +138,8 @@ const TopToursTable = ({ topTours, onRefresh, isRefreshing, isLoading, isError }
                                         <td className="px-6 py-4 text-center">
                                             {tour.status ? (
                                                 <span className={`px-2 py-1 text-[10px] font-black rounded-lg uppercase tracking-wider
-                                                    ${tour.status === 'active' ? 'bg-emerald-50 text-emerald-600' : 
-                                                      tour.status === 'full' ? 'bg-blue-50 text-blue-600' : 'bg-slate-100 text-slate-500'}`}>
+                                                    ${tour.status === 'active' ? 'bg-blue-100 text-[#0f766e]' : 
+                                                      tour.status === 'full' ? 'bg-[#dff7f4] text-[#0f766e]' : 'bg-slate-100 text-slate-500'}`}>
                                                     {t(`status.${tour.status}`)}
                                                 </span>
                                             ) : (

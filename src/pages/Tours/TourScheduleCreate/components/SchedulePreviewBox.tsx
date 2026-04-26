@@ -41,7 +41,7 @@ export const SchedulePreviewBox = ({ control }: SchedulePreviewBoxProps) => {
             );
         }
         return (
-            <span className="text-blue-700 font-bold">
+            <span className="text-[#0f766e] font-bold">
                 {new Intl.NumberFormat(i18n.language === 'vi' ? 'vi-VN' : 'en-US').format(Number(val))} d
             </span>
         );
@@ -51,13 +51,13 @@ export const SchedulePreviewBox = ({ control }: SchedulePreviewBoxProps) => {
         const s = (status || '').toUpperCase() as ScheduleStatus;
         switch (s) {
             case 'AVAILABLE':
-                return <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-medium text-emerald-600 border border-emerald-100">
-                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                return <span className="inline-flex items-center gap-1.5 rounded-full bg-[#dff7f4] px-2 py-0.5 text-[11px] font-medium text-[#0f766e] border border-[#ccfbf1]">
+                    <span className="h-1.5 w-1.5 rounded-full bg-[#14b8a6]" />
                     {t('schedules:status.available')}
                 </span>;
             case 'FULL':
-                return <span className="inline-flex items-center gap-1.5 rounded-full bg-rose-50 px-2 py-0.5 text-[11px] font-medium text-rose-600 border border-rose-100">
-                    <span className="h-1.5 w-1.5 rounded-full bg-rose-500" />
+                return <span className="inline-flex items-center gap-1.5 rounded-full bg-red-50 px-2 py-0.5 text-[11px] font-medium text-red-700 border border-red-100">
+                    <span className="h-1.5 w-1.5 rounded-full bg-red-500" />
                     {t('schedules:status.full')}
                 </span>;
             case 'CANCELLED':
@@ -80,7 +80,7 @@ export const SchedulePreviewBox = ({ control }: SchedulePreviewBoxProps) => {
 
             <div className="grid grid-cols-1 gap-x-8 gap-y-5 p-5 md:grid-cols-2">
                 <div className="flex items-center gap-3">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-100 text-blue-600 shadow-sm">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#dff7f4] text-[#14b8a6] shadow-sm">
                         <i className="ri-calendar-event-line text-lg" />
                     </div>
                     <div className="flex flex-col">
@@ -94,7 +94,7 @@ export const SchedulePreviewBox = ({ control }: SchedulePreviewBoxProps) => {
                 </div>
 
                 <div className="flex items-center gap-3">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-100 text-indigo-600 shadow-sm">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-100 text-[#0f766e] shadow-sm">
                         <i className="ri-checkbox-circle-line text-lg" />
                     </div>
                     <div className="flex flex-col">
@@ -108,7 +108,7 @@ export const SchedulePreviewBox = ({ control }: SchedulePreviewBoxProps) => {
                 </div>
 
                 <div className="flex items-center gap-3">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-amber-100 text-amber-600 shadow-sm">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#f4fce3] text-[#0f766e] shadow-sm">
                         <i className="ri-group-line text-lg" />
                     </div>
                     <div className="flex flex-col">
@@ -122,7 +122,7 @@ export const SchedulePreviewBox = ({ control }: SchedulePreviewBoxProps) => {
                 </div>
 
                 <div className="flex items-center gap-3">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-100 text-emerald-600 shadow-sm">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#dff7f4] text-[#14b8a6] shadow-sm">
                         <i className="ri-money-dollar-circle-line text-lg" />
                     </div>
                     <div className="flex flex-col">

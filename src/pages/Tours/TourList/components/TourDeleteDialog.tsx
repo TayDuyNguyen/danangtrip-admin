@@ -42,7 +42,7 @@ const TourDeleteDialog = ({ isOpen, onClose, onConfirm, tourName, isDeleting, is
                             leaveFrom="opacity-100 scale-100"
                             leaveTo="opacity-0 scale-95"
                         >
-                            <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-[20px] bg-white p-[32px] text-left align-middle shadow-2xl transition-all border border-slate-100">
+                            <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-3xl bg-white p-[32px] text-left align-middle shadow-2xl transition-all border border-slate-100">
                                 <div className="flex items-center justify-between mb-6">
                                     <div className="w-[64px] h-[64px] rounded-full bg-red-50 flex items-center justify-center shrink-0">
                                         <AlertTriangle className="text-[#EF4444]" size={32} />
@@ -55,18 +55,18 @@ const TourDeleteDialog = ({ isOpen, onClose, onConfirm, tourName, isDeleting, is
                                     </button>
                                 </div>
 
-                                <Dialog.Title as="h3" className="text-[20px] font-bold text-[#1E293B] leading-tight mb-3 font-inter">
+                                <Dialog.Title as="h3" className="text-[20px] font-bold text-[#1E293B] leading-tight mb-3 font-sans">
                                     {isBulk ? t('dialog.bulk_delete_title') : t('dialog.delete_title')}
                                 </Dialog.Title>
 
                                 <div className="space-y-4">
-                                    <p className="text-[14px] text-[#64748B] leading-relaxed font-inter">
+                                    <p className="text-[14px] text-[#64748B] leading-relaxed font-sans">
                                         {isBulk 
                                             ? t('dialog.bulk_delete_confirm', { count })
                                             : t('dialog.delete_confirm', { name: tourName })}
                                     </p>
-                                    <div className="p-4 bg-red-50 border border-red-100 rounded-[12px]">
-                                        <p className="text-[12px] font-bold text-[#DC2626] italic font-inter">
+                                    <div className="p-4 bg-red-50 border border-red-100 rounded-2xl">
+                                        <p className="text-[12px] font-bold text-[#DC2626] italic font-sans">
                                             {t('dialog.delete_warning')}
                                         </p>
                                     </div>
@@ -75,7 +75,7 @@ const TourDeleteDialog = ({ isOpen, onClose, onConfirm, tourName, isDeleting, is
                                 <div className="mt-8 flex items-center gap-3">
                                     <button
                                         type="button"
-                                        className="flex-1 px-4 h-[48px] bg-[#F8FAFC] border border-[#E2E8F0] hover:bg-[#F1F5F9] text-[#64748B] text-[14px] font-bold rounded-[12px] transition-all"
+                                        className="flex-1 px-4 h-[48px] bg-[#F8FAFC] border border-[#E2E8F0] hover:bg-[#F1F5F9] text-[#64748B] text-[14px] font-bold rounded-2xl transition-all"
                                         onClick={onClose}
                                     >
                                         {t('dialog.button_cancel')}
@@ -83,7 +83,7 @@ const TourDeleteDialog = ({ isOpen, onClose, onConfirm, tourName, isDeleting, is
                                     <button
                                         type="button"
                                         disabled={isDeleting}
-                                        className="flex-1 px-4 h-[48px] bg-[#EF4444] hover:bg-[#DC2626] text-white text-[14px] font-bold rounded-[12px] shadow-lg shadow-red-500/20 transition-all active:scale-95 disabled:opacity-50"
+                                        className="flex-1 px-4 h-[48px] bg-[#EF4444] hover:bg-[#DC2626] text-white text-[14px] font-bold rounded-2xl shadow-lg shadow-red-500/20 transition-all active:scale-95 disabled:opacity-50"
                                         onClick={onConfirm}
                                     >
                                         {isDeleting ? t('dialog.loading_delete') : (isBulk ? t('dialog.button_bulk_delete') : t('dialog.button_delete'))}

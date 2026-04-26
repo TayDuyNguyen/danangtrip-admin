@@ -75,7 +75,7 @@ const ChartCard = ({
     const { t } = useTranslation('dashboard');
     
     return (
-        <div className="bg-white p-6 rounded-[2.5rem] border border-slate-200/60 shadow-sm h-[400px] flex flex-col hover:shadow-xl transition-all duration-500 group/card">
+        <div className="bg-white p-6 rounded-[32px] border border-slate-100 shadow-sm h-[400px] flex flex-col hover:shadow-xl transition-all duration-500 group/card">
             <div className="flex items-center justify-between mb-4 shrink-0">
                 <div className="flex items-center gap-3">
                     <div>
@@ -88,9 +88,9 @@ const ChartCard = ({
                             disabled={isRefreshing}
                             title={refreshTooltip ?? t('refresh')}
                             aria-label={refreshTooltip ?? t('refresh')}
-                            className={`p-2 rounded-xl bg-slate-50 hover:bg-blue-50 transition-all ${isRefreshing
-                                ? 'opacity-100 text-blue-600 cursor-not-allowed'
-                                : 'text-slate-400 hover:text-blue-600 active:scale-90 group-hover/card:opacity-100 opacity-0 lg:opacity-0'
+                            className={`p-2 rounded-xl bg-slate-50 hover:bg-[#dff7f4] transition-all ${isRefreshing
+                                ? 'opacity-100 text-[#14b8a6] cursor-not-allowed'
+                                : 'text-slate-400 hover:text-[#14b8a6] active:scale-90 group-hover/card:opacity-100 opacity-0 lg:opacity-0'
                             }`}
                         >
                             <RefreshCw size={14} className={isRefreshing ? 'animate-spin' : ''} />
@@ -100,7 +100,7 @@ const ChartCard = ({
                 <div className="flex items-center gap-2">
                     {filter}
                     {badge && (
-                        <span className="px-3 py-1 bg-blue-50 text-blue-600 text-[11px] font-black rounded-xl border border-blue-100 uppercase tracking-wider">
+                        <span className="px-3 py-1 bg-[#dff7f4] text-[#0f766e] text-[11px] font-black rounded-xl border border-[#ccfbf1] uppercase tracking-wider">
                             {badge}
                         </span>
                     )}
@@ -138,7 +138,7 @@ const FilterButton = ({ active, onClick, label }: {
     <button
         onClick={onClick}
         className={`px-3 py-1.5 text-[11px] font-black rounded-lg transition-all ${active
-            ? 'bg-blue-600 text-white shadow-sm'
+            ? 'bg-[#14b8a6] text-white shadow-sm'
             : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100'
         }`}
     >
@@ -223,8 +223,8 @@ const DashboardCharts = (props: ExtendedDashboardChartsProps) => {
                     <LineChart data={safeDailyRevenueData} margin={{ left: 4, right: 10 }}>
                         <defs>
                             <linearGradient id="lineGrad" x1="0" y1="0" x2="1" y2="0">
-                                <stop offset="0%" stopColor="#3b82f6" />
-                                <stop offset="100%" stopColor="#6366f1" />
+                                <stop offset="0%" stopColor="#14b8a6" />
+                                <stop offset="100%" stopColor="#0f766e" />
                             </linearGradient>
                         </defs>
                         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
@@ -248,7 +248,7 @@ const DashboardCharts = (props: ExtendedDashboardChartsProps) => {
                             stroke="url(#lineGrad)"
                             strokeWidth={3}
                             dot={false}
-                            activeDot={{ r: 6, fill: '#3b82f6', stroke: '#fff', strokeWidth: 2 }}
+                            activeDot={{ r: 6, fill: '#14b8a6', stroke: '#fff', strokeWidth: 2 }}
                             name={t('charts.unit_currency')}
                             {...animProps}
                         />
@@ -301,7 +301,7 @@ const DashboardCharts = (props: ExtendedDashboardChartsProps) => {
                         <Tooltip content={<CustomTooltip />} />
                         <Bar
                             dataKey="count"
-                            fill="#3b82f6"
+                            fill="#14b8a6"
                             radius={[6, 6, 0, 0]}
                             barSize={props.bookingTrendDays <= 7 ? 28 : props.bookingTrendDays <= 30 ? 14 : 8}
                             name={t('charts.unit_orders')}

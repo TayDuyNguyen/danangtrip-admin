@@ -1,25 +1,32 @@
 @import "tailwindcss";
 
 @theme {
+  --color-primary: #14B8A6;
+  --color-secondary: #DBEAFE;
+  --color-tertiary: #F4FCE3;
+  --color-surface: #F8FAFC;
+  --color-border: #F1F5F9;
+  --color-text-primary: #0F172A;
+  --color-text-secondary: #94A3B8;
   /* Primary sans-serif font - clean and modern */
   /* (Font sans-serif chính - sạch sẽ và hiện đại) */
-  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 
   /* Elegant serif font for headings */
   /* (Font serif sang trọng cho tiêu đề và heading) */
-  --font-serif: "Playfair Display", Georgia, serif;
+  --font-serif: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 
   /* Friendly rounded font for UI elements */
   /* (Font tròn trịa, thân thiện cho button và UI) */
-  --font-quicksand: "Quicksand", "Inter", sans-serif;
+  --font-quicksand: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 
   /* Decorative script font for accents */
   /* (Font viết tay nghệ thuật cho điểm nhấn trang trí) */
-  --font-script: "Imperial Script", cursive;
+  --font-script: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 
   /* Classic readable font for long content */
   /* (Font cổ điển dễ đọc cho nội dung dài) */
-  --font-neuton: "Neuton", serif;
+  --font-neuton: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 
   /* ========================================================
      ĐỊNH NGHĨA LẠI BẢNG MÀU HEX/RGB CHO TRÌNH DUYỆT CŨ
@@ -107,11 +114,9 @@
   .glow-effect {
     /* Tạo bóng nhiều lớp để có độ sâu */
     box-shadow:
-      0 0 10px rgba(89, 151, 250, 0.6),
-      /* Bóng gần */
-      0 0 20px rgba(88, 149, 247, 0.4),
-      /* Bóng xa */
-      0 0 30px rgba(59, 130, 246, 0.2);
+      0 0 10px rgba(20, 184, 166, 0.3),
+      0 0 20px rgba(20, 184, 166, 0.2),
+      0 0 30px rgba(20, 184, 166, 0.12);
     /* Bóng mờ nhất */
 
     /* Hiệu ứng chuyển cảnh mượt khi hover */
@@ -121,9 +126,9 @@
   /* Tùy chọn: Sáng hơn khi hover */
   .glow-effect:hover {
     box-shadow:
-      0 0 20px rgba(59, 130, 246, 0.8),
-      0 0 40px rgba(49, 110, 209, 0.5),
-      0 0 50px rgba(59, 130, 246, 0.3);
+      0 0 20px rgba(20, 184, 166, 0.42),
+      0 0 40px rgba(20, 184, 166, 0.28),
+      0 0 50px rgba(20, 184, 166, 0.2);
   }
 
   html,
@@ -153,6 +158,6 @@
   }
 
   .custom-scrollbar-horizontal::-webkit-scrollbar-thumb:hover {
-    background: #0066CC;
+    background: #14B8A6;
   }
 }

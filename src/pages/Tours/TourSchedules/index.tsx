@@ -152,7 +152,7 @@ const SchedulesPage = () => {
     };
 
     return (
-        <div className="p-4 lg:p-10 max-w-[1600px] mx-auto min-h-screen bg-[#F8FAFC] font-inter space-y-6">
+        <div className="p-4 lg:p-10 mx-auto min-h-screen bg-white font-sans space-y-6">
             <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
                 <div>
                     <p className="text-xs font-semibold text-[#94A3B8] uppercase tracking-wide mb-1">
@@ -164,7 +164,7 @@ const SchedulesPage = () => {
                 <button
                     type="button"
                     onClick={() => navigate(ROUTES.TOURS_LIST)}
-                    className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-[#0066CC] hover:bg-[#0052a3] text-white rounded-xl font-bold shadow-md transition-all"
+                    className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-[#14b8a6] hover:bg-[#0f766e] text-white rounded-xl font-bold shadow-md transition-all"
                 >
                     <Plus className="w-5 h-5" />
                     {t('schedules:actions.add_new')}
@@ -186,15 +186,15 @@ const SchedulesPage = () => {
             />
 
             {selectedIds.length > 0 ? (
-                <div className="flex flex-wrap items-center gap-3 px-4 py-3 bg-[#EFF6FF] border border-[#B3D9FF] rounded-xl">
-                    <span className="text-[13px] font-bold text-[#0066CC]">
+                <div className="flex flex-wrap items-center gap-3 px-4 py-3 bg-blue-100 border border-slate-100 rounded-xl">
+                    <span className="text-[13px] font-bold text-slate-900">
                         {t('schedules:actions.selected_count', { count: selectedIds.length })}
                     </span>
                     <button
                         type="button"
                         disabled={isBulk}
                         onClick={handleBulkAvailable}
-                        className="px-3 py-1.5 rounded-lg bg-[#D1FAE5] text-[#10B981] text-xs font-bold hover:opacity-90 disabled:opacity-50"
+                        className="px-3 py-1.5 rounded-lg bg-[#f4fce3] text-[#0f766e] text-xs font-bold hover:opacity-90 disabled:opacity-50"
                     >
                         {t('schedules:actions.bulk_activate')}
                     </button>

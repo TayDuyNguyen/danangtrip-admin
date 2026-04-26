@@ -81,7 +81,7 @@ const TourTable = ({
                 <div className="flex justify-center">
                     <input
                         type="checkbox"
-                        className="w-[16px] h-[16px] rounded border-[#E2E8F0] text-[#0066CC] focus:ring-[#0066CC]/20 accent-[#0066CC] cursor-pointer"
+                        className="w-[16px] h-[16px] rounded border-[#E2E8F0] text-[#14b8a6] focus:ring-[#14b8a6]/20 accent-[#14b8a6] cursor-pointer"
                         checked={table.getIsAllPageRowsSelected()}
                         onChange={table.getToggleAllPageRowsSelectedHandler()}
                     />
@@ -91,7 +91,7 @@ const TourTable = ({
                 <div className="flex justify-center">
                     <input
                         type="checkbox"
-                        className="w-[16px] h-[16px] rounded border-[#E2E8F0] text-[#0066CC] focus:ring-[#0066CC]/20 accent-[#0066CC] cursor-pointer"
+                        className="w-[16px] h-[16px] rounded border-[#E2E8F0] text-[#14b8a6] focus:ring-[#14b8a6]/20 accent-[#14b8a6] cursor-pointer"
                         checked={row.getIsSelected()}
                         onChange={row.getToggleSelectedHandler()}
                     />
@@ -103,7 +103,7 @@ const TourTable = ({
             id: 'stt',
             meta: { width: '50px' },
             header: () => <div className="text-center w-full">#</div>,
-            cell: info => <div className="text-center text-[13px] font-medium text-[#94A3B8] font-inter w-full">{info.row.index + (page - 1) * limit + 1}</div>,
+            cell: info => <div className="text-center text-[13px] font-medium text-[#94A3B8] font-sans w-full">{info.row.index + (page - 1) * limit + 1}</div>,
         }),
         // Tour - flexible
         columnHelper.accessor('name', {
@@ -114,7 +114,7 @@ const TourTable = ({
                 const tour = info.row.original;
                 return (
                     <div className="flex items-center gap-[12px] min-w-[250px] py-1">
-                        <div className="w-[48px] h-[48px] rounded-[10px] overflow-hidden border border-[#E2E8F0] shrink-0 shadow-sm relative group/thumb">
+                        <div className="w-[48px] h-[48px] rounded-md overflow-hidden border border-[#E2E8F0] shrink-0 shadow-sm relative group/thumb">
                             {tour.thumbnail ? (
                                 <img
                                     src={tour.thumbnail}
@@ -128,17 +128,17 @@ const TourTable = ({
                             )}
                         </div>
                         <div className="flex flex-col gap-1.5 min-w-0 py-1">
-                            <span className="text-[14px] font-bold text-[#1E293B] whitespace-normal wrap-break-word group-hover:text-[#0066CC] transition-colors leading-snug font-inter">
+                            <span className="text-[14px] font-bold text-[#1E293B] whitespace-normal wrap-break-word group-hover:text-[#14b8a6] transition-colors leading-snug font-sans">
                                 {tour.name}
                             </span>
                             <div className="flex flex-wrap items-center gap-1.5">
                                 {tour.is_featured && (
-                                    <span className="px-1.5 py-0.5 bg-blue-50 text-blue-600 border border-blue-100 rounded text-[10px] font-black uppercase tracking-wider shrink-0">
+                                    <span className="px-1.5 py-0.5 bg-[#dff7f4] text-[#0f766e] border border-[#ccfbf1] rounded text-[10px] font-black uppercase tracking-wider shrink-0">
                                         {t('filters.featured')}
                                     </span>
                                 )}
                                 {tour.is_hot && (
-                                    <span className="px-1.5 py-0.5 bg-orange-50 text-orange-600 border border-orange-100 rounded text-[10px] font-black uppercase tracking-wider shrink-0">
+                                    <span className="px-1.5 py-0.5 bg-[#f4fce3] text-[#0f766e] border border-[#d9f99d] rounded text-[10px] font-black uppercase tracking-wider shrink-0">
                                         {t('filters.hot')}
                                     </span>
                                 )}
@@ -148,7 +148,7 @@ const TourTable = ({
                                     </span>
                                 )}
                             </div>
-                            <span className="text-[10px] font-medium text-[#94A3B8] font-inter uppercase tracking-tight truncate">{tour.slug || `${t('table.tour_code_prefix')}${tour.id.toString().padStart(3, '0')}`}</span>
+                            <span className="text-[10px] font-medium text-[#94A3B8] font-sans uppercase tracking-tight truncate">{tour.slug || `${t('table.tour_code_prefix')}${tour.id.toString().padStart(3, '0')}`}</span>
                         </div>
                     </div>
                 );
@@ -162,7 +162,7 @@ const TourTable = ({
             cell: info => {
                 const categoryName = categories.find(c => c.id === info.getValue())?.name || info.getValue();
                 return (
-                    <span className="px-[8px] py-[2.5px] bg-[#EFF6FF] text-[#0066CC] border border-[#B3D9FF] rounded-full text-[11px] font-bold inline-block max-w-full">
+                    <span className="px-[8px] py-[2.5px] bg-[#dff7f4] text-[#0f766e] border border-[#ccfbf1] rounded-full text-[11px] font-bold inline-block max-w-full">
                         {categoryName}
                     </span>
                 );
@@ -174,7 +174,7 @@ const TourTable = ({
             header: t('table.header_price'),
             cell: info => (
                 <div className="flex items-baseline gap-1">
-                    <span className="text-[13px] font-bold text-[#1E293B] font-inter whitespace-nowrap">
+                    <span className="text-[13px] font-bold text-[#1E293B] font-sans whitespace-nowrap">
                         {Number(info.getValue()).toLocaleString(i18n.language === 'vi' ? 'vi-VN' : 'en-US')} {t('currency', { ns: 'common' })}
                     </span>
                     <span className="text-[11px] font-medium text-[#94A3B8]">{t('table.per_person')}</span>
@@ -190,9 +190,9 @@ const TourTable = ({
                 return (
                     <div>
                         {count > 0 ? (
-                            <span className="text-[13px] font-bold text-[#10B981] font-inter whitespace-nowrap">{t('table.schedules_count', { count })}</span>
+                            <span className="text-[13px] font-bold text-[#10B981] font-sans whitespace-nowrap">{t('table.schedules_count', { count })}</span>
                         ) : (
-                            <span className="text-[13px] font-bold text-[#EF4444] font-inter whitespace-nowrap">{t('table.no_schedule')}</span>
+                            <span className="text-[13px] font-bold text-[#EF4444] font-sans whitespace-nowrap">{t('table.no_schedule')}</span>
                         )}
                     </div>
                 );
@@ -203,7 +203,7 @@ const TourTable = ({
         columnHelper.accessor('booking_count', {
             meta: { width: '100px' },
             header: t('table.header_sales'),
-            cell: info => <div className="text-[13px] font-bold text-[#1E293B] font-inter whitespace-nowrap">{info.getValue().toLocaleString()}</div>,
+            cell: info => <div className="text-[13px] font-bold text-[#1E293B] font-sans whitespace-nowrap">{info.getValue().toLocaleString()}</div>,
         }),
         // Trạng thái
         columnHelper.accessor('status', {
@@ -222,7 +222,7 @@ const TourTable = ({
                     <ToggleSwitch 
                         checked={info.getValue()} 
                         onChange={(val) => onToggleFeatured(info.row.original.id, val)}
-                        color="blue"
+                        color="teal"
                     />
                 </div>
             ),
@@ -251,7 +251,7 @@ const TourTable = ({
                     <button 
                         onClick={() => onView(info.row.original)}
                         title={t('actions.view', { ns: 'common' })}
-                        className="w-[30px] h-[30px] flex items-center justify-center bg-[#F8FAFC] border border-[#E2E8F0] rounded-[6px] text-[#64748B] hover:text-[#0066CC] hover:border-[#0066CC] transition-all group/btn"
+                        className="w-[30px] h-[30px] flex items-center justify-center bg-[#F8FAFC] border border-[#E2E8F0] rounded-[6px] text-[#64748B] hover:text-[#14b8a6] hover:border-[#14b8a6] transition-all group/btn"
                     >
                         <Eye size={14} />
                     </button>
@@ -292,7 +292,7 @@ const TourTable = ({
                 <div className="flex items-center gap-4 w-full sm:w-auto">
                     {selectedIds.length > 0 ? (
                         <div className="flex items-center gap-4 animate-in fade-in slide-in-from-left-2 duration-300">
-                            <span className="text-[13px] font-bold text-[#0066CC] whitespace-nowrap">
+                            <span className="text-[13px] font-bold text-[#14b8a6] whitespace-nowrap">
                                 {t('table.bulk_selected', { count: selectedIds.length })}
                             </span>
                             <div className="h-4 w-px bg-[#E2E8F0]" />
@@ -332,7 +332,7 @@ const TourTable = ({
                                     disabled={isRefreshing || isLoading}
                                     className={clsx(
                                         "p-1.5 rounded-lg transition-all",
-                                        isRefreshing ? "text-[#0066CC]" : "text-[#94A3B8] hover:text-[#0066CC] active:scale-95"
+                                        isRefreshing ? "text-[#14b8a6]" : "text-[#94A3B8] hover:text-[#14b8a6] active:scale-95"
                                     )}
                                 >
                                     <RefreshCw size={14} className={isRefreshing ? 'animate-spin' : ''} />
@@ -343,7 +343,7 @@ const TourTable = ({
                 </div>
 
                 <div className="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end">
-                    <span className="text-[13px] text-[#94A3B8] font-inter">
+                    <span className="text-[13px] text-[#94A3B8] font-sans">
                         {t('table.showing_summary', { 
                             start: total > 0 ? (page - 1) * limit + 1 : 0,
                             end: Math.min(page * limit, total),
@@ -394,7 +394,7 @@ const TourTable = ({
                                     key={row.id}
                                     className={clsx(
                                         "group transition-all duration-150 border-b border-[#F1F5F9] last:border-0",
-                                        row.getIsSelected() ? "bg-[#EFF6FF] border-l-3 border-l-[#0066CC]" : "hover:bg-[#F8FAFC]"
+                                        row.getIsSelected() ? "bg-[#dff7f4] border-l-3 border-l-[#14b8a6]" : "hover:bg-[#F8FAFC]"
                                     )}
                                 >
                                     {row.getVisibleCells().map(cell => (
@@ -425,7 +425,7 @@ const TourTable = ({
 
             {/* Pagination */}
             <div className="px-[24px] py-[16px] border-t border-[#E2E8F0] bg-[#F8FAFC] flex flex-col sm:flex-row items-center justify-between gap-4">
-                <div className="text-[13px] font-medium text-[#64748B] font-inter">
+                <div className="text-[13px] font-medium text-[#64748B] font-sans">
                     {t('table.showing_summary', { 
                         start: total > 0 ? (page - 1) * limit + 1 : 0,
                         end: Math.min(page * limit, total),
@@ -437,7 +437,7 @@ const TourTable = ({
                     <button
                         onClick={() => onPageChange(page - 1)}
                         disabled={page === 1}
-                        className="w-[32px] h-[32px] flex items-center justify-center rounded-[8px] bg-white border border-[#E2E8F0] text-[#64748B] hover:border-[#0066CC] hover:text-[#0066CC] disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm active:scale-90"
+                        className="w-[32px] h-[32px] flex items-center justify-center rounded-[8px] bg-white border border-[#E2E8F0] text-[#64748B] hover:border-[#14b8a6] hover:text-[#14b8a6] disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm active:scale-90"
                     >
                         <ChevronLeft size={16} />
                     </button>
@@ -453,8 +453,8 @@ const TourTable = ({
                                         className={clsx(
                                             "w-[32px] h-[32px] flex items-center justify-center rounded-[8px] text-[13px] font-bold transition-all shadow-sm",
                                             p === page
-                                                ? "bg-[#0066CC] text-white border-[#0066CC]"
-                                                : "bg-white border border-[#E2E8F0] text-[#64748B] hover:border-[#0066CC] hover:text-[#0066CC] active:scale-95"
+                                                ? "bg-[#14b8a6] text-white border-[#14b8a6]"
+                                                : "bg-white border border-[#E2E8F0] text-[#64748B] hover:border-[#14b8a6] hover:text-[#14b8a6] active:scale-95"
                                         )}
                                     >
                                         {p}
@@ -466,7 +466,7 @@ const TourTable = ({
                     <button
                         onClick={() => onPageChange(page + 1)}
                         disabled={page >= Math.ceil(total / limit)}
-                        className="w-[32px] h-[32px] flex items-center justify-center rounded-[8px] bg-white border border-[#E2E8F0] text-[#64748B] hover:border-[#0066CC] hover:text-[#0066CC] disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm active:scale-90"
+                        className="w-[32px] h-[32px] flex items-center justify-center rounded-[8px] bg-white border border-[#E2E8F0] text-[#64748B] hover:border-[#14b8a6] hover:text-[#14b8a6] disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm active:scale-90"
                     >
                         <ChevronRight size={16} />
                     </button>

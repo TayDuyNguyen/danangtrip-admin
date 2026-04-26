@@ -59,13 +59,13 @@ const TourFilter = ({ filters, onFilterChange, categories }: Props) => {
             <div className="flex flex-wrap gap-[12px] items-center">
                 {/* Search input — flex-1 min-280px */}
                 <div className="flex-1 min-w-[280px] relative group">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[#94A3B8] transition-all group-focus-within:text-[#0066CC]" size={18} />
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[#94A3B8] transition-all group-focus-within:text-[#14b8a6]" size={18} />
                     <input
                         type="text"
                         placeholder={t('filters.search_placeholder')}
                         value={localSearch}
                         onChange={(e) => setLocalSearch(e.target.value)}
-                        className="w-full pl-12 pr-4 h-[48px] bg-[#F8FAFC] border border-[#E2E8F0] rounded-[10px] focus:ring-0 focus:bg-white focus:border-[#0066CC] text-[14px] text-[#1E293B] font-medium outline-none transition-all placeholder:text-[#94A3B8]"
+                        className="w-full pl-12 pr-4 h-[48px] bg-[#F8FAFC] border border-[#E2E8F0] rounded-md focus:ring-0 focus:bg-white focus:border-[#14b8a6] text-[14px] text-[#1E293B] font-medium outline-none transition-all placeholder:text-[#94A3B8]"
                     />
                 </div>
 
@@ -124,7 +124,7 @@ const TourFilter = ({ filters, onFilterChange, categories }: Props) => {
 
                 {/* Button Lọc */}
                 <button
-                    className="h-[48px] px-6 bg-[#0066CC] text-white rounded-[10px] text-[14px] font-bold hover:bg-[#0052A3] transition-all active:scale-95 shadow-sm"
+                    className="h-[48px] px-6 bg-[#14b8a6] text-white rounded-md text-[14px] font-bold hover:bg-[#0f766e] transition-all active:scale-95 shadow-sm"
                 >
                     {t('filters.button_apply')}
                 </button>
@@ -133,7 +133,7 @@ const TourFilter = ({ filters, onFilterChange, categories }: Props) => {
                 {hasActiveFilters && (
                     <button
                         onClick={handleReset}
-                        className="flex items-center gap-2 h-[48px] px-4 rounded-[10px] text-[14px] font-bold text-[#64748B] border border-[#E2E8F0] bg-white hover:text-[#EF4444] hover:border-[#EF4444] transition-all active:scale-95 shadow-sm"
+                        className="flex items-center gap-2 h-[48px] px-4 rounded-md text-[14px] font-bold text-[#64748B] border border-[#E2E8F0] bg-white hover:text-[#EF4444] hover:border-[#EF4444] transition-all active:scale-95 shadow-sm"
                     >
                         <RotateCcw size={16} />
                         {t('filters.button_reset')}
@@ -148,12 +148,12 @@ const TourFilter = ({ filters, onFilterChange, categories }: Props) => {
                     {activeFilters.map((tag) => (
                         <div
                             key={tag.key}
-                            className="inline-flex items-center gap-1.5 px-[10px] py-[4px] bg-[#EFF6FF] text-[#0066CC] border border-[#B3D9FF] rounded-full text-[12px] font-medium transition-all hover:bg-[#DEEBFF]"
+                            className="inline-flex items-center gap-1.5 px-[10px] py-[4px] bg-[#dff7f4] text-[#0f766e] border border-[#ccfbf1] rounded-full text-[12px] font-medium transition-all hover:bg-[#ccfbf1]"
                         >
                             {tag.label}
                             <button
                                 onClick={() => handleChange(tag.key, 'all')}
-                                className="hover:bg-[#0066CC]/10 rounded-full transition-colors p-0.5"
+                                className="hover:bg-[#14b8a6]/10 rounded-full transition-colors p-0.5"
                                 title={t('common:actions.remove')}
                             >
                                 <X size={13} strokeWidth={3} />

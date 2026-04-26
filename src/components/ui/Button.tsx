@@ -1,26 +1,26 @@
-import React from 'react';
+import type { ButtonHTMLAttributes } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
     variant?: 'primary' | 'outline' | 'ghost' | 'danger';
     isLoading?: boolean;
 }
 
-export const Button: React.FC<ButtonProps> = ({
+export const Button = ({
     children,
     className,
     variant = 'primary',
     isLoading,
     disabled,
     ...props
-}) => {
-    const baseStyles = 'inline-flex items-center justify-center transition-all duration-200 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none';
+}: ButtonProps) => {
+    const baseStyles = 'inline-flex items-center justify-center rounded-full px-4 py-2 text-sm font-semibold transition-all duration-150 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none';
     
     const variants = {
-        primary: 'bg-blue-600 text-white hover:bg-blue-700 shadow-sm',
-        outline: 'border border-slate-200 bg-transparent hover:bg-slate-50 text-slate-600',
-        ghost: 'bg-transparent hover:bg-slate-100 text-slate-600',
-        danger: 'bg-rose-500 text-white hover:bg-rose-600 shadow-sm',
+        primary: 'bg-[#14b8a6] text-white hover:bg-[#0f766e] border border-transparent shadow-sm shadow-[#14b8a6]/20',
+        outline: 'border border-[#f1f5f9] bg-white text-[#64748b] hover:bg-[#f8fafc]',
+        ghost: 'bg-transparent text-[#64748b] hover:bg-[#f8fafc]',
+        danger: 'bg-[#fee2e2] text-[#b91c1c] hover:bg-[#fecaca] border border-transparent shadow-sm',
     };
 
     return (

@@ -16,7 +16,7 @@ const CategoryTable = ({ categories, onEdit, onDelete, onStatusChange }: Categor
 
     const renderIcon = (iconName: string) => {
         const IconComponent = (Icons as unknown as Record<string, React.ElementType>)[iconName] || Icons.Map;
-        return <IconComponent size={18} className="text-blue-600" />;
+        return <IconComponent size={18} className="text-[#14b8a6]" />;
     };
 
     return (
@@ -67,13 +67,13 @@ const CategoryTable = ({ categories, onEdit, onDelete, onStatusChange }: Categor
                                     </span>
                                 </td>
                                 <td className="px-6 py-5">
-                                    <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                                    <div className="w-10 h-10 bg-[#dff7f4] rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
                                         {renderIcon(category.icon)}
                                     </div>
                                 </td>
                                 <td className="px-6 py-5">
                                     <div className="flex flex-col">
-                                        <span className="text-[15px] font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
+                                        <span className="text-[15px] font-bold text-slate-900 group-hover:text-[#14b8a6] transition-colors">
                                             {category.name}
                                         </span>
                                         <span className="text-[12px] font-medium text-slate-400 mt-0.5 flex items-center gap-1">
@@ -93,13 +93,13 @@ const CategoryTable = ({ categories, onEdit, onDelete, onStatusChange }: Categor
                                         className={cn(
                                             "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[12px] font-black uppercase tracking-wider transition-all hover:scale-105 active:scale-95",
                                             category.status === 'active' 
-                                                ? "bg-emerald-50 text-emerald-600 hover:bg-emerald-100" 
+                                                ? "bg-[#dff7f4] text-[#0f766e] hover:bg-[#ccfbf1]" 
                                                 : "bg-slate-100 text-slate-500 hover:bg-slate-200"
                                         )}
                                     >
                                         <div className={cn(
                                             "w-1.5 h-1.5 rounded-full",
-                                            category.status === 'active' ? "bg-emerald-500 animate-pulse" : "bg-slate-400"
+                                            category.status === 'active' ? "bg-[#14b8a6] animate-pulse" : "bg-slate-400"
                                         )} />
                                         {t(`status.${category.status}`)}
                                     </button>
@@ -108,7 +108,7 @@ const CategoryTable = ({ categories, onEdit, onDelete, onStatusChange }: Categor
                                     <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                         <button
                                             onClick={() => onEdit(category)}
-                                            className="w-9 h-9 flex items-center justify-center rounded-xl bg-white border border-slate-200 text-slate-600 hover:text-blue-600 hover:border-blue-200 hover:shadow-lg hover:shadow-blue-500/10 transition-all"
+                                            className="w-9 h-9 flex items-center justify-center rounded-xl bg-white border border-slate-200 text-slate-600 hover:text-[#14b8a6] hover:border-[#ccfbf1] hover:shadow-lg hover:shadow-[#14b8a6]/10 transition-all"
                                             title={t('categories.edit')}
                                         >
                                             <Edit2 size={16} />
@@ -136,7 +136,7 @@ const CategoryTable = ({ categories, onEdit, onDelete, onStatusChange }: Categor
 
             {categories.length === 0 && (
                 <div className="py-20 flex flex-col items-center justify-center text-center">
-                    <div className="w-20 h-20 bg-slate-50 rounded-[28px] flex items-center justify-center mb-4">
+                    <div className="w-20 h-20 bg-slate-50 rounded-[32px] flex items-center justify-center mb-4">
                         <Icons.FolderOpen size={40} className="text-slate-200" />
                     </div>
                     <h3 className="text-lg font-bold text-slate-900">{t('messages.no_data')}</h3>

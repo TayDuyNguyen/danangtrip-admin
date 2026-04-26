@@ -1,4 +1,3 @@
-import React from 'react';
 import type { LucideIcon } from 'lucide-react';
 
 interface SectionHeaderProps {
@@ -8,11 +7,11 @@ interface SectionHeaderProps {
     required?: boolean;
 }
 
-const SectionHeader: React.FC<SectionHeaderProps> = ({ icon: Icon, title, subtitle, required }) => {
+const SectionHeader = ({ icon: Icon, title, subtitle, required }: SectionHeaderProps) => {
     return (
         <div className="flex items-start gap-4 mb-6 pt-2">
-            <div className="p-2.5 bg-blue-50 rounded-xl">
-                <Icon className="w-5 h-5 text-blue-600" />
+            <div className="p-2.5 bg-[#dff7f4] rounded-xl">
+                <Icon className="w-5 h-5 text-[#14b8a6]" />
             </div>
             <div className="flex-1">
                 <div className="flex items-center gap-1.5">

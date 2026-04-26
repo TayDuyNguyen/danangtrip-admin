@@ -98,7 +98,7 @@ export function ScheduleCard({
                 </h3>
                 
                 <div className="flex items-center text-gray-500 text-sm mb-4">
-                    <Calendar className="w-4 h-4 mr-2 text-blue-500" />
+                    <Calendar className="w-4 h-4 mr-2 text-[#14b8a6]" />
                     <span>{formatAdminShortDate(schedule.startDate, i18n.language)}</span>
                 </div>
 
@@ -141,7 +141,7 @@ export function ScheduleCard({
                 </button>
                 <button 
                     onClick={() => onEdit?.(schedule.id)}
-                    className="flex items-center justify-center w-10 h-10 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg transition-colors"
+                    className="flex items-center justify-center w-10 h-10 bg-[#dff7f4] hover:bg-[#ccfbf1] text-[#14b8a6] rounded-lg transition-colors"
                     title={t('common:actions.edit')}
                     type="button"
                 >

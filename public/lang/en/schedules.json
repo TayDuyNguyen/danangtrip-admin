@@ -80,5 +80,12 @@
     "card": {
         "untitled_tour": "Untitled tour",
         "image_alt_fallback": "Tour image"
+    },
+    "calendar": {
+        "month_year": "Month {{month}}, {{year}}",
+        "available": "Available",
+        "full_or_cancelled": "Full/Cancelled",
+        "full_or_cancelled_title": "Full / Cancelled",
+        "weekdays": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
     }
 }

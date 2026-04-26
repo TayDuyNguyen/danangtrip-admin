@@ -66,13 +66,13 @@ const TourScheduleCreate = () => {
     };
 
     return (
-        <div className="mx-auto max-w-[1200px] space-y-8 p-6 md:p-10">
+        <div className="w-full space-y-8 p-6 md:p-10">
             <div className="flex flex-col justify-between gap-6 md:flex-row md:items-start">
                 <div className="space-y-1">
                     <div className="flex items-center gap-2 text-[12px] font-medium text-slate-400">
                         <span>{t('schedules:breadcrumb')}</span>
                         <i className="ri-arrow-right-s-line" />
-                        <span className="text-blue-600">{t('schedules:actions.add_new')}</span>
+                        <span className="text-[#14b8a6]">{t('schedules:actions.add_new')}</span>
                     </div>
                     <h1 className="text-3xl font-bold tracking-tight text-slate-800">
                         {t('schedules:actions.add_new')}
@@ -91,7 +91,7 @@ const TourScheduleCreate = () => {
                     <Button
                         onClick={methods.handleSubmit(onSubmit)}
                         isLoading={createScheduleMutation.isPending}
-                        className="h-11 rounded-xl bg-blue-700 px-8 font-bold text-white shadow-lg shadow-blue-200 hover:bg-blue-800"
+                        className="h-11 rounded-xl bg-[#14b8a6] px-8 font-bold text-white shadow-lg shadow-[#14b8a6]/20 hover:bg-[#0f766e]"
                     >
                         <i className="ri-add-line mr-2" />
                         {t('schedules:actions.add_new')}
@@ -113,20 +113,20 @@ const TourScheduleCreate = () => {
                 <div className="space-y-6 lg:col-span-5">
                     <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
                         <h4 className="mb-4 flex items-center gap-2 text-[15px] font-bold text-slate-800">
-                            <i className="ri-eye-line text-blue-600" />
+                            <i className="ri-eye-line text-[#14b8a6]" />
                             {t('schedules:fields.preview')}
                         </h4>
 
                         <SchedulePreviewBox control={methods.control} />
 
-                        <div className="mt-6 rounded-xl border border-amber-100 bg-amber-50 p-4">
+                        <div className="mt-6 rounded-xl border border-[#d9f99d] bg-[#f4fce3] p-4">
                             <div className="flex gap-3">
-                                <i className="ri-information-line text-xl text-amber-500" />
+                                <i className="ri-information-line text-xl text-[#0f766e]" />
                                 <div className="space-y-1">
-                                    <p className="text-[13px] font-bold text-amber-800">
+                                    <p className="text-[13px] font-bold text-[#365314]">
                                         {t('common:notices.important')}
                                     </p>
-                                    <p className="text-[12px] leading-relaxed text-amber-700/80">
+                                    <p className="text-[12px] leading-relaxed text-[#3f6212]/90">
                                         {t('schedules:notices.price_override_help')}
                                     </p>
                                 </div>
@@ -147,7 +147,7 @@ const TourScheduleCreate = () => {
                 <Button
                     onClick={methods.handleSubmit(onSubmit)}
                     isLoading={createScheduleMutation.isPending}
-                    className="rounded-xl bg-blue-700 px-6 font-bold text-white shadow-lg shadow-blue-200"
+                    className="rounded-xl bg-[#14b8a6] px-6 font-bold text-white shadow-lg shadow-[#14b8a6]/20"
                 >
                     {t('schedules:actions.add_new')}
                 </Button>

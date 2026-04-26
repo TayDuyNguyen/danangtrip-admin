@@ -2,17 +2,17 @@ import { useTranslation } from 'react-i18next';
 import { ShoppingBag, UserPlus, Star, Package, Info, AlertCircle, CheckCircle } from 'lucide-react';
 
 const TYPE_ICONS = {
-    booking: { icon: <ShoppingBag size={14} />, color: 'text-blue-500', bg: 'bg-blue-50' },
-    user: { icon: <UserPlus size={14} />, color: 'text-sky-500', bg: 'bg-sky-50' },
-    review: { icon: <Star size={14} />, color: 'text-amber-500', bg: 'bg-amber-50' },
-    tour: { icon: <Package size={14} />, color: 'text-emerald-500', bg: 'bg-emerald-50' },
+    booking: { icon: <ShoppingBag size={14} />, color: 'text-[#14b8a6]', bg: 'bg-[#dff7f4]' },
+    user: { icon: <UserPlus size={14} />, color: 'text-[#0f766e]', bg: 'bg-blue-100' },
+    review: { icon: <Star size={14} />, color: 'text-[#0f766e]', bg: 'bg-[#f4fce3]' },
+    tour: { icon: <Package size={14} />, color: 'text-[#0f766e]', bg: 'bg-[#ccfbf1]' },
     system: { icon: <Info size={14} />, color: 'text-slate-500', bg: 'bg-slate-50' },
 };
 
 const STATUS_ICONS = {
-    success: <CheckCircle size={12} className="text-emerald-500" />,
-    warning: <AlertCircle size={12} className="text-amber-500" />,
-    info: <Info size={12} className="text-blue-500" />,
+    success: <CheckCircle size={12} className="text-[#14b8a6]" />,
+    warning: <AlertCircle size={12} className="text-[#b45309]" />,
+    info: <Info size={12} className="text-[#14b8a6]" />,
     error: <AlertCircle size={12} className="text-red-500" />,
 };
 
@@ -30,10 +30,10 @@ const RecentActivities = ({ activities }: RecentActivitiesProps) => {
     const { t } = useTranslation('dashboard');
 
     return (
-        <div className="bg-white border border-slate-200 rounded-4xl p-6 shadow-sm overflow-hidden flex flex-col h-full min-h-[450px]">
+        <div className="bg-white border border-slate-200 rounded-[32px] p-6 shadow-sm overflow-hidden flex flex-col h-full min-h-[450px]">
             <div className="flex items-center justify-between mb-6">
                 <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest">{t('activities.title')}</h3>
-                <button className="text-[10px] font-black text-blue-600 hover:text-blue-700 uppercase tracking-tighter">{t('activities.view_all')}</button>
+                <button className="text-[10px] font-black text-[#14b8a6] hover:text-[#0f766e] uppercase tracking-tighter">{t('activities.view_all')}</button>
             </div>
 
             <div className="space-y-6 overflow-y-auto pr-2 custom-scrollbar flex-1">
@@ -60,7 +60,7 @@ const RecentActivities = ({ activities }: RecentActivitiesProps) => {
 
                                 {/* Content */}
                                 <div className="flex flex-col gap-1 pb-2">
-                                    <p className="text-xs font-bold text-slate-900 leading-relaxed group-hover:text-blue-600 transition-colors">
+                                    <p className="text-xs font-bold text-slate-900 leading-relaxed group-hover:text-[#14b8a6] transition-colors">
                                         {activity.description}
                                     </p>
                                     <span className="text-[10px] font-medium text-slate-400">
