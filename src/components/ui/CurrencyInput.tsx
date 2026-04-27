@@ -50,7 +50,7 @@ export const CurrencyInput = forwardRef<HTMLInputElement, CurrencyInputProps>(
                 onChange={handleChange}
                 autoComplete="off"
                 className={cn(
-                    'flex h-11 w-full rounded-[12px] border border-[#E2E8F0] bg-white px-4 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#14b8a6] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200',
+                    'flex h-11 w-full rounded-2xl border border-[#E2E8F0] bg-white px-4 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#14b8a6] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-150',
                     invalid && 'border-red-500 focus-visible:ring-red-500 text-red-900',
                     className
                 )}

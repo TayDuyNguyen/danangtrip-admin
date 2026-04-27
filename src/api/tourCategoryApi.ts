@@ -1,3 +1,4 @@
+import { API_ENDPOINTS } from '@/constants';
 import axiosClient from './axiosClient';
 import type { 
     RawTourCategory, 
@@ -21,7 +22,7 @@ export const tourCategoryApi = {
         if (!cleanParams.search) delete cleanParams.search;
         if (!cleanParams.status) delete cleanParams.status;
 
-        const response = await axiosClient.get('/admin/tour-categories', { params: cleanParams });
+        const response = await axiosClient.get(API_ENDPOINTS.TOURS.ADMIN_CATEGORIES, { params: cleanParams });
         return tourCategoryMapper.normalizeListResponse(response.data);
     },
 
@@ -39,7 +40,7 @@ export const tourCategoryApi = {
      * (Cập nhật danh mục hiện có)
      */
     updateCategory: async (id: number, data: Partial<RawTourCategory>): Promise<TourCategory> => {
-        const response = await axiosClient.put(`/admin/tour-categories/${id}`, data);
+        const response = await axiosClient.put(API_ENDPOINTS.TOURS.ADMIN_CATEGORY(id), data);
         return tourCategoryMapper.toViewModel(response.data as RawTourCategory);
     },
 
@@ -57,7 +58,7 @@ export const tourCategoryApi = {
      * (Xóa danh mục)
      */
     deleteCategory: async (id: number): Promise<void> => {
-        await axiosClient.delete(`/admin/tour-categories/${id}`);
+        await axiosClient.delete(API_ENDPOINTS.TOURS.ADMIN_CATEGORY(id));
     },
 
     /**
@@ -65,6 +66,6 @@ export const tourCategoryApi = {
      * (Sắp xếp lại thứ tự danh mục hàng loạt)
      */
     reorderCategories: async (items: { id: number; sort_order: number }[]): Promise<void> => {
-        await axiosClient.patch('/admin/tour-categories/reorder', { items });
+        await axiosClient.patch(API_ENDPOINTS.TOURS.ADMIN_CATEGORIES_REORDER, { items });
     }
 };

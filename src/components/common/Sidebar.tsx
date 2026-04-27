@@ -77,7 +77,7 @@ const Sidebar = () => {
                     </div>
                     {!isCollapsed && (
                         <div className="min-w-0 transition-opacity duration-200">
-                            <h1 className="text-slate-900 font-black text-lg leading-none tracking-tight truncate">DaNangTrip</h1>
+                            <h1 className="text-slate-900 font-black text-lg leading-none tracking-tight truncate">{t('brand.name')}</h1>
                             <p className="text-slate-400 text-[10px] mt-1 font-bold uppercase tracking-widest truncate">{t('sidebar.system')}</p>
                         </div>
                     )}

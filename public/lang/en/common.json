@@ -83,6 +83,7 @@
     },
     "header": {
         "search": "Quick search...",
+        "search_label": "Quick search in admin",
         "admin_role": "Administrator"
     },
     "right_sidebar": {

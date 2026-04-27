@@ -1,4 +1,7 @@
 {
+    "errors": {
+        "bulk_status_update_failed": "Bulk status update failed"
+    },
     "title": "Departure schedules",
     "subtitle": "Manage all departure schedules across tours",
     "breadcrumb": "Tours / Schedules",
@@ -65,7 +68,9 @@
         "showing_summary": "Showing {{start}}–{{end}} of {{total}} schedules",
         "per_page": "Per page",
         "upcoming": "Soon",
-        "stt": "#"
+        "stt": "#",
+        "select_all": "Select all schedules on this page",
+        "select_row": "Select schedule: {{name}}"
     },
     "delete": {
         "title": "Delete this schedule?",

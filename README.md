@@ -103,7 +103,7 @@ cp .env.example .env
 | `VITE_PREVIEW_PORT` | Port preview server (mặc định: 4173) |
 | `VITE_HOST` | Host dev server (`false` hoặc `0.0.0.0`) |
 | `VITE_API_URL` | Base URL của backend API |
-| `VITE_NAME` | Tên ứng dụng |
+| `VITE_APP_NAME` | Tên ứng dụng |
 
 ---
 

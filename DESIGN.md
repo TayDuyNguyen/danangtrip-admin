@@ -172,6 +172,10 @@ Motion feels controlled and interface-led across text, layout, and section trans
 
 **Scroll Patterns:** gsap-scrolltrigger
 
+## Admin portal scope
+
+The WebGL / Three.js sections below describe **high-impact marketing or immersive surfaces**. The **admin SPA** prioritises a small bundle, predictable performance, and accessibility: use **CSS glass surfaces, gradients, and optional lightweight canvas only where justified** (for example a subtle login backdrop), with a **static DOM fallback** everywhere else. **Icon set:** DESIGN calls for **Solar**; the admin app currently ships **Lucide** for React tree-shaking and maintainability—treat Solar as the **target** for a future icon audit, not a blocker for shipping admin features.
+
 ## WebGL
 
 Reconstruct the graphics as a full-bleed background field using webgl, renderer, alpha, antialias, dpr clamp, custom shaders. The effect should read as technical, meditative, and atmospheric: fine line lattice with gray and sparse spacing. Build it from line trails + sparse anchors so the effect reads clearly. Animate it as slow breathing pulse. Interaction can react to the pointer, but only as a subtle drift. Preserve dom fallback.

@@ -53,6 +53,8 @@
         "no_schedule": "No schedule",
         "schedules_count": "{{count}} sched.",
         "bulk_selected": "{{count}} selected",
+        "select_all": "Select all tours on this page",
+        "select_row": "Select tour: {{name}}",
         "bulk_activate": "Activate",
         "bulk_deactivate": "Deactivate",
         "bulk_delete": "Delete",

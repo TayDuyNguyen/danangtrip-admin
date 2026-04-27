@@ -41,11 +41,13 @@ src/
 ├── api/           # API service wrappers and axios client
 ├── assets/        # Static assets and animations
 ├── components/    # Reusable UI
+├── config/        # Runtime/environment config (e.g. API env chain)
 ├── constants/     # Shared constants and endpoint definitions
 ├── dataHelper/    # Feature mappers and typed payload helpers
 ├── hooks/         # React Query hooks and UI hooks
 ├── i18n/          # i18next bootstrap
 ├── layouts/       # Page layouts
+├── lib/           # Shared low-level helpers/integrations (currently minimal)
 ├── pages/         # Route-level screens
 ├── providers/     # AppProviders and bootstrapping
 ├── routes/        # Router setup and guards
@@ -115,12 +117,15 @@ Avoid introducing new direct page-to-API calls unless the change is intentionall
 Current documented env vars in this repo:
 
 - `VITE_API_URL`
+- `VITE_API_FALLBACK_URLS`
+- `VITE_API_TIMEOUT_MS`
 - `VITE_PORT`
 - `VITE_PREVIEW_PORT`
 - `VITE_HOST`
 - `VITE_NAME`
 - `VITE_STITCH_API_KEY`
 - `VITE_STITCH_PROJECT_ID`
+- Note: `src/env.d.ts` currently declares `VITE_APP_NAME`; keep this aligned with `.env.example` when touching env types.
 
 ## 7. UI Policy
 
@@ -148,6 +153,7 @@ npm run prepush:check
 ```
 
 This script runs lint, typecheck, and build in sequence. Use it before pushing to catch regressions early.
+When a local dev server is running on `http://127.0.0.1:5173`, it also runs `npm run test:console`; otherwise that step is skipped without failing the gate.
 
 Optional project-local audits under `.agent/` may be used as best-effort helpers, but they are not a substitute for the native repo checks above.
 
@@ -170,7 +176,7 @@ If an `.agent` script fails because of environment drift, report it and continue
 
 Current state of the repository:
 
-- There is no general `npm test` script.
+- `npm test` exists and currently aliases to lint (`npm run lint`).
 - There is no established unit-test runner configured in `package.json`.
 - There is an existing Playwright command: `npm run test:console`.
 
@@ -284,7 +290,7 @@ Validation MUST support the project's multi-language requirement:
 
 ### 1. Atomic UI Strategy
 - Always check `src/components/ui/` or `src/components/common/` for existing atomic elements (Inputs, Buttons, Skeletons) before writing custom styles.
-- Maintain consistent spacing and shadow tokens defined in Tailwind config.
+- Maintain consistent spacing and shadow tokens from the current theme source (`src/index.css` `@theme`, and Tailwind configuration if introduced/extended).
 
 ### 2. Data loading on complex pages
 - Prioritize **above-the-fold** content in layout and hook design (show skeletons for secondary panels).
