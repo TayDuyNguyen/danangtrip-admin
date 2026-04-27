@@ -36,6 +36,7 @@ const TourFilter = ({ filters, onFilterChange, categories }: Props) => {
             q: '',
             tour_category_id: 'all',
             status: 'all',
+            booking_availability: 'all',
             type: 'all',
             sort: 'created_at',
             order: 'desc'
@@ -93,22 +94,36 @@ const TourFilter = ({ filters, onFilterChange, categories }: Props) => {
                     isSearchable={true}
                 />
 
-                {/* Select Trạng thái — 160px */}
+                {/* Trạng thái hiển thị — 170px */}
                 <CustomSelect
                     options={[
                         { value: 'all', label: t('filters.all_status') },
                         { value: 'active', label: t('status.active') },
                         { value: 'inactive', label: t('status.inactive') },
-                        { value: 'sold_out', label: t('status.sold_out') }
                     ]}
                     value={[
                         { value: 'all', label: t('filters.all_status') },
                         { value: 'active', label: t('status.active') },
                         { value: 'inactive', label: t('status.inactive') },
-                        { value: 'sold_out', label: t('status.sold_out') }
                     ].find(opt => opt.value === filters.status)}
                     onChange={(opt) => handleChange('status', (opt as Option)?.value)}
-                    className="w-[160px]"
+                    className="w-[170px]"
+                />
+
+                {/* Còn chỗ / hết chỗ — 170px */}
+                <CustomSelect
+                    options={[
+                        { value: 'all', label: t('filters.all_booking_availability') },
+                        { value: 'open', label: t('booking_availability.open') },
+                        { value: 'sold_out', label: t('booking_availability.sold_out') },
+                    ]}
+                    value={[
+                        { value: 'all', label: t('filters.all_booking_availability') },
+                        { value: 'open', label: t('booking_availability.open') },
+                        { value: 'sold_out', label: t('booking_availability.sold_out') },
+                    ].find(opt => opt.value === filters.booking_availability)}
+                    onChange={(opt) => handleChange('booking_availability', (opt as Option)?.value)}
+                    className="w-[170px]"
                 />
 
                 {/* Select Loại — 160px */}

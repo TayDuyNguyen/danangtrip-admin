@@ -15,9 +15,17 @@ interface SidebarCardsProps {
     onPublish: () => void;
     isSubmitting: boolean;
     submitLabel?: string;
+    statusOptions?: Array<'active' | 'inactive'>;
 }
 
-const SidebarCards = ({ register, watch, onPublish, isSubmitting, submitLabel }: SidebarCardsProps) => {
+const SidebarCards = ({
+    register,
+    watch,
+    onPublish,
+    isSubmitting,
+    submitLabel,
+    statusOptions = ['active', 'inactive'],
+}: SidebarCardsProps) => {
     const { t } = useTranslation('tour');
 
     const formValues = watch();
@@ -78,10 +86,9 @@ const SidebarCards = ({ register, watch, onPublish, isSubmitting, submitLabel }:
     const doneCount = checklistItems.filter((i) => i.completed).length;
     const completionPercent = Math.round((doneCount / checklistItems.length) * 100);
 
-    const statusMeta: Record<string, { badge: string; badgeClass: string }> = {
+    const statusMeta: Record<'active' | 'inactive', { badge: string; badgeClass: string }> = {
         active: { badge: t('form.sidebar.status_public'), badgeClass: 'bg-[#dff7f4] text-[#0f766e]' },
         inactive: { badge: t('form.sidebar.status_hidden'), badgeClass: 'bg-red-100 text-red-700' },
-        sold_out: { badge: t('form.sidebar.status_sold_out_hint'), badgeClass: 'bg-[#f4fce3] text-[#365314]' }
     };
 
     const tips = ['tip_1', 'tip_2', 'tip_3', 'tip_4'] as const;
@@ -99,7 +106,7 @@ const SidebarCards = ({ register, watch, onPublish, isSubmitting, submitLabel }:
                     <div>
                         <label className="block text-sm font-medium text-slate-600 mb-3">{t('form.sidebar.status')}</label>
                         <div className="grid grid-cols-1 gap-2">
-                            {(['active', 'inactive', 'sold_out'] as const).map((s) => {
+                            {statusOptions.map((s) => {
                                 const meta = statusMeta[s];
                                 return (
                                     <label

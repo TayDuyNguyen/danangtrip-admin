@@ -25,7 +25,7 @@ export const tourCategorySchema = (t: TFunction) => yup.object({
         .default(0),
     
     status: yup.string()
-        .oneOf(['active', 'inactive', 'sold_out'])
+        .oneOf(['active', 'inactive'])
         .default('active'),
     
     icon_background: yup.string()

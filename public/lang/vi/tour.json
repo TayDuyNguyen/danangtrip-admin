@@ -33,6 +33,8 @@
         "button_reset": "Đặt lại",
         "category_label": "Danh mục",
         "status_label": "Trạng thái",
+        "booking_label": "Chỗ",
+        "all_booking_availability": "Tất cả (chỗ)",
         "unknown_category": "Chưa phân loại",
         "active_filtering": "Đang áp dụng:"
     },
@@ -46,6 +48,7 @@
         "header_rating": "Đánh giá",
         "header_sales": "Lượt bán",
         "header_status": "Trạng thái",
+        "header_booking_availability": "Chỗ",
         "header_featured": "Nổi bật",
         "header_hot": "Hot",
         "header_actions": "Thao tác",
@@ -56,7 +59,7 @@
         "select_all": "Chọn tất cả tour trên trang này",
         "select_row": "Chọn tour: {{name}}",
         "bulk_activate": "Kích hoạt",
-        "bulk_deactivate": "Tạm ngưng",
+        "bulk_deactivate": "Tạm ẩn",
         "bulk_delete": "Xóa",
         "showing_summary": "Hiển thị {{start}}–{{end}} / {{total}} tour",
         "items_per_page": "{{count}} / trang",
@@ -65,7 +68,12 @@
     },
     "status": {
         "active": "Đang hoạt động",
-        "inactive": "Tạm ngưng",
+        "inactive": "Tạm ẩn",
+        "sold_out": "Hết chỗ",
+        "all": "Tất cả trạng thái"
+    },
+    "booking_availability": {
+        "open": "Còn chỗ",
         "sold_out": "Hết chỗ"
     },
     "dialog": {
@@ -189,6 +197,17 @@
             "info_notice": "Sau khi tạo tour, bạn có thể thêm các lịch khởi hành cụ thể tại mục Lịch khởi hành.",
             "info_link": "Xem hướng dẫn →"
         },
+        "departures": {
+            "title": "Các đợt khởi hành",
+            "subtitle": "Các ngày bán tour thật (bảng lịch khởi hành). Khác với mục “Lịch trình tour” ở trên (mô tả từng ngày).",
+            "manage": "Thêm lịch",
+            "edit_schedule": "Chỉnh sửa đợt khởi hành",
+            "empty": "Chưa có đợt khởi hành nào",
+            "load_error": "Không tải được lịch",
+            "retry": "Thử lại",
+            "showing_note": "Tối đa 25 đợt gần nhất theo ngày khởi hành",
+            "delete_schedule": "Xóa đợt khởi hành này"
+        },
         "itinerary": {
             "add_day": "Thêm ngày mới",
             "day": "Ngày {{num}}",
@@ -259,12 +278,6 @@
             "creating": "Đang tạo...",
             "retry": "Thử lại"
         }
-    },
-    "status": {
-        "active": "Đang hoạt động",
-        "inactive": "Tạm ẩn",
-        "sold_out": "Hết chỗ",
-        "all": "Tất cả trạng thái"
     },
     "validation": {
         "required": "{{field}} không được để trống",

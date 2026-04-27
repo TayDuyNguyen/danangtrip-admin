@@ -29,6 +29,7 @@ const TourList = () => {
         q: '',
         tour_category_id: 'all',
         status: 'all',
+        booking_availability: 'all',
         type: 'all',
         sort: 'created_at',
         order: 'desc'
@@ -98,7 +99,7 @@ const TourList = () => {
         }
     };
 
-    const handleBulkStatusChange = async (ids: number[], status: 'active' | 'inactive' | 'sold_out') => {
+    const handleBulkStatusChange = async (ids: number[], status: 'active' | 'inactive') => {
         try {
             await Promise.all(ids.map(id => statusMutation.mutateAsync({ id, status })));
             toast.success(t('messages.status_update_success', { count: ids.length }));

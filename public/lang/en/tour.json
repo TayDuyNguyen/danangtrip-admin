@@ -33,6 +33,8 @@
         "button_reset": "Reset",
         "category_label": "Category",
         "status_label": "Status",
+        "booking_label": "Seats",
+        "all_booking_availability": "All (availability)",
         "unknown_category": "Uncategorized",
         "active_filtering": "Active filters:"
     },
@@ -46,6 +48,7 @@
         "header_rating": "Rating",
         "header_sales": "Sales",
         "header_status": "Status",
+        "header_booking_availability": "Seats",
         "header_featured": "Featured",
         "header_hot": "Hot",
         "header_actions": "Actions",
@@ -65,8 +68,13 @@
     },
     "status": {
         "active": "Active",
-        "inactive": "Inactive",
-        "sold_out": "Sold Out"
+        "inactive": "Hidden",
+        "sold_out": "Sold out",
+        "all": "All Statuses"
+    },
+    "booking_availability": {
+        "open": "Open",
+        "sold_out": "Sold out"
     },
     "dialog": {
         "delete_title": "Delete this tour?",
@@ -189,6 +197,17 @@
             "info_notice": "After creating the tour, you can add specific departures in the Departure schedule section.",
             "info_link": "View guide →"
         },
+        "departures": {
+            "title": "Departure runs",
+            "subtitle": "Real on-sale dates (tour schedule table). This is not the day-by-day “tour itinerary” above.",
+            "manage": "Add schedule",
+            "edit_schedule": "Edit this departure run",
+            "empty": "No departure runs yet",
+            "load_error": "Could not load schedules",
+            "retry": "Try again",
+            "showing_note": "Up to 25 upcoming runs by start date",
+            "delete_schedule": "Delete this departure run"
+        },
         "itinerary": {
             "add_day": "Add New Day",
             "day": "Day {{num}}",
@@ -269,12 +288,6 @@
         "url": "Invalid URL format",
         "max_gte_min": "Maximum people must be greater than or equal to minimum people",
         "date_after": "End date must be after or equal to start date"
-    },
-    "status": {
-        "active": "Active",
-        "inactive": "Hidden",
-        "sold_out": "Sold Out",
-        "all": "All Statuses"
     },
     "categories": {
         "title": "Tour Category Management",

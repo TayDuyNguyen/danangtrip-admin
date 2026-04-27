@@ -4,7 +4,7 @@ import { toNumberSafe } from '@/utils/safeConverters';
  * List Params for Categories
  */
 export interface CategoryListParams {
-    status?: 'active' | 'inactive' | 'sold_out';
+    status?: 'active' | 'inactive';
     search?: string;
     per_page?: number;
     page?: number;
@@ -62,7 +62,7 @@ export interface TourCategory {
     description: string;
     icon: string;
     sort_order: number;
-    status: 'active' | 'inactive' | 'sold_out';
+    status: 'active' | 'inactive';
     tour_count: number;
     icon_background: string;
     created_at: string;
@@ -82,8 +82,8 @@ export const tourCategoryMapper = {
             description: String(data.description || ''),
             icon: String(data.icon || 'Map'),
             sort_order: toNumberSafe(data.sort_order),
-            status: (data.status === 'active' || data.status === 'inactive' || data.status === 'sold_out') 
-                ? (data.status as 'active' | 'inactive' | 'sold_out') 
+            status: (data.status === 'active' || data.status === 'inactive')
+                ? (data.status as 'active' | 'inactive')
                 : 'inactive',
             tour_count: toNumberSafe(data.tour_count ?? data.tours_count),
             icon_background: String(data.icon_background || '#E0F2FE'),

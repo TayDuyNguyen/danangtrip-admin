@@ -16,10 +16,10 @@ const TourHeader = ({ onExport, isExporting }: Props) => {
         <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-5 mb-[24px]">
             <div className="space-y-1">
                 {/* Breadcrumb — 12px Inter 500 #94A3B8 */}
-                <nav className="flex items-center gap-2 text-[12px] font-medium text-[#94A3B8] font-sans uppercase tracking-wider">
+                <nav className="flex items-center gap-2 text-[12px] font-medium text-text-secondary font-sans uppercase tracking-wider">
                     <span>{t('title.breadcrumb_parent')}</span>
                     <ChevronRight size={12} strokeWidth={3} className="text-[#CBD5E1]" />
-                    <span className="text-[#94A3B8]">{t('title.list') as string}</span>
+                    <span className="text-text-secondary">{t('title.list') as string}</span>
                 </nav>
                 
                 {/* Title — 24px Inter 700 #1E293B letter-spacing -0.3px */}

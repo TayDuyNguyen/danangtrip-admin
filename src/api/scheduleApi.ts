@@ -10,7 +10,17 @@ import { AxiosError } from 'axios';
 export type ScheduleStatsQuery = Pick<ScheduleFilters, 'tour_id' | 'start_date' | 'end_date' | 'q'>;
 
 function apiStatusFromUi(status: string): string {
-    return String(status).toLowerCase();
+    const normalized = String(status).trim().toLowerCase();
+    if (normalized === 'available' || normalized === 'full' || normalized === 'cancelled') {
+        return normalized;
+    }
+    if (normalized === 'active' || normalized === 'open') {
+        return 'available';
+    }
+    if (normalized === 'inactive' || normalized === 'closed' || normalized === 'sold_out') {
+        return 'full';
+    }
+    return normalized;
 }
 
 function unwrapApiData<T>(payload: unknown): T {
@@ -67,6 +77,12 @@ export const scheduleApi = {
         };
     },
 
+    getSchedule: async (id: string | number): Promise<Schedule> => {
+        const response = await axiosClient.get(API_ENDPOINTS.SCHEDULES.DETAIL(id));
+        const rawData = unwrapApiData<RawSchedule>(response);
+        return scheduleMapper.mapFromRaw(rawData);
+    },
+
     getScheduleStats: async (query?: ScheduleStatsQuery): Promise<ScheduleStats> => {
         const params: Record<string, unknown> = {};
         if (query?.q?.trim()) {
@@ -94,7 +110,10 @@ export const scheduleApi = {
     },
 
     createSchedule: async (tourId: string | number, data: Partial<Schedule>): Promise<Schedule> => {
-        const payload = scheduleMapper.mapToRaw(data);
+        const payload = {
+            ...scheduleMapper.mapToRaw(data),
+            tour_id: toNumberSafe(tourId),
+        };
         const response = await axiosClient.post(API_ENDPOINTS.SCHEDULES.CREATE(tourId), payload);
         const rawResult = unwrapApiData<RawSchedule>(response);
         return scheduleMapper.mapFromRaw(rawResult as RawSchedule);

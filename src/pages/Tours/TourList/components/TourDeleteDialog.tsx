@@ -75,7 +75,7 @@ const TourDeleteDialog = ({ isOpen, onClose, onConfirm, tourName, isDeleting, is
                                 <div className="mt-8 flex items-center gap-3">
                                     <button
                                         type="button"
-                                        className="flex-1 px-4 h-[48px] bg-[#F8FAFC] border border-[#E2E8F0] hover:bg-[#F1F5F9] text-[#64748B] text-[14px] font-bold rounded-2xl transition-all"
+                                        className="flex-1 px-4 h-[48px] bg-surface border border-[#E2E8F0] hover:bg-border text-[#64748B] text-[14px] font-bold rounded-2xl transition-all"
                                         onClick={onClose}
                                     >
                                         {t('dialog.button_cancel')}

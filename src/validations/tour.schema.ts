@@ -133,7 +133,7 @@ export const createTourSchema = (t: TFunction) => yup.object({
             (v) => v == null || /^https?:\/\/.+/i.test(v)
         ),
 
-    status: yup.string().oneOf(['active', 'inactive', 'sold_out']).default('active'),
+    status: yup.string().oneOf(['active', 'inactive']).default('active'),
     is_featured: yup.boolean().default(false),
     is_hot: yup.boolean().default(false),
     location_ids: yup.array().of(yup.number())
