@@ -1,4 +1,7 @@
 {
+    "errors": {
+        "bulk_status_update_failed": "Cập nhật hàng loạt trạng thái thất bại"
+    },
     "title": "Lịch khởi hành",
     "subtitle": "Quản lý toàn bộ lịch khởi hành của các tour",
     "breadcrumb": "Quản lý Tour / Lịch khởi hành",
@@ -65,7 +68,9 @@
         "showing_summary": "Hiển thị {{start}}–{{end}} trong tổng số {{total}} lịch",
         "per_page": "Hiển thị",
         "upcoming": "Sắp tới",
-        "stt": "#"
+        "stt": "#",
+        "select_all": "Chọn tất cả lịch trên trang này",
+        "select_row": "Chọn lịch: {{name}}"
     },
     "delete": {
         "title": "Xóa lịch khởi hành này?",

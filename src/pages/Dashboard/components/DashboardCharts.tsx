@@ -75,7 +75,7 @@ const ChartCard = ({
     const { t } = useTranslation('dashboard');
     
     return (
-        <div className="bg-white p-6 rounded-[32px] border border-slate-100 shadow-sm h-[400px] flex flex-col hover:shadow-xl transition-all duration-500 group/card">
+        <div className="bg-white p-6 rounded-[32px] border border-slate-100 shadow-sm h-[400px] flex flex-col hover:shadow-xl transition-all duration-700 group/card">
             <div className="flex items-center justify-between mb-4 shrink-0">
                 <div className="flex items-center gap-3">
                     <div>
@@ -137,7 +137,7 @@ const FilterButton = ({ active, onClick, label }: {
 }) => (
     <button
         onClick={onClick}
-        className={`px-3 py-1.5 text-[11px] font-black rounded-lg transition-all ${active
+        className={`px-3 py-1.5 text-[11px] font-black rounded-md transition-all duration-150 ${active
             ? 'bg-[#14b8a6] text-white shadow-sm'
             : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100'
         }`}
@@ -327,8 +327,8 @@ const DashboardCharts = (props: ExtendedDashboardChartsProps) => {
                     <AreaChart data={safeUserGrowthData} margin={{ left: 4, right: 20, top: 10, bottom: 20 }}>
                         <defs>
                             <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor="#6366f1" stopOpacity={0.25} />
-                                <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
+                                <stop offset="5%" stopColor="#14b8a6" stopOpacity={0.25} />
+                                <stop offset="95%" stopColor="#14b8a6" stopOpacity={0} />
                             </linearGradient>
                         </defs>
                         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
@@ -352,10 +352,10 @@ const DashboardCharts = (props: ExtendedDashboardChartsProps) => {
                         <Area
                             type="monotone"
                             dataKey="new_users"
-                            stroke="#6366f1"
+                            stroke="#14b8a6"
                             strokeWidth={3}
                             fill="url(#areaGrad)"
-                            dot={{ r: 4, fill: '#6366f1', strokeWidth: 2, stroke: '#fff' }}
+                            dot={{ r: 4, fill: '#14b8a6', strokeWidth: 2, stroke: '#fff' }}
                             activeDot={{ r: 6 }}
                             name={t('charts.unit_users')}
                             {...animProps}

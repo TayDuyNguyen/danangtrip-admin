@@ -82,8 +82,8 @@ const TourSchedulesTable = ({
             <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 px-6 py-4 border-b border-[#E2E8F0]">
                 <div className="flex items-center gap-3">
                     {selectedIds.length > 0 && (
-                            <span className="text-[13px] font-semibold text-[#14b8a6]">
-                            Đã chọn {selectedIds.length}
+                        <span className="text-[13px] font-semibold text-[#14b8a6]">
+                            {t('schedules:actions.selected_count', { count: selectedIds.length })}
                         </span>
                     )}
                 </div>
@@ -93,7 +93,7 @@ const TourSchedulesTable = ({
                             <RefreshCw className="w-3.5 h-3.5 text-[#14b8a6] animate-spin" />
                         </div>
                     )}
-                    <span className="text-[13px] font-medium text-[#94A3B8]">
+                    <span className="text-[13px] font-medium text-text-secondary">
                         {t('schedules:table.showing_summary', {
                             start: total > 0 ? (page - 1) * limit + 1 : 0,
                             end: Math.min(page * limit, total),
@@ -116,7 +116,7 @@ const TourSchedulesTable = ({
             <div className="overflow-x-auto">
                 <table className="w-full min-w-[960px]">
                     <thead>
-                        <tr className="bg-[#F8FAFC] border-b border-[#E2E8F0]">
+                        <tr className="bg-surface border-b border-[#E2E8F0]">
                             <th className="w-10 px-3 py-3">
                                 <div className="flex justify-center">
                                     <input
@@ -124,39 +124,40 @@ const TourSchedulesTable = ({
                                         className="w-4 h-4 rounded border-[#E2E8F0] text-[#14b8a6] accent-[#14b8a6] cursor-pointer"
                                         checked={allPageSelected}
                                         onChange={(e) => onToggleAllPage(e.target.checked)}
+                                        aria-label={t('schedules:table.select_all')}
                                     />
                                 </div>
                             </th>
-                            <th className="px-3 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-[#94A3B8] w-12">
+                            <th className="px-3 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-text-secondary w-12">
                                 {t('schedules:table.stt')}
                             </th>
-                            <th className="px-3 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-[#94A3B8]">
+                            <th className="px-3 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-text-secondary">
                                 {t('schedules:table.tour')}
                             </th>
-                            <th className="px-3 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-[#94A3B8] w-36">
+                            <th className="px-3 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-text-secondary w-36">
                                 <button
                                     type="button"
                                     onClick={() => onSortChange('start_date')}
-                                    className="inline-flex items-center gap-1 text-[#94A3B8] hover:text-[#14b8a6]"
+                                    className="inline-flex items-center gap-1 text-text-secondary hover:text-[#14b8a6]"
                                 >
                                     {t('schedules:table.start')}
                                     <ArrowUpDown className="w-3.5 h-3.5" />
                                     {sort === 'start_date' ? ` (${order === 'desc' ? t('schedules:table.sort_desc', 'Giảm dần') : t('schedules:table.sort_asc', 'Tăng dần')})` : ''}
                                 </button>
                             </th>
-                            <th className="px-3 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-[#94A3B8] w-32">
+                            <th className="px-3 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-text-secondary w-32">
                                 {t('schedules:table.end')}
                             </th>
-                            <th className="px-3 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-[#94A3B8] w-28">
+                            <th className="px-3 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-text-secondary w-28">
                                 {t('schedules:table.price')}
                             </th>
-                            <th className="px-3 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-[#94A3B8] w-36">
+                            <th className="px-3 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-text-secondary w-36">
                                 {t('schedules:table.capacity')}
                             </th>
-                            <th className="px-3 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-[#94A3B8] w-36">
+                            <th className="px-3 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-text-secondary w-36">
                                 {t('schedules:table.status')}
                             </th>
-                            <th className="px-3 py-3 text-right text-[11px] font-bold uppercase tracking-wider text-[#94A3B8] w-32">
+                            <th className="px-3 py-3 text-right text-[11px] font-bold uppercase tracking-wider text-text-secondary w-32">
                                 {t('schedules:table.actions')}
                             </th>
                         </tr>
@@ -186,7 +187,7 @@ const TourSchedulesTable = ({
                                     <tr
                                         key={row.id}
                                         className={clsx(
-                                            'border-b border-[#F1F5F9] hover:bg-[#F8FAFC] transition-colors',
+                                            'border-b border-border hover:bg-surface transition-colors',
                                             selected && 'bg-[#dff7f4] border-l-[3px] border-l-[#14b8a6]',
                                         )}
                                     >
@@ -197,6 +198,9 @@ const TourSchedulesTable = ({
                                                     className="w-4 h-4 rounded border-[#E2E8F0] text-[#14b8a6] accent-[#14b8a6] cursor-pointer"
                                                     checked={selected}
                                                     onChange={() => onToggleRow(idNum)}
+                                                    aria-label={t('schedules:table.select_row', {
+                                                        name: row.tourName || t('schedules:card.untitled_tour'),
+                                                    })}
                                                 />
                                             </div>
                                         </td>
@@ -247,7 +251,7 @@ const TourSchedulesTable = ({
                                                 <span
                                                     className={clsx(
                                                         'text-[13px] font-semibold',
-                                                        past ? 'text-[#94A3B8]' : 'text-[#1E293B]',
+                                                        past ? 'text-text-secondary' : 'text-[#1E293B]',
                                                     )}
                                                 >
                                                     {formatAdminShortDate(row.startDate, i18n.language)}
@@ -258,7 +262,7 @@ const TourSchedulesTable = ({
                                                     </span>
                                                 ) : null}
                                             </div>
-                                            <div className="text-[11px] text-[#94A3B8]">
+                                            <div className="text-[11px] text-text-secondary">
                                                 {formatAdminWeekday(row.startDate, i18n.language)}
                                             </div>
                                         </td>
@@ -267,7 +271,7 @@ const TourSchedulesTable = ({
                                         </td>
                                         <td className="px-3 py-3">
                                             {row.priceAdult == null ? (
-                                                <span className="text-[13px] text-[#94A3B8] italic">
+                                                <span className="text-[13px] text-text-secondary italic">
                                                     {t('schedules:fields.price_follows_tour')}
                                                 </span>
                                             ) : (
@@ -323,7 +327,7 @@ const TourSchedulesTable = ({
                                                             ),
                                                         )
                                                     }
-                                                    className="w-7 h-7 flex items-center justify-center rounded-md bg-[#F8FAFC] border border-[#E2E8F0] text-[#64748B] hover:text-[#F59E0B]"
+                                                    className="w-7 h-7 flex items-center justify-center rounded-md bg-surface border border-[#E2E8F0] text-[#64748B] hover:text-[#F59E0B]"
                                                 >
                                                     <Edit3 className="w-4 h-4" />
                                                 </button>
@@ -331,7 +335,7 @@ const TourSchedulesTable = ({
                                                     type="button"
                                                     title={t('common:actions.remove')}
                                                     onClick={() => onDelete(row)}
-                                                    className="w-7 h-7 flex items-center justify-center rounded-md bg-[#F8FAFC] border border-[#E2E8F0] text-[#64748B] hover:text-[#EF4444]"
+                                                    className="w-7 h-7 flex items-center justify-center rounded-md bg-surface border border-[#E2E8F0] text-[#64748B] hover:text-[#EF4444]"
                                                 >
                                                     <Trash2 className="w-4 h-4" />
                                                 </button>
@@ -345,7 +349,7 @@ const TourSchedulesTable = ({
                 </table>
             </div>
 
-            <div className="px-6 py-4 border-t border-[#E2E8F0] bg-[#F8FAFC] flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="px-6 py-4 border-t border-[#E2E8F0] bg-surface flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div className="text-[13px] font-semibold text-[#64748B]">
                     {t('schedules:table.showing_summary', {
                         start: total > 0 ? (page - 1) * limit + 1 : 0,
@@ -373,7 +377,7 @@ const TourSchedulesTable = ({
                             return acc;
                         }, [])
                         .map((p, idx) => p === '...' ? (
-                            <span key={`dots-${idx}`} className="px-1 text-[#94A3B8]">...</span>
+                            <span key={`dots-${idx}`} className="px-1 text-text-secondary">...</span>
                         ) : (
                             <button
                                 key={p}

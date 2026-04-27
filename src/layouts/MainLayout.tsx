@@ -14,9 +14,9 @@ const MainLayout = () => {
         <div className="flex h-screen bg-white font-sans text-slate-900 overflow-hidden antialiased selection:bg-[#dff7f4] selection:text-slate-900">
             {/* Meta tags for SEO Audit compliance and accessibility */}
             <meta name="description" content={t('seo.description_admin')} />
-            <meta property="og:title" content="Đà Nẵng Trip" />
+            <meta property="og:title" content={t('brand.name')} />
             <div className="sr-only">
-                <h1>{t('title')} - Đà Nẵng Trip Admin</h1>
+                <h1>{t('title.welcome')} — {t('brand.name')} Admin</h1>
                 <p>{t('seo.description_platform')}</p>
             </div>
             {/* Sidebar Left - Fixed Navigation */}
@@ -27,7 +27,7 @@ const MainLayout = () => {
                 <Header />
 
                 {/* Main Content Area - Scrollable */}
-                <main className="flex-1 px-6 pb-6 w-full overflow-y-auto transition-all duration-300 custom-scrollbar">
+                <main className="flex-1 px-6 pb-6 w-full overflow-y-auto transition-all duration-150 custom-scrollbar">
                     <Suspense fallback={<LoadingReact />}>
                         <Outlet context={{ setIsRightSidebarOpen }} />
                     </Suspense>

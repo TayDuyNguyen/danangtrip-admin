@@ -53,6 +53,8 @@
         "no_schedule": "Hết lịch",
         "schedules_count": "{{count}} lịch",
         "bulk_selected": "Đã chọn {{count}}",
+        "select_all": "Chọn tất cả tour trên trang này",
+        "select_row": "Chọn tour: {{name}}",
         "bulk_activate": "Kích hoạt",
         "bulk_deactivate": "Tạm ngưng",
         "bulk_delete": "Xóa",

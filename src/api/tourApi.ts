@@ -19,7 +19,7 @@ export const tourApi = {
             per_page: safeLimit,
         };
 
-        if (filters.q) params.q = filters.q;
+        if (filters.q) params.search = filters.q;
         if (filters.tour_category_id && filters.tour_category_id !== 'all') {
             params.tour_category_id = toNumberSafe(filters.tour_category_id);
         }
@@ -34,8 +34,8 @@ export const tourApi = {
             params.is_hot = 0;
         }
 
-        if (filters.sort) params.sort = filters.sort;
-        if (filters.order) params.order = filters.order;
+        if (filters.sort) params.sort_by = filters.sort;
+        if (filters.order) params.sort_order = filters.order;
 
         const response = await axiosClient.get(API_ENDPOINTS.TOURS.LIST, { params });
         const rawData = response.data as unknown as Record<string, unknown>;

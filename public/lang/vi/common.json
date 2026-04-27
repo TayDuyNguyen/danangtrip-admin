@@ -83,6 +83,7 @@
     },
     "header": {
         "search": "Tìm kiếm nhanh...",
+        "search_label": "Tìm kiếm nhanh trong admin",
         "admin_role": "Quản trị viên"
     },
     "right_sidebar": {

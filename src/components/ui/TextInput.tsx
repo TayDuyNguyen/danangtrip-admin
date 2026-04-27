@@ -27,7 +27,7 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(function T
             <input
                 ref={ref}
                 className={twMerge(
-                    'w-full px-4 py-3 bg-slate-50 border rounded-xl transition-all',
+                    'w-full px-4 py-3 bg-slate-50 border rounded-2xl transition-all duration-150',
                     'focus:outline-none focus:border-[#14b8a6] focus:bg-white',
                     invalid ? 'border-red-300 bg-red-50/40' : 'border-slate-200',
                     leftIcon ? 'pl-11' : '',

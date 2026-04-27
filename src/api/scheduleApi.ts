@@ -1,5 +1,6 @@
 import { API_ENDPOINTS } from '@/constants';
 import axiosClient from './axiosClient';
+import i18next from 'i18next';
 import type { ScheduleListData, ScheduleStats, RawSchedule } from '@/dataHelper/schedule.dataHelper';
 import { scheduleMapper } from '@/dataHelper/schedule.mapper';
 import type { Schedule, ScheduleFilters } from '@/types/schedule';
@@ -128,7 +129,9 @@ export const scheduleApi = {
                 reason instanceof AxiosError
                     ? (reason.response?.data as { message?: string })?.message
                     : undefined;
-            throw new Error(msg || 'Bulk status update failed');
+            throw new Error(
+                msg || i18next.t('schedules:errors.bulk_status_update_failed'),
+            );
         }
     },
 
