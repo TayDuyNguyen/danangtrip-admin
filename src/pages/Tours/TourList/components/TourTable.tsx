@@ -20,6 +20,7 @@ import { clsx } from 'clsx';
 
 import type { TourItem, TourCategory } from '@/dataHelper/tour.dataHelper';
 import StatusBadge from './StatusBadge';
+import BookingAvailabilityBadge from './BookingAvailabilityBadge';
 import ToggleSwitch from './ToggleSwitch';
 import LoadingReact from '@/components/loading';
 import CustomSelect, { type Option } from '@/components/ui/CustomSelect';
@@ -38,9 +39,9 @@ interface Props {
     onDelete: (id: number, name: string) => void;
     onToggleFeatured: (id: number, value: boolean) => void;
     onToggleHot: (id: number, value: boolean) => void;
-    onStatusChange: (id: number, status: 'active' | 'inactive' | 'sold_out') => void;
+    onStatusChange: (id: number, status: 'active' | 'inactive') => void;
     onBulkDelete: (ids: number[]) => void;
-    onBulkStatusChange: (ids: number[], status: 'active' | 'inactive' | 'sold_out') => void;
+    onBulkStatusChange: (ids: number[], status: 'active' | 'inactive') => void;
     rowSelection: RowSelectionState;
     onRowSelectionChange: OnChangeFn<RowSelectionState>;
     onRefresh?: () => void;
@@ -207,12 +208,20 @@ const TourTable = ({
             header: t('table.header_sales'),
             cell: info => <div className="text-[13px] font-bold text-[#1E293B] font-sans whitespace-nowrap">{info.getValue().toLocaleString()}</div>,
         }),
-        // Trạng thái
+        // Trạng thái hiển thị (đang hoạt động / tạm ẩn)
         columnHelper.accessor('status', {
-            meta: { width: '130px' },
+            meta: { width: '140px' },
             header: t('table.header_status'),
             cell: info => (
                 <StatusBadge status={info.getValue()} />
+            ),
+        }),
+        // Còn chỗ / hết chỗ (đồng bộ từ lịch)
+        columnHelper.accessor('booking_availability', {
+            meta: { width: '130px' },
+            header: t('table.header_booking_availability'),
+            cell: info => (
+                <BookingAvailabilityBadge availability={info.getValue()} />
             ),
         }),
         // Nổi bật
@@ -312,12 +321,6 @@ const TourTable = ({
                                     {t('table.bulk_deactivate')}
                                 </button>
                                 <button
-                                    onClick={() => onBulkStatusChange(selectedIds, 'sold_out')}
-                                    className="px-3 py-1.5 bg-[#FEF3C7] text-[#F59E0B] rounded-md text-[12px] font-bold hover:brightness-95 transition-all duration-150 shadow-sm whitespace-nowrap"
-                                >
-                                    {t('status.sold_out')}
-                                </button>
-                                <button
                                     onClick={() => onBulkDelete(selectedIds)}
                                     className="px-3 py-1.5 bg-[#FEE2E2] text-[#EF4444] rounded-md text-[12px] font-bold hover:brightness-95 transition-all duration-150 shadow-sm whitespace-nowrap"
                                 >
@@ -362,7 +365,7 @@ const TourTable = ({
             </div>
 
             <div className="overflow-x-auto custom-scrollbar-horizontal">
-                <table className="w-full text-left border-collapse table-fixed min-w-[1300px]">
+                <table className="w-full text-left border-collapse table-fixed min-w-[1430px]">
                     <thead className="bg-surface border-b border-[#E2E8F0]">
                         {table.getHeaderGroups().map(headerGroup => (
                             <tr key={headerGroup.id}>

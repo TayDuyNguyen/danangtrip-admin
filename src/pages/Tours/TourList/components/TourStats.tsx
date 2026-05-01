@@ -57,7 +57,7 @@ const TourStats = ({ stats, isLoading }: Props) => {
                         {card.icon}
                     </div>
                     <div className="flex flex-col">
-                        <span className="text-[12px] font-bold text-[#94A3B8] uppercase tracking-wider font-sans">
+                        <span className="text-[12px] font-bold text-text-secondary uppercase tracking-wider font-sans">
                             {card.label}
                         </span>
                         {isLoading ? (

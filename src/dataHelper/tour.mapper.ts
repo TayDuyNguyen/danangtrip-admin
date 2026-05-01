@@ -29,11 +29,15 @@ export interface RawTour {
     images: string[] | null;
     video_url: string | null;
     location_ids?: number[] | null;
-    status: 'active' | 'inactive' | 'sold_out';
+    /** API: active | inactive; legacy sold_out normalized in mapFromRaw */
+    status: string;
+    booking_availability?: string | null;
     is_featured: boolean | number;
     is_hot: boolean | number;
     view_count: number;
     booking_count: number;
+    /** Eloquent withCount('schedules') in list responses */
+    schedules_count?: number;
     created_by?: number | string | null;
     created_at: string;
     updated_at: string;
@@ -66,9 +70,28 @@ function optionalNumericPayload(v: unknown): number | string {
     return toNumberSafe(v);
 }
 
+function normalizeTourVisibility(raw: RawTour): {
+    status: 'active' | 'inactive';
+    booking_availability: 'open' | 'sold_out';
+} {
+    const legacySoldOutStatus = raw.status === 'sold_out';
+    let status: 'active' | 'inactive' =
+        raw.status === 'inactive' ? 'inactive' : 'active';
+    if (legacySoldOutStatus) {
+        status = 'active';
+    }
+    let booking_availability: 'open' | 'sold_out' =
+        raw.booking_availability === 'sold_out' ? 'sold_out' : 'open';
+    if (legacySoldOutStatus) {
+        booking_availability = 'sold_out';
+    }
+    return { status, booking_availability };
+}
+
 export const tourMapper = {
     /** API → UI */
     mapFromRaw(raw: RawTour): TourViewModel {
+        const { status, booking_availability } = normalizeTourVisibility(raw);
         return {
             id: toNumberSafe(raw.id),
             name: raw.name || '',
@@ -98,11 +121,13 @@ export const tourMapper = {
             thumbnail: raw.thumbnail || '',
             images: toArraySafe<string>(raw.images),
             video_url: raw.video_url || null,
-            status: raw.status || 'inactive',
+            status,
+            booking_availability,
             is_featured: !!raw.is_featured,
             is_hot: !!raw.is_hot,
             view_count: toNumberSafe(raw.view_count),
             booking_count: toNumberSafe(raw.booking_count),
+            scheduleCount: toNumberSafe(raw.schedules_count),
             created_by:
                 raw.created_by !== undefined && raw.created_by !== null
                     ? toNumberSafe(raw.created_by)

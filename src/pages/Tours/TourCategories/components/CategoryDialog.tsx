@@ -27,7 +27,7 @@ interface CategoryFormValues {
     icon: string;
     description: string;
     sort_order: number;
-    status: 'active' | 'inactive' | 'sold_out';
+    status: 'active' | 'inactive';
     icon_background: string;
 }
 

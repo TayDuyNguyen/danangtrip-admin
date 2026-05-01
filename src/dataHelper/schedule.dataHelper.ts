@@ -24,6 +24,7 @@ export interface RawSchedule {
     price_child?: string | number | null;
     price_infant?: string | number | null;
     status: string;
+    booking_availability?: string;
     tour?: RawScheduleTour | null;
 }
 

@@ -2,10 +2,10 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { clsx } from 'clsx';
-import { ChevronLeft, ChevronRight, Edit3, Trash2, ImageOff, ArrowUpDown, RefreshCw } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Trash2, ImageOff, ArrowUpDown, RefreshCw, Plus, Pencil } from 'lucide-react';
 
 import type { Schedule } from '@/types/schedule';
-import { ScheduleStatus } from '@/types/schedule';
+import { ScheduleBookingAvailability, ScheduleStatus } from '@/types/schedule';
 import CustomSelect from '@/components/ui/CustomSelect';
 import type { Option } from '@/components/ui/CustomSelect';
 import ProgressBar from '@/components/ui/ProgressBar';
@@ -76,6 +76,12 @@ const TourSchedulesTable = ({
     };
 
     const lastPage = Math.max(1, Math.ceil(total / limit));
+
+    const toScheduleCreate = (tourId: number | string) =>
+        ROUTES.TOURS_SCHEDULE_CREATE.replace(':id', String(tourId));
+
+    const toScheduleEdit = (id: number | string) =>
+        ROUTES.TOURS_SCHEDULE_EDIT.replace(':id', String(id));
 
     return (
         <div className="bg-white border border-[#E2E8F0] rounded-2xl overflow-hidden shadow-sm">
@@ -157,6 +163,9 @@ const TourSchedulesTable = ({
                             <th className="px-3 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-text-secondary w-36">
                                 {t('schedules:table.status')}
                             </th>
+                            <th className="px-3 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-text-secondary w-32">
+                                {t('schedules:table.booking_availability')}
+                            </th>
                             <th className="px-3 py-3 text-right text-[11px] font-bold uppercase tracking-wider text-text-secondary w-32">
                                 {t('schedules:table.actions')}
                             </th>
@@ -165,13 +174,13 @@ const TourSchedulesTable = ({
                     <tbody>
                         {(isLoading && data.length === 0) ? (
                             <tr>
-                                <td colSpan={9} className="py-20 text-center">
+                                <td colSpan={10} className="py-20 text-center">
                                     <LoadingReact type="spokes" height={48} width={48} color="#14B8A6" />
                                 </td>
                             </tr>
                         ) : data.length === 0 ? (
                             <tr>
-                                <td colSpan={9} className="py-16 text-center text-[#64748B] text-sm font-medium">
+                                <td colSpan={10} className="py-16 text-center text-[#64748B] text-sm font-medium">
                                     {t('schedules:no_data.title')}
                                 </td>
                             </tr>
@@ -223,14 +232,7 @@ const TourSchedulesTable = ({
                                                 <div className="min-w-0">
                                                     <button
                                                         type="button"
-                                                        onClick={() =>
-                                                            navigate(
-                                                                ROUTES.TOURS_EDIT.replace(
-                                                                    ':id',
-                                                                    String(row.tourId),
-                                                                ),
-                                                            )
-                                                        }
+                                                        onClick={() => navigate(toScheduleCreate(row.tourId))}
                                                     className="text-left text-[14px] font-semibold text-[#1E293B] hover:text-[#14b8a6] line-clamp-2"
                                                     >
                                                         {row.tourName || '—'}
@@ -299,14 +301,11 @@ const TourSchedulesTable = ({
                                                     label:
                                                         row.status === ScheduleStatus.AVAILABLE
                                                             ? t('schedules:status.available')
-                                                            : row.status === ScheduleStatus.FULL
-                                                              ? t('schedules:status.full')
-                                                              : t('schedules:status.cancelled'),
+                                                            : t('schedules:status.cancelled'),
                                                 }}
                                                 onChange={(opt: Option | null) => onStatusChange(idNum, String(opt?.value))}
                                                 options={[
                                                     { value: ScheduleStatus.AVAILABLE, label: t('schedules:status.available') },
-                                                    { value: ScheduleStatus.FULL, label: t('schedules:status.full') },
                                                     { value: ScheduleStatus.CANCELLED, label: t('schedules:status.cancelled') },
                                                 ]}
                                                 size="sm"
@@ -315,27 +314,42 @@ const TourSchedulesTable = ({
                                             />
                                         </td>
                                         <td className="px-3 py-3">
+                                            <span
+                                                className={clsx(
+                                                    'inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-wide',
+                                                    row.bookingAvailability === ScheduleBookingAvailability.SOLD_OUT
+                                                        ? 'bg-[#FEE2E2] text-[#B91C1C] border border-[#FECACA]'
+                                                        : 'bg-[#dff7f4] text-[#0f766e] border border-[#ccfbf1]',
+                                                )}
+                                            >
+                                                {row.bookingAvailability === ScheduleBookingAvailability.SOLD_OUT
+                                                    ? t('schedules:booking_availability.sold_out')
+                                                    : t('schedules:booking_availability.open')}
+                                            </span>
+                                        </td>
+                                        <td className="px-3 py-3">
                                             <div className="flex justify-end gap-1">
                                                 <button
                                                     type="button"
-                                                    title={t('schedules:actions.edit_tour')}
-                                                    onClick={() =>
-                                                        navigate(
-                                                            ROUTES.TOURS_EDIT.replace(
-                                                                ':id',
-                                                                String(row.tourId),
-                                                            ),
-                                                        )
-                                                    }
-                                                    className="w-7 h-7 flex items-center justify-center rounded-md bg-surface border border-[#E2E8F0] text-[#64748B] hover:text-[#F59E0B]"
+                                                    title={t('schedules:actions.add_new')}
+                                                    onClick={() => navigate(toScheduleCreate(row.tourId))}
+                                                    className="w-7 h-7 flex items-center justify-center rounded-md bg-white border border-[#E2E8F0] text-[#64748B] hover:text-[#14b8a6] hover:border-[#14b8a6] transition-colors"
                                                 >
-                                                    <Edit3 className="w-4 h-4" />
+                                                    <Plus className="w-4 h-4" />
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    title={t('common:actions.edit')}
+                                                    onClick={() => navigate(toScheduleEdit(row.id))}
+                                                    className="w-7 h-7 flex items-center justify-center rounded-md bg-white border border-[#E2E8F0] text-[#64748B] hover:text-[#F59E0B] hover:border-[#F59E0B] transition-colors"
+                                                >
+                                                    <Pencil className="w-4 h-4" />
                                                 </button>
                                                 <button
                                                     type="button"
                                                     title={t('common:actions.remove')}
                                                     onClick={() => onDelete(row)}
-                                                    className="w-7 h-7 flex items-center justify-center rounded-md bg-surface border border-[#E2E8F0] text-[#64748B] hover:text-[#EF4444]"
+                                                    className="w-7 h-7 flex items-center justify-center rounded-md bg-white border border-[#E2E8F0] text-[#64748B] hover:text-[#EF4444] hover:border-[#EF4444] transition-colors"
                                                 >
                                                     <Trash2 className="w-4 h-4" />
                                                 </button>

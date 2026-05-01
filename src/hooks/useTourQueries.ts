@@ -74,7 +74,7 @@ export const useTourMutations = () => {
     };
 
     const statusMutation = useMutation({
-        mutationFn: ({ id, status }: { id: string | number; status: 'active' | 'inactive' | 'sold_out' }) => tourApi.updateStatus(id, status),
+        mutationFn: ({ id, status }: { id: string | number; status: 'active' | 'inactive' }) => tourApi.updateStatus(id, status),
         onMutate: async (newData) => {
             await queryClient.cancelQueries({ queryKey: tourKeys.lists() });
             const previousQueries = queryClient.getQueriesData<TourListData>({ queryKey: tourKeys.lists() });

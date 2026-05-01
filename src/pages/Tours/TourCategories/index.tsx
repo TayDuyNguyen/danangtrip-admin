@@ -17,7 +17,7 @@ const TourCategories = () => {
     
     // Search & Filter State
     const [searchQuery, setSearchQuery] = useState('');
-    const [statusFilter, setStatusFilter] = useState<'active' | 'inactive' | 'sold_out' | undefined>(undefined);
+    const [statusFilter, setStatusFilter] = useState<'active' | 'inactive' | undefined>(undefined);
 
     // State for Dialogs
     const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -83,7 +83,7 @@ const TourCategories = () => {
         icon: string; 
         description: string; 
         sort_order: number; 
-        status: 'active' | 'inactive' | 'sold_out';
+        status: 'active' | 'inactive';
         icon_background: string;
     }) => {
         // Construct API data explicitly to omit icon_background (Rule §14.5)
@@ -209,7 +209,7 @@ const TourCategories = () => {
                                 { value: 'active', label: t('status.active') },
                                 { value: 'inactive', label: t('status.inactive') },
                             ].find(opt => opt.value === (statusFilter || ''))}
-                            onChange={(opt) => setStatusFilter((opt as { value: 'active' | 'inactive' | 'sold_out' })?.value || undefined)}
+                            onChange={(opt) => setStatusFilter((opt as { value: 'active' | 'inactive' })?.value || undefined)}
                             placeholder={t('status.all')}
                             leftIcon={<Filter size={16} className="text-slate-400" />}
                         />

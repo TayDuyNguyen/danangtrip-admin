@@ -25,7 +25,6 @@ export const SchedulePreviewBox = ({ control }: SchedulePreviewBoxProps) => {
                 day: '2-digit',
                 month: '2-digit',
                 year: 'numeric',
-                weekday: 'long',
             }).format(date);
         } catch {
             return '-';
@@ -42,7 +41,7 @@ export const SchedulePreviewBox = ({ control }: SchedulePreviewBoxProps) => {
         }
         return (
             <span className="text-[#0f766e] font-bold">
-                {new Intl.NumberFormat(i18n.language === 'vi' ? 'vi-VN' : 'en-US').format(Number(val))} d
+                {new Intl.NumberFormat(i18n.language === 'vi' ? 'vi-VN' : 'en-US').format(Number(val))} ₫
             </span>
         );
     };
@@ -51,87 +50,98 @@ export const SchedulePreviewBox = ({ control }: SchedulePreviewBoxProps) => {
         const s = (status || '').toUpperCase() as ScheduleStatus;
         switch (s) {
             case 'AVAILABLE':
-                return <span className="inline-flex items-center gap-1.5 rounded-full bg-[#dff7f4] px-2 py-0.5 text-[11px] font-medium text-[#0f766e] border border-[#ccfbf1]">
-                    <span className="h-1.5 w-1.5 rounded-full bg-[#14b8a6]" />
-                    {t('schedules:status.available')}
-                </span>;
+                return (
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-[#dff7f4] px-2.5 py-1 text-[11px] font-bold text-[#0f766e] border border-[#ccfbf1]">
+                        <span className="h-1.5 w-1.5 rounded-full bg-[#14b8a6] animate-pulse" />
+                        {t('schedules:status.available')}
+                    </span>
+                );
             case 'FULL':
-                return <span className="inline-flex items-center gap-1.5 rounded-full bg-red-50 px-2 py-0.5 text-[11px] font-medium text-red-700 border border-red-100">
-                    <span className="h-1.5 w-1.5 rounded-full bg-red-500" />
-                    {t('schedules:status.full')}
-                </span>;
+                return (
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-red-50 px-2.5 py-1 text-[11px] font-bold text-red-700 border border-red-100">
+                        <span className="h-1.5 w-1.5 rounded-full bg-red-500" />
+                        {t('schedules:status.full')}
+                    </span>
+                );
             case 'CANCELLED':
-                return <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 px-2 py-0.5 text-[11px] font-medium text-slate-600 border border-slate-100">
-                    <span className="h-1.5 w-1.5 rounded-full bg-slate-500" />
-                    {t('schedules:status.cancelled')}
-                </span>;
+                return (
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 px-2.5 py-1 text-[11px] font-bold text-slate-600 border border-slate-100">
+                        <span className="h-1.5 w-1.5 rounded-full bg-slate-400" />
+                        {t('schedules:status.cancelled')}
+                    </span>
+                );
             default:
                 return '-';
         }
     };
 
     return (
-        <div className="mt-8 overflow-hidden rounded-2xl border border-slate-200 bg-slate-50/50 shadow-sm">
-            <div className="border-b border-slate-200 bg-white/50 px-5 py-2.5">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                    {t('schedules:fields.preview')}
-                </span>
-            </div>
-
-            <div className="grid grid-cols-1 gap-x-8 gap-y-5 p-5 md:grid-cols-2">
-                <div className="flex items-center gap-3">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#dff7f4] text-[#14b8a6] shadow-sm">
-                        <i className="ri-calendar-event-line text-lg" />
+        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-slate-50/30 p-1">
+            <div className="grid grid-cols-1 gap-1">
+                {/* Dates */}
+                <div className="flex items-center justify-between rounded-xl bg-white p-4 shadow-sm">
+                    <div className="flex items-center gap-3">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#dff7f4] text-[#14b8a6]">
+                            <i className="ri-calendar-line text-xl" />
+                        </div>
+                        <div className="flex flex-col">
+                            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                                {t('schedules:fields.start_date')}
+                            </span>
+                            <span className="text-[14px] font-bold text-slate-700">
+                                {formatDate(values.startDate)}
+                            </span>
+                        </div>
                     </div>
-                    <div className="flex flex-col">
-                        <span className="text-[11px] font-medium text-slate-400 uppercase tracking-tight">
-                            {t('schedules:fields.start_date')}
+                    <div className="h-8 w-px bg-slate-100 mx-2" />
+                    <div className="flex flex-col text-right">
+                        <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                            {t('schedules:fields.end_date')}
                         </span>
-                        <span className="text-[14px] font-semibold text-slate-700">
-                            {formatDate(values.startDate)}
+                        <span className="text-[14px] font-bold text-slate-700">
+                            {formatDate(values.endDate)}
                         </span>
                     </div>
                 </div>
 
-                <div className="flex items-center gap-3">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-100 text-[#0f766e] shadow-sm">
-                        <i className="ri-checkbox-circle-line text-lg" />
-                    </div>
-                    <div className="flex flex-col">
-                        <span className="text-[11px] font-medium text-slate-400 uppercase tracking-tight">
+                {/* Status & Slots */}
+                <div className="grid grid-cols-2 gap-1">
+                    <div className="flex flex-col gap-1 rounded-xl bg-white p-4 shadow-sm">
+                        <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
                             {t('schedules:fields.status')}
                         </span>
-                        <div className="mt-0.5">
-                            {getStatusLabel(values.status)}
+                        <div className="mt-1">{getStatusLabel(values.status)}</div>
+                    </div>
+                    <div className="flex flex-col gap-1 rounded-xl bg-white p-4 shadow-sm">
+                        <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                            {t('schedules:fields.max_people')}
+                        </span>
+                        <div className="mt-1 flex items-baseline gap-1">
+                            <span className="text-xl font-black text-slate-800">{values.totalSlots || '0'}</span>
+                            <span className="text-[11px] font-bold text-slate-400 uppercase">{t('common:units.people')}</span>
                         </div>
                     </div>
                 </div>
 
-                <div className="flex items-center gap-3">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#f4fce3] text-[#0f766e] shadow-sm">
-                        <i className="ri-group-line text-lg" />
-                    </div>
-                    <div className="flex flex-col">
-                        <span className="text-[11px] font-medium text-slate-400 uppercase tracking-tight">
-                            {t('schedules:fields.max_people')}
-                        </span>
-                        <span className="text-[14px] font-semibold text-slate-700">
-                            {values.totalSlots || '-'} {t('common:units.people')}
-                        </span>
-                    </div>
-                </div>
-
-                <div className="flex items-center gap-3">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#dff7f4] text-[#14b8a6] shadow-sm">
-                        <i className="ri-money-dollar-circle-line text-lg" />
-                    </div>
-                    <div className="flex flex-col">
-                        <span className="text-[11px] font-medium text-slate-400 uppercase tracking-tight">
-                            {t('schedules:fields.price_adult')}
-                        </span>
-                        <span className="text-[14px] font-semibold">
-                            {formatCurrency(values.priceAdult)}
-                        </span>
+                {/* Prices */}
+                <div className="rounded-xl bg-white p-4 shadow-sm space-y-4">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                        {t('schedules:table.price')}
+                    </span>
+                    
+                    <div className="space-y-3">
+                        <div className="flex items-center justify-between text-[13px]">
+                            <span className="font-medium text-slate-500">{t('schedules:fields.price_adult')}</span>
+                            <span className="font-bold">{formatCurrency(values.priceAdult)}</span>
+                        </div>
+                        <div className="flex items-center justify-between text-[13px]">
+                            <span className="font-medium text-slate-500">{t('schedules:fields.price_child')}</span>
+                            <span className="font-bold">{formatCurrency(values.priceChild)}</span>
+                        </div>
+                        <div className="flex items-center justify-between text-[13px]">
+                            <span className="font-medium text-slate-500">{t('schedules:fields.price_infant')}</span>
+                            <span className="font-bold">{formatCurrency(values.priceInfant)}</span>
+                        </div>
                     </div>
                 </div>
             </div>

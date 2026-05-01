@@ -5,6 +5,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useTourEditDepartureSchedules, useDeleteSchedule } from '@/hooks/useScheduleQueries';
+import { ScheduleStatus, type Schedule } from '@/types/schedule';
 import {
     Save,
     FileText,
@@ -19,7 +21,9 @@ import {
     Type,
     Info,
     AlertTriangle,
-    Trash2
+    Trash2,
+    CalendarPlus,
+    Edit2,
 } from 'lucide-react';
 
 import { createTourSchema, type CreateTourInput } from '@/validations/tour.schema';
@@ -37,6 +41,7 @@ import ImageGallery from '../TourCreate/components/ImageGallery';
 import { tourMapper } from '@/dataHelper/tour.mapper';
 import SidebarCards from '../TourCreate/components/SidebarCards';
 import TourDeleteDialog from '../TourList/components/TourDeleteDialog';
+import ScheduleDeleteDialog from '../TourSchedules/components/ScheduleDeleteDialog';
 
 const SCROLL_FIELD_ORDER: string[] = [
     'name',
@@ -63,12 +68,13 @@ const SCROLL_FIELD_ORDER: string[] = [
 ];
 
 function EditTour() {
-    const { t } = useTranslation(['tour', 'common']);
+    const { t, i18n } = useTranslation(['tour', 'common', 'schedules']);
     const navigate = useNavigate();
     const { id } = useParams<{ id: string }>();
     const [isScrolled, setIsScrolled] = useState(false);
     const [autoSlug, setAutoSlug] = useState(false);
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+    const [schedulePendingDelete, setSchedulePendingDelete] = useState<Schedule | null>(null);
 
     useEffect(() => {
         const handleScroll = (e: Event) => {
@@ -101,7 +107,16 @@ function EditTour() {
         refetch: refetchTour
     } = useTourDetailQuery(id);
 
+    const {
+        data: scheduleListData,
+        isLoading: isDepartureSchedulesLoading,
+        isError: isDepartureSchedulesError,
+        refetch: refetchDepartureSchedules,
+    } = useTourEditDepartureSchedules(id);
+    const departureSchedules = scheduleListData?.data ?? [];
+
     const { updateTourMutation, deleteMutation } = useTourMutations();
+    const deleteScheduleMutation = useDeleteSchedule();
 
     const {
         register,
@@ -239,7 +254,7 @@ function EditTour() {
     }) as string[];
 
     return (
-        <form onSubmit={onSubmit} className="min-h-screen bg-[#F8FAFC] pb-20 font-sans" noValidate>
+        <form onSubmit={onSubmit} className="min-h-screen bg-surface pb-20 font-sans" noValidate>
             <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200 transition-all duration-300 shadow-sm rounded-b-2xl">
                 <div
                     className={cn(
@@ -250,7 +265,7 @@ function EditTour() {
                     <div className="flex-1 min-w-0">
                         <nav
                             className={cn(
-                                'flex flex-wrap items-center gap-x-1 gap-y-0.5 text-xs font-medium text-[#94A3B8] transition-all duration-300',
+                                'flex flex-wrap items-center gap-x-1 gap-y-0.5 text-xs font-medium text-text-secondary transition-all duration-300',
                                 isScrolled ? 'opacity-0 h-0 overflow-hidden mb-0' : 'opacity-100 h-auto mb-2'
                             )}
                         >
@@ -469,7 +484,7 @@ function EditTour() {
                                     <label className="text-sm font-semibold text-slate-700">
                                         {t('form.basic.description')}
                                     </label>
-                                    <p className="text-xs text-[#94A3B8]">{t('form.basic.description_helper')}</p>
+                                    <p className="text-xs text-text-secondary">{t('form.basic.description_helper')}</p>
                                     <TextareaField
                                         {...register('description')}
                                         rows={6}
@@ -497,7 +512,7 @@ function EditTour() {
                                     <label className="text-sm font-semibold text-slate-700">
                                         {t('form.pricing.price_adult')}
                                     </label>
-                                    <p className="text-xs text-[#94A3B8]">{t('form.pricing.helper_price_adult')}</p>
+                                    <p className="text-xs text-text-secondary">{t('form.pricing.helper_price_adult')}</p>
                                     <div className="relative">
                                         <Controller
                                             name="price_adult"
@@ -522,7 +537,7 @@ function EditTour() {
                                     <label className="text-sm font-semibold text-slate-700">
                                         {t('form.pricing.price_child')}
                                     </label>
-                                    <p className="text-xs text-[#94A3B8]">{t('form.pricing.helper_price_child')}</p>
+                                    <p className="text-xs text-text-secondary">{t('form.pricing.helper_price_child')}</p>
                                     <div className="relative">
                                         <Controller
                                             name="price_child"
@@ -543,7 +558,7 @@ function EditTour() {
                                     <label className="text-sm font-semibold text-slate-700">
                                         {t('form.pricing.price_infant')}
                                     </label>
-                                    <p className="text-xs text-[#94A3B8]">{t('form.pricing.helper_price_infant')}</p>
+                                    <p className="text-xs text-text-secondary">{t('form.pricing.helper_price_infant')}</p>
                                     <div className="relative">
                                         <Controller
                                             name="price_infant"
@@ -573,14 +588,14 @@ function EditTour() {
                                     <label className="text-sm font-semibold text-slate-700">
                                         {t('form.pricing.price_after_discount')}
                                     </label>
-                                    <div className="w-full px-4 py-3 bg-[#F8FAFC] border border-slate-200 rounded-xl text-[#14b8a6] text-base font-bold">
+                                    <div className="w-full px-4 py-3 bg-surface border border-slate-200 rounded-xl text-[#14b8a6] text-base font-bold">
                                         {priceAfterDiscount.toLocaleString('vi-VN')} {t('form.pricing.currency_suffix')}
                                     </div>
                                 </div>
 
                                 <div className="space-y-2" data-tour-field="min_people">
                                     <label className="text-sm font-semibold text-slate-700">{t('form.pricing.min_people')}</label>
-                                    <p className="text-xs text-[#94A3B8]">{t('form.pricing.helper_min_people')}</p>
+                                    <p className="text-xs text-text-secondary">{t('form.pricing.helper_min_people')}</p>
                                     <div className="relative">
                                         <Users className="absolute left-4 top-3.5 w-4 h-4 text-slate-400" />
                                         <TextInput
@@ -598,7 +613,7 @@ function EditTour() {
 
                                 <div className="space-y-2" data-tour-field="max_people">
                                     <label className="text-sm font-semibold text-slate-700">{t('form.pricing.max_people')}</label>
-                                    <p className="text-xs text-[#94A3B8]">{t('form.pricing.helper_max_people')}</p>
+                                    <p className="text-xs text-text-secondary">{t('form.pricing.helper_max_people')}</p>
                                     <div className="relative">
                                         <Users className="absolute left-4 top-3.5 w-4 h-4 text-slate-400" />
                                         <TextInput
@@ -615,7 +630,7 @@ function EditTour() {
 
                                 <div className="space-y-2" data-tour-field="start_time">
                                     <label className="text-sm font-semibold text-slate-700">{t('form.pricing.start_time')}</label>
-                                    <p className="text-xs text-[#94A3B8]">{t('form.pricing.helper_start_time')}</p>
+                                    <p className="text-xs text-text-secondary">{t('form.pricing.helper_start_time')}</p>
                                     <TextInput
                                         type="time"
                                         {...register('start_time')}
@@ -648,7 +663,7 @@ function EditTour() {
                                     <label className="text-sm font-semibold text-slate-700">
                                         {t('form.schedule.available_from')}
                                     </label>
-                                    <p className="text-xs text-[#94A3B8]">{t('form.schedule.helper_from')}</p>
+                                    <p className="text-xs text-text-secondary">{t('form.schedule.helper_from')}</p>
                                     <TextInput
                                         type="date"
                                         {...register('available_from')}
@@ -662,7 +677,7 @@ function EditTour() {
                                     <label className="text-sm font-semibold text-slate-700">
                                         {t('form.schedule.available_to')}
                                     </label>
-                                    <p className="text-xs text-[#94A3B8]">{t('form.schedule.helper_to')}</p>
+                                    <p className="text-xs text-text-secondary">{t('form.schedule.helper_to')}</p>
                                     <TextInput
                                         type="date"
                                         {...register('available_to')}
@@ -700,6 +715,113 @@ function EditTour() {
 
                         <div className="bg-white rounded-2xl p-6 md:p-8 border border-[#E2E8F0] shadow-sm">
                             <SectionHeader
+                                icon={CalendarPlus}
+                                title={t('form.departures.title')}
+                                subtitle={t('form.departures.subtitle')}
+                            />
+                            <div className="flex justify-end mb-4">
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        id &&
+                                        navigate(ROUTES.TOURS_SCHEDULE_CREATE.replace(':id', String(id)), {
+                                            state: { fromTourEdit: true },
+                                        })
+                                    }
+                                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#dff7f4] text-sm font-bold text-[#0f766e] border border-[#ccfbf1] hover:bg-[#ccfbf1] transition-colors"
+                                >
+                                    <CalendarPlus className="w-4 h-4" aria-hidden />
+                                    {t('form.departures.manage')}
+                                </button>
+                            </div>
+
+                            {isDepartureSchedulesLoading ? (
+                                <div className="flex items-center justify-center py-12 rounded-2xl border border-slate-100 bg-slate-50/50">
+                                    <p className="text-sm text-slate-400">{t('common:loading')}</p>
+                                </div>
+                            ) : isDepartureSchedulesError ? (
+                                <div
+                                    className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 rounded-2xl border border-red-100 bg-red-50/50 px-4 py-3 text-sm text-red-700"
+                                    role="alert"
+                                >
+                                    <span>{t('form.departures.load_error')}</span>
+                                    <button
+                                        type="button"
+                                        onClick={() => void refetchDepartureSchedules()}
+                                        className="shrink-0 inline-flex items-center justify-center rounded-lg border border-red-200 bg-white px-3 py-1.5 text-xs font-bold text-red-800 hover:bg-red-50"
+                                    >
+                                        {t('form.departures.retry')}
+                                    </button>
+                                </div>
+                            ) : departureSchedules.length > 0 ? (
+                                <div>
+                                    <ul className="space-y-3 list-none p-0 m-0" aria-label={t('form.departures.title')}>
+                                        {departureSchedules.map((row) => (
+                                            <li
+                                                key={row.id}
+                                                className="rounded-2xl border border-slate-100 bg-slate-50/60 px-4 py-3 flex flex-col md:flex-row md:items-center md:justify-between gap-3"
+                                            >
+                                                <div className="text-sm text-slate-700 font-semibold min-w-0">
+                                                    {new Date(row.startDate).toLocaleDateString(
+                                                        i18n.language === 'vi' ? 'vi-VN' : 'en-US',
+                                                    )}
+                                                    {' — '}
+                                                    {new Date(row.endDate).toLocaleDateString(
+                                                        i18n.language === 'vi' ? 'vi-VN' : 'en-US',
+                                                    )}
+                                                </div>
+                                                <div className="flex items-center gap-2 sm:gap-3 flex-wrap justify-end">
+                                                    <span className="text-xs font-bold text-slate-500 tabular-nums">
+                                                        {row.bookedSlots}/{row.totalSlots}
+                                                    </span>
+                                                    <span className="px-2 py-1 rounded-lg bg-white border border-slate-200 text-xs font-bold text-slate-600">
+                                                        {row.status === ScheduleStatus.AVAILABLE
+                                                            ? t('schedules:status.available')
+                                                            : row.status === ScheduleStatus.FULL
+                                                                ? t('schedules:status.full')
+                                                                : t('schedules:status.cancelled')}
+                                                    </span>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() =>
+                                                            navigate(
+                                                                ROUTES.TOURS_SCHEDULE_EDIT.replace(
+                                                                    ':id',
+                                                                    String(row.id),
+                                                                ),
+                                                                { state: { fromTourEdit: true } },
+                                                            )
+                                                        }
+                                                        className="inline-flex items-center justify-center w-9 h-9 rounded-xl border border-slate-200 bg-white text-slate-500 hover:text-[#0f766e] hover:border-[#14b8a6] hover:bg-[#dff7f4]/50 transition-colors shrink-0"
+                                                        aria-label={t('form.departures.edit_schedule')}
+                                                    >
+                                                        <Edit2 className="w-4 h-4" aria-hidden />
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setSchedulePendingDelete(row)}
+                                                        disabled={deleteScheduleMutation.isPending}
+                                                        className="inline-flex items-center justify-center w-9 h-9 rounded-xl border border-slate-200 bg-white text-slate-500 hover:text-red-600 hover:border-red-200 hover:bg-red-50 transition-colors disabled:opacity-50 shrink-0"
+                                                        aria-label={t('form.departures.delete_schedule')}
+                                                    >
+                                                        <Trash2 className="w-4 h-4" aria-hidden />
+                                                    </button>
+                                                </div>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                    <p className="text-xs text-slate-400 mt-2">{t('form.departures.showing_note')}</p>
+                                </div>
+                            ) : (
+                                <div className="flex flex-col items-center justify-center py-10 rounded-2xl border border-dashed border-slate-200 bg-slate-50/50">
+                                    <Clock className="w-10 h-10 text-slate-200 mb-2" />
+                                    <p className="text-slate-500 font-medium text-sm">{t('form.departures.empty')}</p>
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="bg-white rounded-2xl p-6 md:p-8 border border-[#E2E8F0] shadow-sm">
+                            <SectionHeader
                                 icon={CheckSquare}
                                 title={t('form.sections.inclusions')}
                                 subtitle={t('form.section_descriptions.inclusions')}
@@ -709,7 +831,7 @@ function EditTour() {
                                     <label className="text-sm font-semibold text-green-700">
                                         {t('form.inclusions_fields.included_label')}
                                     </label>
-                                    <p className="text-xs text-[#94A3B8]">{t('form.inclusions_fields.line_hint')}</p>
+                                    <p className="text-xs text-text-secondary">{t('form.inclusions_fields.line_hint')}</p>
                                     <TextareaField
                                         {...register('inclusions')}
                                         rows={5}
@@ -721,7 +843,7 @@ function EditTour() {
                                     <label className="text-sm font-semibold text-red-700">
                                         {t('form.inclusions_fields.excluded_label')}
                                     </label>
-                                    <p className="text-xs text-[#94A3B8]">{t('form.inclusions_fields.line_hint')}</p>
+                                    <p className="text-xs text-text-secondary">{t('form.inclusions_fields.line_hint')}</p>
                                     <TextareaField
                                         {...register('exclusions')}
                                         rows={5}
@@ -780,6 +902,7 @@ function EditTour() {
                             onPublish={onSubmit}
                             isSubmitting={busy}
                             submitLabel={t('form.actions.save_changes')}
+                            statusOptions={['active', 'inactive']}
                         />
                     </aside>
                 </div>
@@ -790,6 +913,32 @@ function EditTour() {
                 onClose={() => setIsDeleteDialogOpen(false)}
                 onConfirm={confirmDelete}
                 isDeleting={deleteMutation.isPending}
+            />
+            <ScheduleDeleteDialog
+                isOpen={schedulePendingDelete !== null}
+                onClose={() => setSchedulePendingDelete(null)}
+                onConfirm={() => {
+                    if (!schedulePendingDelete) {
+                        return;
+                    }
+                    const scheduleId = schedulePendingDelete.id;
+                    deleteScheduleMutation.mutate(scheduleId, {
+                        onSuccess: () => {
+                            setSchedulePendingDelete(null);
+                            void refetchTour();
+                        },
+                    });
+                }}
+                schedule={
+                    schedulePendingDelete
+                        ? {
+                              ...schedulePendingDelete,
+                              tourName:
+                                  schedulePendingDelete.tourName || String(tourName ?? ''),
+                          }
+                        : null
+                }
+                isDeleting={deleteScheduleMutation.isPending}
             />
         </form>
     );

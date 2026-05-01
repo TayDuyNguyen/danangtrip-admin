@@ -6,9 +6,13 @@
     "subtitle": "Quản lý toàn bộ lịch khởi hành của các tour",
     "breadcrumb": "Quản lý Tour / Lịch khởi hành",
     "status": {
-        "available": "Còn chỗ",
+        "available": "Đang hoạt động",
         "full": "Đầy chỗ",
         "cancelled": "Đã hủy"
+    },
+    "booking_availability": {
+        "open": "Còn chỗ",
+        "sold_out": "Hết chỗ"
     },
     "fields": {
         "capacity": "Sức chứa",
@@ -52,6 +56,7 @@
         "load_more": "Tải thêm kết quả",
         "view_tour": "Xem tour",
         "edit_tour": "Sửa tour",
+        "edit_schedule": "Cập nhật lịch trình",
         "bulk_activate": "Còn chỗ",
         "bulk_cancel": "Hủy lịch",
         "selected_count": "Đã chọn {{count}}",
@@ -64,6 +69,7 @@
         "price": "Giá riêng",
         "capacity": "Đặt / Tối đa",
         "status": "Trạng thái",
+        "booking_availability": "Chỗ",
         "actions": "Thao tác",
         "showing_summary": "Hiển thị {{start}}–{{end}} trong tổng số {{total}} lịch",
         "per_page": "Hiển thị",

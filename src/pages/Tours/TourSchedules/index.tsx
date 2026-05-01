@@ -1,7 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Plus } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
 
 import type { Option } from '@/components/ui/CustomSelect';
 import type { TourFilters } from '@/dataHelper/tour.dataHelper';
@@ -23,7 +22,6 @@ import SchedulesCalendar from './components/SchedulesCalendar';
 import TourSchedulesTable from './components/TourSchedulesTable';
 import ScheduleDeleteDialog from './components/ScheduleDeleteDialog';
 import EmptyState from '@/components/common/EmptyState';
-import { ROUTES } from '@/routes/routes';
 
 const defaultFilters: ScheduleFilters = {
     page: 1,
@@ -37,6 +35,7 @@ const tourPickerFiltersBase: TourFilters = {
     q: '',
     tour_category_id: 'all',
     status: 'all',
+    booking_availability: 'all',
     type: 'all',
     sort: 'name',
     order: 'asc',
@@ -44,7 +43,6 @@ const tourPickerFiltersBase: TourFilters = {
 
 const SchedulesPage = () => {
     const { t } = useTranslation(['schedules', 'common']);
-    const navigate = useNavigate();
     const [searchParams] = useSearchParams();
 
     const [filters, setFilters] = useState<ScheduleFilters>(() => {
@@ -155,20 +153,12 @@ const SchedulesPage = () => {
         <div className="p-4 lg:p-10 mx-auto min-h-screen bg-white font-sans space-y-6">
             <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
                 <div>
-                    <p className="text-xs font-semibold text-[#94A3B8] uppercase tracking-wide mb-1">
+                    <p className="text-xs font-semibold text-text-secondary uppercase tracking-wide mb-1">
                         {t('schedules:breadcrumb')}
                     </p>
                     <h1 className="text-2xl font-black text-[#1E293B]">{t('schedules:title')}</h1>
                     <p className="text-sm text-[#64748B] mt-1">{t('schedules:subtitle')}</p>
                 </div>
-                <button
-                    type="button"
-                    onClick={() => navigate(ROUTES.TOURS_LIST)}
-                    className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-[#14b8a6] hover:bg-[#0f766e] text-white rounded-xl font-bold shadow-md transition-all"
-                >
-                    <Plus className="w-5 h-5" />
-                    {t('schedules:actions.add_new')}
-                </button>
             </div>
 
             <StatsSummary stats={statsData} loading={isLoadingStats || isFetchingStats} />

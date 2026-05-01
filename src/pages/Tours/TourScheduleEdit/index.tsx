@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useForm, FormProvider } from 'react-hook-form';
@@ -7,20 +7,21 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { getScheduleSchema } from '@/validations/schedule.schema';
 import type { ScheduleFormValues, ScheduleStatus } from '@/types/schedule';
 import { useTourDetailQuery } from '@/hooks/useTourQueries';
-import { useCreateSchedule } from '@/hooks/useScheduleQueries';
-import { TourInfoBox } from './components/TourInfoBox';
-import { ScheduleForm } from './components/ScheduleForm';
-import { SchedulePreviewBox } from './components/SchedulePreviewBox';
+import { useSchedule, useUpdateSchedule } from '@/hooks/useScheduleQueries';
+import { TourInfoBox } from '../TourScheduleCreate/components/TourInfoBox';
+import { ScheduleForm } from '../TourScheduleCreate/components/ScheduleForm';
+import { SchedulePreviewBox } from '../TourScheduleCreate/components/SchedulePreviewBox';
 import { Button } from '@/components/ui/Button';
 import { ROUTES } from '@/routes/routes';
+import LoadingReact from '@/components/loading';
 
 type ScheduleLocationState = { fromTourEdit?: boolean };
 
 /**
- * Screen [2.9 - Thêm lịch khởi hành]
- * Implements a glassy dashboard UI with real-time preview and fallback price logic.
+ * Screen [Cập nhật lịch khởi hành]
+ * Reuses components from TourScheduleCreate for consistency.
  */
-const TourScheduleCreate = () => {
+const TourScheduleEdit = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const location = useLocation();
@@ -28,8 +29,9 @@ const TourScheduleCreate = () => {
         (location.state as ScheduleLocationState | null)?.fromTourEdit === true;
     const { t } = useTranslation(['schedules', 'common']);
 
-    const { data: tour, isLoading: isLoadingTour } = useTourDetailQuery(id);
-    const createScheduleMutation = useCreateSchedule();
+    const { data: schedule, isLoading: isLoadingSchedule } = useSchedule(id);
+    const { data: tour, isLoading: isLoadingTour } = useTourDetailQuery(schedule?.tourId);
+    const updateScheduleMutation = useUpdateSchedule();
 
     const schema = useMemo(() => getScheduleSchema(t), [t]);
 
@@ -46,12 +48,28 @@ const TourScheduleCreate = () => {
         },
     });
 
+    const { reset } = methods;
+
+    useEffect(() => {
+        if (schedule) {
+            reset({
+                startDate: schedule.startDate,
+                endDate: schedule.endDate,
+                totalSlots: schedule.totalSlots,
+                priceAdult: schedule.priceAdult,
+                priceChild: schedule.priceChild,
+                priceInfant: schedule.priceInfant,
+                status: schedule.status,
+            });
+        }
+    }, [schedule, reset]);
+
     const onSubmit = (data: ScheduleFormValues) => {
         if (!id) return;
 
-        createScheduleMutation.mutate(
+        updateScheduleMutation.mutate(
             {
-                tourId: id,
+                id,
                 data: {
                     startDate: data.startDate,
                     endDate: data.endDate,
@@ -64,11 +82,12 @@ const TourScheduleCreate = () => {
             },
             {
                 onSuccess: () => {
-                    if (fromTourEdit && id) {
-                        navigate(ROUTES.TOURS_EDIT.replace(':id', id));
+                    const tourId = schedule?.tourId;
+                    if (fromTourEdit && tourId != null && tourId !== '') {
+                        navigate(ROUTES.TOURS_EDIT.replace(':id', String(tourId)));
                         return;
                     }
-                    navigate(`${ROUTES.TOURS_SCHEDULES}?tour_id=${id}`);
+                    navigate(`${ROUTES.TOURS_SCHEDULES}?tour_id=${tourId}`);
                 },
             }
         );
@@ -78,6 +97,14 @@ const TourScheduleCreate = () => {
         navigate(-1);
     };
 
+    if (isLoadingSchedule) {
+        return (
+            <div className="flex h-[400px] w-full items-center justify-center">
+                <LoadingReact type="spokes" color="#14b8a6" />
+            </div>
+        );
+    }
+
     return (
         <div className="w-full min-h-screen space-y-8 bg-slate-50 p-6 md:p-10">
             {/* Header Section */}
@@ -86,10 +113,10 @@ const TourScheduleCreate = () => {
                     <div className="flex items-center gap-2 text-[12px] font-medium text-slate-400">
                         <span>{t('schedules:breadcrumb')}</span>
                         <i className="ri-arrow-right-s-line" />
-                        <span className="text-[#14b8a6]">{t('schedules:actions.add_new')}</span>
+                        <span className="text-[#14b8a6]">{t('common:actions.edit')}</span>
                     </div>
                     <h1 className="text-3xl font-bold tracking-tight text-slate-800">
-                        {t('schedules:actions.add_new')}
+                        {t('common:actions.edit')}
                     </h1>
                     <TourInfoBox tour={tour} isLoading={isLoadingTour} />
                 </div>
@@ -104,11 +131,11 @@ const TourScheduleCreate = () => {
                     </Button>
                     <Button
                         onClick={methods.handleSubmit(onSubmit)}
-                        isLoading={createScheduleMutation.isPending}
-                        className="h-11 rounded-xl bg-[#14b8a6] px-8 font-bold text-white shadow-lg shadow-[#14b8a6]/20 hover:bg-[#0d9488] active:scale-95 transition-all"
+                        isLoading={updateScheduleMutation.isPending}
+                        className="h-11 rounded-xl bg-[#F59E0B] px-8 font-bold text-white shadow-lg shadow-[#F59E0B]/20 hover:bg-[#D97706] active:scale-95 transition-all"
                     >
-                        <i className="ri-add-line mr-2" />
-                        {t('schedules:actions.add_new')}
+                        <i className="ri-save-line mr-2" />
+                        {t('common:actions.edit')}
                     </Button>
                 </div>
             </div>
@@ -169,14 +196,14 @@ const TourScheduleCreate = () => {
                 </Button>
                 <Button
                     onClick={methods.handleSubmit(onSubmit)}
-                    isLoading={createScheduleMutation.isPending}
-                    className="rounded-xl bg-[#14b8a6] px-6 font-bold text-white shadow-lg shadow-[#14b8a6]/20"
+                    isLoading={updateScheduleMutation.isPending}
+                    className="rounded-xl bg-[#F59E0B] px-6 font-bold text-white shadow-lg shadow-[#F59E0B]/20"
                 >
-                    {t('schedules:actions.add_new')}
+                    {t('common:actions.edit')}
                 </Button>
             </div>
         </div>
     );
 };
 
-export default TourScheduleCreate;
+export default TourScheduleEdit;
