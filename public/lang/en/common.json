@@ -74,6 +74,8 @@
         "articles": "Article Approval",
         "users": "User Management",
         "locations": "Location Management",
+        "location_list": "Location List",
+        "location_categories": "Categories",
         "categories": "Category Management",
         "finance": "Finance & Points",
         "reports": "Reports & Analytics",

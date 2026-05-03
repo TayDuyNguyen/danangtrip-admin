@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+
+<html class="light" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Danh sách Địa điểm - Đà Nẵng Trip Admin</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style type="text/tailwindcss">
+        :root {
+            --bg-page: #F8FAFC;
+            --surface: #FFFFFF;
+            --border: #E2E8F0;
+            --text-primary: #1E293B;
+            --text-secondary: #64748B;
+            --text-muted: #94A3B8;
+            --primary: #0066CC;
+            --primary-subtle: #B3D9FF;
+            --primary-dark: #004999;
+            --accent: #FF6B35;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --error: #EF4444;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-primary);
+            font-size: 13px;}
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+        }
+        .table-dense th {
+            padding: 8px 12px;
+            font-size: 11px;
+        }
+        .table-dense td {
+            padding: 6px 12px;
+            height: 58px;
+        }
+        .toggle-switch {
+            width: 36px;
+            height: 20px;
+        }
+        .toggle-dot {
+            width: 14px;
+            height: 14px;
+            top: 3px;
+        }
+    </style>
+</head>
+<body class="antialiased">
+<aside class="h-screen w-64 fixed left-0 top-0 overflow-y-auto bg-[#1E293B] flex flex-col z-50 custom-scrollbar">
+<div class="p-6">
+<div class="flex items-center gap-3 mb-8">
+<div class="w-10 h-10 bg-[#0066CC] rounded-xl flex items-center justify-center text-white font-bold text-2xl">D</div>
+<div>
+<h1 class="text-white font-bold text-lg leading-none">Đà Nẵng Trip</h1>
+<p class="text-[#94A3B8] text-[10px] mt-1 uppercase tracking-wider font-semibold">Admin Panel</p>
+</div>
+</div>
+<nav class="space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-[#94A3B8] hover:text-white hover:bg-white/5 transition-all" href="#">
+<span class="material-symbols-outlined text-xl">dashboard</span>
+<span class="font-medium">Bảng điều khiển</span>
+</a>
+<div class="pt-4 pb-2 px-4">
+<p class="text-[10px] font-bold text-[#475569] uppercase tracking-widest">Quản lý nội dung</p>
+</div>
+<div>
+<button class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-[#94A3B8] hover:text-white hover:bg-white/5 transition-all group">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-xl">map</span>
+<span class="font-medium">Quản lý Tour</span>
+</div>
+<span class="material-symbols-outlined text-lg transition-transform">expand_more</span>
+</button>
+<div class="mt-1 ml-4 border-l border-slate-700 hidden">
+<a class="flex items-center gap-3 px-8 py-2 rounded-xl text-[#94A3B8] hover:text-white transition-all text-sm" href="#">Danh sách Tour</a>
+<a class="flex items-center gap-3 px-8 py-2 rounded-xl text-[#94A3B8] hover:text-white transition-all text-sm" href="#">Danh mục</a>
+<a class="flex items-center gap-3 px-8 py-2 rounded-xl text-[#94A3B8] hover:text-white transition-all text-sm" href="#">Lịch khởi hành</a>
+</div>
+</div>
+<div>
+<button class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-white bg-[#0066CC] shadow-lg shadow-[#0066CC]/20 group">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-xl">location_on</span>
+<span class="font-medium">Quản lý Địa điểm</span>
+</div>
+<span class="material-symbols-outlined text-lg">expand_more</span>
+</button>
+<div class="mt-1 ml-4 border-l border-slate-700">
+<a class="flex items-center gap-3 px-8 py-2 rounded-xl text-white font-medium transition-all text-sm" href="#">Danh sách Địa điểm</a>
+<a class="flex items-center gap-3 px-8 py-2 rounded-xl text-[#94A3B8] hover:text-white transition-all text-sm" href="#">Danh mục</a>
+</div>
+</div>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-[#94A3B8] hover:text-white hover:bg-white/5 transition-all" href="#">
+<span class="material-symbols-outlined text-xl">shopping_cart</span>
+<span class="font-medium">Đơn hàng</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-[#94A3B8] hover:text-white hover:bg-white/5 transition-all" href="#">
+<span class="material-symbols-outlined text-xl">star</span>
+<span class="font-medium">Đánh giá</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-[#94A3B8] hover:text-white hover:bg-white/5 transition-all" href="#">
+<span class="material-symbols-outlined text-xl">group</span>
+<span class="font-medium">Người dùng</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-[#94A3B8] hover:text-white hover:bg-white/5 transition-all" href="#">
+<span class="material-symbols-outlined text-xl">notifications</span>
+<span class="font-medium">Thông báo</span>
+</a>
+</nav>
+</div>
+<div class="mt-auto p-6 border-t border-slate-800">
+<button class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-[#EF4444] hover:bg-red-500/10 transition-all font-semibold">
+<span class="material-symbols-outlined text-xl">logout</span>
+<span>Đăng xuất</span>
+</button>
+</div>
+</aside>
+<main class="ml-64 p-6 min-h-screen">
+<div class="flex items-start justify-between mb-6">
+<div>
+<div class="flex items-center gap-2 mb-1">
+<span class="text-[12px] font-medium text-[#94A3B8]">Quản lý Địa điểm</span>
+<span class="material-symbols-outlined text-sm text-[#94A3B8]">chevron_right</span>
+<span class="text-[12px] font-medium text-[#94A3B8]">Danh sách Địa điểm</span>
+</div>
+<h2 class="text-2xl font-bold text-[#1E293B]">Danh sách Địa điểm</h2>
+<p class="text-sm text-[#64748B]">Quản lý toàn bộ địa điểm du lịch tại Đà Nẵng</p>
+</div>
+<div class="flex gap-3">
+<button class="flex items-center gap-2 px-4 py-2 bg-white border border-[#E2E8F0] rounded-[10px] text-sm font-semibold text-[#64748B] hover:border-[#0066CC] hover:text-[#0066CC] transition-all">
+<span class="material-symbols-outlined text-[20px]">download</span>
+                Xuất Excel
+            </button>
+<button class="flex items-center gap-2 px-5 py-2 bg-[#0066CC] text-white rounded-[10px] text-sm font-semibold hover:bg-[#004999] shadow-lg shadow-[#0066CC]/25 transition-all">
+<span class="material-symbols-outlined text-[20px]">add</span>
+                Thêm Địa điểm
+            </button>
+</div>
+</div>
+<div class="grid grid-cols-4 gap-4 mb-6">
+<div class="bg-white border border-[#E2E8F0] rounded-xl p-4 flex items-center gap-3 shadow-sm">
+<div class="w-10 h-10 bg-[#EFF6FF] rounded-xl flex items-center justify-center text-[#0066CC]">
+<span class="material-symbols-outlined">location_on</span>
+</div>
+<div>
+<p class="text-[11px] font-bold text-[#94A3B8] uppercase">TỔNG ĐỊA ĐIỂM</p>
+<p class="text-xl font-bold text-[#1E293B]">124</p>
+</div>
+</div>
+<div class="bg-white border border-[#E2E8F0] rounded-xl p-4 flex items-center gap-3 shadow-sm">
+<div class="w-10 h-10 bg-[#D1FAE5] rounded-xl flex items-center justify-center text-[#10B981]">
+<span class="material-symbols-outlined">check_circle</span>
+</div>
+<div>
+<p class="text-[11px] font-bold text-[#94A3B8] uppercase">ĐANG HOẠT ĐỘNG</p>
+<p class="text-xl font-bold text-[#10B981]">98</p>
+</div>
+</div>
+<div class="bg-white border border-[#E2E8F0] rounded-xl p-4 flex items-center gap-3 shadow-sm">
+<div class="w-10 h-10 bg-[#FEF3C7] rounded-xl flex items-center justify-center text-[#F59E0B]">
+<span class="material-symbols-outlined">star</span>
+</div>
+<div>
+<p class="text-[11px] font-bold text-[#94A3B8] uppercase">NỔI BẬT</p>
+<p class="text-xl font-bold text-[#F59E0B]">24</p>
+</div>
+</div>
+<div class="bg-white border border-[#E2E8F0] rounded-xl p-4 flex items-center gap-3 shadow-sm">
+<div class="w-10 h-10 bg-[#EEF2FF] rounded-xl flex items-center justify-center text-[#6366F1]">
+<span class="material-symbols-outlined">visibility</span>
+</div>
+<div>
+<p class="text-[11px] font-bold text-[#94A3B8] uppercase">LƯỢT XEM</p>
+<p class="text-xl font-bold text-[#6366F1]">48.2K</p>
+</div>
+</div>
+</div>
+<div class="bg-white border border-[#E2E8F0] rounded-2xl p-3 mb-6 shadow-sm">
+<div class="flex items-center gap-2">
+<div class="relative flex-1 min-w-[280px]">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#94A3B8] text-lg">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-slate-50 border-[#E2E8F0] rounded-[10px] text-sm focus:ring-2 focus:ring-[#0066CC]/10 focus:border-[#0066CC] outline-none transition-all placeholder:text-slate-400" placeholder="Tìm theo tên địa điểm, địa chỉ..." type="text"/>
+</div>
+<select class="w-[160px] bg-white border-[#E2E8F0] rounded-[10px] text-[13px] py-2 px-3 outline-none focus:border-[#0066CC]">
+<option value="all">Danh mục</option>
+<option>Bãi biển</option>
+<option>Di tích</option>
+<option>Vui chơi</option>
+</select>
+<select class="w-[160px] bg-white border-[#E2E8F0] rounded-[10px] text-[13px] py-2 px-3 outline-none focus:border-[#0066CC]">
+<option value="all">Quận/Huyện</option>
+<option>Hải Châu</option>
+<option>Sơn Trà</option>
+<option>Ngũ Hành Sơn</option>
+</select>
+<select class="w-[130px] bg-white border-[#E2E8F0] rounded-[10px] text-[13px] py-2 px-3 outline-none focus:border-[#0066CC]">
+<option value="all">Mức giá</option>
+<option>Miễn phí</option>
+<option>$ (Bình dân)</option>
+<option>$$ (Trung bình)</option>
+</select>
+<select class="w-[130px] bg-white border-[#E2E8F0] rounded-[10px] text-[13px] py-2 px-3 outline-none focus:border-[#0066CC]">
+<option value="all">Trạng thái</option>
+<option>Đang hoạt động</option>
+<option>Tạm dừng</option>
+</select>
+<button class="px-6 py-2 bg-[#0066CC] text-white rounded-[10px] text-[13px] font-semibold hover:bg-[#004999] transition-all">Lọc</button>
+<button class="px-4 py-2 border border-[#E2E8F0] text-[#64748B] rounded-[10px] text-[13px] font-semibold hover:text-[#EF4444] hover:border-[#EF4444] transition-all">Đặt lại</button>
+</div>
+<div class="flex items-center gap-2 mt-3 pt-3 border-t border-slate-50">
+<div class="bg-[#EFF6FF] text-[#0066CC] border border-[#B3D9FF] rounded-full px-3 py-1 text-[11px] font-medium flex items-center gap-2">
+                Danh mục: Bãi biển
+                <button class="hover:text-red-500 transition-colors flex"><span class="material-symbols-outlined text-[14px]">close</span></button>
+</div>
+<div class="bg-[#EFF6FF] text-[#0066CC] border border-[#B3D9FF] rounded-full px-3 py-1 text-[11px] font-medium flex items-center gap-2">
+                Quận: Sơn Trà
+                <button class="hover:text-red-500 transition-colors flex"><span class="material-symbols-outlined text-[14px]">close</span></button>
+</div>
+</div>
+</div>
+<div class="bg-white border border-[#E2E8F0] rounded-2xl shadow-sm overflow-hidden">
+<div class="px-6 py-3 border-b border-[#E2E8F0] flex justify-between items-center">
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2">
+<input class="w-4 h-4 rounded border-[#E2E8F0] text-[#0066CC] focus:ring-[#0066CC]" type="checkbox"/>
+<span class="text-[13px] font-semibold text-[#0066CC]">Đã chọn 3</span>
+</div>
+<div class="flex gap-2">
+<button class="bg-[#D1FAE5] text-[#10B981] px-3 py-1 rounded-lg text-[11px] font-bold uppercase tracking-wider hover:bg-[#A7F3D0]">Kích hoạt</button>
+<button class="bg-[#FEF3C7] text-[#F59E0B] px-3 py-1 rounded-lg text-[11px] font-bold uppercase tracking-wider hover:bg-[#FDE68A]">Tạm dừng</button>
+<button class="bg-[#FEE2E2] text-[#EF4444] px-3 py-1 rounded-lg text-[11px] font-bold uppercase tracking-wider hover:bg-[#FECACA]">Xóa</button>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<div class="flex border border-[#E2E8F0] rounded-lg p-0.5 bg-slate-50">
+<button class="p-1.5 bg-white border border-[#B3D9FF] text-[#0066CC] rounded-md shadow-sm"><span class="material-symbols-outlined text-lg">view_list</span></button>
+<button class="p-1.5 text-[#94A3B8] hover:text-[#0066CC] transition-colors"><span class="material-symbols-outlined text-lg">grid_view</span></button>
+</div>
+<span class="text-[13px] font-medium text-[#94A3B8]">1–10 / 124 địa điểm</span>
+<select class="text-[12px] font-bold border-[#E2E8F0] rounded-lg px-2 py-1 outline-none focus:border-[#0066CC] bg-white">
+<option>10 / trang</option>
+<option>20 / trang</option>
+<option>50 / trang</option>
+</select>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse table-dense">
+<thead class="bg-[#F8FAFC] border-b border-[#E2E8F0]">
+<tr class="text-[11px] uppercase font-bold text-[#94A3B8] tracking-widest">
+<th class="w-10"></th>
+<th class="w-12">#</th>
+<th>Địa điểm</th>
+<th class="w-32">Quận</th>
+<th class="w-24">Mức giá</th>
+<th class="w-24">Đánh giá</th>
+<th class="w-32">Trạng thái</th>
+<th class="w-20 text-center">Nổi bật</th>
+<th class="w-24 text-right">Thao tác</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100">
+<tr class="hover:bg-[#F8FAFC] transition-colors group">
+<td><input class="w-4 h-4 rounded border-[#E2E8F0] text-[#0066CC]" type="checkbox"/></td>
+<td class="text-[13px] text-[#94A3B8] font-medium">01</td>
+<td>
+<div class="flex items-center gap-3">
+<img alt="" class="w-10 h-10 rounded-lg object-cover border border-[#E2E8F0]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA3Zj6k6l1SvePUNPy-5GZg77MfHawH1a6AochlCqIfKvAfolvqTx5j3d9UnIGTPCIxscQBPaoNIm53MixqJq1EgQjR2iLsvlhDQBJACh0SShQWpWGcRLU2mlkV8inFmP68lyjD0QlziRcOOQk8FQFG5Ob3RLTFx6G_8ihKOdoVkQLnhUSwv_9U4EjCiRilXLrBED4FBMBXBuKEiHAs6854u3w8od1jiXruQ66DxtMoi4zt0Fw5iXOXDlH4GoBhcb_45p-LBMknLw"/>
+<div class="min-w-0">
+<h4 class="text-[14px] font-semibold text-[#1E293B] truncate hover:text-[#0066CC] cursor-pointer">Bãi biển Mỹ Khê</h4>
+<div class="flex items-center gap-3 mt-1">
+<div class="flex items-center gap-1 text-[11px] text-[#94A3B8]">
+<span class="material-symbols-outlined text-[12px]">location_on</span>
+<span class="truncate max-w-[150px]">Võ Nguyên Giáp, Sơn Trà</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="bg-[#EFF6FF] text-[#0066CC] border border-[#B3D9FF] px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider">Bãi biển</span>
+<span class="flex items-center gap-1 bg-[#EEF2FF] text-[#6366F1] px-1.5 py-0.5 rounded-md text-[10px] font-bold">
+<span class="material-symbols-outlined text-[12px]">visibility</span> 12.4K
+                                            </span>
+<span class="flex items-center gap-1 bg-red-50 text-[#EF4444] px-1.5 py-0.5 rounded-md text-[10px] font-bold">
+<span class="material-symbols-outlined text-[12px]">favorite</span> 1.2K
+                                            </span>
+</div>
+</div>
+</div>
+</div>
+</td>
+<td>
+<span class="inline-block px-2 py-0.5 bg-slate-100 text-[#64748B] text-[11px] font-bold rounded-full">Sơn Trà</span>
+</td>
+<td><span class="text-[13px] font-semibold text-[#10B981]">Miễn phí</span></td>
+<td>
+<div class="flex items-center gap-1">
+<span class="text-[13px] font-bold text-[#1E293B]">★ 4.8</span>
+<span class="text-[11px] font-medium text-[#94A3B8]">(428)</span>
+</div>
+</td>
+<td>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-[#D1FAE5] text-[#10B981] border border-[#10B981]/10">ĐANG HOẠT ĐỘNG</span>
+</td>
+<td class="text-center">
+<button class="relative w-[36px] h-[20px] bg-[#0066CC] rounded-full inline-flex items-center">
+<span class="w-[14px] h-[14px] bg-white rounded-full ml-[19px] shadow-sm"></span>
+</button>
+</td>
+<td class="text-right">
+<div class="flex justify-end gap-1">
+<button class="w-7 h-7 flex items-center justify-center rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] text-[#64748B] hover:text-[#0066CC] hover:border-[#0066CC]"><span class="material-symbols-outlined text-[18px]">visibility</span></button>
+<button class="w-7 h-7 flex items-center justify-center rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] text-[#64748B] hover:text-[#F59E0B] hover:border-[#F59E0B]"><span class="material-symbols-outlined text-[18px]">edit</span></button>
+<button class="w-7 h-7 flex items-center justify-center rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] text-[#64748B] hover:text-[#EF4444] hover:border-[#EF4444]"><span class="material-symbols-outlined text-[18px]">delete</span></button>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-[#F8FAFC] transition-colors group">
+<td><input class="w-4 h-4 rounded border-[#E2E8F0] text-[#0066CC]" type="checkbox"/></td>
+<td class="text-[13px] text-[#94A3B8] font-medium">02</td>
+<td>
+<div class="flex items-center gap-3">
+<img alt="" class="w-10 h-10 rounded-lg object-cover border border-[#E2E8F0]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBuxpxJb6QO9N4yPjMwxE9gzOomH1yLlTzpdYdR2MIK2d_r6CXi7OrAMYxVGU1kfOGwd1B50UoZt6fRjzkYZby0EZTCQlw9Fz2w-kVBgJdFy_Hp5BktP_EJHDcyeJRcWm2UVi0__j-xmvdmI3CJXM-9kCWGZiPxxa-ywQ5CT6uldKzm5-ETQSSFYFYtipkcQQHcyuTTZGfpx2IZ6-tQSyULTToc0GZ0dc5KTJzIzI1-kWpnJeCkvThitbHoi06EGQGIXh5_cixhXA"/>
+<div class="min-w-0">
+<h4 class="text-[14px] font-semibold text-[#1E293B] truncate hover:text-[#0066CC] cursor-pointer">Cầu Rồng</h4>
+<div class="flex items-center gap-3 mt-1">
+<div class="flex items-center gap-1 text-[11px] text-[#94A3B8]">
+<span class="material-symbols-outlined text-[12px]">location_on</span>
+<span class="truncate max-w-[150px]">Nguyễn Văn Linh, Hải Châu</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="bg-[#EFF6FF] text-[#0066CC] border border-[#B3D9FF] px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider">Cây cầu</span>
+<span class="flex items-center gap-1 bg-[#EEF2FF] text-[#6366F1] px-1.5 py-0.5 rounded-md text-[10px] font-bold">
+<span class="material-symbols-outlined text-[12px]">visibility</span> 8.6K
+                                            </span>
+<span class="flex items-center gap-1 bg-red-50 text-[#EF4444] px-1.5 py-0.5 rounded-md text-[10px] font-bold">
+<span class="material-symbols-outlined text-[12px]">favorite</span> 856
+                                            </span>
+</div>
+</div>
+</div>
+</div>
+</td>
+<td>
+<span class="inline-block px-2 py-0.5 bg-slate-100 text-[#64748B] text-[11px] font-bold rounded-full">Hải Châu</span>
+</td>
+<td><span class="text-[13px] font-semibold text-[#10B981]">Miễn phí</span></td>
+<td>
+<div class="flex items-center gap-1">
+<span class="text-[13px] font-bold text-[#1E293B]">★ 4.7</span>
+<span class="text-[11px] font-medium text-[#94A3B8]">(320)</span>
+</div>
+</td>
+<td>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-[#D1FAE5] text-[#10B981] border border-[#10B981]/10">ĐANG HOẠT ĐỘNG</span>
+</td>
+<td class="text-center">
+<button class="relative w-[36px] h-[20px] bg-[#0066CC] rounded-full inline-flex items-center">
+<span class="w-[14px] h-[14px] bg-white rounded-full ml-[19px] shadow-sm"></span>
+</button>
+</td>
+<td class="text-right">
+<div class="flex justify-end gap-1">
+<button class="w-7 h-7 flex items-center justify-center rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] text-[#64748B] hover:text-[#0066CC] hover:border-[#0066CC] transition-all"><span class="material-symbols-outlined text-[18px]">visibility</span></button>
+<button class="w-7 h-7 flex items-center justify-center rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] text-[#64748B] hover:text-[#F59E0B] hover:border-[#F59E0B] transition-all"><span class="material-symbols-outlined text-[18px]">edit</span></button>
+<button class="w-7 h-7 flex items-center justify-center rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] text-[#64748B] hover:text-[#EF4444] hover:border-[#EF4444] transition-all"><span class="material-symbols-outlined text-[18px]">delete</span></button>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-[#F8FAFC] transition-colors group">
+<td><input class="w-4 h-4 rounded border-[#E2E8F0] text-[#0066CC]" type="checkbox"/></td>
+<td class="text-[13px] text-[#94A3B8] font-medium">03</td>
+<td>
+<div class="flex items-center gap-3">
+<img alt="" class="w-10 h-10 rounded-lg object-cover border border-[#E2E8F0]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCNdk_MpFApm5DPqQiL0dOPxVVbJvNzUIeUPkv8N0YNIWAUzcloamqMh4ZAPmzJFaSFb2b-e6QUhRBafH-LUH-gn4xzCiaT5JAiZqqm24rqKAf3WNioYiyXrmqbIaXzB6tW7nL4GVKu8PgqWFH_YmqjbBYA56FGPXx5OLJozS_-PLPwTUuAgmB1GKfHdtAokyEebJ0EVi0EmBk-yM8FCVpA6TLbUCY0dgbZwiqpvZpZdO3gvD-qO4deFvZjRBzsSIMJAIy7Z6bfGA"/>
+<div class="min-w-0">
+<h4 class="text-[14px] font-semibold text-[#1E293B] truncate hover:text-[#0066CC] cursor-pointer">Bà Nà Hills</h4>
+<div class="flex items-center gap-3 mt-1">
+<div class="flex items-center gap-1 text-[11px] text-[#94A3B8]">
+<span class="material-symbols-outlined text-[12px]">location_on</span>
+<span class="truncate max-w-[150px]">Hòa Ninh, Hòa Vang</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="bg-[#EFF6FF] text-[#0066CC] border border-[#B3D9FF] px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider">Khu du lịch</span>
+<span class="flex items-center gap-1 bg-[#EEF2FF] text-[#6366F1] px-1.5 py-0.5 rounded-md text-[10px] font-bold">
+<span class="material-symbols-outlined text-[12px]">visibility</span> 6.2K
+                                            </span>
+<span class="flex items-center gap-1 bg-red-50 text-[#EF4444] px-1.5 py-0.5 rounded-md text-[10px] font-bold">
+<span class="material-symbols-outlined text-[12px]">favorite</span> 624
+                                            </span>
+</div>
+</div>
+</div>
+</div>
+</td>
+<td>
+<span class="inline-block px-2 py-0.5 bg-slate-100 text-[#64748B] text-[11px] font-bold rounded-full">Hòa Vang</span>
+</td>
+<td><span class="text-[13px] font-semibold text-[#FF6B35]">$$$</span></td>
+<td>
+<div class="flex items-center gap-1">
+<span class="text-[13px] font-bold text-[#1E293B]">★ 4.9</span>
+<span class="text-[11px] font-medium text-[#94A3B8]">(982)</span>
+</div>
+</td>
+<td>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-[#D1FAE5] text-[#10B981] border border-[#10B981]/10">ĐANG HOẠT ĐỘNG</span>
+</td>
+<td class="text-center">
+<button class="relative w-[36px] h-[20px] bg-[#0066CC] rounded-full inline-flex items-center">
+<span class="w-[14px] h-[14px] bg-white rounded-full ml-[19px] shadow-sm"></span>
+</button>
+</td>
+<td class="text-right">
+<div class="flex justify-end gap-1">
+<button class="w-7 h-7 flex items-center justify-center rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] text-[#64748B] hover:text-[#0066CC] hover:border-[#0066CC] transition-all"><span class="material-symbols-outlined text-[18px]">visibility</span></button>
+<button class="w-7 h-7 flex items-center justify-center rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] text-[#64748B] hover:text-[#F59E0B] hover:border-[#F59E0B] transition-all"><span class="material-symbols-outlined text-[18px]">edit</span></button>
+<button class="w-7 h-7 flex items-center justify-center rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] text-[#64748B] hover:text-[#EF4444] hover:border-[#EF4444] transition-all"><span class="material-symbols-outlined text-[18px]">delete</span></button>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-[#F8FAFC] transition-colors group">
+<td><input class="w-4 h-4 rounded border-[#E2E8F0] text-[#0066CC]" type="checkbox"/></td>
+<td class="text-[13px] text-[#94A3B8] font-medium">04</td>
+<td>
+<div class="flex items-center gap-3">
+<img alt="" class="w-10 h-10 rounded-lg object-cover border border-[#E2E8F0]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAjN96NU5auCw6ztz_84QB2mLQusPENZnOup-mpgFefk79C75nUkmvqAxJPGiZtpKyXrwZ20V030Vyfu3vGSQttLYCpKoLb6iq4AHk-53A6_PfHfPgJYyZ4shsjvpBfKVuqyEY379lcScLL16mlekKEKatyaKK6rwOJXwVDF06aIckwa4mWHShrHZH8twF1PKEkSPQo2_5s2w9bPOMGnZQ8aa3xjCcDiJeW29OIUz6oaPrr1DLOha2au6HJ_W5pPmtz_o4ROOSZTw"/>
+<div class="min-w-0">
+<h4 class="text-[14px] font-semibold text-[#1E293B] truncate hover:text-[#0066CC] cursor-pointer">Ngũ Hành Sơn</h4>
+<div class="flex items-center gap-3 mt-1">
+<div class="flex items-center gap-1 text-[11px] text-[#94A3B8]">
+<span class="material-symbols-outlined text-[12px]">location_on</span>
+<span class="truncate max-w-[150px]">Lê Văn Hiến, Ngũ Hành Sơn</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="bg-[#EFF6FF] text-[#0066CC] border border-[#B3D9FF] px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider">Thắng cảnh</span>
+<span class="flex items-center gap-1 bg-[#EEF2FF] text-[#6366F1] px-1.5 py-0.5 rounded-md text-[10px] font-bold">
+<span class="material-symbols-outlined text-[12px]">visibility</span> 3.8K
+                                            </span>
+<span class="flex items-center gap-1 bg-red-50 text-[#EF4444] px-1.5 py-0.5 rounded-md text-[10px] font-bold">
+<span class="material-symbols-outlined text-[12px]">favorite</span> 312
+                                            </span>
+</div>
+</div>
+</div>
+</div>
+</td>
+<td>
+<span class="inline-block px-2 py-0.5 bg-slate-100 text-[#64748B] text-[11px] font-bold rounded-full">Ngũ Hành Sơn</span>
+</td>
+<td><span class="text-[13px] font-semibold text-[#64748B]">$</span></td>
+<td>
+<div class="flex items-center gap-1">
+<span class="text-[13px] font-bold text-[#1E293B]">★ 4.6</span>
+<span class="text-[11px] font-medium text-[#94A3B8]">(215)</span>
+</div>
+</td>
+<td>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-[#D1FAE5] text-[#10B981] border border-[#10B981]/10">ĐANG HOẠT ĐỘNG</span>
+</td>
+<td class="text-center">
+<button class="relative w-[36px] h-[20px] bg-[#E2E8F0] rounded-full inline-flex items-center">
+<span class="w-[14px] h-[14px] bg-white rounded-full ml-[3px] shadow-sm"></span>
+</button>
+</td>
+<td class="text-right">
+<div class="flex justify-end gap-1">
+<button class="w-7 h-7 flex items-center justify-center rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] text-[#64748B] hover:text-[#0066CC] hover:border-[#0066CC] transition-all"><span class="material-symbols-outlined text-[18px]">visibility</span></button>
+<button class="w-7 h-7 flex items-center justify-center rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] text-[#64748B] hover:text-[#F59E0B] hover:border-[#F59E0B] transition-all"><span class="material-symbols-outlined text-[18px]">edit</span></button>
+<button class="w-7 h-7 flex items-center justify-center rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] text-[#64748B] hover:text-[#EF4444] hover:border-[#EF4444] transition-all"><span class="material-symbols-outlined text-[18px]">delete</span></button>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-[#F8FAFC] transition-colors group">
+<td><input class="w-4 h-4 rounded border-[#E2E8F0] text-[#0066CC]" type="checkbox"/></td>
+<td class="text-[13px] text-[#94A3B8] font-medium">05</td>
+<td>
+<div class="flex items-center gap-3">
+<img alt="" class="w-10 h-10 rounded-lg object-cover border border-[#E2E8F0]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAz76-TISnIlW0_daGEe0hdiengxHP96LSPtM31hxvOVlGADA5OZ9lYBANRB_7O3Mqr5aTgUoEm3JwhXcGoUFMJ9tfU1kq-4T5NjIDQh1uDYmJTs95WmMz_cWcFCML2mO-UZ8-tt3i9ZXGvlLoAnc6XpQYRzTtuZjX1W3kb7oH2GjTQF1I5B_wC_mk1GAHgCCdBUhffTLtPpRhhc1-YhZgPh7bU7ZwaHTPSj6Y4LIu1xGdtcu0RdX2gq8EoUlMrSPFgAN0wNHUqkg"/>
+<div class="min-w-0">
+<h4 class="text-[14px] font-semibold text-[#1E293B] truncate hover:text-[#0066CC] cursor-pointer">Chùa Linh Ứng</h4>
+<div class="flex items-center gap-3 mt-1">
+<div class="flex items-center gap-1 text-[11px] text-[#94A3B8]">
+<span class="material-symbols-outlined text-[12px]">location_on</span>
+<span class="truncate max-w-[150px]">Sơn Trà, Đà Nẵng</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="bg-[#EFF6FF] text-[#0066CC] border border-[#B3D9FF] px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider">Tâm linh</span>
+<span class="flex items-center gap-1 bg-[#EEF2FF] text-[#6366F1] px-1.5 py-0.5 rounded-md text-[10px] font-bold">
+<span class="material-symbols-outlined text-[12px]">visibility</span> 2.1K
+                                            </span>
+<span class="flex items-center gap-1 bg-red-50 text-[#EF4444] px-1.5 py-0.5 rounded-md text-[10px] font-bold">
+<span class="material-symbols-outlined text-[12px]">favorite</span> 198
+                                            </span>
+</div>
+</div>
+</div>
+</div>
+</td>
+<td>
+<span class="inline-block px-2 py-0.5 bg-slate-100 text-[#64748B] text-[11px] font-bold rounded-full">Sơn Trà</span>
+</td>
+<td><span class="text-[13px] font-semibold text-[#10B981]">Miễn phí</span></td>
+<td>
+<div class="flex items-center gap-1">
+<span class="text-[13px] font-bold text-[#1E293B]">★ 4.5</span>
+<span class="text-[11px] font-medium text-[#94A3B8]">(156)</span>
+</div>
+</td>
+<td>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-[#FEE2E2] text-[#EF4444] border border-[#EF4444]/10">TẠM DỪNG</span>
+</td>
+<td class="text-center">
+<button class="relative w-[36px] h-[20px] bg-[#E2E8F0] rounded-full inline-flex items-center">
+<span class="w-[14px] h-[14px] bg-white rounded-full ml-[3px] shadow-sm"></span>
+</button>
+</td>
+<td class="text-right">
+<div class="flex justify-end gap-1">
+<button class="w-7 h-7 flex items-center justify-center rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] text-[#64748B] hover:text-[#0066CC] hover:border-[#0066CC] transition-all"><span class="material-symbols-outlined text-[18px]">visibility</span></button>
+<button class="w-7 h-7 flex items-center justify-center rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] text-[#64748B] hover:text-[#F59E0B] hover:border-[#F59E0B] transition-all"><span class="material-symbols-outlined text-[18px]">edit</span></button>
+<button class="w-7 h-7 flex items-center justify-center rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] text-[#64748B] hover:text-[#EF4444] hover:border-[#EF4444] transition-all"><span class="material-symbols-outlined text-[18px]">delete</span></button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="px-6 py-4 flex justify-between items-center bg-[#F8FAFC] border-t border-[#E2E8F0]">
+<p class="text-[13px] font-medium text-[#64748B]">Hiển thị 1–10 trong tổng số 124 địa điểm</p>
+<div class="flex items-center gap-1.5">
+<button class="w-8 h-8 flex items-center justify-center rounded-lg border border-[#E2E8F0] bg-white text-[#94A3B8] opacity-40 cursor-not-allowed">
+<span class="material-symbols-outlined text-lg">chevron_left</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg bg-[#0066CC] text-white font-bold text-[13px]">1</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg border border-[#E2E8F0] bg-white text-[#64748B] hover:border-[#0066CC] hover:text-[#0066CC] font-bold text-[13px] transition-all">2</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg border border-[#E2E8F0] bg-white text-[#64748B] hover:border-[#0066CC] hover:text-[#0066CC] font-bold text-[13px] transition-all">3</button>
+<span class="text-[#94A3B8] px-1 text-[13px]">...</span>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg border border-[#E2E8F0] bg-white text-[#64748B] hover:border-[#0066CC] hover:text-[#0066CC] font-bold text-[13px] transition-all">13</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg border border-[#E2E8F0] bg-white text-[#64748B] hover:border-[#0066CC] hover:text-[#0066CC] transition-all">
+<span class="material-symbols-outlined text-lg">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+<div class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm hidden">
+<div class="bg-white rounded-2xl w-full max-w-[400px] shadow-2xl overflow-hidden">
+<div class="p-6">
+<div class="w-12 h-12 bg-[#FEE2E2] rounded-xl flex items-center justify-center text-[#EF4444] mb-4">
+<span class="material-symbols-outlined text-3xl">warning_amber</span>
+</div>
+<h3 class="text-[18px] font-bold text-[#1E293B] mb-2">Xóa địa điểm này?</h3>
+<p class="text-sm text-[#64748B] mb-4 leading-relaxed">Địa điểm <strong class="text-[#1E293B]">Bãi biển Mỹ Khê</strong> sẽ bị xóa vĩnh viễn.</p>
+<div class="bg-[#FEF3C7] border border-[#F59E0B]/30 rounded-xl p-3 flex gap-3">
+<span class="material-symbols-outlined text-[#F59E0B] text-xl">report_problem</span>
+<p class="text-[13px] font-medium text-[#92400E]">Tất cả đánh giá, lượt yêu thích và dữ liệu liên quan sẽ bị xóa theo.</p>
+</div>
+</div>
+<div class="px-6 py-4 bg-slate-50 border-t border-[#E2E8F0] flex justify-end gap-3">
+<button class="px-5 py-2.5 border border-[#E2E8F0] bg-white text-[#64748B] rounded-[10px] text-sm font-semibold hover:bg-slate-50 transition-all">Hủy</button>
+<button class="px-5 py-2.5 bg-[#EF4444] text-white rounded-[10px] text-sm font-semibold hover:bg-[#DC2626] shadow-lg shadow-red-500/20 transition-all">Xóa địa điểm</button>
+</div>
+</div>
+</div>
+</body></html>

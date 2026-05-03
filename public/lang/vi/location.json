@@ -1,0 +1,58 @@
+{
+    "title": "Danh sách Địa điểm",
+    "subtitle": "Quản lý toàn bộ địa điểm du lịch tại Đà Nẵng",
+    "actions": {
+        "add": "Thêm Địa điểm",
+        "export": "Xuất Excel",
+        "filter": "Lọc",
+        "reset": "Đặt lại",
+        "activate": "Kích hoạt",
+        "deactivate": "Tạm dừng",
+        "delete": "Xóa",
+        "selected": "Đã chọn {{count}}",
+        "confirm_delete": "Xóa địa điểm này?",
+        "cancel": "Hủy"
+    },
+    "stats": {
+        "total": "TỔNG ĐỊA ĐIỂM",
+        "active": "ĐANG HOẠT ĐỘNG",
+        "featured": "NỔI BẬT",
+        "views": "LƯỢT XEM"
+    },
+    "filters": {
+        "placeholder": "Tìm theo tên địa điểm, địa chỉ...",
+        "category": "Danh mục",
+        "district": "Quận/Huyện",
+        "price_level": "Mức giá",
+        "status": "Trạng thái"
+    },
+    "table": {
+        "headers": {
+            "name": "Địa điểm",
+            "district": "Quận",
+            "price": "Mức giá",
+            "rating": "Đánh giá",
+            "status": "Trạng thái",
+            "featured": "Nổi bật",
+            "actions": "Thao tác"
+        },
+        "pagination": "Hiển thị {{from}}–{{to}} trong tổng số {{total}} địa điểm",
+        "per_page": "{{count}} / trang"
+    },
+    "status": {
+        "active": "ĐANG HOẠT ĐỘNG",
+        "inactive": "TẠM DỪNG"
+    },
+    "messages": {
+        "delete_confirm": "Địa điểm <strong>{{name}}</strong> sẽ bị xóa vĩnh viễn.",
+        "delete_warning": "Tất cả đánh giá, lượt yêu thích và dữ liệu liên quan sẽ bị xóa theo.",
+        "delete_success": "Xóa địa điểm thành công",
+        "delete_error": "Có lỗi xảy ra khi xóa địa điểm",
+        "update_success": "Cập nhật thành công",
+        "update_error": "Cập nhật thất bại",
+        "bulk_update_success": "Cập nhật hàng loạt thành công"
+    },
+    "validation": {
+        "required": "Trường này là bắt buộc"
+    }
+}

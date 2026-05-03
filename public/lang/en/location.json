@@ -1,0 +1,58 @@
+{
+    "title": "Location List",
+    "subtitle": "Manage all tourist locations in Da Nang",
+    "actions": {
+        "add": "Add Location",
+        "export": "Export Excel",
+        "filter": "Filter",
+        "reset": "Reset",
+        "activate": "Activate",
+        "deactivate": "Deactivate",
+        "delete": "Delete",
+        "selected": "{{count}} selected",
+        "confirm_delete": "Delete this location?",
+        "cancel": "Cancel"
+    },
+    "stats": {
+        "total": "TOTAL LOCATIONS",
+        "active": "ACTIVE",
+        "featured": "FEATURED",
+        "views": "VIEWS"
+    },
+    "filters": {
+        "placeholder": "Search by name, address...",
+        "category": "Category",
+        "district": "District",
+        "price_level": "Price Level",
+        "status": "Status"
+    },
+    "table": {
+        "headers": {
+            "name": "Location",
+            "district": "District",
+            "price": "Price",
+            "rating": "Rating",
+            "status": "Status",
+            "featured": "Featured",
+            "actions": "Actions"
+        },
+        "pagination": "Showing {{from}}–{{to}} of {{total}} locations",
+        "per_page": "{{count}} / page"
+    },
+    "status": {
+        "active": "ACTIVE",
+        "inactive": "INACTIVE"
+    },
+    "messages": {
+        "delete_confirm": "Location <strong>{{name}}</strong> will be permanently deleted.",
+        "delete_warning": "All reviews, favorites, and related data will also be deleted.",
+        "delete_success": "Location deleted successfully",
+        "delete_error": "Error deleting location",
+        "update_success": "Updated successfully",
+        "update_error": "Update failed",
+        "bulk_update_success": "Bulk update successful"
+    },
+    "validation": {
+        "required": "This field is required"
+    }
+}
