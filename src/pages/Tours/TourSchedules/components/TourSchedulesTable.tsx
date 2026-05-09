@@ -22,6 +22,7 @@ import { ROUTES } from '@/routes/routes';
 type Props = {
     data: Schedule[];
     isLoading: boolean;
+    isRefreshing?: boolean;
     total: number;
     page: number;
     limit: number;
@@ -40,6 +41,7 @@ type Props = {
 const TourSchedulesTable = ({
     data,
     isLoading,
+    isRefreshing,
     total,
     page,
     limit,
@@ -94,7 +96,7 @@ const TourSchedulesTable = ({
                     )}
                 </div>
                 <div className="flex flex-wrap items-center gap-4 sm:ml-auto">
-                    {isLoading && (
+                    {(isRefreshing || isLoading) && (
                         <div className="animate-fade-in">
                             <RefreshCw className="w-3.5 h-3.5 text-[#14b8a6] animate-spin" />
                         </div>
@@ -198,6 +200,7 @@ const TourSchedulesTable = ({
                                         className={clsx(
                                             'border-b border-border hover:bg-surface transition-colors',
                                             selected && 'bg-[#dff7f4] border-l-[3px] border-l-[#14b8a6]',
+                                            isRefreshing && 'opacity-60',
                                         )}
                                     >
                                         <td className="px-3 py-3">
@@ -376,44 +379,40 @@ const TourSchedulesTable = ({
                         type="button"
                         onClick={() => onPageChange(page - 1)}
                         disabled={page <= 1}
-                                className="w-8 h-8 flex items-center justify-center rounded-lg bg-white border border-[#E2E8F0] text-[#64748B] hover:border-[#14b8a6] hover:text-[#14b8a6] disabled:opacity-40"
+                        className="w-[32px] h-[32px] flex items-center justify-center rounded-md bg-white border border-[#E2E8F0] text-[#64748B] hover:border-[#14b8a6] hover:text-[#14b8a6] disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-150 shadow-sm active:scale-90"
                     >
                         <ChevronLeft size={16} />
                     </button>
                     
-                    {Array.from({ length: lastPage }, (_, i) => i + 1)
-                        .filter(p => p === 1 || p === lastPage || Math.abs(p - page) <= 1)
-                        .reduce((acc: (string | number)[], p, i, arr) => {
-                            if (i > 0 && p - arr[i - 1] > 1) {
-                                acc.push('...');
-                            }
-                            acc.push(p);
-                            return acc;
-                        }, [])
-                        .map((p, idx) => p === '...' ? (
-                            <span key={`dots-${idx}`} className="px-1 text-text-secondary">...</span>
-                        ) : (
-                            <button
-                                key={p}
-                                type="button"
-                                onClick={() => onPageChange(Number(p))}
-                                className={clsx(
-                                    "w-8 h-8 flex items-center justify-center rounded-lg border text-[13px] font-semibold transition-colors",
-                                    p === page 
-                                        ? "bg-[#14b8a6] text-white border-[#14b8a6]" 
-                                        : "bg-white border-[#E2E8F0] text-[#64748B] hover:border-[#14b8a6] hover:text-[#14b8a6]"
-                                )}
-                            >
-                                {p}
-                            </button>
-                        ))
-                    }
+                    <div className="flex items-center gap-1.5">
+                        {Array.from({ length: lastPage }, (_, i) => i + 1)
+                            .filter(p => p === 1 || p === lastPage || Math.abs(p - page) <= 1)
+                            .map((p, i, arr) => (
+                                <div key={p} className="flex items-center gap-1.5">
+                                    {i > 0 && arr[i - 1] !== p - 1 && (
+                                        <span className="text-slate-300 font-bold px-1">...</span>
+                                    )}
+                                    <button
+                                        type="button"
+                                        onClick={() => onPageChange(Number(p))}
+                                        className={clsx(
+                                            'w-[32px] h-[32px] flex items-center justify-center rounded-md text-[13px] font-bold transition-all duration-150 shadow-sm',
+                                            p === page 
+                                                ? 'bg-[#14b8a6] text-white border-[#14b8a6]' 
+                                                : 'bg-white border border-[#E2E8F0] text-[#64748B] hover:border-[#14b8a6] hover:text-[#14b8a6] active:scale-95'
+                                        )}
+                                    >
+                                        {p}
+                                    </button>
+                                </div>
+                            ))}
+                    </div>
 
                     <button
                         type="button"
                         onClick={() => onPageChange(page + 1)}
                         disabled={page >= lastPage}
-                        className="w-8 h-8 flex items-center justify-center rounded-lg bg-white border border-[#E2E8F0] text-[#64748B] hover:border-[#14b8a6] hover:text-[#14b8a6] disabled:opacity-40"
+                        className="w-[32px] h-[32px] flex items-center justify-center rounded-md bg-white border border-[#E2E8F0] text-[#64748B] hover:border-[#14b8a6] hover:text-[#14b8a6] disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-150 shadow-sm active:scale-90"
                     >
                         <ChevronRight size={16} />
                     </button>

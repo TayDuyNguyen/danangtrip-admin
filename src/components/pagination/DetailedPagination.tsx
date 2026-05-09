@@ -52,10 +52,11 @@ const DetailedPagination = ({
                     <label htmlFor="pageSizeSelect" className="sr-only">{t('pagination.items_per_page')}</label>
                     <CustomSelect
                         id="pageSizeSelect"
+                        size="sm"
                         options={pageSizeOptions.map(option => ({ value: option, label: option.toString() }))}
                         value={{ value: pageSize, label: pageSize.toString() }}
                         onChange={(opt) => onPageSizeChange(Number((opt as Option)?.value))}
-                        className="text-xs w-[85px]"
+                        className="min-w-18"
                     />
                 </div>
             </div>

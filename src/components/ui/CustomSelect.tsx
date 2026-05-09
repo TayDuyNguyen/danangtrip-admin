@@ -37,6 +37,7 @@ const CustomSelect = ({
         control: (provided, state) => ({
             ...provided,
             minHeight: size === 'sm' ? '36px' : size === 'lg' ? '60px' : '52px',
+            alignItems: 'center',
             backgroundColor: '#F8FAFC',
             borderColor: state.isFocused ? '#14B8A6' : '#E2E8F0',
             borderRadius: size === 'sm' ? '8px' : '16px',
@@ -50,9 +51,11 @@ const CustomSelect = ({
             borderWidth: '1px',
             paddingLeft: leftIcon ? (size === 'sm' ? '28px' : '32px') : '4px',
         }),
+        // Keep default display: grid for single-select so SingleValue gridArea lines up with Input + chevron.
         valueContainer: (provided) => ({
             ...provided,
-            padding: leftIcon ? '0 12px' : (size === 'sm' ? '0 8px' : '0 20px'),
+            alignItems: 'center',
+            padding: leftIcon ? '0 8px 0 12px' : (size === 'sm' ? '0 2px 0 8px' : '0 4px 0 12px'),
         }),
         input: (provided) => ({
             ...provided,
@@ -67,6 +70,13 @@ const CustomSelect = ({
             fontSize: size === 'sm' ? '13px' : '14px',
             fontWeight: '700',
             fontFamily: 'system-ui, sans-serif',
+            lineHeight: 1,
+            marginLeft: 0,
+            marginRight: 0,
+        }),
+        indicatorsContainer: (provided) => ({
+            ...provided,
+            alignItems: 'center',
         }),
         placeholder: (provided) => ({
             ...provided,
@@ -80,7 +90,11 @@ const CustomSelect = ({
         dropdownIndicator: (provided, state) => ({
             ...provided,
             color: state.isFocused ? '#14B8A6' : '#94A3B8',
-            paddingRight: size === 'sm' ? '8px' : '12px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            alignSelf: 'center',
+            padding: size === 'sm' ? '0 4px 0 2px' : '0 6px 0 4px',
             transition: 'transform 0.3s ease, color 0.2s ease',
             transform: state.selectProps.menuIsOpen ? 'rotate(180deg)' : 'none',
             '&:hover': {

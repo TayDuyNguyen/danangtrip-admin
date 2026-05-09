@@ -213,7 +213,8 @@ const SchedulesPage = () => {
             ) : (
                 <TourSchedulesTable
                     data={rows}
-                    isLoading={isLoading || isFetching}
+                    isLoading={isLoading}
+                    isRefreshing={isFetching && !isLoading}
                     total={total}
                     page={page}
                     limit={limit}
