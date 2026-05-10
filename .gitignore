@@ -29,4 +29,5 @@ dist-ssr
 *.sw?
 
 # Agent configuration
-.agent/
+.agent/*
+!.agent/skills/
