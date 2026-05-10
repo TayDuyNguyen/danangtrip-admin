@@ -32,14 +32,9 @@ Skill này optimize performance, chạy production build, và deploy. Đây là 
 # Dev
 npm run dev
 
-# Quality gates (bắt buộc pass trước build)
-npm run lint
-npm run typecheck
-
-# Production build
-npm run build
-
-# Preview build locally
+# 2. **Build Verification**:
+   - Run mandatory quality gate: `npm run prepush:check` (covers lint, typecheck, build).
+   - Resolve all failures before proceeding.
 npm run preview
 
 # All-in-one pre-push check
@@ -63,9 +58,23 @@ npm run prepush:check
 - KHÔNG deploy khi build fail.
 - Dynamic import cho modals và heavy components.
 - Smoke test phải pass trước khi gọi done.
+- **Bắt buộc review trước khi push**: Phải sinh ra file `review.md` và trình USER duyệt. TUYỆT ĐỐI KHÔNG TỰ Ý `git push`.
+- **Quy tắc tên nhánh (Branch Naming)**: Phải dùng format `<viết tắt chức năng>/DATN-<số thứ tự>/<nội dung ngắn gọn>` (ví dụ: `feat/DATN-54/api-align-location`).
 
 ## 6) Output specification
-- `.agent/artifacts/deploy/YYYY-MM-DD__<feature-slug>__deploy-report.md`
+- Deploy Report: `.agent/artifacts/deploy/YYYY-MM-DD__<feature-slug>__deploy-report.md` (Phải bao gồm: Tên nhánh, Commit message, và bảng trạng thái các Quality Gates).
+- **Feature Review/Walkthrough**: `.agent/artifacts/review/YYYY-MM-DD__<feature-slug>__review.md` (Bản tổng kết cực kỳ chi tiết toàn bộ quá trình thực hiện từ Bước 1 đến Bước 10:
+  1. Phân tích yêu cầu/SRS.
+  2. Thiết kế cấu trúc dữ liệu/Zod Schema.
+  3. Xây dựng Service & Mock API (nếu có).
+  4. Xây dựng Hooks & State logic.
+  5. Phát triển UI Components & Layout.
+  6. Tích hợp i18n (đa ngôn ngữ).
+  7. Viết Unit Tests & Integration Tests.
+  8. Kiểm thử E2E bằng Browser Subagent.
+  9. Tối ưu Performance, SEO & Accessibility.
+  10. Fix bugs phát sinh & Build Verification).
+  Mỗi bước phải mô tả rõ các file đã thay đổi và lý do thực hiện.
 
 Format:
 ```

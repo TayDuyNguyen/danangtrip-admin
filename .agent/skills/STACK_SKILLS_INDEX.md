@@ -485,6 +485,7 @@ Kích hoạt 09-testing
 Context:
 - Repo: d:/DATN/danangtrip-admin
 - Feature slug: <feature-slug>
+- Test URL: <link localhost de test UI, vd: http://127.0.0.1:5173/admin/feature>
 - Code scope: src/pages/<Feature>/, src/hooks/use<Feature>Queries.ts
 
 Files bắt buộc đọc trước:
@@ -498,6 +499,7 @@ Testing hiện tại:
 - npm run build (Vite build — bắt buộc pass)
 - npm run test:console (Playwright — khi dev server đang chạy)
 - npm run prepush:check (all-in-one gate)
+- E2E Manual (AI Browser Subagent): YÊU CẦU TRUYỀN LINK URL VÀO PROMPT (vd: `http://127.0.0.1:5173/feature`) ĐỂ AI TEST TRỰC TIẾP TRÊN TRÌNH DUYỆT.
 
 KHÔNG có Vitest/Jest setup → không viết unit tests trừ khi được yêu cầu
 
