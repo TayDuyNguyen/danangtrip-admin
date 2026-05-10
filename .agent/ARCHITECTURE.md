@@ -101,6 +101,27 @@ Notes:
 - The `nextjs-react-expert/` directory currently exposes the canonical skill name `react-best-practices` in its `SKILL.md`.
 - Some skills contain nested reference or template folders that are resources, not additional top-level skills.
 
+## Pipeline Skills (Screen A→Z)
+
+A dedicated 10-skill pipeline for implementing admin screens end-to-end lives under `.agent/skills/`:
+
+| # | Skill | Persona | Purpose |
+|---|-------|---------|---------|
+| 01 | `01-screen-analysis` | Business Analyst | Analyze mockup/SRS → checklist |
+| 02 | `02-project-setup` | DevOps Engineer | Audit project base |
+| 03 | `03-types-api-contract` | System Architect | Types, Yup schemas, API module, mapper |
+| 04 | `04-layout-routing` | Senior SSE | Route, page skeleton, i18n keys |
+| 05 | `05-ui-components` | UI/UX + SSE | Build components (Atomic Design) |
+| 06 | `06-data-integration` | Senior SSE | TanStack Query hooks + wire UI |
+| 07 | `07-interactions` | Senior SSE | CRUD, filter, search, pagination, export |
+| 08 | `08-auth-permissions` | Security Expert | Route guard, role-based UI |
+| 09 | `09-testing` | QA/QC | Lint + typecheck + build |
+| 10 | `10-optimization-deploy` | Performance + DevOps | Optimize + build + deploy |
+
+**Master index:** `.agent/skills/STACK_SKILLS_INDEX.md`
+
+Stack: React 19 + Vite + TypeScript + react-router-dom v7 + TanStack Query + Zustand + Tailwind CSS v4 + react-hook-form + yup + react-i18next + lucide-react + sonner
+
 ## Workflows
 
 Workflow files under `.agent/workflows/`:
