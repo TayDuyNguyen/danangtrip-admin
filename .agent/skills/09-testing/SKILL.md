@@ -48,13 +48,19 @@ npm run test:console
 - [ ] Empty states hiển thị đúng khi API trả về []
 - [ ] Error states hiển thị đúng khi API lỗi
 
-## 6) i18n Check (nếu đã thêm keys mới)
+## 6) AI Browser UI Testing (Manual E2E)
+- Cần chạy dev server trước (vd: `npm run dev` trên `127.0.0.1:5173`).
+- Khác với chạy command test tự động, AI PHẢI yêu cầu hoặc sử dụng URL được cấp (vd: `http://127.0.0.1:5173/feature`) để trực tiếp mở trình duyệt (Browser Subagent) và test giao diện.
+- Mục đích: Test mọi kịch bản có thể xảy ra trên giao diện thật (thao tác CRUD, nhập liệu form, click các nút, filter/search, pagination, hiển thị thông báo lỗi/thành công).
+- Báo cáo lỗi (nếu có) kèm hướng khắc phục.
+
+## 7) i18n Check (nếu đã thêm keys mới)
 ```bash
 python .agent/skills/i18n-localization/scripts/i18n_checker.py .
 ```
 (Nếu script không tồn tại → kiểm tra thủ công bằng cách so sánh vi/en files)
 
-## 7) Output specification
+## 8) Output specification
 - `.agent/artifacts/test-cases/YYYY-MM-DD__<feature-slug>__test-report.md`
 
 Format report:

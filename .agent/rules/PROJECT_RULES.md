@@ -138,21 +138,13 @@ Current documented env vars in this repo:
 
 After code changes, run the strongest checks that are actually available and relevant.
 
-Baseline checks for this repo:
-
-```bash
-npm run lint
-npm run typecheck
-npm run build
-```
-
-All-in-one pre-push gate (recommended):
+### Mandatory quality gate before calling work complete:
 
 ```bash
 npm run prepush:check
 ```
 
-This script runs lint, typecheck, and build in sequence. Use it before pushing to catch regressions early.
+This command runs lint, typecheck, and build in sequence. It MUST pass before any feature is considered "done". Use it before pushing to catch regressions early.
 When a local dev server is running on `http://127.0.0.1:5173`, it also runs `npm run test:console`; otherwise that step is skipped without failing the gate.
 
 Optional project-local audits under `.agent/` may be used as best-effort helpers, but they are not a substitute for the native repo checks above.
@@ -296,3 +288,25 @@ Validation MUST support the project's multi-language requirement:
 - Prioritize **above-the-fold** content in layout and hook design (show skeletons for secondary panels).
 - **Default**: fire **parallel** queries for independent datasets; see **§14** for when `enabled` (dependent queries) is appropriate.
 - **Avoid** unnecessary sequential waterfalls; they often **slow** first paint more than they help the server.
+
+## 18. Git and Delivery Discipline
+
+### Must
+- Keep commits focused.
+- Use conventional commit style when creating commits.
+- Separate refactor work from feature work unless tightly coupled.
+- **Bắt buộc sinh báo cáo review trước**: Bạn phải tạo file `review.md` (theo chuẩn skill 10-optimization-deploy) TRƯỚC khi tính đến chuyện push code.
+- **Phải được USER duyệt**: Bạn tuyệt đối KHÔNG được tự ý `git push`. Phải trình báo cáo cho USER và chờ USER duyệt mới được push.
+- **Quy tắc đặt tên nhánh (Branch Naming)**: Phải đặt tên nhánh theo đúng format `<viết tắt chức năng>/DATN-<số thứ tự>/<nội dung ngắn gọn>` (ví dụ: `feat/DATN-54/api-align-location-and-tour-category`, `fix/DATN-55/button-loading-bug`).
+
+---
+
+## 19. Definition of Done
+
+Work is done only when:
+1. The requested behavior works and is verified.
+2. `npm run prepush:check` passes successfully without errors.
+3. Touched code follows repository boundaries and PROJECT_RULES.
+4. i18n keys are synchronized (vi/en).
+5. Validation status (review.md & deploy-report.md) is reported and approved by USER.
+6. Residual risks or skipped checks are stated explicitly.
