@@ -4,6 +4,10 @@ import { mapLocationListData } from '@/dataHelper/location.mapper';
 import type { LocationFilters } from '@/dataHelper/location.dataHelper';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
+import axiosClient from '@/api/axiosClient';
+import { API_ENDPOINTS } from '@/constants/endpoints';
+
+import type { CreateLocationInput } from '@/validations/location.schema';
 
 export const locationKeys = {
     all: ['locations'] as const,
@@ -36,7 +40,7 @@ export const useLocationsQuery = (filters: LocationFilters) => {
     });
 };
 
-export const useLocationFilterCategoriesQuery = () => {
+export const useLocationCategoriesQuery = () => {
     return useQuery({
         queryKey: locationKeys.filterCategories(),
         queryFn: async () => {
@@ -44,6 +48,45 @@ export const useLocationFilterCategoriesQuery = () => {
             return res.data ?? [];
         },
         staleTime: 30 * 60 * 1000,
+    });
+};
+
+export const useLocationTagsQuery = () => {
+    return useQuery({
+        queryKey: [...locationKeys.all, 'tags'],
+        queryFn: async () => {
+            const res = await locationApi.getTags();
+            return res.data ?? [];
+        },
+        staleTime: 30 * 60 * 1000,
+    });
+};
+
+export const useLocationAmenitiesQuery = () => {
+    return useQuery({
+        queryKey: [...locationKeys.all, 'amenities'],
+        queryFn: async () => {
+            const res = await locationApi.getAmenities();
+            return res.data ?? [];
+        },
+        staleTime: 30 * 60 * 1000,
+    });
+};
+
+export const useCreateLocationMutation = () => {
+    const queryClient = useQueryClient();
+    const { t } = useTranslation('location');
+
+    return useMutation({
+        mutationFn: (data: CreateLocationInput) => locationApi.createLocation(data),
+        onSuccess: () => {
+            toast.success(t('messages.create_success'));
+            queryClient.invalidateQueries({ queryKey: locationKeys.lists() });
+            queryClient.invalidateQueries({ queryKey: locationKeys.stats() });
+        },
+        onError: () => {
+            toast.error(t('messages.create_error'));
+        },
     });
 };
 
@@ -130,4 +173,40 @@ export const useBulkLocationActionsMutation = () => {
             toast.error(err instanceof Error && err.message === 'partial' ? t('messages.bulk_partial_error') : t('messages.update_error'));
         },
     });
+};
+
+export const useLocationUploadMutations = () => {
+    return {
+        uploadThumbnailMutation: useMutation({
+            mutationFn: async (file: File) => {
+                const formData = new FormData();
+                formData.append('image', file);
+                const res = await axiosClient.post(API_ENDPOINTS.UPLOAD.IMAGE, formData, {
+                    headers: { 'Content-Type': 'multipart/form-data' },
+                });
+                return res.data;
+            },
+            onError: () => toast.error('Upload thumbnail failed'),
+        }),
+        uploadGalleryMutation: useMutation({
+            mutationFn: async (files: File[]) => {
+                const results = await Promise.all(
+                    files.map(async (file) => {
+                        const formData = new FormData();
+                        formData.append('image', file);
+                        const res = await axiosClient.post(API_ENDPOINTS.UPLOAD.IMAGE, formData, {
+                            headers: { 'Content-Type': 'multipart/form-data' },
+                        });
+                        return res.data;
+                    })
+                );
+                return results;
+            },
+            onError: () => toast.error('Upload gallery failed'),
+        }),
+        deleteImageMutation: useMutation({
+            mutationFn: (publicId: string) =>
+                axiosClient.delete(API_ENDPOINTS.UPLOAD.DELETE, { data: { public_id: publicId } }),
+        }),
+    };
 };

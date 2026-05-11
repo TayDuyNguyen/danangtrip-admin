@@ -65,5 +65,21 @@ export const API_ENDPOINTS = {
         UPDATE: (id: string | number) => `/admin/tour-schedules/${id}`,
         DELETE: (id: string | number) => `/admin/tour-schedules/${id}`,
         PATCH_STATUS: (id: string | number) => `/admin/tour-schedules/${id}/status`,
+    },
+    // Locations management
+    LOCATIONS: {
+        LIST: '/admin/locations',
+        STATS: '/admin/locations/stats',
+        DETAIL: (id: string | number) => `/admin/locations/${id}`,
+        CREATE: '/admin/locations',
+        UPDATE: (id: string | number) => `/admin/locations/${id}`,
+        DELETE: (id: string | number) => `/admin/locations/${id}`,
+        PATCH_STATUS: (id: string | number) => `/admin/locations/${id}/status`,
+        PATCH_FEATURED: (id: string | number) => `/admin/locations/${id}/featured`,
+        CATEGORIES: '/categories',
+        ADMIN_CATEGORIES: '/admin/categories',
+        DISTRICTS: '/admin/locations/districts',
+        TAGS: '/tags',
+        AMENITIES: '/amenities',
     }
 } as const;

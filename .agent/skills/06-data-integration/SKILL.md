@@ -1,97 +1,259 @@
-# Skill: 06-data-integration (Tích hợp Data — TanStack Query)
+---
+name: 06-data-integration
+description: Plan and implement data wiring through TanStack Query, mappers, and UI state handling. Use when real API data must be connected to the screen.
+---
 
-## 0) Tuyên bố tự mô tả
-Skill này gắn API vào UI thông qua TanStack Query hooks, tuân thủ data flow: API module → mapper → hook → UI component.
+# Skill: 06-data-integration
 
-## 1) Goal
-- Tạo React Query hooks cho feature.
-- Wire data vào UI components đã build.
-- Implement đầy đủ states: loading (skeleton), error (toast), empty (EmptyState), success.
+## Overview
 
-## 2) Persona
-Đóng vai: **Senior Software Engineer**.
+Skill này mô tả và thực hiện cách nối API thật vào UI theo flow:
 
-## 3) Input & Context (must read first)
-- `.agent/rules/PROJECT_RULES.md` (Sections 4, 14)
-- `src/providers/index.tsx` — QueryClient setup
-- `src/api/<feature>Api.ts` — API functions
-- `src/dataHelper/<feature>.mapper.ts` — mapper
-- `src/hooks/useTourQueries.ts` — hook pattern mẫu (READ + MUTATION)
-- `src/hooks/useDashboardQueries.ts` — parallel queries pattern mẫu
-- `src/hooks/useLocationQueries.ts` — pattern mẫu thứ 3
+```
+API module → mapper → hook (TanStack Query) → UI component
+```
 
-## 4) Workflow
+Đây là bước biến UI tĩnh thành màn hình dùng dữ liệu thật, và đồng thời đảm bảo loading/error/empty states không bị bỏ sót.
 
-### 4.1 Read Hooks
-1. useQuery cho list data:
-   ```ts
-   export function use<Feature>List(params: ListParams) {
-     return useQuery({
-       queryKey: ['<feature>', 'list', params],
-       queryFn: async () => {
-         const res = await featureApi.getList(params);
-         return { ...res.data, data: res.data.data.map(mapRawFeatureToViewModel) };
-       },
-       staleTime: 5 * 60 * 1000,
-     });
-   }
-   ```
-2. useQuery cho detail:
-   ```ts
-   export function use<Feature>Detail(id: number) {
-     return useQuery({
-       queryKey: ['<feature>', 'detail', id],
-       queryFn: async () => {
-         const res = await featureApi.getById(id);
-         return mapRawFeatureToViewModel(res.data.data);
-       },
-       enabled: !!id,
-       staleTime: 5 * 60 * 1000,
-     });
-   }
-   ```
-3. **Parallel queries** cho independent data (KHÔNG chain enabled).
+## Required Input
 
-### 4.2 Mutation Hooks
-4. useMutation cho create/update/delete:
-   ```ts
-   export function use<Feature>Mutations() {
-     const queryClient = useQueryClient();
-     const { t } = useTranslation();
-     
-     const create = useMutation({
-       mutationFn: (data: CreateInput) => featureApi.create(data),
-       onSuccess: () => {
-         queryClient.invalidateQueries({ queryKey: ['<feature>'] });
-         toast.success(t('<feature>.create_success'));
-       },
-     });
-     
-     return { create };
-   }
-   ```
+- `persona.md`
+- `.agent/rules/PROJECT_RULES.md`
+- `src/providers/index.tsx`
+- `src/api/<feature>Api.ts`
+- `src/dataHelper/<feature>.mapper.ts`
+- `src/hooks/useTourQueries.ts`
+- `src/hooks/useDashboardQueries.ts`
+- `src/hooks/useLocationQueries.ts`
 
-### 4.3 Wire UI
-5. Wire hooks vào page/organism components.
-6. Pass data/loading/error qua props xuống child components.
-7. KHÔNG call hooks sâu trong component tree — call ở page level.
+## Recommended Questions To Answer
 
-### 4.4 States
-8. Loading → truyền `isLoading` vào component → render Skeleton.
-9. Error → `toast.error(error.message)` từ sonner.
-10. Empty → truyền `isEmpty` hoặc check `data.length === 0` → render EmptyState.
-11. Success → render data thật.
+1. Query nào là list, query nào là detail, query nào là lookup?
+2. Query nào có thể chạy song song?
+3. Mutation nào cần invalidate query nào?
+4. Data nào cần map trước khi vào UI?
+5. UI section nào sẽ render loading/empty/error như thế nào?
 
-## 5) Strict Rules
-- Data flow bắt buộc: `API module → mapper → hook → UI`
-- KHÔNG gọi API trực tiếp trong component.
-- KHÔNG hardcode mock data.
-- Parallel queries cho independent data (xem PROJECT_RULES §14).
-- staleTime: 5–30 phút cho non-volatile data.
-- Query keys: hierarchical `['<feature>', 'list', params]`.
-- Loading: Skeleton screens (KHÔNG full-page spinner — tránh CLS).
+## Process
 
-## 6) Output specification
-- `src/hooks/use<Feature>Queries.ts`
-- `src/pages/<Feature>/components/` (wired with real data)
-- `src/pages/<Feature>/components/<Component>Skeleton.tsx` (skeleton variants)
+### 1) Data Source Breakdown
+
+Liệt kê rõ:
+
+- endpoint/service nào được dùng
+- purpose của từng query
+- dependency giữa các query nếu có
+
+### 2) Query Strategy
+
+Phải mô tả:
+
+- query key (hierarchical)
+- trigger condition
+- staleTime
+- enabled condition nếu có
+
+### 3) Mutation Strategy
+
+Phải chỉ ra:
+
+- action nào là create/update/delete/toggle/export
+- invalidate query nào sau success
+- success/error feedback nào nên có
+
+### 4) UI State Handling
+
+Không chỉ ghi "loading/error/empty".
+Phải chỉ ra:
+
+- section nào loading ra sao (skeleton hay spinner)
+- empty state hiển thị ở đâu
+- error xử lý bằng toast, inline state, hay cả hai
+
+### 5) Handoff To Implementation
+
+Data integration plan nên để người triển khai biết:
+
+- hook files nào cần tạo/sửa
+- component nào cần nhận data props
+- skeleton nào cần tạo
+
+## Pattern Chuẩn Của Repo
+
+### Query key convention — hierarchical
+
+```ts
+// src/hooks/useTourQueries.ts
+// Bám pattern này — không dùng string đơn giản
+
+const tourKeys = {
+  all: ['tours'] as const,
+  lists: () => [...tourKeys.all, 'list'] as const,
+  list: (params: TourListParams) => [...tourKeys.lists(), params] as const,
+  details: () => [...tourKeys.all, 'detail'] as const,
+  detail: (id: number) => [...tourKeys.details(), id] as const,
+};
+```
+
+### useQuery pattern
+
+```ts
+export const useTourList = (params: TourListParams) => {
+  return useQuery({
+    queryKey: tourKeys.list(params),
+    queryFn: async () => {
+      const res = await tourApi.getList(params);
+      // Map raw → ViewModel trước khi trả về
+      return {
+        ...res.data.data,
+        data: res.data.data.data.map(mapTour),
+      };
+    },
+    staleTime: 5 * 60 * 1000, // 5 phút
+  });
+};
+
+export const useTourDetail = (id: number) => {
+  return useQuery({
+    queryKey: tourKeys.detail(id),
+    queryFn: async () => {
+      const res = await tourApi.getDetail(id);
+      return mapTour(res.data.data);
+    },
+    enabled: !!id, // Chỉ chạy khi có id
+  });
+};
+```
+
+### useMutation pattern — với invalidation
+
+```ts
+export const useCreateTour = () => {
+  const queryClient = useQueryClient();
+  const { t } = useTranslation();
+
+  return useMutation({
+    mutationFn: (data: CreateTourInput) => tourApi.create(data),
+    onSuccess: () => {
+      // Invalidate list — không invalidate detail vì chưa có id
+      queryClient.invalidateQueries({ queryKey: tourKeys.lists() });
+      toast.success(t('tour.createSuccess'));
+    },
+    onError: (error) => {
+      toast.error(getErrorMessage(error));
+    },
+  });
+};
+
+export const useDeleteTour = () => {
+  const queryClient = useQueryClient();
+  const { t } = useTranslation();
+
+  return useMutation({
+    mutationFn: (id: number) => tourApi.delete(id),
+    onSuccess: (_, id) => {
+      // Invalidate list và remove detail cache
+      queryClient.invalidateQueries({ queryKey: tourKeys.lists() });
+      queryClient.removeQueries({ queryKey: tourKeys.detail(id) });
+      toast.success(t('tour.deleteSuccess'));
+    },
+    onError: (error) => {
+      toast.error(getErrorMessage(error));
+    },
+  });
+};
+```
+
+### UI state handling — cụ thể, không chung chung
+
+```tsx
+// Không chỉ ghi "loading state: có"
+// Phải chỉ rõ component nào render gì
+
+function TourListPage() {
+  const [params, setParams] = useState<TourListParams>({ page: 1, per_page: 15 });
+  const { data, isLoading, isError, refetch } = useTourList(params);
+
+  // Loading: skeleton table, không phải full-page spinner
+  if (isLoading) return <TourTableSkeleton rows={15} />;
+
+  // Error: inline error với retry button
+  if (isError) return <ErrorState message={t('tour.loadError')} onRetry={refetch} />;
+
+  // Empty: empty state với CTA
+  if (!data?.data.length) return <EmptyState message={t('tour.empty')} />;
+
+  return <TourTable data={data.data} pagination={data} onPageChange={...} />;
+}
+```
+
+### Parallel queries — khi cần nhiều data độc lập
+
+```ts
+// Chạy song song khi không có dependency
+const { data: tours } = useTourList(params);
+const { data: categories } = useCategoryList(); // Không phụ thuộc tours
+
+// Chạy tuần tự khi có dependency
+const { data: tour } = useTourDetail(tourId);
+const { data: reviews } = useTourReviews(tourId, {
+  enabled: !!tour, // Chỉ chạy sau khi có tour
+});
+```
+
+## Output Document
+
+Tạo file:
+
+- `.agent/artifacts/integration/YYYY-MM-DD__<feature-slug>__data-integration.md`
+
+Template:
+
+- `template_data_integration.md`
+
+## Strict Rules
+
+- Không gọi API trực tiếp trong component — phải qua hook
+- Không hardcode mock data trong production flow
+- Query keys phải hierarchical theo pattern `tourKeys` / `locationKeys`
+- Query độc lập thì chạy song song — không chain vô lý
+- Error handling không được trùng lặp giữa interceptor và component (interceptor xử lý 401/403, component xử lý business error)
+- UI không được consume raw shape nếu mapper là bắt buộc
+- Loading phải dùng skeleton, không phải full-page spinner cho table/list
+
+## Red Flags
+
+Nếu thấy những dấu hiệu sau, phải dừng và flag:
+
+- Query key là string đơn giản `'tours'` thay vì array hierarchical → invalidation không chính xác
+- Mutation không invalidate sau success → UI hiển thị data cũ
+- Component gọi `tourApi.getList()` trực tiếp thay vì qua hook → không có caching
+- Raw API data render thẳng vào UI mà không qua mapper → UI nhận snake_case fields
+- `isLoading` nhưng không có skeleton → layout shift khi data load
+- Error chỉ `console.error` mà không có UI feedback → user không biết có lỗi
+
+## Common Rationalizations
+
+| Lý do hay gặp | Thực tế |
+|---|---|
+| "Query đơn giản, gọi thẳng trong component cho nhanh" | Không có caching, không có loading state chuẩn, không reuse được |
+| "Invalidate all queries cho chắc" | `invalidateQueries()` không có key sẽ refetch toàn bộ app — tốn bandwidth |
+| "Mapper nhỏ, map inline trong queryFn" | Khi cần test mapper hoặc reuse ở chỗ khác, sẽ phải extract lại |
+| "Loading state chỉ cần spinner là đủ" | Skeleton giữ layout ổn định, tránh CLS — spinner gây layout shift |
+
+## Documentation Expectations
+
+Data integration doc tốt phải có:
+
+- data sources (endpoint, purpose, dependency)
+- query plan (key, trigger, staleTime, enabled)
+- mutation plan (action, invalidate, feedback)
+- UI state handling (loading/empty/error per section)
+- files expected to change (hooks, components, skeletons)
+
+## Verification
+
+- Đối chiếu `checklist.md`
+- Tài liệu phải chỉ ra đủ query/mutation, mapper dependency, và UI state handling
+- Người đọc phải biết data chảy từ đâu đến đâu
+- Mọi mutation phải có invalidation strategy rõ ràng

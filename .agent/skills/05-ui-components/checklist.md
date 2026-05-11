@@ -13,3 +13,4 @@
 - [ ] Text strings: nhận qua props đã translated (không gọi `t()` trong atom).
 - [ ] Responsive: Tailwind breakpoints, mobile-first.
 - [ ] Không có hardcoded colors ngoài design system.
+- [ ] UI spec tạo đúng path: `.agent/artifacts/ui-specs/...`.

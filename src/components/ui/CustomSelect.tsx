@@ -11,13 +11,13 @@ export interface Option {
     label: string | ReactNode;
 }
 
-interface CustomSelectProps extends Omit<SelectProps<Option, false, GroupBase<Option>>, 'styles' | 'theme'> {
+interface CustomSelectProps<IsMulti extends boolean = false> extends Omit<SelectProps<Option, IsMulti, GroupBase<Option>>, 'styles' | 'theme'> {
     containerClassName?: string;
     leftIcon?: ReactNode;
     size?: 'sm' | 'md' | 'lg';
 }
 
-const CustomSelect = ({ 
+const CustomSelect = <IsMulti extends boolean = false>({ 
     className, 
     containerClassName, 
     options,
@@ -28,12 +28,12 @@ const CustomSelect = ({
     leftIcon,
     size = 'md',
     ...props 
-}: CustomSelectProps) => {
+}: CustomSelectProps<IsMulti>) => {
     const { t } = useTranslation('common');
     const finalPlaceholder = placeholder ?? t('placeholder_select');
     
 
-    const customStyles: StylesConfig<Option, false> = {
+    const customStyles: StylesConfig<Option, IsMulti> = {
         control: (provided, state) => ({
             ...provided,
             minHeight: size === 'sm' ? '36px' : size === 'lg' ? '60px' : '52px',
