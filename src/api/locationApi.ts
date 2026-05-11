@@ -2,7 +2,7 @@ import axiosClient from './axiosClient';
 import { toAdminLocationParams } from './locationQueryParams';
 import { API_ENDPOINTS } from '@/constants/endpoints';
 import type { LocationListResponse, LocationFilters } from '@/dataHelper/location.dataHelper';
-import type { ApiResponse } from '@/types';
+import type { ApiResponse, RawLocation } from '@/types';
 import type { CreateLocationInput } from '@/validations/location.schema';
 
 export type LocationStatsPayload = {
@@ -43,14 +43,20 @@ const locationApi = {
     getPublicCategories: (): Promise<ApiResponse<PublicCategoryOption[]>> =>
         axiosClient.get(API_ENDPOINTS.LOCATIONS.CATEGORIES),
 
-    getTags: (type = 'location'): Promise<ApiResponse<TagOption[]>> =>
-        axiosClient.get(API_ENDPOINTS.LOCATIONS.TAGS, { params: { type } }),
+    getTags: (type?: string): Promise<ApiResponse<TagOption[]>> =>
+        axiosClient.get(API_ENDPOINTS.LOCATIONS.TAGS, { params: type ? { type } : {} }),
 
     getAmenities: (): Promise<ApiResponse<AmenityOption[]>> =>
         axiosClient.get(API_ENDPOINTS.LOCATIONS.AMENITIES),
 
     createLocation: (data: CreateLocationInput): Promise<ApiResponse<{ id: number }>> =>
         axiosClient.post(API_ENDPOINTS.LOCATIONS.CREATE, data),
+
+    getDetail: (id: string | number): Promise<ApiResponse<RawLocation>> =>
+        axiosClient.get(API_ENDPOINTS.LOCATIONS.DETAIL(id)),
+
+    updateLocation: (id: string | number, data: Partial<CreateLocationInput>): Promise<ApiResponse<void>> =>
+        axiosClient.put(API_ENDPOINTS.LOCATIONS.UPDATE(id), data),
 
     deleteLocation: (id: number) => axiosClient.delete(API_ENDPOINTS.LOCATIONS.DELETE(id)),
 

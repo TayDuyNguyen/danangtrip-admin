@@ -149,8 +149,12 @@
         },
         "actions": {
             "create_location": "Save Location",
+            "update_location": "Update Location",
             "creating": "Saving...",
+            "updating": "Updating...",
             "cancel": "Cancel"
         }
-    }
+    },
+    "edit_title": "Edit Location",
+    "edit_subtitle": "Update details for {{name}}"
 }

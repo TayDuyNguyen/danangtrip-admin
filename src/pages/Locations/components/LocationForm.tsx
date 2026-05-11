@@ -1,4 +1,4 @@
-import { useForm, Controller } from 'react-hook-form';
+import { useForm, Controller, useWatch } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useTranslation } from 'react-i18next';
 import {
@@ -33,7 +33,8 @@ import {
     useLocationTagsQuery,
     useLocationAmenitiesQuery,
     useLocationFilterDistrictsQuery,
-    useCreateLocationMutation
+    useCreateLocationMutation,
+    useUpdateLocationMutation
 } from '@/hooks/useLocationQueries';
 import MapPicker from './MapPicker';
 import MarkdownEditor from './MarkdownEditor';
@@ -41,13 +42,20 @@ import ImageUploader from './ImageUploader';
 import TagSelector from './TagSelector';
 import { slugifyVietnamese } from '@/utils/slug';
 
-const LocationForm = () => {
+interface LocationFormProps {
+    isEdit?: boolean;
+    initialData?: CreateLocationInput & { id: number };
+}
+
+const LocationForm = ({ isEdit = false, initialData }: LocationFormProps) => {
     const { t } = useTranslation('location');
     const { data: categories = [], isLoading: categoriesLoading } = useLocationCategoriesQuery();
     const { data: tags = [], isLoading: tagsLoading } = useLocationTagsQuery();
     const { data: amenities = [], isLoading: amenitiesLoading } = useLocationAmenitiesQuery();
     const { data: districts = [] } = useLocationFilterDistrictsQuery();
+    
     const createMutation = useCreateLocationMutation();
+    const updateMutation = useUpdateLocationMutation();
 
     const {
         register,
@@ -58,7 +66,7 @@ const LocationForm = () => {
         formState: { errors }
     } = useForm<CreateLocationInput>({
         resolver: yupResolver(createLocationSchema(t)),
-        defaultValues: {
+        defaultValues: initialData || {
             status: 'active',
             is_featured: false,
             tags: [],
@@ -68,25 +76,39 @@ const LocationForm = () => {
         }
     } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
 
-    const watchName = watch('name');
-    const watchAllFields = watch();
-
-    const handleAutoSlug = () => {
-        if (watchName) {
-            setValue('slug', slugifyVietnamese(watchName), { shouldValidate: true });
+    const onSubmit = (data: CreateLocationInput) => {
+        if (isEdit && initialData?.id) {
+            updateMutation.mutate({ id: initialData.id, data });
+        } else {
+            createMutation.mutate(data as any); // eslint-disable-line @typescript-eslint/no-explicit-any
         }
     };
 
-    // Calculate form completion (simple version)
-    const requiredFields: (keyof CreateLocationInput)[] = ['name', 'slug', 'category_id', 'description', 'short_description', 'address', 'district', 'latitude', 'longitude', 'thumbnail'];
-    const completedFields = requiredFields.filter(field => !!watchAllFields[field as keyof typeof watchAllFields]);
+    const watchName = useWatch({ control, name: 'name' });
+    const watchAllFields = useWatch({ control });
+
+    const handleAutoSlug = () => {
+        if (watchName) {
+            setValue('slug', slugifyVietnamese(watchName), { shouldValidate: true, shouldDirty: true });
+        }
+    };
+
+    // Calculate form completion
+    const requiredFields = [
+        { key: 'name', label: t('form.basic.name') },
+        { key: 'category_id', label: t('form.basic.category') },
+        { key: 'district', label: t('form.contact.district') },
+        { key: 'address', label: t('form.contact.address') },
+        { key: 'description', label: t('form.basic.description') },
+        { key: 'thumbnail', label: t('form.media.thumbnail') },
+    ];
+    const completedFields = requiredFields.filter(f => !!watchAllFields[f.key as keyof typeof watchAllFields]);
     const completionPercent = Math.round((completedFields.length / requiredFields.length) * 100);
 
     return (
         <form
             id="location-form"
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            onSubmit={handleSubmit((data) => createMutation.mutate(data as any))}
+            onSubmit={handleSubmit(onSubmit)}
             className="flex flex-col lg:flex-row gap-8"
         >
             {/* Left Column: Form Fields */}
@@ -408,11 +430,21 @@ const LocationForm = () => {
                         required
                     />
                     <ImageUploader setValue={setValue} watch={watch} />
+                    {errors.thumbnail && <p className="text-xs text-red-500 font-bold mt-2">{errors.thumbnail.message}</p>}
                 </div>
             </div>
 
             {/* Right Column: Sidebar / Progress */}
             <div className="lg:w-80 space-y-6">
+                {/* DEBUG: Show validation errors in dev mode if needed */}
+                {Object.keys(errors).length > 0 && import.meta.env.DEV && (
+                    <div className="bg-red-50 p-4 rounded-2xl border border-red-100 text-[10px] font-mono text-red-600 overflow-auto max-h-40">
+                        <pre>{JSON.stringify({
+                            ...errors,
+                            opening_hours: typeof watchAllFields.opening_hours === 'string' ? watchAllFields.opening_hours : (watchAllFields.opening_hours ? '' : null)
+                        }, null, 2)}</pre>
+                    </div>
+                )}
                 <div className="sticky top-28 space-y-6">
                     {/* Completion Card */}
                     <div className="bg-white rounded-3xl p-6 border border-slate-200/60 shadow-sm overflow-hidden relative group">
@@ -441,12 +473,12 @@ const LocationForm = () => {
 
                             <div className="pt-2 space-y-2">
                                 {requiredFields.map(field => {
-                                    const isDone = !!watchAllFields[field as keyof typeof watchAllFields];
+                                    const isDone = !!watchAllFields[field.key as keyof typeof watchAllFields];
                                     return (
-                                        <div key={field} className="flex items-center gap-2">
+                                        <div key={field.key} className="flex items-center gap-2">
                                             <div className={`w-1.5 h-1.5 rounded-full ${isDone ? 'bg-[#14b8a6]' : 'bg-slate-200'}`} />
                                             <span className={`text-[11px] font-medium ${isDone ? 'text-slate-500 line-through opacity-50' : 'text-slate-600'}`}>
-                                                {t(`form.basic.${field}`) || t(`form.contact.${field}`) || t(`form.sections.${field}`) || field}
+                                                {field.label}
                                             </span>
                                         </div>
                                     );
@@ -461,7 +493,7 @@ const LocationForm = () => {
 
                         <div className="space-y-6">
                             <div className="flex items-center justify-between">
-                                <span className="text-sm font-semibold text-slate-600">Active Status</span>
+                                <span className="text-sm font-semibold text-slate-600">{t('form.settings.status')}</span>
                                 <Controller
                                     name="status"
                                     control={control}
@@ -506,9 +538,9 @@ const LocationForm = () => {
                             form="location-form"
                             type="submit"
                             className="w-full rounded-2xl bg-[#14b8a6] hover:bg-[#0d9488] text-white h-14 font-bold shadow-lg shadow-[#14b8a6]/20"
-                            isLoading={createMutation.isPending}
+                            isLoading={isEdit ? updateMutation.isPending : createMutation.isPending}
                         >
-                            {t('form.actions.create_location')}
+                            {isEdit ? t('form.actions.update_location') : t('form.actions.create_location')}
                         </Button>
                         <Button
                             variant="ghost"

@@ -1,6 +1,7 @@
 import type { RawLocation } from '@/types';
 import type { LocationViewModel, LocationListData, LocationListResponse } from './location.dataHelper';
 import { toNumberSafe } from '@/utils/safeConverters';
+import type { CreateLocationInput } from '@/validations/location.schema';
 
 /**
  * Format large numbers to human readable strings (e.g. 12400 -> 12.4K)
@@ -54,11 +55,11 @@ export const mapLocationToViewModel = (raw: RawLocation): LocationViewModel => {
         email: raw.email,
         website: raw.website,
         openingHours: raw.opening_hours,
-        latitude: toNumberSafe(raw.latitude, undefined),
-        longitude: toNumberSafe(raw.longitude, undefined),
+        latitude: toNumberSafe(raw.latitude, 0),
+        longitude: toNumberSafe(raw.longitude, 0),
         priceLevelKey: priceKey,
-        priceMin: toNumberSafe(raw.price_min, undefined),
-        priceMax: toNumberSafe(raw.price_max, undefined),
+        priceMin: raw.price_min ? toNumberSafe(raw.price_min) : undefined,
+        priceMax: raw.price_max ? toNumberSafe(raw.price_max) : undefined,
         rating: toNumberSafe(raw.avg_rating ?? raw.rating, 0),
         reviewCount: raw.review_count || 0,
         status: raw.status,
@@ -66,6 +67,39 @@ export const mapLocationToViewModel = (raw: RawLocation): LocationViewModel => {
         viewCountStr: formatMetric(raw.view_count),
         favoriteCountStr: formatMetric(raw.favorite_count),
         images: raw.images || [],
+    };
+};
+
+/**
+ * Map Raw API Location to Form Input (snake_case)
+ */
+export const mapLocationToFormInput = (raw: RawLocation): CreateLocationInput & { id: number } => {
+    return {
+        id: raw.id,
+        name: raw.name,
+        slug: raw.slug,
+        category_id: raw.category_id,
+        subcategory_id: raw.subcategory_id,
+        description: raw.description || '',
+        short_description: raw.short_description || '',
+        address: raw.address,
+        district: raw.district || '',
+        latitude: toNumberSafe(raw.latitude, 0),
+        longitude: toNumberSafe(raw.longitude, 0),
+        phone: raw.phone || null,
+        email: raw.email || null,
+        website: raw.website || null,
+        opening_hours: typeof raw.opening_hours === 'string' ? raw.opening_hours : (raw.opening_hours ? '' : null),
+        price_min: raw.price_min ? toNumberSafe(raw.price_min) : null,
+        price_max: raw.price_max ? toNumberSafe(raw.price_max) : null,
+        price_level: raw.price_level ? Number(raw.price_level) : 1,
+        thumbnail: raw.thumbnail || '',
+        images: raw.images || [],
+        video_url: raw.video_url || null,
+        status: raw.status as 'active' | 'inactive',
+        is_featured: !!raw.is_featured,
+        tags: (raw.tags || []).map(t => t.id),
+        amenities: (raw.amenities || []).map(a => a.id),
     };
 };
 

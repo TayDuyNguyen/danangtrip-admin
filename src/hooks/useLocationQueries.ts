@@ -16,6 +16,8 @@ export const locationKeys = {
     stats: () => [...locationKeys.all, 'stats'] as const,
     filterCategories: () => [...locationKeys.all, 'filter-categories'] as const,
     filterDistricts: () => [...locationKeys.all, 'filter-districts'] as const,
+    details: () => [...locationKeys.all, 'detail'] as const,
+    detail: (id: string | number) => [...locationKeys.details(), id] as const,
 };
 
 export const useLocationsQuery = (filters: LocationFilters) => {
@@ -98,6 +100,36 @@ export const useLocationFilterDistrictsQuery = () => {
             return res.data ?? [];
         },
         staleTime: 30 * 60 * 1000,
+    });
+};
+
+export const useLocationDetailQuery = (id: string | number | undefined) => {
+    return useQuery({
+        queryKey: locationKeys.detail(id || ''),
+        queryFn: async () => {
+            if (!id) throw new Error('Location ID is required');
+            const res = await locationApi.getDetail(id);
+            return res.data;
+        },
+        enabled: !!id,
+    });
+};
+
+export const useUpdateLocationMutation = () => {
+    const queryClient = useQueryClient();
+    const { t } = useTranslation('location');
+
+    return useMutation({
+        mutationFn: ({ id, data }: { id: string | number; data: Partial<CreateLocationInput> }) =>
+            locationApi.updateLocation(id, data),
+        onSuccess: (_data, variables) => {
+            toast.success(t('messages.update_success'));
+            queryClient.invalidateQueries({ queryKey: locationKeys.lists() });
+            queryClient.invalidateQueries({ queryKey: locationKeys.detail(variables.id) });
+        },
+        onError: () => {
+            toast.error(t('messages.update_error'));
+        },
     });
 };
 
