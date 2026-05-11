@@ -7,3 +7,4 @@
 - [ ] Token attachment: KHÔNG duplicate logic trong API module (đã có trong axiosClient).
 - [ ] Logout: useUserStore.getState().logout() → redirect /login.
 - [ ] Manual test: access feature without auth → redirect đúng.
+- [ ] Auth review tạo đúng path: `.agent/artifacts/auth/...`.

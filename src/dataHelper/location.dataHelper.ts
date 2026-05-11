@@ -6,18 +6,30 @@ import type { RawLocation } from '@/types';
 export interface LocationViewModel {
     id: number;
     name: string;
+    slug: string;
     thumbnail: string | null;
     address: string;
     district: string;
     category: string;
+    description: string;
+    shortDescription: string;
+    phone?: string;
+    email?: string;
+    website?: string;
+    openingHours?: string;
+    latitude?: number;
+    longitude?: number;
     /** Key for `t(\`priceLevels.${key}\`)` */
     priceLevelKey: string;
+    priceMin?: number;
+    priceMax?: number;
     rating: number;
     reviewCount: number;
     status: 'active' | 'inactive';
     isFeatured: boolean;
     viewCountStr: string;
     favoriteCountStr: string;
+    images: string[];
 }
 
 /**

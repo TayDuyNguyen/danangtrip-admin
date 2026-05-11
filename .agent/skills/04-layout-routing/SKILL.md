@@ -1,57 +1,269 @@
-# Skill: 04-layout-routing (Xây dựng Layout & Route)
+---
+name: 04-layout-routing
+description: Plan route, layout, navigation, and page skeleton before wiring data. Use when a feature adds or changes screens, menu items, or protected routes.
+---
 
-## 0) Tuyên bố tự mô tả
-Skill này tạo route, page skeleton, và đăng ký layout cho feature mới trong admin — dùng react-router-dom v7.
+# Skill: 04-layout-routing
 
-## 1) Goal
-- Tạo page component skeleton (không data, không logic).
-- Đăng ký route trong router config.
-- Đảm bảo route guard đúng (admin-only).
-- Thêm i18n keys cho menu/breadcrumb.
+## Overview
 
-## 2) Persona
-Đóng vai: **Senior Software Engineer**.
+Skill này dùng để lập kế hoạch route, layout, breadcrumb, menu, và page skeleton cho feature mới trong admin.
+Đây là bước giúp tránh việc code UI xong mới phát hiện route sai, i18n thiếu, hoặc guard chưa hợp lý.
 
-## 3) Input & Context (must read first)
-- `.agent/rules/PROJECT_RULES.md` (Sections 3, 4)
-- `src/routes/` — router setup hiện có + ProtectedRoute
-- `src/layouts/` — AdminLayout, AuthLayout
-- `src/pages/Tours/index.tsx` — page structure pattern mẫu
-- `src/pages/Locations/` — pattern mẫu thứ 2
+## Required Input
 
-## 4) Workflow
+- `persona.md`
+- `.agent/rules/PROJECT_RULES.md`
+- `src/routes/`
+- `src/layouts/`
+- `src/pages/Tours/index.tsx`
+- `src/pages/Locations/`
+- Analysis file từ `01-screen-analysis`
 
-### 4.1 Page Skeleton
-1. Tạo `src/pages/<Feature>/index.tsx` với:
-   - Import AdminLayout (nếu chưa wrap ở router level)
-   - Breadcrumb component
-   - Page title (i18n)
-   - Placeholder sections (TODO comments cho từng organism)
-2. KHÔNG fetch data ở bước này — chỉ structure.
+## Recommended Questions To Answer
 
-### 4.2 Route Registration
-3. Thêm route vào router config trong `src/routes/`:
-   - Wrap với ProtectedRoute nếu admin-only
-   - Dùng lazy import cho code splitting
-4. Path convention: `/admin/<feature>` (lowercase, kebab-case).
+1. Feature này là page mới, sub-page, hay chỉ là biến thể của route cũ?
+2. Route path nên theo naming nào?
+3. Có cần guard không?
+4. Có cần menu item / breadcrumb mới không?
+5. Có cần skeleton page trước khi wiring data không?
 
-### 4.3 i18n Keys
-5. Thêm i18n keys cho:
-   - Menu item label
-   - Page title / breadcrumb
-   - Thêm vào cả vi và en locale files cùng lúc.
+## Process
 
-### 4.4 Navigation
-6. Nếu có sidebar/menu → thêm menu item với đúng route path và icon (lucide-react).
+### 1) Route Scope Review
 
-## 5) Strict Rules
-- Dùng `React.lazy` + `Suspense` cho page-level code splitting.
-- Route path lowercase, kebab-case.
-- KHÔNG viết data fetching trong page skeleton.
-- i18n: cập nhật cả vi và en cùng lúc.
+Xác định:
 
-## 6) Output specification
-- `src/pages/<Feature>/index.tsx`
-- Cập nhật `src/routes/` (route registration)
-- Cập nhật i18n locale files (vi + en)
-- Cập nhật sidebar/menu nếu cần
+- route mới hay route cũ
+- path convention
+- auth/guard requirement
+- layout chain
+
+### 2) Page Skeleton Planning
+
+Phải chỉ ra:
+
+- page file nào cần có
+- section chính của page
+- component nào chỉ là placeholder ở bước này
+
+### 3) Navigation And i18n Planning
+
+Ghi rõ:
+
+- breadcrumb text
+- menu label
+- icon (lucide-react)
+- locale keys cần thêm
+
+### 4) Route Registration Planning
+
+Mô tả:
+
+- file route config nào bị ảnh hưởng
+- route đăng ký theo pattern nào
+- nếu protected, guard sẽ ở đâu
+
+### 5) Handoff Notes
+
+Route plan nên để bước UI/data sau nhìn vào biết:
+
+- page skeleton nằm ở đâu
+- route nào đã active
+- text/key nào cần sync
+
+## Pattern Chuẩn Của Repo
+
+### Route registration pattern — react-router-dom v7
+
+```tsx
+// src/routes/index.tsx — bám pattern hiện tại
+import { lazy, Suspense } from 'react';
+import { createBrowserRouter } from 'react-router-dom';
+import { ProtectedRoute } from './ProtectedRoute';
+import AdminLayout from '@/layouts/AdminLayout';
+
+// Lazy load page-level — code splitting
+const ToursPage = lazy(() => import('@/pages/Tours'));
+const TourCreatePage = lazy(() => import('@/pages/Tours/TourCreate'));
+const TourEditPage = lazy(() => import('@/pages/Tours/TourEdit'));
+
+export const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <ProtectedRoute />,  // Guard ở route level
+    children: [
+      {
+        element: <AdminLayout />,
+        children: [
+          {
+            path: 'tours',
+            element: (
+              <Suspense fallback={<PageSkeleton />}>
+                <ToursPage />
+              </Suspense>
+            ),
+          },
+          {
+            path: 'tours/create',
+            element: (
+              <Suspense fallback={<PageSkeleton />}>
+                <TourCreatePage />
+              </Suspense>
+            ),
+          },
+          {
+            path: 'tours/:id/edit',
+            element: (
+              <Suspense fallback={<PageSkeleton />}>
+                <TourEditPage />
+              </Suspense>
+            ),
+          },
+        ],
+      },
+    ],
+  },
+]);
+```
+
+### Page skeleton — không fetch data
+
+```tsx
+// src/pages/Tours/index.tsx — skeleton trước khi wire data
+import { useTranslation } from 'react-i18next';
+
+export default function ToursPage() {
+  const { t } = useTranslation();
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold">{t('tour.pageTitle')}</h1>
+          <p className="text-sm text-muted-foreground">{t('tour.pageDesc')}</p>
+        </div>
+        <button className="btn-primary">
+          {t('tour.addNew')}
+        </button>
+      </div>
+
+      {/* Filter bar placeholder */}
+      <div className="h-10 bg-muted rounded animate-pulse" />
+
+      {/* Table placeholder */}
+      <div className="h-64 bg-muted rounded animate-pulse" />
+    </div>
+  );
+}
+```
+
+### Breadcrumb pattern
+
+```tsx
+// src/components/common/Breadcrumb.tsx — reuse component này
+<Breadcrumb
+  items={[
+    { label: t('nav.dashboard'), href: '/' },
+    { label: t('nav.tours'), href: '/tours' },
+    { label: t('tour.create'), current: true },
+  ]}
+/>
+```
+
+### Sidebar menu item
+
+```tsx
+// src/layouts/Sidebar.tsx — thêm menu item theo pattern
+const menuItems = [
+  {
+    label: t('nav.tours'),
+    href: '/tours',
+    icon: MapIcon,          // lucide-react
+    active: pathname.startsWith('/tours'),
+  },
+  // ...
+];
+```
+
+### i18n keys pattern
+
+```json
+// src/locales/vi/tour.json
+{
+  "pageTitle": "Quản lý Tour",
+  "pageDesc": "Danh sách tất cả tour du lịch",
+  "addNew": "Thêm tour mới",
+  "nav": {
+    "list": "Danh sách",
+    "create": "Thêm mới",
+    "edit": "Chỉnh sửa"
+  }
+}
+
+// src/locales/en/tour.json — phải sync đồng thời
+{
+  "pageTitle": "Tour Management",
+  "pageDesc": "List of all tours",
+  "addNew": "Add New Tour",
+  "nav": {
+    "list": "List",
+    "create": "Create",
+    "edit": "Edit"
+  }
+}
+```
+
+## Output Document
+
+Tạo file:
+
+- `.agent/artifacts/routing/YYYY-MM-DD__<feature-slug>__route-plan.md`
+
+Template:
+
+- `template_route_plan.md`
+
+## Strict Rules
+
+- Route path phải lowercase, kebab-case: `/tours`, `/tours/create`, `/tours/:id/edit`
+- Không fetch data ở bước page skeleton
+- Cập nhật cả `vi` và `en` locale khi thêm text mới
+- Nếu route bị guard, phải ghi rõ lý do và role
+- Không tạo menu/link visible tới page chưa tồn tại
+- Mọi page-level component phải lazy-load với `React.lazy`
+
+## Red Flags
+
+Nếu thấy những dấu hiệu sau, phải dừng và flag:
+
+- Route path dùng camelCase hoặc PascalCase (`/tourCreate`) → không nhất quán
+- Page component không lazy-load → tăng initial bundle
+- Guard đặt trong component thay vì route level → dễ bị bypass
+- i18n chỉ thêm vào `vi` mà quên `en` → broken UI khi switch language
+- Menu item link tới route chưa đăng ký → 404
+
+## Common Rationalizations
+
+| Lý do hay gặp | Thực tế |
+|---|---|
+| "Route đơn giản, không cần lazy-load" | Mỗi page thêm vào initial bundle — lazy-load là default cho admin |
+| "Guard trong component cho tiện" | Route-level guard rõ ràng hơn, không bị bỏ sót khi thêm route mới |
+| "i18n thêm sau" | Khi thêm sau, dễ bỏ sót key — thêm ngay khi tạo route |
+
+## Documentation Expectations
+
+Route plan tốt phải có:
+
+- target routes (path, guard, layout)
+- page structure (files cần tạo)
+- navigation/breadcrumb impact
+- locale update impact (keys cần thêm)
+- files expected to change
+
+## Verification
+
+- Đối chiếu `checklist.md`
+- Route plan phải chỉ ra đủ file liên quan và i18n keys cần thêm
+- Người đọc phải biết route này sẽ được cắm vào app như thế nào

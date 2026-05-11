@@ -59,9 +59,98 @@
         "update_error": "Update failed",
         "bulk_update_success": "Bulk update successful",
         "bulk_delete_success": "Selected locations deleted",
-        "bulk_partial_error": "Some items could not be updated"
+        "bulk_partial_error": "Some items could not be updated",
+        "create_success": "Location created successfully",
+        "create_error": "Error creating location",
+        "create_error_title": "Creation Error",
+        "discard_confirm": "Are you sure you want to discard? Changes will not be saved."
     },
     "validation": {
-        "required": "This field is required"
+        "required": "{{field}} is required",
+        "min_length": "{{field}} must be at least {{min}} characters",
+        "max_length": "{{field}} must be at most {{max}} characters",
+        "number": "{{field}} must be a number",
+        "positive": "{{field}} must be a positive number",
+        "url": "Invalid URL format",
+        "email": "Invalid email format",
+        "max_gte_min": "Max price must be greater than or equal to min price"
+    },
+    "form": {
+        "page_subtitle": "Fill in the information below to add a new tourist location to the system",
+        "sections": {
+            "basic": "Basic Information",
+            "contact": "Contact Information",
+            "pricing": "Pricing & Hours",
+            "media": "Media",
+            "map": "Map Location",
+            "settings": "Settings & Status"
+        },
+        "section_descriptions": {
+            "basic": "Name, category, and detailed description",
+            "contact": "Address, phone number, and other contact details",
+            "pricing": "Price range and daily operating hours",
+            "media": "Upload thumbnail and photo gallery",
+            "map": "Pin the exact coordinates on the map",
+            "settings": "Visibility and priority settings"
+        },
+        "basic": {
+            "name": "Location Name",
+            "name_placeholder": "e.g. Linh Ung Pagoda",
+            "slug": "Slug",
+            "slug_placeholder": "linh-ung-pagoda",
+            "slug_auto": "Auto-generate",
+            "category": "Category",
+            "category_placeholder": "Select category",
+            "subcategory": "Subcategory",
+            "subcategory_placeholder": "Select subcategory",
+            "short_description": "Short Description",
+            "short_description_placeholder": "A brief summary of the location...",
+            "description": "Detailed Description",
+            "description_placeholder": "Detailed content (Markdown supported)...",
+            "description_helper": "Use Markdown for formatting (bold, italic, lists...)",
+            "short_desc_counter": "{{current}} / 300 characters"
+        },
+        "contact": {
+            "address": "Address",
+            "address_placeholder": "House number, street, ward...",
+            "district": "District",
+            "district_placeholder": "Select district",
+            "phone": "Phone Number",
+            "phone_placeholder": "e.g. 0236 3123 456",
+            "email": "Contact Email",
+            "email_placeholder": "e.g. contact@location.com",
+            "website": "Website",
+            "website_placeholder": "e.g. https://location.com"
+        },
+        "pricing": {
+            "price_min": "Min Price",
+            "price_max": "Max Price",
+            "price_level": "Price Level (1-4)",
+            "opening_hours": "Opening Hours",
+            "opening_hours_placeholder": "e.g. 07:30 - 21:00 daily",
+            "currency_suffix": "VND"
+        },
+        "media": {
+            "thumbnail": "Thumbnail",
+            "gallery": "Gallery",
+            "video_url": "Video URL (Youtube/Vimeo)",
+            "video_placeholder": "Paste video link here..."
+        },
+        "map": {
+            "latitude": "Latitude",
+            "longitude": "Longitude",
+            "helper": "Click on the map to select exact coordinates"
+        },
+        "settings": {
+            "status": "Visibility Status",
+            "is_featured": "Featured Location",
+            "featured_helper": "Featured locations will be prioritized on the home page",
+            "completion": "Completion Progress"
+        },
+        "actions": {
+            "create_location": "Save Location",
+            "creating": "Saving...",
+            "cancel": "Cancel"
+        }
     }
 }

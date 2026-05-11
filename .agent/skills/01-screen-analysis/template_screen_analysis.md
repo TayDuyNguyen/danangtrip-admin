@@ -10,6 +10,7 @@
 - Màn hình này phục vụ mục đích gì?
 - Ai là người dùng chính (admin / staff)?
 - Thuộc feature/module nào?
+- Source inputs nào đã dùng? (mockup, SRS, route cũ, API docs)
 
 ## 2) Component Breakdown
 ### [REUSE] — Components đã có
@@ -84,3 +85,10 @@
 - [ ] Auth/permissions (nếu cần)
 - [ ] Testing (lint + typecheck + build)
 - [ ] Deploy
+
+## 13) Files / Areas Likely To Change
+- `src/pages/...`
+- `src/components/...`
+- `src/hooks/...`
+- `src/api/...`
+- `src/validations/...`

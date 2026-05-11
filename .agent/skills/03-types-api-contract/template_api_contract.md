@@ -18,6 +18,11 @@
 
 ---
 
+## 1.1) Source References
+- `api_list.md` section:
+- `src/constants/endpoints.ts` entries:
+- Analysis file:
+
 ## 2) Request Schemas
 
 ### List Params
@@ -116,3 +121,12 @@ export type <Feature>FormValues = yup.InferType<ReturnType<typeof <feature>Schem
 | 403 | Forbidden | Show permission error |
 | 401 | Unauthorized | Redirect to login |
 | 500 | Server error | Global toast |
+
+---
+
+## 7) Files Expected To Change
+- `src/types/<feature>.ts`
+- `src/api/<feature>Api.ts`
+- `src/dataHelper/<feature>.mapper.ts`
+- `src/dataHelper/<feature>.dataHelper.ts`
+- `src/validations/<feature>.schema.ts`

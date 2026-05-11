@@ -1,108 +1,259 @@
-# Skill: 03-types-api-contract (Định nghĩa Types, Yup Schemas, API Module, Mapper)
+---
+name: 03-types-api-contract
+description: Convert screen analysis into detailed types, schema, API, mapper, and contract documentation. Use when a feature introduces or changes data contracts.
+---
 
-## 0) Tuyên bố tự mô tả
-Skill này chuyển SRS/analysis thành TypeScript interfaces, Yup schemas, API modules, và data mappers — đúng theo kiến trúc hiện có của admin repo.
+# Skill: 03-types-api-contract
 
-## 1) Goal
-Chuyển SRS/analysis thành:
-- **TypeScript interfaces** (Raw + ViewModel)
-- **Yup validation schemas** (function-based, i18n-compatible)
-- **API service module** (async, typed, thin transport layer)
-- **Data mapper** (Raw → ViewModel sanitization)
-- **API contract document**
+## Overview
 
-## 2) Persona (mandatory)
-Đóng vai: **System Architect**. Đọc `persona.md` trước khi làm.
+Skill này chuyển screen analysis thành:
 
-## 3) Input & Context (must read first)
+- Raw types (bám backend shape)
+- ViewModel types (UI-consumable shape)
+- Yup validation schema
+- API module plan
+- Mapper plan
+- API contract document
+
+Mục tiêu không chỉ là "liệt kê field", mà là **khóa toàn bộ contract data** để UI, hook, validation, và service cùng bám một ngôn ngữ thống nhất.
+Không có bước này, các bước sau sẽ tự suy diễn type và dẫn đến drift.
+
+## Required Input
+
 - `persona.md`
-- `.agent/rules/PROJECT_RULES.md` (Sections 12, 14, 15)
-- Screen analysis: `.agent/artifacts/analysis/YYYY-MM-DD__<slug>__screen-analysis.md`
-- `d:/DATN/DATN_Tài liệu/docs/api/api_list.md` — **NGUỒN CHÂN LÝ API** (xác nhận method, path, params name, auth level TRƯỚC khi tạo type)
-- `src/constants/endpoints.ts` — endpoints đã đăng ký trong frontend
-- `src/types/api.ts` — ApiResponse<T>, PaginatedResponse<T> (REUSE)
-- `src/types/` — entities hiện có (REUSE trước khi tạo mới)
-- `src/api/tourApi.ts` — API module pattern mẫu
-- `src/dataHelper/tour.mapper.ts` — mapper pattern mẫu
-- `src/dataHelper/tour.dataHelper.ts` — dataHelper pattern mẫu
-- `src/validations/tour.schema.ts` — Yup schema pattern mẫu
+- `.agent/rules/PROJECT_RULES.md`
+- Analysis file từ `01-screen-analysis`
+- `/DATN/DATN_Tài liệu/docs/api/api_list.md`
+- `src/constants/endpoints.ts`
+- `src/types/api.ts`
+- `src/types/`
+- `src/api/tourApi.ts`
+- `src/dataHelper/tour.mapper.ts`
+- `src/dataHelper/tour.dataHelper.ts`
+- `src/validations/tour.schema.ts`
 
-## 4) Workflow
+## Recommended Questions To Answer
 
-### 4.1 TypeScript Types
-1. Đọc data fields từ analysis → tạo interfaces.
-2. **Raw interface**: match chính xác backend response shape.
-3. **ViewModel interface**: clean shape để UI consume.
-4. Placement: `src/types/<feature>.ts`.
-5. Conventions:
-   - `import type` cho type-only imports.
-   - Không dùng `any` — dùng `unknown` + type guard.
-   - Suffix `.ts` (không phải `.types.ts` — theo convention admin repo).
+1. Field nào là raw backend shape, field nào là UI-consumable shape?
+2. Có field nào cần sanitize / map / rename không?
+3. Endpoint nào đã tồn tại, endpoint nào cần xác nhận thêm?
+4. Schema validation nên ở mức nào?
+5. File nào sẽ phải tạo mới, file nào nên reuse pattern cũ?
 
-### 4.2 Yup Validation Schemas
-6. Schema là function nhận `t: TFunction`:
-   ```ts
-   export const featureSchema = (t: TFunction) => yup.object({
-     name: yup.string().required(t('validation.name_required')),
-   });
-   ```
-7. Placement: `src/validations/<feature>.schema.ts`.
-8. Export cả schema function và inferred type:
-   ```ts
-   export type FeatureFormValues = yup.InferType<ReturnType<typeof featureSchema>>;
-   ```
+## Process
 
-### 4.3 API Module
-9. File: `src/api/<feature>Api.ts`.
-10. Pattern mẫu:
-    ```ts
-    export const featureApi = {
-      getList: (params: ListParams) => axiosClient.get<ApiResponse<Feature[]>>(ENDPOINT, { params }),
-      getById: (id: number) => axiosClient.get<ApiResponse<Feature>>(ENDPOINT(id)),
-      create: (data: CreateInput) => axiosClient.post<ApiResponse<Feature>>(ENDPOINT, data),
-      update: (id: number, data: UpdateInput) => axiosClient.put<ApiResponse<Feature>>(ENDPOINT(id), data),
-      delete: (id: number) => axiosClient.delete<ApiResponse<void>>(ENDPOINT(id)),
-    };
-    ```
-11. Dùng endpoints từ `src/constants/endpoints.ts` — KHÔNG hardcode string paths.
-12. Import axiosClient từ `src/api/axiosClient.ts`.
-13. KHÔNG chứa business logic — chỉ transport.
+### 1) Source Reconciliation
 
-### 4.4 Data Mapper
-14. File: `src/dataHelper/<feature>.mapper.ts`.
-15. Pattern:
-    ```ts
-    export function mapRawFeatureToViewModel(raw: RawFeature): Feature {
-      return {
-        id: toNumberSafe(raw.id),
-        name: raw.name ?? '',
-        // ...
-      };
-    }
-    ```
-16. Dùng safe converters: `toNumberSafe`, `toArraySafe`, `toDateLabelSafe`.
-17. Nếu cần helpers phức tạp → `src/dataHelper/<feature>.dataHelper.ts`.
+Đối chiếu giữa:
 
-### 4.5 API Contract Document
-18. Tạo contract doc theo template.
+- analysis file
+- `api_list.md`
+- `src/constants/endpoints.ts`
 
-## 5) Strict Rules
-- **Types phải match backend response** — ĐốI CHIẾU `api_list.md` trước khi tạo field, không tự bịa.
-- **API path/method phải đúng chính xác** — copy từ `api_list.md`, không suy diễn.
-- API module KHÔNG chứa business logic — chỉ transport.
-- Yup schemas PHẢI là function nhận `t: TFunction`.
-- Luôn dùng safe converters trong mapper.
-- KHÔNG import chéo giữa các feature API modules.
+Nếu ba nguồn không khớp, phải flag rõ.
 
-## 6) Output specification
-- `src/types/<feature>.ts`
-- `src/api/<feature>Api.ts`
-- `src/dataHelper/<feature>.mapper.ts`
-- `src/dataHelper/<feature>.dataHelper.ts` (nếu cần)
-- `src/validations/<feature>.schema.ts`
+### 2) Type Design
+
+Thiết kế rõ:
+
+- `Raw<Entity>` — bám backend docs, snake_case, boolean dạng số nếu backend trả vậy
+- `ViewModel` — camelCase, boolean thật, Date object thay vì string
+- params / payload types
+- form values types nếu cần
+
+Mỗi type nên có lý do tồn tại:
+
+- backend fidelity
+- UI cleanliness
+- validation compatibility
+
+### 3) Validation Contract
+
+Mô tả:
+
+- schema nào cần có
+- key validation nào là bắt buộc
+- message pattern phải dùng `t()`
+- inferred types nào nên export
+
+### 4) API Module Contract
+
+Phải mô tả:
+
+- service/API methods cần có
+- method/path/auth
+- input/output chính
+- errors cần lưu ý
+
+### 5) Mapper Contract
+
+Nếu backend shape không sạch, phải chỉ rõ:
+
+- field nào cần map
+- field nào cần sanitize
+- safe helper nào nên dùng
+
+### 6) Handoff To Implementation
+
+Tài liệu cuối phải giúp người bước sau biết:
+
+- file nào cần tạo
+- file nào cần sửa
+- contract nào đã chắc
+- contract nào còn assumption
+
+## Pattern Chuẩn Của Repo
+
+### Raw type — bám backend
+
+```ts
+// src/types/tour.ts
+interface RawTour {
+  id: number;
+  tour_name: string;        // snake_case từ backend
+  is_active: 0 | 1;        // boolean dạng số
+  created_at: string;       // ISO string
+  updated_at: string;
+  category_id: number;
+  price: number | null;
+}
+```
+
+### ViewModel — UI-consumable
+
+```ts
+interface Tour {
+  id: number;
+  name: string;             // camelCase
+  isActive: boolean;        // boolean thật
+  createdAt: Date;          // Date object
+  updatedAt: Date;
+  categoryId: number;
+  price: number | null;
+}
+```
+
+### Mapper pattern — bám `tour.mapper.ts`
+
+```ts
+// src/dataHelper/tour.mapper.ts
+import { safeDate } from '@/utils/safe';
+
+export const mapTour = (raw: RawTour): Tour => ({
+  id: raw.id,
+  name: raw.tour_name,
+  isActive: raw.is_active === 1,
+  createdAt: safeDate(raw.created_at),
+  updatedAt: safeDate(raw.updated_at),
+  categoryId: raw.category_id,
+  price: raw.price ?? null,
+});
+```
+
+### Yup schema pattern — bám `tour.schema.ts`
+
+```ts
+// src/validations/tour.schema.ts
+import * as yup from 'yup';
+import type { TFunction } from 'i18next';
+
+export const tourSchema = (t: TFunction) =>
+  yup.object({
+    name: yup
+      .string()
+      .required(t('validation.required', { field: t('tour.name') }))
+      .max(200, t('validation.maxLength', { max: 200 })),
+    categoryId: yup
+      .number()
+      .required(t('validation.required', { field: t('tour.category') })),
+    price: yup.number().nullable().min(0, t('validation.minValue', { min: 0 })),
+  });
+
+export type TourFormValues = yup.InferType<ReturnType<typeof tourSchema>>;
+```
+
+### API module pattern — bám `tourApi.ts`
+
+```ts
+// src/api/tourApi.ts
+import axiosClient from '@/api/axiosClient';
+import { ENDPOINTS } from '@/constants/endpoints';
+import type { RawTour, ListParams, ApiListResponse, ApiDetailResponse } from '@/types/api';
+
+export const tourApi = {
+  getList: (params: ListParams) =>
+    axiosClient.get<ApiListResponse<RawTour>>(ENDPOINTS.TOURS.LIST, { params }),
+
+  getDetail: (id: number) =>
+    axiosClient.get<ApiDetailResponse<RawTour>>(ENDPOINTS.TOURS.DETAIL(id)),
+
+  create: (data: CreateTourInput) =>
+    axiosClient.post<ApiDetailResponse<RawTour>>(ENDPOINTS.TOURS.CREATE, data),
+
+  update: (id: number, data: UpdateTourInput) =>
+    axiosClient.put<ApiDetailResponse<RawTour>>(ENDPOINTS.TOURS.UPDATE(id), data),
+
+  delete: (id: number) =>
+    axiosClient.delete(ENDPOINTS.TOURS.DELETE(id)),
+};
+```
+
+## Output Document
+
+Tạo file:
+
 - `.agent/artifacts/api-contracts/YYYY-MM-DD__<feature-slug>__api-contract.md`
 
-Template: `template_api_contract.md`
+Template:
 
-## 7) Control
-Đối chiếu `checklist.md` và report Pass/Fail.
+- `template_api_contract.md`
+
+## Strict Rules
+
+- Không tự suy diễn path, method, hoặc field names — phải đối chiếu `api_list.md` và `endpoints.ts`
+- Raw types phải bám backend docs, không tự đặt tên
+- ViewModel phải tách khỏi raw shape nếu backend không sạch
+- Schema phải theo pattern `schema(t: TFunction)` — không hardcode string message
+- Không dùng `any`
+- Không được nhảy thẳng sang code mà bỏ qua contract doc
+- Mapper phải handle null/undefined safely — không để runtime crash
+
+## Red Flags
+
+Nếu thấy những dấu hiệu sau, phải dừng và flag:
+
+- ViewModel có field snake_case → chưa map đúng
+- Schema dùng hardcoded string `'Trường này bắt buộc'` thay vì `t()` → sẽ không i18n được
+- API module gọi `axios` trực tiếp thay vì `axiosClient` → bỏ qua interceptor
+- Mapper không handle `null` / `undefined` → runtime crash khi backend trả thiếu field
+- Type dùng `any` → mất type safety toàn bộ downstream
+- Endpoint path hardcode trong API module thay vì dùng `ENDPOINTS` constant
+
+## Common Rationalizations
+
+| Lý do hay gặp | Thực tế |
+|---|---|
+| "Backend trả snake_case thì để vậy cho tiện" | UI sẽ dùng `tour.tour_name` thay vì `tour.name` — không nhất quán với codebase |
+| "Schema đơn giản, không cần `t()`" | Khi đổi ngôn ngữ hoặc copy message, sẽ phải sửa lại toàn bộ |
+| "Mapper nhỏ, viết inline trong hook cho nhanh" | Mapper inline không test được, không reuse được |
+| "Chưa có API docs, tự đoán field trước" | Phải ghi `[ASSUMPTION]` và flag — không được code trên assumption im lặng |
+
+## Documentation Expectations
+
+Contract doc tốt phải có:
+
+- source references (api_list.md section, endpoints.ts entries)
+- endpoint list với method/path/auth
+- request/response model đầy đủ
+- raw vs view model mapping rõ ràng
+- schema notes với validation rules
+- error handling notes (422, 404, 403, 401, 500)
+- files expected to change (types, api, mapper, schema)
+
+## Verification
+
+- Đối chiếu `checklist.md`
+- Contract doc phải chỉ ra rõ endpoint, request/response, type mapping, schema, và file dự kiến thay đổi
+- Người đọc phải biết bước code tiếp theo cần tạo chính xác file nào
+- Không có field nào trong ViewModel mà không có nguồn gốc từ Raw type hoặc computed logic rõ ràng

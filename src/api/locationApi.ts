@@ -1,7 +1,9 @@
 import axiosClient from './axiosClient';
 import { toAdminLocationParams } from './locationQueryParams';
+import { API_ENDPOINTS } from '@/constants/endpoints';
 import type { LocationListResponse, LocationFilters } from '@/dataHelper/location.dataHelper';
 import type { ApiResponse } from '@/types';
+import type { CreateLocationInput } from '@/validations/location.schema';
 
 export type LocationStatsPayload = {
     total: number;
@@ -15,28 +17,48 @@ export type PublicCategoryOption = {
     name: string;
 };
 
+export type TagOption = {
+    id: number;
+    name: string;
+};
+
+export type AmenityOption = {
+    id: number;
+    name: string;
+    icon?: string;
+};
+
 const locationApi = {
     getLocations: (filters: LocationFilters): Promise<ApiResponse<LocationListResponse>> =>
-        axiosClient.get('/admin/locations', {
+        axiosClient.get(API_ENDPOINTS.LOCATIONS.LIST, {
             params: toAdminLocationParams(filters),
         }),
 
     getStats: (): Promise<ApiResponse<LocationStatsPayload>> =>
-        axiosClient.get('/admin/locations/stats'),
+        axiosClient.get(API_ENDPOINTS.LOCATIONS.STATS),
 
     getAdminDistricts: (): Promise<ApiResponse<string[]>> =>
-        axiosClient.get('/admin/locations/districts'),
+        axiosClient.get(API_ENDPOINTS.LOCATIONS.DISTRICTS),
 
     getPublicCategories: (): Promise<ApiResponse<PublicCategoryOption[]>> =>
-        axiosClient.get('/categories'),
+        axiosClient.get(API_ENDPOINTS.LOCATIONS.CATEGORIES),
 
-    deleteLocation: (id: number) => axiosClient.delete(`/admin/locations/${id}`),
+    getTags: (type = 'location'): Promise<ApiResponse<TagOption[]>> =>
+        axiosClient.get(API_ENDPOINTS.LOCATIONS.TAGS, { params: { type } }),
+
+    getAmenities: (): Promise<ApiResponse<AmenityOption[]>> =>
+        axiosClient.get(API_ENDPOINTS.LOCATIONS.AMENITIES),
+
+    createLocation: (data: CreateLocationInput): Promise<ApiResponse<{ id: number }>> =>
+        axiosClient.post(API_ENDPOINTS.LOCATIONS.CREATE, data),
+
+    deleteLocation: (id: number) => axiosClient.delete(API_ENDPOINTS.LOCATIONS.DELETE(id)),
 
     toggleFeatured: (id: number, isFeatured: boolean) =>
-        axiosClient.patch(`/admin/locations/${id}/featured`, { is_featured: isFeatured }),
+        axiosClient.patch(API_ENDPOINTS.LOCATIONS.PATCH_FEATURED(id), { is_featured: isFeatured }),
 
     updateStatus: (id: number, status: string) =>
-        axiosClient.patch(`/admin/locations/${id}/status`, { status }),
+        axiosClient.patch(API_ENDPOINTS.LOCATIONS.PATCH_STATUS(id), { status }),
 };
 
 export default locationApi;

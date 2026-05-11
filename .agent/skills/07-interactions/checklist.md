@@ -12,3 +12,4 @@
 - [ ] Loading state: button disabled + spinner khi mutation pending.
 - [ ] i18n: cập nhật cả vi và en locale files cùng lúc.
 - [ ] Không có hardcoded user-facing strings.
+- [ ] Interaction spec tạo đúng path: `.agent/artifacts/interaction-specs/...`.

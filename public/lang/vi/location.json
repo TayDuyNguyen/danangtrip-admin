@@ -59,9 +59,98 @@
         "update_error": "Cập nhật thất bại",
         "bulk_update_success": "Cập nhật hàng loạt thành công",
         "bulk_delete_success": "Đã xóa các địa điểm đã chọn",
-        "bulk_partial_error": "Một số mục không thể cập nhật"
+        "bulk_partial_error": "Một số mục không thể cập nhật",
+        "create_success": "Tạo địa điểm thành công",
+        "create_error": "Có lỗi xảy ra khi tạo địa điểm",
+        "create_error_title": "Lỗi tạo địa điểm",
+        "discard_confirm": "Bạn có chắc chắn muốn hủy bỏ? Các thay đổi sẽ không được lưu."
     },
     "validation": {
-        "required": "Trường này là bắt buộc"
+        "required": "{{field}} là bắt buộc",
+        "min_length": "{{field}} phải có ít nhất {{min}} ký tự",
+        "max_length": "{{field}} tối đa {{max}} ký tự",
+        "number": "{{field}} phải là số",
+        "positive": "{{field}} phải là số dương",
+        "url": "Định dạng URL không hợp lệ",
+        "email": "Định dạng email không hợp lệ",
+        "max_gte_min": "Giá cao nhất phải lớn hơn hoặc bằng giá thấp nhất"
+    },
+    "form": {
+        "page_subtitle": "Điền đầy đủ thông tin bên dưới để thêm địa điểm du lịch mới vào hệ thống",
+        "sections": {
+            "basic": "Thông tin cơ bản",
+            "contact": "Thông tin liên hệ",
+            "pricing": "Mức giá & Giờ mở cửa",
+            "media": "Hình ảnh & Video",
+            "map": "Vị trí trên bản đồ",
+            "settings": "Cài đặt & Trạng thái"
+        },
+        "section_descriptions": {
+            "basic": "Tên, danh mục và mô tả chi tiết của địa điểm",
+            "contact": "Địa chỉ, số điện thoại và các thông tin liên lạc khác",
+            "pricing": "Khoảng giá và thời gian hoạt động hàng ngày",
+            "media": "Tải lên ảnh đại diện và bộ sưu tập ảnh của địa điểm",
+            "map": "Xác định tọa độ chính xác để hiển thị trên bản đồ du lịch",
+            "settings": "Cấu hình trạng thái hiển thị và độ ưu tiên"
+        },
+        "basic": {
+            "name": "Tên địa điểm",
+            "name_placeholder": "VD: Chùa Linh Ứng Bãi Bụt",
+            "slug": "Đường dẫn (Slug)",
+            "slug_placeholder": "chua-linh-ung-bai-but",
+            "slug_auto": "Tự động tạo",
+            "category": "Danh mục",
+            "category_placeholder": "Chọn danh mục",
+            "subcategory": "Danh mục phụ",
+            "subcategory_placeholder": "Chọn danh mục phụ",
+            "short_description": "Mô tả ngắn",
+            "short_description_placeholder": "Tóm tắt về địa điểm trong 1-2 câu...",
+            "description": "Mô tả chi tiết",
+            "description_placeholder": "Nhập nội dung chi tiết (hỗ trợ Markdown)...",
+            "description_helper": "Sử dụng Markdown để định dạng văn bản (đậm, nghiêng, danh sách...)",
+            "short_desc_counter": "{{current}} / 300 ký tự"
+        },
+        "contact": {
+            "address": "Địa chỉ",
+            "address_placeholder": "Số nhà, tên đường, phường...",
+            "district": "Quận/Huyện",
+            "district_placeholder": "Chọn quận huyện",
+            "phone": "Số điện thoại",
+            "phone_placeholder": "VD: 0236 3123 456",
+            "email": "Email liên hệ",
+            "email_placeholder": "VD: contact@location.com",
+            "website": "Website",
+            "website_placeholder": "VD: https://location.com"
+        },
+        "pricing": {
+            "price_min": "Giá thấp nhất",
+            "price_max": "Giá cao nhất",
+            "price_level": "Mức giá (1-4)",
+            "opening_hours": "Giờ mở cửa",
+            "opening_hours_placeholder": "VD: 07:30 - 21:00 hàng ngày",
+            "currency_suffix": "VNĐ"
+        },
+        "media": {
+            "thumbnail": "Ảnh đại diện",
+            "gallery": "Thư viện ảnh",
+            "video_url": "Video URL (Youtube/Vimeo)",
+            "video_placeholder": "Dán đường dẫn video tại đây..."
+        },
+        "map": {
+            "latitude": "Vĩ độ (Latitude)",
+            "longitude": "Kinh độ (Longitude)",
+            "helper": "Click vào bản đồ để chọn tọa độ chính xác"
+        },
+        "settings": {
+            "status": "Trạng thái hiển thị",
+            "is_featured": "Địa điểm nổi bật",
+            "featured_helper": "Địa điểm nổi bật sẽ được ưu tiên hiển thị ở trang chủ",
+            "completion": "Độ hoàn thiện thông tin"
+        },
+        "actions": {
+            "create_location": "Lưu địa điểm",
+            "creating": "Đang lưu...",
+            "cancel": "Hủy bỏ"
+        }
     }
 }

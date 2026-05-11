@@ -5,7 +5,7 @@ import { TextInput } from '@/components/ui/TextInput';
 import CustomSelect, { type Option } from '@/components/ui/CustomSelect';
 import { Button } from '@/components/ui/Button';
 import type { LocationFilters } from '@/dataHelper/location.dataHelper';
-import { useLocationFilterCategoriesQuery, useLocationFilterDistrictsQuery } from '@/hooks/useLocationQueries';
+import { useLocationCategoriesQuery, useLocationFilterDistrictsQuery } from '@/hooks/useLocationQueries';
 
 interface LocationFilterProps {
     filters: LocationFilters;
@@ -15,7 +15,7 @@ interface LocationFilterProps {
 
 const LocationFilter = ({ filters, onFilterChange, onReset }: LocationFilterProps) => {
     const { t } = useTranslation('location');
-    const { data: categories = [], isLoading: catLoading } = useLocationFilterCategoriesQuery();
+    const { data: categories = [], isLoading: catLoading } = useLocationCategoriesQuery();
     const { data: districts = [], isLoading: distLoading } = useLocationFilterDistrictsQuery();
 
     const statusOptions: Option[] = useMemo(
@@ -40,7 +40,7 @@ const LocationFilter = ({ filters, onFilterChange, onReset }: LocationFilterProp
 
     const categoryOptions: Option[] = useMemo(() => {
         const base: Option[] = [{ value: 'all', label: t('filters.category') }];
-        const fromApi = categories.map((c) => ({ value: String(c.id), label: c.name }));
+        const fromApi = categories.map((c: { id: number; name: string }) => ({ value: String(c.id), label: c.name }));
         return [...base, ...fromApi];
     }, [categories, t]);
 
