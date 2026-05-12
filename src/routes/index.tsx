@@ -17,6 +17,7 @@ const TourScheduleCreate = React.lazy(() => import('@/pages/Tours/TourScheduleCr
 const TourScheduleEdit = React.lazy(() => import('@/pages/Tours/TourScheduleEdit'));
 const LocationList = React.lazy(() => import('@/pages/Locations/LocationList'));
 const LocationCreate = React.lazy(() => import('@/pages/Locations/LocationCreate'));
+const LocationEdit = React.lazy(() => import('@/pages/Locations/LocationEdit'));
 import ErrorPage from '@/pages/ErrorPage';
 
 /**
@@ -75,6 +76,7 @@ const router = createBrowserRouter([
                     { path: ROUTES.TOURS_SCHEDULE_EDIT, element: withSuspense(TourScheduleEdit) },
                     { path: ROUTES.LOCATIONS_LIST, element: withSuspense(LocationList) },
                     { path: ROUTES.LOCATIONS_CREATE, element: withSuspense(LocationCreate) },
+                    { path: ROUTES.LOCATIONS_EDIT, element: withSuspense(LocationEdit) },
                 ]
             }
         ],

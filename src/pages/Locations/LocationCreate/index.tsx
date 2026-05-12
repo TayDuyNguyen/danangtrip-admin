@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, MapPin, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { ROUTES } from '@/routes/routes';
-import LocationForm from './components/LocationForm';
+import LocationForm from '../components/LocationForm';
 
 const LocationCreate = () => {
     const { t } = useTranslation('location');

@@ -49,6 +49,6 @@ export const apiClientEnv = {
     fallbackUrls,
     /** [primary, ...fallbacks], unique preserve order */
     baseChain,
-    /** Request timeout; default 20s for faster failover than legacy 60s */
-    timeoutMs: parseTimeoutMs(import.meta.env.VITE_API_TIMEOUT_MS, 20_000),
+    /** Request timeout; default 60s */
+    timeoutMs: parseTimeoutMs(import.meta.env.VITE_API_TIMEOUT_MS, 60_000),
 } as const;

@@ -149,8 +149,12 @@
         },
         "actions": {
             "create_location": "Lưu địa điểm",
+            "update_location": "Cập nhật địa điểm",
             "creating": "Đang lưu...",
+            "updating": "Đang cập nhật...",
             "cancel": "Hủy bỏ"
         }
-    }
+    },
+    "edit_title": "Chỉnh sửa Địa điểm",
+    "edit_subtitle": "Cập nhật thông tin chi tiết cho địa điểm {{name}}"
 }

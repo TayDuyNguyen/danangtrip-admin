@@ -10,7 +10,7 @@ import type { LocationFilters } from '@/dataHelper/location.dataHelper';
 import LocationStats from './components/LocationStats';
 import LocationFilter from './components/LocationFilter';
 import LocationTable from './components/LocationTable';
-import DeleteLocationModal from './components/DeleteLocationModal';
+import DeleteLocationModal from '../components/DeleteLocationModal';
 
 import {
     useLocationsQuery,

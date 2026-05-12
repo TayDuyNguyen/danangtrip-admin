@@ -39,6 +39,8 @@ export interface RawLocation {
         id: number;
         name: string;
     };
+    tags?: { id: number; name: string }[];
+    amenities?: { id: number; name: string }[];
 }
 
 export interface CreateLocationInput {
