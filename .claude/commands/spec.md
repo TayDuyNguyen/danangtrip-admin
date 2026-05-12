@@ -1,0 +1,9 @@
+﻿---
+description: Analyze a new feature or screen before implementation.
+---
+
+Read AGENTS.md, .agent/rules/PROJECT_RULES.md, .agent/rules/REPO_FACTS.md, .agent/memory/WORKING_STATE.md, and .agent/memory/HANDOFF.md first.
+
+Use `01-screen-analysis` to analyze Figma, requirements, route impact, i18n impact, and artifact scope before coding.
+Update .agent/memory/WORKING_STATE.md if the active task or feature slug changes.
+Write or extend the relevant artifact under .agent/artifacts/analysis/.

@@ -7,6 +7,12 @@ description: Plan and implement data wiring through TanStack Query, mappers, and
 
 ## Overview
 
+## When to Use
+
+- When connecting real admin APIs to pages and components.
+- When query, mutation, mapper, and UI state ownership must be planned explicitly.
+- When existing data flow is likely to drift without a written integration plan.
+
 Skill này mô tả và thực hiện cách nối API thật vào UI theo flow:
 
 ```
@@ -19,6 +25,9 @@ API module → mapper → hook (TanStack Query) → UI component
 
 - `persona.md`
 - `.agent/rules/PROJECT_RULES.md`
+- `.agent/rules/REPO_FACTS.md`
+- `.agent/memory/WORKING_STATE.md`
+- `.agent/memory/HANDOFF.md`
 - `src/providers/index.tsx`
 - `src/api/<feature>Api.ts`
 - `src/dataHelper/<feature>.mapper.ts`
@@ -221,6 +230,16 @@ Template:
 - UI không được consume raw shape nếu mapper là bắt buộc
 - Loading phải dùng skeleton, không phải full-page spinner cho table/list
 
+## Rationalizations
+
+| Lý do hay gặp | Thực tế |
+|---|---|
+| "Query đơn giản, gọi thẳng trong component cho nhanh" | Không có caching, không có loading state chuẩn, không reuse được |
+| "Invalidate all queries cho chắc" | `invalidateQueries()` không có key sẽ refetch toàn bộ app — tốn bandwidth |
+| "Mapper nhỏ, map inline trong queryFn" | Khi cần test mapper hoặc reuse ở chỗ khác, sẽ phải extract lại |
+| "Loading state chỉ cần spinner là đủ" | Skeleton giữ layout ổn định, tránh CLS — spinner gây layout shift |
+
+
 ## Red Flags
 
 Nếu thấy những dấu hiệu sau, phải dừng và flag:
@@ -231,15 +250,6 @@ Nếu thấy những dấu hiệu sau, phải dừng và flag:
 - Raw API data render thẳng vào UI mà không qua mapper → UI nhận snake_case fields
 - `isLoading` nhưng không có skeleton → layout shift khi data load
 - Error chỉ `console.error` mà không có UI feedback → user không biết có lỗi
-
-## Common Rationalizations
-
-| Lý do hay gặp | Thực tế |
-|---|---|
-| "Query đơn giản, gọi thẳng trong component cho nhanh" | Không có caching, không có loading state chuẩn, không reuse được |
-| "Invalidate all queries cho chắc" | `invalidateQueries()` không có key sẽ refetch toàn bộ app — tốn bandwidth |
-| "Mapper nhỏ, map inline trong queryFn" | Khi cần test mapper hoặc reuse ở chỗ khác, sẽ phải extract lại |
-| "Loading state chỉ cần spinner là đủ" | Skeleton giữ layout ổn định, tránh CLS — spinner gây layout shift |
 
 ## Documentation Expectations
 

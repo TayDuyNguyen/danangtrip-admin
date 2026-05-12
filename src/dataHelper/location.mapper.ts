@@ -1,5 +1,5 @@
-import type { RawLocation } from '@/types';
-import type { LocationViewModel, LocationListData, LocationListResponse } from './location.dataHelper';
+import type { RawLocation, RawRating, RawRatingStats } from '@/types';
+import type { LocationViewModel, LocationListData, LocationListResponse, RatingViewModel, RatingStatsViewModel, OpeningHours } from './location.dataHelper';
 import { toNumberSafe } from '@/utils/safeConverters';
 import type { CreateLocationInput } from '@/validations/location.schema';
 
@@ -36,6 +36,27 @@ function resolveDistrictLabel(raw: RawLocation): string {
 }
 
 /**
+ * Safely parse opening hours from string or object
+ */
+export const parseOpeningHours = (val: unknown): string | OpeningHours | undefined => {
+    if (!val) return undefined;
+    if (typeof val === 'object' && !Array.isArray(val)) return val as OpeningHours;
+    if (typeof val === 'string') {
+        const trimmed = val.trim();
+        if (trimmed === '') return undefined;
+        if (trimmed.startsWith('{') && trimmed.endsWith('}')) {
+            try {
+                return JSON.parse(trimmed) as OpeningHours;
+            } catch {
+                return trimmed;
+            }
+        }
+        return trimmed;
+    }
+    return undefined;
+};
+
+/**
  * Map Raw API Location to View Model
  */
 export const mapLocationToViewModel = (raw: RawLocation): LocationViewModel => {
@@ -45,7 +66,7 @@ export const mapLocationToViewModel = (raw: RawLocation): LocationViewModel => {
         id: raw.id,
         name: raw.name,
         slug: raw.slug,
-        thumbnail: raw.thumbnail,
+        thumbnail: typeof raw.thumbnail === 'string' ? raw.thumbnail : (raw.thumbnail as unknown as { url: string })?.url || '',
         address: raw.address,
         district: resolveDistrictLabel(raw),
         category: raw.category?.name ?? '—',
@@ -54,9 +75,13 @@ export const mapLocationToViewModel = (raw: RawLocation): LocationViewModel => {
         phone: raw.phone,
         email: raw.email,
         website: raw.website,
-        openingHours: raw.opening_hours,
-        latitude: toNumberSafe(raw.latitude, 0),
-        longitude: toNumberSafe(raw.longitude, 0),
+        openingHours: parseOpeningHours(raw.opening_hours),
+        latitude: raw.latitude !== null && raw.latitude !== undefined && raw.latitude !== ''
+            ? toNumberSafe(raw.latitude)
+            : undefined,
+        longitude: raw.longitude !== null && raw.longitude !== undefined && raw.longitude !== ''
+            ? toNumberSafe(raw.longitude)
+            : undefined,
         priceLevelKey: priceKey,
         priceMin: raw.price_min ? toNumberSafe(raw.price_min) : undefined,
         priceMax: raw.price_max ? toNumberSafe(raw.price_max) : undefined,
@@ -66,7 +91,8 @@ export const mapLocationToViewModel = (raw: RawLocation): LocationViewModel => {
         isFeatured: raw.is_featured,
         viewCountStr: formatMetric(raw.view_count),
         favoriteCountStr: formatMetric(raw.favorite_count),
-        images: raw.images || [],
+        images: (raw.images || []).map((img: unknown) => typeof img === 'string' ? img : (img as { url: string }).url || ''),
+        amenities: (raw.amenities || []).map((amenity) => amenity.name),
     };
 };
 
@@ -89,7 +115,7 @@ export const mapLocationToFormInput = (raw: RawLocation): CreateLocationInput & 
         phone: raw.phone || null,
         email: raw.email || null,
         website: raw.website || null,
-        opening_hours: typeof raw.opening_hours === 'string' ? raw.opening_hours : (raw.opening_hours ? '' : null),
+        opening_hours: typeof raw.opening_hours === 'string' ? raw.opening_hours : (raw.opening_hours ? JSON.stringify(raw.opening_hours) : null),
         price_min: raw.price_min ? toNumberSafe(raw.price_min) : null,
         price_max: raw.price_max ? toNumberSafe(raw.price_max) : null,
         price_level: raw.price_level ? Number(raw.price_level) : 1,
@@ -124,5 +150,44 @@ export const mapLocationListData = (
             featured: statsSummary?.featured ?? 0,
             views: formatMetric(statsSummary?.total_views ?? 0),
         },
+    };
+};
+
+/**
+ * Map Raw API Rating to View Model
+ */
+export const mapRatingToViewModel = (raw: RawRating): RatingViewModel => {
+    return {
+        id: raw.id,
+        score: raw.score,
+        comment: raw.comment || '',
+        images: (raw.images || []).map((img: unknown) => typeof img === 'string' ? img : (img as { url: string }).url || ''),
+        status: raw.status,
+        userName: raw.user.full_name,
+        userAvatar: raw.user.avatar || '',
+        createdAt: raw.created_at,
+    };
+};
+
+/**
+ * Map Raw API Rating Stats to Summary View Model
+ */
+export const mapRatingStats = (raw: RawRatingStats): RatingStatsViewModel => {
+    const stats = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, ...raw };
+    const total = Object.values(stats).reduce((sum, count) => sum + count, 0);
+    const average = total > 0 
+        ? Object.entries(stats).reduce((sum, [score, count]) => sum + Number(score) * count, 0) / total 
+        : 0;
+
+    return {
+        average: Number(average.toFixed(1)),
+        total,
+        distribution: {
+            1: stats[1] || 0,
+            2: stats[2] || 0,
+            3: stats[3] || 0,
+            4: stats[4] || 0,
+            5: stats[5] || 0,
+        }
     };
 };

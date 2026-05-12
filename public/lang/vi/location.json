@@ -36,7 +36,7 @@
             "featured": "Nổi bật",
             "actions": "Thao tác"
         },
-        "pagination": "Hiển thị {{from}}–{{to}} trong tổng số {{total}} địa điểm",
+        "pagination": "Hiển thị {{from}}-{{to}} trong tổng số {{total}} địa điểm",
         "per_page": "{{count}} / trang"
     },
     "status": {
@@ -55,6 +55,7 @@
         "delete_warning": "Tất cả đánh giá, lượt yêu thích và dữ liệu liên quan sẽ bị xóa theo.",
         "delete_success": "Xóa địa điểm thành công",
         "delete_error": "Có lỗi xảy ra khi xóa địa điểm",
+        "load_error": "Không thể tải chi tiết địa điểm.",
         "update_success": "Cập nhật thành công",
         "update_error": "Cập nhật thất bại",
         "bulk_update_success": "Cập nhật hàng loạt thành công",
@@ -156,5 +157,74 @@
         }
     },
     "edit_title": "Chỉnh sửa Địa điểm",
-    "edit_subtitle": "Cập nhật thông tin chi tiết cho địa điểm {{name}}"
+    "edit_subtitle": "Cập nhật thông tin chi tiết cho địa điểm {{name}}",
+    "detail": {
+        "title": "Chi tiết Địa điểm",
+        "back_to_list": "Quay lại danh sách",
+        "edit": "Chỉnh sửa",
+        "delete": "Xóa địa điểm",
+        "tabs": {
+            "info": "Thông tin chi tiết",
+            "reviews": "Đánh giá của khách",
+            "map": "Vị trí & Bản đồ"
+        },
+        "stats": {
+            "views": "Lượt xem",
+            "favorites": "Yêu thích",
+            "ratings": "Đánh giá",
+            "avg_score": "Trung bình"
+        },
+        "hero": {
+            "no_images": "Chưa có hình ảnh"
+        },
+        "info": {
+            "description": "Mô tả",
+            "short_desc": "Mô tả ngắn",
+            "amenities": "Tiện ích",
+            "contact": "Thông tin liên hệ",
+            "address": "Địa chỉ",
+            "phone": "Điện thoại",
+            "email": "Email",
+            "website": "Trang web",
+            "opening_hours": "Giờ mở cửa",
+            "price_range": "Khoảng giá",
+            "no_description": "Chưa có mô tả chi tiết cho địa điểm này.",
+            "price_estimate": "Mức giá ước tính",
+            "no_price": "Liên hệ đơn vị vận hành để cập nhật giá.",
+            "no_amenities": "Chưa có thông tin tiện ích."
+        },
+        "map": {
+            "coordinates": "Tọa độ",
+            "directions": "Mở chỉ đường",
+            "no_coordinates": "Địa điểm này chưa có tọa độ bản đồ."
+        },
+        "management": {
+            "title": "Quản lý & Cấu hình",
+            "status": "Trạng thái hiển thị",
+            "featured": "Nổi bật trên trang chủ",
+            "featured_desc": "Đẩy địa điểm này lên các vị trí ưu tiên",
+            "status_tip": "Thay đổi trạng thái hoặc nổi bật sẽ được áp dụng ngay sau khi xác nhận.",
+            "danger_zone": "Khu vực nguy hiểm",
+            "delete_desc": "Một khi đã xóa, bạn không thể hoàn tác hành động này."
+        },
+        "reviews": {
+            "empty": "Chưa có đánh giá nào cho địa điểm này.",
+            "all_reviews": "Tất cả đánh giá",
+            "distribution": "Phân bổ đánh giá",
+            "total_count": "{{count}} đánh giá",
+            "approved": "Đã duyệt",
+            "pending": "Chờ duyệt",
+            "rejected": "Đã từ chối",
+            "no_comment": "Người dùng này chưa để lại nhận xét."
+        },
+        "days": {
+            "mon": "Thứ 2",
+            "tue": "Thứ 3",
+            "wed": "Thứ 4",
+            "thu": "Thứ 5",
+            "fri": "Thứ 6",
+            "sat": "Thứ 7",
+            "sun": "Chủ nhật"
+        }
+    }
 }

@@ -1,6 +1,13 @@
 import type { RawLocation } from '@/types';
 
 /**
+ * Structured opening hours by day
+ */
+export interface OpeningHours {
+    [day: string]: string;
+}
+
+/**
  * View Model for Location List UI
  */
 export interface LocationViewModel {
@@ -16,7 +23,7 @@ export interface LocationViewModel {
     phone?: string;
     email?: string;
     website?: string;
-    openingHours?: string;
+    openingHours?: string | OpeningHours;
     latitude?: number;
     longitude?: number;
     /** Key for `t(\`priceLevels.${key}\`)` */
@@ -30,6 +37,7 @@ export interface LocationViewModel {
     viewCountStr: string;
     favoriteCountStr: string;
     images: string[];
+    amenities: string[];
 }
 
 /**
@@ -79,4 +87,27 @@ export interface LocationListData {
         lastPage: number;
     };
     stats: LocationStats;
+}
+
+/**
+ * View Model for Individual Rating
+ */
+export interface RatingViewModel {
+    id: number;
+    score: number;
+    comment: string;
+    images: string[];
+    status: 'pending' | 'approved' | 'rejected';
+    userName: string;
+    userAvatar: string;
+    createdAt: string;
+}
+
+/**
+ * View Model for Rating Statistics Breakdown
+ */
+export interface RatingStatsViewModel {
+    average: number;
+    total: number;
+    distribution: Record<number, number>;
 }

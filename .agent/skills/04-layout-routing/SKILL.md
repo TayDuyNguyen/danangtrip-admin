@@ -7,6 +7,12 @@ description: Plan route, layout, navigation, and page skeleton before wiring dat
 
 ## Overview
 
+## When to Use
+
+- When adding or changing admin routes, page shells, breadcrumbs, or layout behavior.
+- When route protection or navigation structure may be affected.
+- When implementation needs a route plan before files are edited.
+
 Skill này dùng để lập kế hoạch route, layout, breadcrumb, menu, và page skeleton cho feature mới trong admin.
 Đây là bước giúp tránh việc code UI xong mới phát hiện route sai, i18n thiếu, hoặc guard chưa hợp lý.
 
@@ -14,6 +20,9 @@ Skill này dùng để lập kế hoạch route, layout, breadcrumb, menu, và p
 
 - `persona.md`
 - `.agent/rules/PROJECT_RULES.md`
+- `.agent/rules/REPO_FACTS.md`
+- `.agent/memory/WORKING_STATE.md`
+- `.agent/memory/HANDOFF.md`
 - `src/routes/`
 - `src/layouts/`
 - `src/pages/Tours/index.tsx`
@@ -234,6 +243,15 @@ Template:
 - Không tạo menu/link visible tới page chưa tồn tại
 - Mọi page-level component phải lazy-load với `React.lazy`
 
+## Rationalizations
+
+| Lý do hay gặp | Thực tế |
+|---|---|
+| "Route đơn giản, không cần lazy-load" | Mỗi page thêm vào initial bundle — lazy-load là default cho admin |
+| "Guard trong component cho tiện" | Route-level guard rõ ràng hơn, không bị bỏ sót khi thêm route mới |
+| "i18n thêm sau" | Khi thêm sau, dễ bỏ sót key — thêm ngay khi tạo route |
+
+
 ## Red Flags
 
 Nếu thấy những dấu hiệu sau, phải dừng và flag:
@@ -243,14 +261,6 @@ Nếu thấy những dấu hiệu sau, phải dừng và flag:
 - Guard đặt trong component thay vì route level → dễ bị bypass
 - i18n chỉ thêm vào `vi` mà quên `en` → broken UI khi switch language
 - Menu item link tới route chưa đăng ký → 404
-
-## Common Rationalizations
-
-| Lý do hay gặp | Thực tế |
-|---|---|
-| "Route đơn giản, không cần lazy-load" | Mỗi page thêm vào initial bundle — lazy-load là default cho admin |
-| "Guard trong component cho tiện" | Route-level guard rõ ràng hơn, không bị bỏ sót khi thêm route mới |
-| "i18n thêm sau" | Khi thêm sau, dễ bỏ sót key — thêm ngay khi tạo route |
 
 ## Documentation Expectations
 

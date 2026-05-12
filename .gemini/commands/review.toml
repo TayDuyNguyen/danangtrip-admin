@@ -1,0 +1,8 @@
+﻿description = "Review the current diff or feature state against repo rules and risks."
+
+prompt = """
+Read AGENTS.md, .agent/rules/PROJECT_RULES.md, .agent/rules/REPO_FACTS.md, .agent/memory/WORKING_STATE.md, and .agent/memory/HANDOFF.md first.
+
+Perform a code review against `PROJECT_RULES.md`, `REPO_FACTS.md`, the current diff, and the active artifact trail. Findings must be concrete and prioritized.
+Present findings first, ordered by severity, with concrete file references.
+"""

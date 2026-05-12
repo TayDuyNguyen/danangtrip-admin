@@ -10,10 +10,16 @@ Mục tiêu của nó không phải là làm thật nhiều skill, mà là làm 
 Khi có xung đột, hãy ưu tiên:
 
 1. `.agent/rules/PROJECT_RULES.md`
-2. Repo thực tế (`package.json`, `src/`, `vite.config.ts`, `tsconfig.app.json`)
-3. Các `SKILL.md` trong `.agent/skills/`
+2. `.agent/rules/REPO_FACTS.md`
+3. Repo thực tế (`package.json`, `src/`, `vite.config.ts`, `tsconfig.app.json`)
+4. Các `SKILL.md` trong `.agent/skills/`
 
 `ARCHITECTURE.md` là file inventory và định hướng sử dụng, **không phải** source of truth cho runtime architecture của app.
+
+Quick anchors:
+
+- Repo facts: `.agent/rules/REPO_FACTS.md`
+- Drift check: `.agent/scripts/verify_agent_drift.py`
 
 ## Inventory thực tế
 

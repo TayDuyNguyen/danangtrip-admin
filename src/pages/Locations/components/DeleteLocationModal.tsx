@@ -42,9 +42,7 @@ const DeleteLocationModal = ({
                     </h3>
                     
                     <p className="text-slate-500 text-sm font-medium leading-relaxed mb-4">
-                        {t('messages.delete_confirm_prefix')}{' '}
-                        <strong>{locationName}</strong>{' '}
-                        {t('messages.delete_confirm_suffix')}
+                        {t('messages.delete_confirm', { name: locationName })}
                     </p>
 
                     <div className="flex gap-3 rounded-2xl border border-tertiary-border bg-tertiary p-4">

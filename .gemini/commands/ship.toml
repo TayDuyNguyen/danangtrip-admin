@@ -1,0 +1,8 @@
+﻿description = "Run the final readiness and handoff pass for the current task."
+
+prompt = """
+Read AGENTS.md, .agent/rules/PROJECT_RULES.md, .agent/rules/REPO_FACTS.md, .agent/memory/WORKING_STATE.md, and .agent/memory/HANDOFF.md first.
+
+Use `10-optimization-deploy` to run the final readiness pass: build, deployment constraints, review summary, and residual risk log.
+Update .agent/memory/HANDOFF.md and the relevant final artifact before concluding.
+"""

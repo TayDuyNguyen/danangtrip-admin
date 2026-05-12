@@ -7,6 +7,10 @@ description: "Primary project rules for DanangTrip Admin. Read this first and tr
 This file is the project-specific operating guide for AI work in this repository.
 When project docs conflict, prefer this file over older inventory-style docs.
 
+Fast companion doc:
+- `.agent/rules/REPO_FACTS.md` for compact repository reality checks before using skill templates.
+- `.agent/memory/WORKING_STATE.md` and `.agent/memory/HANDOFF.md` for continuity across sessions.
+
 ## 1. Current Stack
 
 | Layer | Technology |
@@ -33,6 +37,18 @@ Use the actual repo state as authority:
 - `vite.config.ts`, `tsconfig.app.json`, `.env.example` for runtime/build config
 
 Treat `.agent/ARCHITECTURE.md` as a catalog of the local agent kit, not as the source of truth for app architecture.
+
+## Working Memory Protocol
+
+Before non-trivial work, read:
+- `.agent/rules/REPO_FACTS.md`
+- `.agent/memory/WORKING_STATE.md`
+- `.agent/memory/HANDOFF.md`
+- the most recent relevant files in `.agent/memory/decisions/` and `.agent/artifacts/`
+
+When the active task changes, update `.agent/memory/WORKING_STATE.md`.
+When pausing unfinished work, update `.agent/memory/HANDOFF.md`.
+When a repo-wide decision is made, record it under `.agent/memory/decisions/`.
 
 ## 3. Repository Shape
 

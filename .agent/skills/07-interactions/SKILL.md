@@ -7,6 +7,12 @@ description: Define and implement CRUD, form validation, filters, pagination, ex
 
 ## Overview
 
+## When to Use
+
+- When admin screens contain CRUD flows, forms, filters, search, pagination, export, or confirm actions.
+- When interaction behavior needs to be specified before implementation.
+- When UX state and feedback need a repeatable pattern.
+
 Skill này mô tả và triển khai các interaction chính của feature: form, mutation, filter, search, pagination, export, confirm flows.
 Đây là bước biến data screen thành feature có thể thao tác thực sự.
 
@@ -14,6 +20,9 @@ Skill này mô tả và triển khai các interaction chính của feature: form
 
 - `persona.md`
 - `.agent/rules/PROJECT_RULES.md`
+- `.agent/rules/REPO_FACTS.md`
+- `.agent/memory/WORKING_STATE.md`
+- `.agent/memory/HANDOFF.md`
 - `src/validations/<feature>.schema.ts`
 - `src/hooks/use<Feature>Queries.ts`
 - `src/pages/Tours/`
@@ -235,6 +244,16 @@ Template:
 - i18n `vi/en` phải cập nhật đồng thời
 - Không để destructive action chạy mà không có feedback
 
+## Rationalizations
+
+| Lý do hay gặp | Thực tế |
+|---|---|
+| "Form đơn giản, dùng useState cho nhanh" | Khi cần validation, reset, hoặc dirty check, sẽ phải refactor toàn bộ |
+| "window.confirm đủ rồi" | Không nhất quán với design system, không customizable |
+| "Search không cần debounce, API nhanh" | Mỗi keystroke = 1 request — tốn bandwidth và gây race condition |
+| "Pagination không cần URL sync" | User mất vị trí khi back hoặc share link |
+
+
 ## Red Flags
 
 Nếu thấy những dấu hiệu sau, phải dừng và flag:
@@ -245,15 +264,6 @@ Nếu thấy những dấu hiệu sau, phải dừng và flag:
 - Pagination không sync URL → user mất vị trí khi back/refresh
 - Mutation success không invalidate query → UI hiển thị data cũ
 - i18n key chỉ thêm vào `vi` mà quên `en` → broken UI khi switch language
-
-## Common Rationalizations
-
-| Lý do hay gặp | Thực tế |
-|---|---|
-| "Form đơn giản, dùng useState cho nhanh" | Khi cần validation, reset, hoặc dirty check, sẽ phải refactor toàn bộ |
-| "window.confirm đủ rồi" | Không nhất quán với design system, không customizable |
-| "Search không cần debounce, API nhanh" | Mỗi keystroke = 1 request — tốn bandwidth và gây race condition |
-| "Pagination không cần URL sync" | User mất vị trí khi back hoặc share link |
 
 ## Documentation Expectations
 

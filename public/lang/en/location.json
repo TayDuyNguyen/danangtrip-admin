@@ -55,6 +55,7 @@
         "delete_warning": "All reviews, favorites, and related data will also be deleted.",
         "delete_success": "Location deleted successfully",
         "delete_error": "Error deleting location",
+        "load_error": "Unable to load location details.",
         "update_success": "Updated successfully",
         "update_error": "Update failed",
         "bulk_update_success": "Bulk update successful",
@@ -156,5 +157,74 @@
         }
     },
     "edit_title": "Edit Location",
-    "edit_subtitle": "Update details for {{name}}"
+    "edit_subtitle": "Update details for {{name}}",
+    "detail": {
+        "title": "Location Details",
+        "back_to_list": "Back to list",
+        "edit": "Edit",
+        "delete": "Delete location",
+        "tabs": {
+            "info": "Details",
+            "reviews": "Guest Reviews",
+            "map": "Location & Map"
+        },
+        "stats": {
+            "views": "Views",
+            "favorites": "Favorites",
+            "ratings": "Ratings",
+            "avg_score": "Average"
+        },
+        "hero": {
+            "no_images": "No images available"
+        },
+        "info": {
+            "description": "Description",
+            "short_desc": "Short description",
+            "amenities": "Amenities",
+            "contact": "Contact info",
+            "address": "Address",
+            "phone": "Phone",
+            "email": "Email",
+            "website": "Website",
+            "opening_hours": "Opening hours",
+            "price_range": "Price range",
+            "no_description": "No detailed description available yet.",
+            "price_estimate": "Estimated price",
+            "no_price": "Contact the operator for updated pricing.",
+            "no_amenities": "No amenities information available."
+        },
+        "map": {
+            "coordinates": "Coordinates",
+            "directions": "Open directions",
+            "no_coordinates": "This location does not have map coordinates yet."
+        },
+        "management": {
+            "title": "Management & Configuration",
+            "status": "Visibility status",
+            "featured": "Featured on homepage",
+            "featured_desc": "Push this location to priority spots",
+            "status_tip": "Status and featured changes are applied immediately after confirmation.",
+            "danger_zone": "Danger Zone",
+            "delete_desc": "Once deleted, you cannot undo this action."
+        },
+        "reviews": {
+            "empty": "No reviews yet for this location.",
+            "all_reviews": "All reviews",
+            "distribution": "Review distribution",
+            "total_count": "{{count}} reviews",
+            "approved": "Approved",
+            "pending": "Pending",
+            "rejected": "Rejected",
+            "no_comment": "This reviewer did not leave a written comment."
+        },
+        "days": {
+            "mon": "Monday",
+            "tue": "Tuesday",
+            "wed": "Wednesday",
+            "thu": "Thursday",
+            "fri": "Friday",
+            "sat": "Saturday",
+            "sun": "Sunday"
+        }
+    }
 }

@@ -7,6 +7,12 @@ description: Convert screen analysis into detailed types, schema, API, mapper, a
 
 ## Overview
 
+## When to Use
+
+- When admin features add or change data contracts, forms, filters, payloads, or response shapes.
+- When API, mapper, validation, and UI types need one explicit contract.
+- When analysis is done but data language is still not locked down.
+
 Skill này chuyển screen analysis thành:
 
 - Raw types (bám backend shape)
@@ -23,6 +29,9 @@ Không có bước này, các bước sau sẽ tự suy diễn type và dẫn đ
 
 - `persona.md`
 - `.agent/rules/PROJECT_RULES.md`
+- `.agent/rules/REPO_FACTS.md`
+- `.agent/memory/WORKING_STATE.md`
+- `.agent/memory/HANDOFF.md`
 - Analysis file từ `01-screen-analysis`
 - `/DATN/DATN_Tài liệu/docs/api/api_list.md`
 - `src/constants/endpoints.ts`
@@ -219,6 +228,16 @@ Template:
 - Không được nhảy thẳng sang code mà bỏ qua contract doc
 - Mapper phải handle null/undefined safely — không để runtime crash
 
+## Rationalizations
+
+| Lý do hay gặp | Thực tế |
+|---|---|
+| "Backend trả snake_case thì để vậy cho tiện" | UI sẽ dùng `tour.tour_name` thay vì `tour.name` — không nhất quán với codebase |
+| "Schema đơn giản, không cần `t()`" | Khi đổi ngôn ngữ hoặc copy message, sẽ phải sửa lại toàn bộ |
+| "Mapper nhỏ, viết inline trong hook cho nhanh" | Mapper inline không test được, không reuse được |
+| "Chưa có API docs, tự đoán field trước" | Phải ghi `[ASSUMPTION]` và flag — không được code trên assumption im lặng |
+
+
 ## Red Flags
 
 Nếu thấy những dấu hiệu sau, phải dừng và flag:
@@ -229,15 +248,6 @@ Nếu thấy những dấu hiệu sau, phải dừng và flag:
 - Mapper không handle `null` / `undefined` → runtime crash khi backend trả thiếu field
 - Type dùng `any` → mất type safety toàn bộ downstream
 - Endpoint path hardcode trong API module thay vì dùng `ENDPOINTS` constant
-
-## Common Rationalizations
-
-| Lý do hay gặp | Thực tế |
-|---|---|
-| "Backend trả snake_case thì để vậy cho tiện" | UI sẽ dùng `tour.tour_name` thay vì `tour.name` — không nhất quán với codebase |
-| "Schema đơn giản, không cần `t()`" | Khi đổi ngôn ngữ hoặc copy message, sẽ phải sửa lại toàn bộ |
-| "Mapper nhỏ, viết inline trong hook cho nhanh" | Mapper inline không test được, không reuse được |
-| "Chưa có API docs, tự đoán field trước" | Phải ghi `[ASSUMPTION]` và flag — không được code trên assumption im lặng |
 
 ## Documentation Expectations
 
