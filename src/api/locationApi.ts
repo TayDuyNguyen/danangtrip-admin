@@ -2,7 +2,7 @@ import axiosClient from './axiosClient';
 import { toAdminLocationParams } from './locationQueryParams';
 import { API_ENDPOINTS } from '@/constants/endpoints';
 import type { LocationListResponse, LocationFilters } from '@/dataHelper/location.dataHelper';
-import type { ApiResponse, RawLocation } from '@/types';
+import type { ApiResponse, RawLocation, Paginator, RawRating, RawRatingStats, PaginationParams } from '@/types';
 import type { CreateLocationInput } from '@/validations/location.schema';
 
 export type LocationStatsPayload = {
@@ -65,6 +65,12 @@ const locationApi = {
 
     updateStatus: (id: number, status: string) =>
         axiosClient.patch(API_ENDPOINTS.LOCATIONS.PATCH_STATUS(id), { status }),
+
+    getRatingStats: (id: string | number): Promise<ApiResponse<RawRatingStats>> =>
+        axiosClient.get(API_ENDPOINTS.LOCATIONS.RATING_STATS(id)),
+
+    getRatings: (id: string | number, params?: PaginationParams): Promise<ApiResponse<Paginator<RawRating>>> =>
+        axiosClient.get(API_ENDPOINTS.LOCATIONS.RATINGS(id), { params }),
 };
 
 export default locationApi;

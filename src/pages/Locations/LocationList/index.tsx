@@ -214,7 +214,7 @@ const LocationListPage = () => {
                 onSelectRow={handleSelectRow}
                 onSelectAll={handleSelectAll}
                 onToggleFeatured={handleToggleFeatured}
-                onView={(id) => navigate(ROUTES.LOCATIONS_EDIT.replace(':id', id.toString()))}
+                onView={(id) => navigate(ROUTES.LOCATIONS_DETAIL.replace(':id', id.toString()))}
                 onEdit={(id) => navigate(ROUTES.LOCATIONS_EDIT.replace(':id', id.toString()))}
                 onDelete={handleDeleteClick}
             />

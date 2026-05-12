@@ -7,6 +7,12 @@ description: Design and build reusable UI components from screen analysis. Use w
 
 ## Overview
 
+## When to Use
+
+- When building or refactoring user-facing admin UI components.
+- When a screen needs a clear reuse/new/modify component plan.
+- When design consistency must be checked before implementation.
+
 Skill này chuyển screen analysis thành component map chi tiết, ưu tiên reuse, và tạo UI spec đủ rõ để build hoặc review lại sau này.
 Đây là bước mô tả UI ở mức có thể giao cho dev khác triển khai mà không phải hỏi lại quá nhiều.
 
@@ -14,6 +20,9 @@ Skill này chuyển screen analysis thành component map chi tiết, ưu tiên r
 
 - `persona.md`
 - `.agent/rules/PROJECT_RULES.md`
+- `.agent/rules/REPO_FACTS.md`
+- `.agent/memory/WORKING_STATE.md`
+- `.agent/memory/HANDOFF.md`
 - Analysis file từ `01-screen-analysis`
 - `src/components/ui/`
 - `src/components/common/`
@@ -231,6 +240,16 @@ Template:
 - Text user-facing phải đi qua i18n layer (`react-i18next`)
 - Không tạo shared component nếu mới chỉ có một nơi dùng mà chưa có lý do mạnh
 
+## Rationalizations
+
+| Lý do hay gặp | Thực tế |
+|---|---|
+| "Component nhỏ, fetch data trong đó cho tiện" | Khi cần test hoặc reuse, sẽ phải refactor |
+| "Text tiếng Việt hardcode cho nhanh, i18n sau" | "Sau" thường không bao giờ đến |
+| "Spinner đơn giản hơn skeleton" | Skeleton giữ layout ổn định, tránh CLS |
+| "Tạo DataTable riêng cho feature này" | `src/components/common/DataTable.tsx` đã có — reuse |
+
+
 ## Red Flags
 
 Nếu thấy những dấu hiệu sau, phải dừng và flag:
@@ -240,15 +259,6 @@ Nếu thấy những dấu hiệu sau, phải dừng và flag:
 - Spinner thay vì skeleton cho table/list loading → layout shift
 - Props dùng `any` → mất type safety
 - Tạo component mới khi `DataTable`, `Pagination`, `ConfirmDialog` đã có → duplicate
-
-## Common Rationalizations
-
-| Lý do hay gặp | Thực tế |
-|---|---|
-| "Component nhỏ, fetch data trong đó cho tiện" | Khi cần test hoặc reuse, sẽ phải refactor |
-| "Text tiếng Việt hardcode cho nhanh, i18n sau" | "Sau" thường không bao giờ đến |
-| "Spinner đơn giản hơn skeleton" | Skeleton giữ layout ổn định, tránh CLS |
-| "Tạo DataTable riêng cho feature này" | `src/components/common/DataTable.tsx` đã có — reuse |
 
 ## Documentation Expectations
 

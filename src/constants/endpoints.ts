@@ -81,5 +81,7 @@ export const API_ENDPOINTS = {
         DISTRICTS: '/admin/locations/districts',
         TAGS: '/tags',
         AMENITIES: '/amenities',
+        RATING_STATS: (id: string | number) => `/locations/${id}/rating-stats`,
+        RATINGS: (id: string | number) => `/locations/${id}/ratings`,
     }
 } as const;

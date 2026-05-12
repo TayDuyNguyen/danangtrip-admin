@@ -7,6 +7,12 @@ description: Produce final delivery documents for performance, build, smoke test
 
 ## Overview
 
+## When to Use
+
+- When wrapping up a feature before final review, push, or deployment.
+- When final delivery needs a build/deploy/handoff summary.
+- When testing already produced a verdict and reviewer-facing closure is required.
+
 Đây là bước cuối của pipeline. Skill này tạo ra 2 tài liệu quan trọng:
 
 - `deploy report`: ghi nhận build, smoke test, và readiness
@@ -17,6 +23,9 @@ Nếu `09-testing` là bước ghi nhận kiểm thử, thì `10-optimization-de
 ## Required Input
 
 - `.agent/rules/PROJECT_RULES.md`
+- `.agent/rules/REPO_FACTS.md`
+- `.agent/memory/WORKING_STATE.md`
+- `.agent/memory/HANDOFF.md`
 - `persona.md`
 - `vite.config.ts`
 - `package.json`
@@ -307,6 +316,15 @@ Templates:
 - **Phải gợi ý tên nhánh và commit message trước khi hỏi USER**
 - Không biến `review.md` thành danh sách file khô khan
 - Nếu thiếu artifact ở bước trước, phải ghi rõ đang thiếu bước nào
+
+## Rationalizations
+
+| Excuse | Rebuttal |
+|---|---|
+| "The test report already tells the whole story." | Final delivery still needs deploy readiness, handoff notes, and reviewer-facing summary. |
+| "If build passes, deployment is basically done." | Deployment readiness also depends on smoke behavior, risks, and release context. |
+| "The reviewer can inspect the branch directly." | A delivery report reduces ambiguity and speeds final approval. |
+
 
 ## Red Flags
 

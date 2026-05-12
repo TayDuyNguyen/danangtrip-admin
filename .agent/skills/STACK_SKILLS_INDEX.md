@@ -1,93 +1,254 @@
-# STACK SKILLS INDEX — Pipeline tài liệu và triển khai màn hình A→Z
+# STACK SKILLS INDEX - DanangTrip Admin
 
-File này là **master index** cho bộ 10 skill trong `.agent/skills/`.
-Nó tồn tại để giúp AI chọn đúng skill, đọc đúng context, và sinh ra **tài liệu chi tiết phục vụ dự án** trước khi gọi công việc là hoàn tất.
+Master index for the 10 local skills in `.agent/skills/`.
+Use this file to decide which skill to activate, what context must be read first, and what artifact each step should produce.
 
-## Mục tiêu của bộ skill này
+  - 01-screen-analysis: phân tích, chưa code
+  - 02-project-setup: audit/setup, thường chưa code feature
+  - 03-types-api-contract: tài liệu + type/schema/service plan, có thể có code nền dữ liệu
+    nhưng chưa phải UI
+  - 04-layout-routing: route/layout plan, có thể scaffold nhẹ cấu trúc route
+  - 05-ui-components: bắt đầu thực hiện code giao diện
+  - 06-data-integration: nối data vào UI
+  - 07-interactions: làm form, filter, search, pagination, mutation
+  - 08-auth-permissions: gate quyền trên UI/route
+  - 09-testing: test
+  - 10-optimization-deploy: tối ưu, review, deploy readiness
 
-- Bám sát repo `danangtrip-admin`
-- Tạo được tài liệu có thể dùng lại cho team
-- Chuẩn hóa output theo từng bước trong pipeline
-- Giảm tình trạng prompt dài nhưng output không đồng đều
-- Tránh lỗi chữ và lỗi format trong tài liệu Markdown
+## Goals
 
-## Quy ước chung
+- Stay aligned with the real `danangtrip-admin` repository.
+- Keep one execution model across Claude, Gemini, OpenCode, and manual runs.
+- Produce reusable project artifacts, not one-off answers.
+- Prevent template drift by checking repo reality before following a skill.
 
-### 1) Nguồn sự thật
+## Canonical Read Order
 
-Luôn ưu tiên theo thứ tự:
+Before non-trivial work, read in this order:
 
 1. `.agent/rules/PROJECT_RULES.md`
-2. Repo thực tế: `package.json`, `src/`, `vite.config.ts`, `tsconfig.app.json`
-3. Từng `SKILL.md`
+2. `.agent/rules/REPO_FACTS.md`
+3. `.agent/memory/WORKING_STATE.md`
+4. `.agent/memory/HANDOFF.md`
+5. Relevant recent files in `.agent/memory/decisions/` and `.agent/artifacts/`
+6. Real repo sources: `package.json`, `src/`, `vite.config.ts`, `tsconfig.app.json`
+7. The specific `SKILL.md` that matches the task
 
-### 2) Chuẩn đặt tên artifact
+If these sources conflict, follow the earlier item in the list.
+
+## How To Run Skills
+
+### Preferred
+
+Use the platform adapter already installed at the repo root:
+
+- `AGENTS.md` for the shared operating contract
+- `.claude/commands/` for Claude-style entry points
+- `.gemini/commands/` for Gemini-style entry points
+- `.opencode/skills` for OpenCode skill discovery
+
+In this mode, the adapter should route back to `.agent/` and keep working memory and artifacts current.
+
+### Fallback
+
+If the platform cannot use the root adapters, manually activate the skill by:
+
+1. Reading the canonical read order above
+2. Opening the target skill folder
+3. Supplying the required context fields shown in this file
+4. Writing the output artifact to `.agent/artifacts/...`
+5. Updating `WORKING_STATE.md` or `HANDOFF.md` if task state changed
+
+Do not treat manual prompt injection as the primary mode anymore. It is only the fallback mode.
+
+## Full Pipeline Approval Prompt
+
+Use this prompt when you want the AI to execute the entire local pipeline from start to finish, but only one approved step at a time.
+This is the strictest execution mode and is the recommended choice for large feature work.
+
+```text
+SYSTEM EXECUTION CONTRACT
+
+Act as the execution agent for repository: `[REPO_PATH]`
+
+Your job is to run the local `.agent` pipeline step by step, with strict user approval gates.
+You MUST NOT skip, merge, reorder, or auto-complete any step unless I explicitly approve the current step and tell you to continue.
+
+MANDATORY READ ORDER BEFORE ANY WORK
+1. `AGENTS.md`
+2. `.agent/rules/PROJECT_RULES.md`
+3. `.agent/rules/REPO_FACTS.md`
+4. `.agent/memory/WORKING_STATE.md`
+5. `.agent/memory/HANDOFF.md`
+6. relevant recent files in `.agent/memory/decisions/` and `.agent/artifacts/`
+7. `.agent/skills/STACK_SKILLS_INDEX.md`
+8. the current step's `SKILL.md`
+
+GLOBAL RULES
+- You MUST follow the local `.agent` system only.
+- You MUST treat `.agent` as the single source of truth.
+- You MUST execute all steps in order.
+- You MUST NOT skip any step.
+- You MUST NOT combine multiple steps into one response.
+- You MUST stop after each step and wait for my approval.
+- You MUST update `.agent/memory/WORKING_STATE.md` when the active task state changes.
+- You MUST update `.agent/memory/HANDOFF.md` if work is paused or blocked.
+- You MUST create or update the required artifact for each step under `.agent/artifacts/`.
+- If repo reality conflicts with a template, follow repo reality and record the mismatch in the artifact.
+- If information is missing, state the missing input inside the current step output, but do NOT jump ahead.
+
+APPROVAL GATE
+After finishing each step, STOP and wait.
+Only continue when I reply with one of:
+- `duyệt`
+- `ok bước này`
+- `tiếp tục`
+- `next`
+
+If I give feedback, revise the SAME current step first.
+Do not start the next step until I explicitly approve.
+
+PIPELINE ORDER
+Execute in this exact order:
+
+1. `01-screen-analysis`
+2. `02-project-setup`
+3. `03-types-api-contract`
+4. `04-layout-routing`
+5. `05-ui-components`
+6. `06-data-integration`
+7. `07-interactions`
+8. `08-auth-permissions`
+9. `09-testing`
+10. `10-optimization-deploy`
+
+STEP-BY-STEP EXECUTION RULE
+For each step:
+1. Read the step's `SKILL.md`
+2. Restate the goal of the step in repository terms
+3. List required inputs for that step
+4. Perform only that step
+5. Produce or update the step artifact
+6. Report exactly what was done
+7. Report what is still unknown or risky
+8. STOP for approval
+
+RESPONSE FORMAT FOR EVERY STEP
+
+`CURRENT STEP`
+- Skill: `[skill-name]`
+- Goal: `[what this step is trying to achieve]`
+
+`INPUTS USED`
+- `[file / artifact / repo source / memory source]`
+
+`WORK COMPLETED`
+- `[flat bullet list of concrete work done in this step only]`
+
+`ARTIFACT`
+- Path: `[artifact path]`
+- Status: `[created | updated | blocked]`
+
+`FILES READ`
+- `[paths]`
+
+`FILES CHANGED`
+- `[paths or NONE]`
+
+`RISKS OR OPEN QUESTIONS`
+- `[flat bullet list or NONE]`
+
+`GATE`
+- Reply `duyệt` to move to `[next-skill-name]`
+- Reply with feedback if this step must be revised
+
+TASK CONTEXT
+- Repo: `[REPO_PATH]`
+- Feature slug: `[FEATURE_SLUG]`
+- Feature/screen name: `[FEATURE_NAME]`
+- Figma: `[FIGMA_LINK or NONE]`
+- API docs: `[API_DOC_PATH or NONE]`
+- PRD/SRS: `[PRD_PATH or NONE]`
+- Extra constraints: `[ANY SPECIAL RULES or NONE]`
+
+BEGIN NOW
+Start with step `01-screen-analysis`.
+Do not preview future steps.
+Do not implement code for later steps.
+Do not skip the approval gate.
+```
+
+## Artifact Standard
+
+Artifact naming:
 
 ```text
 .agent/artifacts/<group>/YYYY-MM-DD__<feature-slug>__<artifact-name>.md
 ```
 
-### 3) Chuẩn format tài liệu
+Artifact quality rules:
 
-- Markdown UTF-8
-- 1 H1 duy nhất
-- Có metadata đầu file: feature slug, date, source
-- Bảng dùng đúng cột, không trộn tab/spaces ngẫu nhiên
-- Không để lỗi ký tự mã hóa
-- Nếu chưa chắc chắn: ghi `[ASSUMPTION]`
+- UTF-8
+- One `#` H1 only
+- Include feature slug, date, and sources used
+- Mark uncertainty with `[ASSUMPTION]`
+- No broken encoding or placeholder junk
 
-### 4) Chuẩn mức chi tiết
+A good artifact answers:
 
-Một artifact tốt phải trả lời được:
+- What feature or task is being worked on?
+- Which sources were used?
+- Which files are affected?
+- Which technical or business rules apply?
+- What risks, blockers, or open questions remain?
 
-- Đang làm feature nào?
-- Dựa vào nguồn nào?
-- Những file nào liên quan?
-- Rule nghiệp vụ hoặc technical decision là gì?
-- Còn rủi ro hoặc câu hỏi mở nào?
+Final-phase artifacts such as `test-report`, `deploy-report`, and `review.md` must also include:
 
-Nếu là artifact ở cuối pipeline như `test-report`, `deploy-report`, `review.md`, mức chi tiết phải cao hơn:
+- clear verdict
+- concrete evidence
+- `not run`, `skipped`, or `pending` sections when needed
+- next actions or residual risks
 
-- có verdict rõ ràng
-- có evidence rõ ràng
-- có phần `not run / skipped / pending` nếu tồn tại
-- có phần `risks / next actions`
+## Repository Reality
 
-## Stack thực tế của dự án
-
-| Hạng mục | Công nghệ |
-|---|---|
+| Area | Reality |
+| --- | --- |
 | Framework | React 19 + Vite + TypeScript |
 | Routing | react-router-dom v7 |
 | Server state | @tanstack/react-query |
 | Client state | zustand |
 | HTTP | axios + axiosClient interceptor |
 | Styling | Tailwind CSS v4 |
-| Forms | react-hook-form + yup |
+| Forms | react-hook-form + yup in the current standard pattern |
 | i18n | react-i18next |
 | Icons | lucide-react, react-icons |
 | Notifications | sonner |
 | Charts | recharts |
 | Build gate | `npm run prepush:check` |
 
-## Pipeline 10 Skills
+Reality check note:
 
-| # | Skill | Khi dùng | Output chính | Có thể bỏ qua khi |
-|---|---|---|---|---|
-| 01 | `01-screen-analysis` | Có mockup, SRS, hoặc màn hình mới | `analysis/...__screen-analysis.md` | Chỉ sửa bug rất nhỏ, không đổi UI/flow |
-| 02 | `02-project-setup` | Cần audit base hoặc vừa đổi nền tảng | `audits/...__project-audit.md` | Base đã audit gần đây và không đổi stack |
-| 03 | `03-types-api-contract` | Có field/API/schema mới hoặc đổi contract | `api-contracts/...__api-contract.md` | Chỉ đổi text/style, không chạm data |
-| 04 | `04-layout-routing` | Có route, page shell, breadcrumb, menu mới | `routing/...__route-plan.md` | Chỉ sửa component con trong page có sẵn |
-| 05 | `05-ui-components` | Cần build mới hoặc tách component UI | `ui-specs/...__ui-spec.md` | Chỉ chỉnh logic, không đổi UI structure |
-| 06 | `06-data-integration` | Cần nối API vào UI | `integration/...__data-integration.md` | UI tĩnh, chưa dùng data thật |
-| 07 | `07-interactions` | Có CRUD, form, filter, search, pagination | `interaction-specs/...__interaction-spec.md` | Page read-only, không có interaction đáng kể |
-| 08 | `08-auth-permissions` | Có role check, route guard, action nhạy cảm | `auth/...__auth-permissions-review.md` | Feature hoàn toàn public hoặc không đổi quyền |
-| 09 | `09-testing` | Trước khi bàn giao | `test-cases/...__test-report.md` | Không nên bỏ qua |
-| 10 | `10-optimization-deploy` | Trước khi push/deploy/bàn giao cuối | `deploy/...__deploy-report.md`, `review/...__review.md` | Không nên bỏ qua |
+- Before following any skill template, compare it against `.agent/rules/REPO_FACTS.md`.
+- If a template and repo diverge, follow the repo and record the mismatch in the artifact.
 
-## Kích hoạt nhanh theo loại việc
+## Pipeline Map
 
-### Nếu đang làm màn hình mới
+| # | Skill | Use When | Primary Artifact | Can Skip When |
+| --- | --- | --- | --- | --- |
+| 01 | `01-screen-analysis` | New screen, flow, Figma, or requirement analysis | `analysis/...__screen-analysis.md` | Tiny bug fix with no UI or flow change |
+| 02 | `02-project-setup` | Base audit, config check, stack drift, runtime readiness | `audits/...__project-audit.md` | Recent audit still reflects current repo state |
+| 03 | `03-types-api-contract` | New or changed fields, schemas, API contracts, mappers | `api-contracts/...__api-contract.md` | Pure copy or style change with no data impact |
+| 04 | `04-layout-routing` | New routes, page shells, breadcrumbs, menu impact | `routing/...__route-plan.md` | Only editing a child component inside an existing page |
+| 05 | `05-ui-components` | New UI build or component refactor | `ui-specs/...__ui-spec.md` | Logic-only change with no UI structure impact |
+| 06 | `06-data-integration` | Wiring API, query flows, and invalidation into UI | `integration/...__data-integration.md` | Static UI with no real data flow |
+| 07 | `07-interactions` | CRUD flows, forms, filters, search, pagination | `interaction-specs/...__interaction-spec.md` | Read-only page with no meaningful interaction |
+| 08 | `08-auth-permissions` | Role checks, guards, gated actions, sensitive flows | `auth/...__auth-permissions-review.md` | Public or unchanged permission model |
+| 09 | `09-testing` | Validation before handoff | `test-cases/...__test-report.md` | Should not be skipped |
+| 10 | `10-optimization-deploy` | Final readiness, handoff, push, deploy | `deploy/...__deploy-report.md`, `review/...__review.md` | Should not be skipped |
+
+## Fast Activation By Task Type
+
+### New Screen Or Feature
 
 1. `01-screen-analysis`
 2. `03-types-api-contract`
@@ -95,25 +256,27 @@ Nếu là artifact ở cuối pipeline như `test-report`, `deploy-report`, `rev
 4. `05-ui-components`
 5. `06-data-integration`
 6. `07-interactions`
-7. `08-auth-permissions` nếu cần
+7. `08-auth-permissions` if needed
 8. `09-testing`
 9. `10-optimization-deploy`
 
-### Nếu chỉ audit project
+### Project Audit
 
 1. `02-project-setup`
 2. `09-testing`
-3. `10-optimization-deploy` nếu cần tổng kết/review
+3. `10-optimization-deploy` if a final readiness summary is needed
 
-### Nếu chỉ sửa UI nhỏ
+### Small UI Change
 
-1. `01-screen-analysis` dạng nhẹ nếu cần hiểu màn
+1. Lightweight `01-screen-analysis` if scope is unclear
 2. `05-ui-components`
 3. `09-testing`
 
-## File bắt buộc nên đọc trước hầu hết task
+## Files Commonly Read Before Most Tasks
 
 - `.agent/rules/PROJECT_RULES.md`
+- `.agent/rules/REPO_FACTS.md`
+- `.agent/memory/WORKING_STATE.md`
 - `package.json`
 - `vite.config.ts`
 - `tsconfig.app.json`
@@ -122,376 +285,227 @@ Nếu là artifact ở cuối pipeline như `test-report`, `deploy-report`, `rev
 - `src/providers/index.tsx`
 - `src/routes/`
 
-## Prompt Kích Hoạt Từng Skill
+## Manual Activation Templates
 
-Mỗi skill có prompt riêng với các trường bắt buộc trong `[...]`.
-Copy prompt tương ứng, điền vào các trường `[...]`, rồi gửi cho AI.
+The examples below are fallback templates.
+Dates and slugs are examples only; replace them with the current task values.
 
----
-
-### Skill 01 — Screen Analysis
+### Skill 01 - Screen Analysis
 
 ```text
-Kích hoạt 01-screen-analysis
+Activate 01-screen-analysis
 
 Context:
 - Repo: [d:/DATN/danangtrip-admin]
 - Feature slug: [tour-list]
-- Screen name: [Danh sách Tour]
+- Screen name: [Tour list]
 - Figma/Stitch: [https://www.figma.com/... | https://stitch.withgoogle.com/... | NONE]
-- Input source: [d:/DATN/DATN_Tài liệu/mockup/tour-list.png | SRS section 3.2 | NONE]
+- Input source: [path to mockup | SRS section | NONE]
 - DESIGN.md: [d:/DATN/danangtrip-admin/DESIGN.md]
-- API docs: [d:/DATN/DATN_Tài liệu/docs/api/api_list.md]
-- Output: [.agent/artifacts/analysis/2026-05-11__tour-list__screen-analysis.md]
+- API docs: [path to API docs | NONE]
+- Output: [.agent/artifacts/analysis/YYYY-MM-DD__tour-list__screen-analysis.md]
 ```
 
-**Ví dụ thực tế:**
-```text
-Kích hoạt 01-screen-analysis
+Expected output:
 
-Context:
-- Repo: d:/DATN/danangtrip-admin
-- Feature slug: tour-list
-- Screen name: Danh sách Tour
-- Figma/Stitch: https://www.figma.com/design/abc123/DanangTrip-Admin?node-id=12-34
-- Input source: d:/DATN/DATN_Tài liệu/mockup/admin-tour-list.png
-- DESIGN.md: d:/DATN/danangtrip-admin/DESIGN.md
-- API docs: d:/DATN/DATN_Tài liệu/docs/api/api_list.md
-- Output: .agent/artifacts/analysis/2026-05-11__tour-list__screen-analysis.md
-```
+- design token audit against `DESIGN.md`
+- `[REUSE]`, `[NEW]`, `[MOD]` component breakdown
+- per-section UI states
+- data and API mapping
+- business rules and edge cases
 
-**Output mong đợi:** `analysis/2026-05-11__tour-list__screen-analysis.md` với design token audit (đối chiếu DESIGN.md), bảng component breakdown [REUSE]/[NEW]/[MOD], UI states per section, data/API mapping, business rules BR-xx, edge cases EC-xx.
-
----
-
-### Skill 02 — Project Setup Audit
+### Skill 02 - Project Setup Audit
 
 ```text
-Kích hoạt 02-project-setup
+Activate 02-project-setup
 
 Context:
 - Repo: [d:/DATN/danangtrip-admin]
 - Feature slug: [project-base | tour-list]
-- Lý do audit: [Trước feature mới | Nghi ngờ stack drift | Onboarding]
-- Output: [.agent/artifacts/audits/2026-05-11__project-base__project-audit.md]
+- Audit reason: [new sprint | stack drift suspicion | onboarding]
+- Output: [.agent/artifacts/audits/YYYY-MM-DD__project-base__project-audit.md]
 ```
 
-**Ví dụ thực tế:**
-```text
-Kích hoạt 02-project-setup
+Expected output:
 
-Context:
-- Repo: d:/DATN/danangtrip-admin
-- Feature slug: project-base
-- Lý do audit: Bắt đầu sprint mới, cần verify base trước khi làm Tour CRUD
-- Output: .agent/artifacts/audits/2026-05-11__project-base__project-audit.md
-```
+- ready or not-ready verdict
+- dependency, config, auth bootstrap, HTTP, and scripts checks
 
-**Output mong đợi:** `audits/2026-05-11__project-base__project-audit.md` với verdict ready/not ready, pass/fail từng nhóm (dependency, config, http/auth bootstrap, scripts).
-
----
-
-### Skill 03 — Types & API Contract
+### Skill 03 - Types And API Contract
 
 ```text
-Kích hoạt 03-types-api-contract
+Activate 03-types-api-contract
 
 Context:
 - Repo: [d:/DATN/danangtrip-admin]
 - Feature slug: [tour-list]
-- Analysis file: [.agent/artifacts/analysis/2026-05-11__tour-list__screen-analysis.md]
-- API docs: [d:/DATN/DATN_Tài liệu/docs/api/api_list.md]
-- Endpoints liên quan: [GET /admin/tours, POST /admin/tours, PUT /admin/tours/:id, DELETE /admin/tours/:id]
-- Output: [.agent/artifacts/api-contracts/2026-05-11__tour-list__api-contract.md]
+- Analysis file: [.agent/artifacts/analysis/YYYY-MM-DD__tour-list__screen-analysis.md]
+- API docs: [path to API docs]
+- Relevant endpoints: [GET /admin/tours, POST /admin/tours, PUT /admin/tours/:id, DELETE /admin/tours/:id]
+- Output: [.agent/artifacts/api-contracts/YYYY-MM-DD__tour-list__api-contract.md]
 ```
 
-**Ví dụ thực tế:**
-```text
-Kích hoạt 03-types-api-contract
+Expected output:
 
-Context:
-- Repo: d:/DATN/danangtrip-admin
-- Feature slug: tour-list
-- Analysis file: .agent/artifacts/analysis/2026-05-11__tour-list__screen-analysis.md
-- API docs: d:/DATN/DATN_Tài liệu/docs/api/api_list.md
-- Endpoints liên quan: GET /admin/tours (list + filter), POST /admin/tours, PUT /admin/tours/:id, DELETE /admin/tours/:id
-- Output: .agent/artifacts/api-contracts/2026-05-11__tour-list__api-contract.md
-```
+- raw types and view models
+- validation schema plan
+- API module plan
+- mapper plan
+- files expected to change
 
-**Output mong đợi:** `api-contracts/2026-05-11__tour-list__api-contract.md` với RawTour interface, Tour ViewModel, tourSchema(t), tourApi module plan, mapper plan, files expected to change.
-
----
-
-### Skill 04 — Layout & Routing
+### Skill 04 - Layout And Routing
 
 ```text
-Kích hoạt 04-layout-routing
+Activate 04-layout-routing
 
 Context:
 - Repo: [d:/DATN/danangtrip-admin]
 - Feature slug: [tour-list]
-- Analysis file: [.agent/artifacts/analysis/2026-05-11__tour-list__screen-analysis.md]
-- Route path mong muốn: [/tours]
-- Có route mới không: [Có — /tours, /tours/create, /tours/:id/edit | Không]
-- Có menu item mới không: [Có — sidebar "Quản lý Tour" | Không]
-- Output: [.agent/artifacts/routing/2026-05-11__tour-list__route-plan.md]
+- Analysis file: [.agent/artifacts/analysis/YYYY-MM-DD__tour-list__screen-analysis.md]
+- Target route path: [/tours]
+- New routes: [yes | no]
+- New menu item: [yes | no]
+- Output: [.agent/artifacts/routing/YYYY-MM-DD__tour-list__route-plan.md]
 ```
 
-**Ví dụ thực tế:**
-```text
-Kích hoạt 04-layout-routing
+Expected output:
 
-Context:
-- Repo: d:/DATN/danangtrip-admin
-- Feature slug: tour-list
-- Analysis file: .agent/artifacts/analysis/2026-05-11__tour-list__screen-analysis.md
-- Route path mong muốn: /tours
-- Có route mới không: Có — /tours (list), /tours/create, /tours/:id/edit
-- Có menu item mới không: Có — sidebar "Quản lý Tour" với icon MapIcon
-- Output: .agent/artifacts/routing/2026-05-11__tour-list__route-plan.md
-```
+- route registration plan
+- page skeleton files
+- breadcrumb and menu impact
+- i18n key impact
 
-**Output mong đợi:** `routing/2026-05-11__tour-list__route-plan.md` với route registration plan, page skeleton files, breadcrumb/menu impact, i18n keys cần thêm.
-
----
-
-### Skill 05 — UI Components
+### Skill 05 - UI Components
 
 ```text
-Kích hoạt 05-ui-components
+Activate 05-ui-components
 
 Context:
 - Repo: [d:/DATN/danangtrip-admin]
 - Feature slug: [tour-list]
-- Analysis file: [.agent/artifacts/analysis/2026-05-11__tour-list__screen-analysis.md]
-- Components cần đặc biệt chú ý: [TourTable, TourFormModal, TourFilterBar | NONE]
-- Output: [.agent/artifacts/ui-specs/2026-05-11__tour-list__ui-spec.md]
+- Analysis file: [.agent/artifacts/analysis/YYYY-MM-DD__tour-list__screen-analysis.md]
+- Components to focus on: [TourTable, TourFormModal, TourFilterBar | NONE]
+- Output: [.agent/artifacts/ui-specs/YYYY-MM-DD__tour-list__ui-spec.md]
 ```
 
-**Ví dụ thực tế:**
-```text
-Kích hoạt 05-ui-components
+Expected output:
 
-Context:
-- Repo: d:/DATN/danangtrip-admin
-- Feature slug: tour-list
-- Analysis file: .agent/artifacts/analysis/2026-05-11__tour-list__screen-analysis.md
-- Components cần đặc biệt chú ý: TourTable (reuse DataTable?), TourFormModal (create + edit), TourStatusBadge
-- Output: .agent/artifacts/ui-specs/2026-05-11__tour-list__ui-spec.md
-```
+- `[REUSE]`, `[NEW]`, `[MOD]` breakdown
+- component layering
+- per-component states
+- placement strategy
+- build order
 
-**Output mong đợi:** `ui-specs/2026-05-11__tour-list__ui-spec.md` với bảng [REUSE]/[NEW]/[MOD], layer breakdown, UI states per component, placement strategy, build order.
-
----
-
-### Skill 06 — Data Integration
+### Skill 06 - Data Integration
 
 ```text
-Kích hoạt 06-data-integration
+Activate 06-data-integration
 
 Context:
 - Repo: [d:/DATN/danangtrip-admin]
 - Feature slug: [tour-list]
-- API contract: [.agent/artifacts/api-contracts/2026-05-11__tour-list__api-contract.md]
-- UI spec: [.agent/artifacts/ui-specs/2026-05-11__tour-list__ui-spec.md]
-- Queries cần có: [list với filter/pagination, detail, categories lookup]
-- Mutations cần có: [create, update, delete, toggle-status]
-- Output: [.agent/artifacts/integration/2026-05-11__tour-list__data-integration.md]
+- API contract: [.agent/artifacts/api-contracts/YYYY-MM-DD__tour-list__api-contract.md]
+- UI spec: [.agent/artifacts/ui-specs/YYYY-MM-DD__tour-list__ui-spec.md]
+- Queries: [useTourList, useTourDetail, useCategoryList]
+- Mutations: [useCreateTour, useUpdateTour, useDeleteTour, useToggleTourStatus]
+- Output: [.agent/artifacts/integration/YYYY-MM-DD__tour-list__data-integration.md]
 ```
 
-**Ví dụ thực tế:**
-```text
-Kích hoạt 06-data-integration
+Expected output:
 
-Context:
-- Repo: d:/DATN/danangtrip-admin
-- Feature slug: tour-list
-- API contract: .agent/artifacts/api-contracts/2026-05-11__tour-list__api-contract.md
-- UI spec: .agent/artifacts/ui-specs/2026-05-11__tour-list__ui-spec.md
-- Queries cần có: useTourList (list + filter + pagination), useTourDetail (cho edit modal), useCategoryList (lookup cho filter)
-- Mutations cần có: useCreateTour, useUpdateTour, useDeleteTour, useToggleTourStatus
-- Output: .agent/artifacts/integration/2026-05-11__tour-list__data-integration.md
-```
+- query key hierarchy
+- stale time assumptions
+- invalidation strategy
+- per-section UI state handling
 
-**Output mong đợi:** `integration/2026-05-11__tour-list__data-integration.md` với query key hierarchy, staleTime, mutation invalidation strategy, UI state handling per section.
-
----
-
-### Skill 07 — Interactions
+### Skill 07 - Interactions
 
 ```text
-Kích hoạt 07-interactions
+Activate 07-interactions
 
 Context:
 - Repo: [d:/DATN/danangtrip-admin]
 - Feature slug: [tour-list]
-- Analysis file: [.agent/artifacts/analysis/2026-05-11__tour-list__screen-analysis.md]
-- Data integration: [.agent/artifacts/integration/2026-05-11__tour-list__data-integration.md]
-- Actions chính: [create, update, delete, search, filter-by-category, filter-by-status, pagination, export-excel]
-- Destructive actions: [delete single, bulk delete]
-- Output: [.agent/artifacts/interaction-specs/2026-05-11__tour-list__interaction-spec.md]
+- Analysis file: [.agent/artifacts/analysis/YYYY-MM-DD__tour-list__screen-analysis.md]
+- Data integration: [.agent/artifacts/integration/YYYY-MM-DD__tour-list__data-integration.md]
+- Main actions: [create, update, delete, search, filter, pagination, export]
+- Destructive actions: [single delete, bulk delete]
+- Output: [.agent/artifacts/interaction-specs/YYYY-MM-DD__tour-list__interaction-spec.md]
 ```
 
-**Ví dụ thực tế:**
-```text
-Kích hoạt 07-interactions
+Expected output:
 
-Context:
-- Repo: d:/DATN/danangtrip-admin
-- Feature slug: tour-list
-- Analysis file: .agent/artifacts/analysis/2026-05-11__tour-list__screen-analysis.md
-- Data integration: .agent/artifacts/integration/2026-05-11__tour-list__data-integration.md
-- Actions chính: create (modal), update (modal), delete (confirm dialog), search (debounce), filter by category + status, pagination (URL sync), export Excel
-- Destructive actions: delete single tour, bulk delete selected tours
-- Output: .agent/artifacts/interaction-specs/2026-05-11__tour-list__interaction-spec.md
-```
+- action breakdown
+- form flow
+- URL or local state ownership
+- confirm dialog behavior
+- i18n keys to add
 
-**Output mong đợi:** `interaction-specs/2026-05-11__tour-list__interaction-spec.md` với action breakdown, form flow (schema + submit + reset), URL-synced state, confirm dialog spec, i18n keys cần thêm.
-
----
-
-### Skill 08 — Auth & Permissions
+### Skill 08 - Auth And Permissions
 
 ```text
-Kích hoạt 08-auth-permissions
+Activate 08-auth-permissions
 
 Context:
 - Repo: [d:/DATN/danangtrip-admin]
 - Feature slug: [tour-list]
-- Route plan: [.agent/artifacts/routing/2026-05-11__tour-list__route-plan.md]
-- Interaction spec: [.agent/artifacts/interaction-specs/2026-05-11__tour-list__interaction-spec.md]
-- Loại feature: [authenticated-only | role-based]
-- Roles liên quan: [admin, staff]
-- Actions nhạy cảm: [delete, bulk-delete, export]
-- Output: [.agent/artifacts/auth/2026-05-11__tour-list__auth-permissions-review.md]
+- Route plan: [.agent/artifacts/routing/YYYY-MM-DD__tour-list__route-plan.md]
+- Interaction spec: [.agent/artifacts/interaction-specs/YYYY-MM-DD__tour-list__interaction-spec.md]
+- Feature type: [authenticated-only | role-based]
+- Relevant roles: [admin, staff]
+- Output: [.agent/artifacts/auth/YYYY-MM-DD__tour-list__auth-permissions-review.md]
 ```
 
-**Ví dụ thực tế:**
-```text
-Kích hoạt 08-auth-permissions
+Expected output:
 
-Context:
-- Repo: d:/DATN/danangtrip-admin
-- Feature slug: tour-list
-- Route plan: .agent/artifacts/routing/2026-05-11__tour-list__route-plan.md
-- Interaction spec: .agent/artifacts/interaction-specs/2026-05-11__tour-list__interaction-spec.md
-- Loại feature: role-based
-- Roles liên quan: admin (full access), staff (view + create + edit, không được delete/export)
-- Actions nhạy cảm: delete single, bulk delete, export Excel
-- Output: .agent/artifacts/auth/2026-05-11__tour-list__auth-permissions-review.md
-```
+- protected route review
+- permission matrix
+- guarded UI actions
+- redirect behavior
+- risks and assumptions
 
-**Output mong đợi:** `auth/2026-05-11__tour-list__auth-permissions-review.md` với protected routes, permission matrix (action × role), guarded UI actions (hidden vs disabled), redirect behavior, risks.
-
----
-
-### Skill 09 — Testing
+### Skill 09 - Testing
 
 ```text
-Kích hoạt 09-testing
+Activate 09-testing
 
 Context:
 - Repo: [d:/DATN/danangtrip-admin]
 - Feature slug: [tour-list]
-- Dev server URL: [http://localhost:5173/tours | NOT AVAILABLE]
-- Code scope: [src/pages/Tours/, src/hooks/useTourQueries.ts, src/dataHelper/tour.mapper.ts, src/validations/tour.schema.ts]
-- Analysis file: [.agent/artifacts/analysis/2026-05-11__tour-list__screen-analysis.md]
-- Interaction spec: [.agent/artifacts/interaction-specs/2026-05-11__tour-list__interaction-spec.md]
-- Auth review: [.agent/artifacts/auth/2026-05-11__tour-list__auth-permissions-review.md]
-- Output: [.agent/artifacts/test-cases/2026-05-11__tour-list__test-report.md]
+- Analysis file: [.agent/artifacts/analysis/YYYY-MM-DD__tour-list__screen-analysis.md]
+- Interaction spec: [.agent/artifacts/interaction-specs/YYYY-MM-DD__tour-list__interaction-spec.md]
+- Auth review: [.agent/artifacts/auth/YYYY-MM-DD__tour-list__auth-permissions-review.md]
+- Output: [.agent/artifacts/test-cases/YYYY-MM-DD__tour-list__test-report.md]
 ```
 
-**Ví dụ thực tế:**
-```text
-Kích hoạt 09-testing
+Expected output:
 
-Context:
-- Repo: d:/DATN/danangtrip-admin
-- Feature slug: tour-list
-- Dev server URL: http://localhost:5173/tours
-- Code scope: src/pages/Tours/, src/hooks/useTourQueries.ts, src/dataHelper/tour.mapper.ts, src/validations/tour.schema.ts
-- Analysis file: .agent/artifacts/analysis/2026-05-11__tour-list__screen-analysis.md
-- Interaction spec: .agent/artifacts/interaction-specs/2026-05-11__tour-list__interaction-spec.md
-- Auth review: .agent/artifacts/auth/2026-05-11__tour-list__auth-permissions-review.md
-- Output: .agent/artifacts/test-cases/2026-05-11__tour-list__test-report.md
-```
+- lint, typecheck, build, and prepush checks
+- UI visual validation
+- interaction validation
+- i18n validation
+- role and permission validation
+- explicit PASS, FAIL, SKIPPED evidence
 
-**Output mong đợi:** `test-cases/2026-05-11__tour-list__test-report.md` với 5 phase đầy đủ:
-- Phase 1: lint/typecheck/build/prepush (PASS/FAIL)
-- Phase 2: UI visual — layout, skeleton, empty state, design tokens
-- Phase 3: Functional — CRUD flows, search/filter/pagination, form validation
-- Phase 4: Edge cases — boundary values, network errors, concurrent actions
-- Phase 5: Regression — i18n vi/en, auth redirect, existing features
-- Verdict: `ready / not ready`
-
----
-
-### Skill 10 — Optimization & Deploy
+### Skill 10 - Optimization And Deploy
 
 ```text
-Kích hoạt 10-optimization-deploy
+Activate 10-optimization-deploy
 
 Context:
 - Repo: [d:/DATN/danangtrip-admin]
 - Feature slug: [tour-list]
-- Test report: [.agent/artifacts/test-cases/2026-05-11__tour-list__test-report.md]
+- Test report: [.agent/artifacts/test-cases/YYYY-MM-DD__tour-list__test-report.md]
 - Test verdict: [READY | READY WITH RISKS | NOT READY]
-- Artifacts đã có: [analysis, api-contract, route-plan, ui-spec, data-integration, interaction-spec, auth-review, test-report]
-- Branch hiện tại: [main | develop | NONE — chưa tạo nhánh]
-- Output deploy: [.agent/artifacts/deploy/2026-05-11__tour-list__deploy-report.md]
-- Output review: [.agent/artifacts/review/2026-05-11__tour-list__review.md]
+- Existing artifacts: [analysis, api-contract, route-plan, ui-spec, data-integration, interaction-spec, auth-review, test-report]
+- Output deploy: [.agent/artifacts/deploy/YYYY-MM-DD__tour-list__deploy-report.md]
+- Output review: [.agent/artifacts/review/YYYY-MM-DD__tour-list__review.md]
 ```
 
-**Ví dụ thực tế:**
-```text
-Kích hoạt 10-optimization-deploy
+Expected output:
 
-Context:
-- Repo: d:/DATN/danangtrip-admin
-- Feature slug: tour-list
-- Test report: .agent/artifacts/test-cases/2026-05-11__tour-list__test-report.md
-- Test verdict: READY
-- Artifacts đã có: analysis, api-contract, route-plan, ui-spec, data-integration, interaction-spec, auth-review, test-report
-- Branch hiện tại: main
-- Output deploy: .agent/artifacts/deploy/2026-05-11__tour-list__deploy-report.md
-- Output review: .agent/artifacts/review/2026-05-11__tour-list__review.md
-```
-
-**Output mong đợi:**
-- `deploy-report.md` — build status, performance notes, smoke test, verdict
-- `review.md` — objective, scope, artifact trace, technical decisions, risks
-- **Gợi ý tên nhánh**: `feat/tour-list`
-- **Gợi ý commit message**: `feat(tours): add tour list screen with CRUD and filter`
-- **Hiển thị lệnh git** và **CHỜ USER xác nhận** trước khi push.
-
-## Những gì mỗi SKILL.md cung cấp
-
-Mỗi SKILL.md trong bộ này có:
-
-- **Overview**: mục tiêu và vai trò trong pipeline
-- **Required Input**: file phải đọc trước khi bắt đầu
-- **Process**: các bước thực hiện có thứ tự
-- **Pattern Chuẩn**: code example thực tế từ repo (không generic)
-- **Output Document**: artifact cần tạo và template dùng
-- **Strict Rules**: rule không được vi phạm
-- **Red Flags**: dấu hiệu đang làm sai — phải dừng và flag
-- **Common Rationalizations**: lý do hay dùng để bỏ qua bước — và tại sao sai
-- **Verification**: checklist cuối để xác nhận output đủ chất lượng
-
-## Kỳ vọng đầu ra 10/10
-
-Một bộ skill được xem là thực dụng `10/10` cho repo này khi:
-
-- Tất cả skill đều tham chiếu đúng file đang tồn tại
-- Mỗi skill có artifact rõ ràng
-- Tài liệu đủ chi tiết để người khác review mà không phải hỏi lại
-- Không có lỗi encoding/format
-- Không có rule nói một đằng, template làm một nẻo
-- Các ví dụ đều bám `Tours`, `Locations`, `Dashboard` hoặc pattern thật trong repo
-
-Đồng thời:
-
-- skill docs đủ chi tiết để AI không phải tự đoán quy trình
-- code example trong skill bám đúng pattern thật (react-hook-form + yup, axiosClient, useTourQueries)
-- template docs đủ chi tiết để artifact sinh ra không bị cụt
-- cuối pipeline có thể đọc `review.md` mà nắm được toàn bộ feature ở mức high-level lẫn execution trace
+- deploy-readiness verdict
+- build and runtime constraints
+- quality gate summary
+- final review summary
+- residual risks and next actions

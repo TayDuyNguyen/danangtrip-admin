@@ -7,6 +7,12 @@ description: Review route guards, permission checks, and role-based UI behavior.
 
 ## Overview
 
+## When to Use
+
+- When a feature changes guards, roles, sensitive actions, or permission-gated UI.
+- When route protection or auth redirect behavior may be affected.
+- When access control needs to be reviewed before handoff.
+
 Skill này dùng để rà soát quyền truy cập, route guard, và role-based UI trước khi bàn giao feature có action nhạy cảm.
 Mục tiêu không chỉ là "route có bị chặn hay không", mà còn phải làm rõ:
 
@@ -20,6 +26,9 @@ Mục tiêu không chỉ là "route có bị chặn hay không", mà còn phải
 
 - `persona.md`
 - `.agent/rules/PROJECT_RULES.md`
+- `.agent/rules/REPO_FACTS.md`
+- `.agent/memory/WORKING_STATE.md`
+- `.agent/memory/HANDOFF.md`
 - `src/routes/`
 - `src/store/useUserStore.ts`
 - `src/hooks/useAuthQuery.ts`
@@ -239,6 +248,17 @@ Template:
 - Nếu chưa xác minh được backend auth level, phải ghi rõ "frontend-only assumption"
 - Không kết luận "an toàn" nếu mới chỉ kiểm tra bề mặt UI
 
+## Rationalizations
+
+| Lý do hay gặp | Thực tế |
+|---|---|
+| "Feature này admin-only, không cần review" | Vẫn cần ghi N/A rõ ràng — không bỏ qua im lặng |
+| "Chỉ cần check `isAuthenticated` là đủ" | Nếu có role-based action, cần check cả `user.role` |
+| "CSS hide nhanh hơn conditional render" | User có thể inspect DOM và thấy hidden elements |
+| "Interceptor đã xử lý 401, không cần check trong component" | Đúng — nhưng phải verify interceptor đang hoạt động đúng |
+| "Staff không cần xóa, disable button là đủ" | Nếu action nhạy cảm, phải ẩn hoàn toàn — không chỉ disable |
+
+
 ## Red Flags
 
 Nếu thấy những dấu hiệu sau, phải dừng và flag:
@@ -249,16 +269,6 @@ Nếu thấy những dấu hiệu sau, phải dừng và flag:
 - Logout chỉ clear localStorage nhưng không clear Zustand store → stale auth state
 - `useAuthBootstrap` không được gọi ở root → user bị logout khi refresh page
 - Route redirect về `/login` nhưng `/login` cũng bị protect → infinite redirect loop
-
-## Common Rationalizations
-
-| Lý do hay gặp | Thực tế |
-|---|---|
-| "Feature này admin-only, không cần review" | Vẫn cần ghi N/A rõ ràng — không bỏ qua im lặng |
-| "Chỉ cần check `isAuthenticated` là đủ" | Nếu có role-based action, cần check cả `user.role` |
-| "CSS hide nhanh hơn conditional render" | User có thể inspect DOM và thấy hidden elements |
-| "Interceptor đã xử lý 401, không cần check trong component" | Đúng — nhưng phải verify interceptor đang hoạt động đúng |
-| "Staff không cần xóa, disable button là đủ" | Nếu action nhạy cảm, phải ẩn hoàn toàn — không chỉ disable |
 
 ## Documentation Expectations
 

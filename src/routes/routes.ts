@@ -11,5 +11,6 @@ export const ROUTES = {
     LOCATIONS_LIST: '/admin/locations',
     LOCATIONS_CREATE: '/admin/locations/create',
     LOCATIONS_EDIT: '/admin/locations/edit/:id',
+    LOCATIONS_DETAIL: '/admin/locations/detail/:id',
     LOCATIONS_CATEGORIES: '/admin/locations/categories',
 } as const;

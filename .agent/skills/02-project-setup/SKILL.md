@@ -10,7 +10,7 @@ description: Audit project base before implementing a feature. Use when you need
 Skill này kiểm tra project base hiện tại để đảm bảo repo đủ điều kiện triển khai feature mới và để lại **audit document có thể tái sử dụng**.
 Đây không chỉ là bước "check package", mà là bước khóa nền tảng để các step sau không build trên assumption sai.
 
-## When To Use
+## When to Use
 
 - Trước feature lớn đầu tiên trong phiên làm việc
 - Khi nghi ngờ base đang lệch stack/rules
@@ -21,6 +21,9 @@ Skill này kiểm tra project base hiện tại để đảm bảo repo đủ đ
 
 - `persona.md`
 - `.agent/rules/PROJECT_RULES.md`
+- `.agent/rules/REPO_FACTS.md`
+- `.agent/memory/WORKING_STATE.md`
+- `.agent/memory/HANDOFF.md`
 - `package.json`
 - `tsconfig.app.json`
 - `vite.config.ts`
@@ -196,6 +199,15 @@ Template:
   - mức ảnh hưởng
   - hướng fix nhỏ nhất
 - Không báo "ổn" nếu chưa kiểm thực tế file/config liên quan
+
+## Rationalizations
+
+| Excuse | Rebuttal |
+|---|---|
+| "The admin app already builds, so audit is unnecessary." | Build success does not guarantee scripts, routes, providers, or env assumptions are still aligned. |
+| "This feature is isolated." | Even isolated features inherit baseline risk from drifted setup and validation commands. |
+| "We can audit later." | Delayed baseline checks usually move discovery to the most expensive stage. |
+
 
 ## Red Flags
 

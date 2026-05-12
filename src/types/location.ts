@@ -43,6 +43,29 @@ export interface RawLocation {
     amenities?: { id: number; name: string }[];
 }
 
+/**
+ * Raw Rating Data from API
+ */
+export interface RawRating {
+    id: number;
+    score: number;
+    comment: string | null;
+    images: string[] | null;
+    status: 'pending' | 'approved' | 'rejected';
+    user: {
+        id: number;
+        full_name: string;
+        avatar: string | null;
+    };
+    created_at: string;
+}
+
+/**
+ * Raw Rating Stats from API
+ * Example: { "1": 2, "2": 0, "3": 5, "4": 10, "5": 20 }
+ */
+export type RawRatingStats = Record<string | number, number>;
+
 export interface CreateLocationInput {
     name: string;
     slug: string;

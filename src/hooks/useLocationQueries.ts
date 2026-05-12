@@ -1,11 +1,12 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import locationApi from '@/api/locationApi';
-import { mapLocationListData } from '@/dataHelper/location.mapper';
+import { mapLocationListData, mapLocationToViewModel, mapRatingStats, mapRatingToViewModel } from '@/dataHelper/location.mapper';
 import type { LocationFilters } from '@/dataHelper/location.dataHelper';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 import axiosClient from '@/api/axiosClient';
 import { API_ENDPOINTS } from '@/constants/endpoints';
+import type { PaginationParams } from '@/types';
 
 import type { CreateLocationInput } from '@/validations/location.schema';
 
@@ -18,6 +19,9 @@ export const locationKeys = {
     filterDistricts: () => [...locationKeys.all, 'filter-districts'] as const,
     details: () => [...locationKeys.all, 'detail'] as const,
     detail: (id: string | number) => [...locationKeys.details(), id] as const,
+    detailRaw: (id: string | number) => [...locationKeys.detail(id), 'raw'] as const,
+    ratingStats: (id: string | number) => [...locationKeys.detail(id), 'rating-stats'] as const,
+    ratings: (id: string | number, params?: PaginationParams) => [...locationKeys.detail(id), 'ratings', params] as const,
 };
 
 export const useLocationsQuery = (filters: LocationFilters) => {
@@ -109,7 +113,51 @@ export const useLocationDetailQuery = (id: string | number | undefined) => {
         queryFn: async () => {
             if (!id) throw new Error('Location ID is required');
             const res = await locationApi.getDetail(id);
+            if (!res.data) throw new Error('Location not found');
+            return mapLocationToViewModel(res.data);
+        },
+        enabled: !!id,
+    });
+};
+
+export const useLocationDetailRawQuery = (id: string | number | undefined) => {
+    return useQuery({
+        queryKey: locationKeys.detailRaw(id || ''),
+        queryFn: async () => {
+            if (!id) throw new Error('Location ID is required');
+            const res = await locationApi.getDetail(id);
+            if (!res.data) throw new Error('Location not found');
             return res.data;
+        },
+        enabled: !!id,
+    });
+};
+
+export const useLocationRatingStatsQuery = (id: string | number | undefined) => {
+    return useQuery({
+        queryKey: locationKeys.ratingStats(id || ''),
+        queryFn: async () => {
+            if (!id) throw new Error('Location ID is required');
+            const res = await locationApi.getRatingStats(id);
+            return mapRatingStats(res.data || {});
+        },
+        enabled: !!id,
+    });
+};
+
+export const useLocationRatingsQuery = (id: string | number | undefined, params?: PaginationParams) => {
+    return useQuery({
+        queryKey: locationKeys.ratings(id || '', params),
+        queryFn: async () => {
+            if (!id) throw new Error('Location ID is required');
+            const res = await locationApi.getRatings(id, params);
+            const payload = res.data;
+            if (!payload) throw new Error('Empty ratings response');
+            
+            return {
+                ...payload,
+                data: payload.data.map(mapRatingToViewModel),
+            };
         },
         enabled: !!id,
     });
@@ -139,11 +187,12 @@ export const useDeleteLocationMutation = () => {
 
     return useMutation({
         mutationFn: (id: number) => locationApi.deleteLocation(id),
-        onSuccess: () => {
+        onSuccess: (_data, id) => {
             toast.success(t('messages.delete_success'));
             queryClient.invalidateQueries({ queryKey: locationKeys.lists() });
             queryClient.invalidateQueries({ queryKey: locationKeys.stats() });
             queryClient.invalidateQueries({ queryKey: locationKeys.filterDistricts() });
+            queryClient.invalidateQueries({ queryKey: locationKeys.detail(id) });
         },
         onError: () => {
             toast.error(t('messages.delete_error'));
@@ -158,10 +207,11 @@ export const useUpdateLocationFeaturedMutation = () => {
     return useMutation({
         mutationFn: ({ id, isFeatured }: { id: number; isFeatured: boolean }) =>
             locationApi.toggleFeatured(id, isFeatured),
-        onSuccess: () => {
+        onSuccess: (_data, variables) => {
             toast.success(t('messages.update_success'));
             queryClient.invalidateQueries({ queryKey: locationKeys.lists() });
             queryClient.invalidateQueries({ queryKey: locationKeys.stats() });
+            queryClient.invalidateQueries({ queryKey: locationKeys.detail(variables.id) });
         },
         onError: () => {
             toast.error(t('messages.update_error'));
@@ -200,6 +250,9 @@ export const useBulkLocationActionsMutation = () => {
             queryClient.invalidateQueries({ queryKey: locationKeys.lists() });
             queryClient.invalidateQueries({ queryKey: locationKeys.stats() });
             queryClient.invalidateQueries({ queryKey: locationKeys.filterDistricts() });
+            variables.ids.forEach((id) => {
+                queryClient.invalidateQueries({ queryKey: locationKeys.detail(id) });
+            });
         },
         onError: (err) => {
             toast.error(err instanceof Error && err.message === 'partial' ? t('messages.bulk_partial_error') : t('messages.update_error'));

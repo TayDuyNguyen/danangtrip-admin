@@ -48,6 +48,7 @@ def print_error(text: str) -> None:
 
 
 CHECKS = [
+    ("Agent Drift Check", ["python", ".agent/scripts/verify_agent_drift.py", "."], True),
     ("Lint", ["npm", "run", "lint"], True),
     ("Typecheck", ["npm", "run", "typecheck"], True),
     ("Build", ["npm", "run", "build"], True),

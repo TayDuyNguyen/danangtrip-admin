@@ -7,6 +7,12 @@ description: Analyze an admin screen from mockup, SRS, or business notes and pro
 
 ## Overview
 
+## When to Use
+
+- When a new admin screen or major admin UI change needs structured analysis.
+- When requirements are spread across mockups, SRS, notes, or unclear business context.
+- When downstream implementation steps need one shared source of interpretation.
+
 Skill này là bước mở đầu của pipeline.
 Nó dùng để biến yêu cầu thô như mockup, SRS, note nghiệp vụ, hoặc mô tả từ USER thành **screen analysis document đủ chi tiết để các bước sau không phải tự đoán**.
 
@@ -27,6 +33,9 @@ Mục tiêu của output không phải là "ghi chú ngắn", mà là tài liệ
 - `DATN/DATN_Tài liệu/docs/api/api_list.md`
 - `src/constants/endpoints.ts`
 - `.agent/rules/PROJECT_RULES.md`
+- `.agent/rules/REPO_FACTS.md`
+- `.agent/memory/WORKING_STATE.md`
+- `.agent/memory/HANDOFF.md`
 - `src/routes/`
 - `src/pages/Tours/`
 
@@ -204,6 +213,16 @@ Template:
 - Endpoint nên đối chiếu với cả `api_list.md` và `src/constants/endpoints.ts`
 - Nếu không thấy component cũ để reuse, phải ghi rõ "chưa tìm thấy" thay vì giả định có
 
+## Rationalizations
+
+| Lý do hay gặp | Thực tế |
+|---|---|
+| "Màn admin đơn giản, không cần analysis chi tiết" | Bước sau sẽ tự đoán và drift — tốn thêm thời gian fix |
+| "Chưa có mockup, phân tích sau" | Phân tích từ SRS/notes trước, ghi `[ASSUMPTION]` cho phần chưa có mockup |
+| "Component breakdown rõ rồi, không cần bảng" | Bảng giúp bước 05 đọc nhanh — prose dài khó scan |
+| "API chưa có docs, bỏ qua phần data mapping" | Phải ghi `Open Question` — không được bỏ qua im lặng |
+
+
 ## Red Flags
 
 Nếu thấy những dấu hiệu sau trong analysis, phải bổ sung:
@@ -213,15 +232,6 @@ Nếu thấy những dấu hiệu sau trong analysis, phải bổ sung:
 - Data mapping không có source endpoint → bước 03 phải tự đoán
 - Không có business rules section → bước 07 sẽ miss edge cases
 - Không có `[ASSUMPTION]` dù có nhiều điểm chưa chắc → silent assumption
-
-## Common Rationalizations
-
-| Lý do hay gặp | Thực tế |
-|---|---|
-| "Màn admin đơn giản, không cần analysis chi tiết" | Bước sau sẽ tự đoán và drift — tốn thêm thời gian fix |
-| "Chưa có mockup, phân tích sau" | Phân tích từ SRS/notes trước, ghi `[ASSUMPTION]` cho phần chưa có mockup |
-| "Component breakdown rõ rồi, không cần bảng" | Bảng giúp bước 05 đọc nhanh — prose dài khó scan |
-| "API chưa có docs, bỏ qua phần data mapping" | Phải ghi `Open Question` — không được bỏ qua im lặng |
 
 ## Documentation Expectations
 

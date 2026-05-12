@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, MapPin, Sparkles, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { ROUTES } from '@/routes/routes';
-import { useLocationDetailQuery, useDeleteLocationMutation } from '@/hooks/useLocationQueries';
+import { useLocationDetailRawQuery, useDeleteLocationMutation } from '@/hooks/useLocationQueries';
 import LocationForm from '../components/LocationForm';
 import LocationFormSkeleton from '../components/LocationFormSkeleton';
 import { mapLocationToFormInput } from '@/dataHelper/location.mapper';
@@ -20,7 +20,7 @@ const LocationEdit = () => {
 
     const isAdmin = user?.role === 'admin';
 
-    const { data: rawLocation, isLoading, isError } = useLocationDetailQuery(id);
+    const { data: rawLocation, isLoading, isError } = useLocationDetailRawQuery(id);
     const deleteMutation = useDeleteLocationMutation();
 
     const locationData = rawLocation ? mapLocationToFormInput(rawLocation) : null;
@@ -135,7 +135,7 @@ const LocationEdit = () => {
                         {locationData && (
                             <LocationForm 
                                 isEdit 
-                                initialData={locationData as any} // eslint-disable-line @typescript-eslint/no-explicit-any
+                                initialData={locationData}
                             />
                         )}
                     </>

@@ -1,59 +1,30 @@
 ---
-description: Create new application command. Triggers App Builder skill and starts interactive dialogue with user.
+description: Create a repository-specific implementation plan before building new admin features.
 ---
 
-# /create - Create Application
+# /create - Admin Feature Bootstrap
 
-$ARGUMENTS
+Use this workflow to start a new screen or feature in `danangtrip-admin`.
+It is planning-first, not an instant scaffold generator.
 
----
+## Process
 
-## Task
+1. Read `.agent/rules/PROJECT_RULES.md` and `.agent/rules/REPO_FACTS.md`.
+2. Use `project-planner` to produce the initial slice plan.
+3. Use `explorer-agent` only if repo discovery is still unclear.
+4. Ask for approval if the plan changes routes, auth, or shared component APIs.
+5. Execute with the local skills in this order when relevant:
+   - `01-screen-analysis`
+   - `03-types-api-contract`
+   - `04-layout-routing`
+   - `05-ui-components`
+   - `06-data-integration`
+   - `07-interactions`
+   - `08-auth-permissions`
+   - `09-testing`
+   - `10-optimization-deploy`
 
-This command starts a new application creation process.
+## Notes
 
-### Steps:
-
-1. **Request Analysis**
-   - Understand what the user wants
-   - If information is missing, use `conversation-manager` skill to ask
-
-2. **Project Planning**
-   - Use `project-planner` agent for task breakdown
-   - Determine tech stack
-   - Plan file structure
-   - Create plan file and proceed to building
-
-3. **Application Building (After Approval)**
-   - Orchestrate with `app-builder` skill
-   - Coordinate expert agents:
-     - `database-architect` → Schema
-     - `backend-specialist` → API
-     - `frontend-specialist` → UI
-
-4. **Preview**
-   - Start with `auto_preview.py` when complete
-   - Present URL to user
-
----
-
-## Usage Examples
-
-```
-/create blog site
-/create e-commerce app with product listing and cart
-/create todo app
-/create Instagram clone
-/create crm system with customer management
-```
-
----
-
-## Before Starting
-
-If request is unclear, ask these questions:
-- What type of application?
-- What are the basic features?
-- Who will use it?
-
-Use defaults, add details later.
+- Do not reference removed generic roles.
+- Prefer repository reality over generic app-builder behavior.
