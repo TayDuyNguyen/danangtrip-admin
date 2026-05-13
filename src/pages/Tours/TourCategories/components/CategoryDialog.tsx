@@ -8,6 +8,7 @@ import * as Icons from 'lucide-react';
 import { Save, AlertCircle, Plus, XCircle, Search } from 'lucide-react';
 import { tourCategorySchema } from '@/validations/tourCategory.schema';
 import type { TourCategory } from '@/dataHelper/tourCategory.dataHelper';
+import { resolveCategoryIconName } from '@/utils/categoryIcon';
 import { slugifyVietnamese } from '@/utils/slug';
 import { cn } from '@/utils/cn';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -103,7 +104,7 @@ const CategoryDialog = ({ isOpen, onClose, onSubmit, initialData, nextSortOrder 
                 reset({
                     name: initialData.name,
                     slug: initialData.slug,
-                    icon: initialData.icon,
+                    icon: resolveCategoryIconName(initialData.icon, 'Map'),
                     description: initialData.description || '',
                     sort_order: initialData.sort_order,
                     status: initialData.status,

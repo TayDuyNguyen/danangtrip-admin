@@ -28,21 +28,27 @@ export const useLocationsQuery = (filters: LocationFilters) => {
     return useQuery({
         queryKey: locationKeys.list(filters),
         queryFn: async () => {
-            const [listRes, statsRes] = await Promise.all([
-                locationApi.getLocations(filters),
-                locationApi.getStats(),
-            ]);
-
+            const listRes = await locationApi.getLocations(filters);
             const listPayload = listRes.data;
-            const statsPayload = statsRes.data;
 
             if (!listPayload) {
                 throw new Error('Empty location list response');
             }
 
-            return mapLocationListData(listPayload, statsPayload);
+            return mapLocationListData(listPayload);
         },
         placeholderData: (previousData) => previousData,
+    });
+};
+
+export const useLocationStatsQuery = () => {
+    return useQuery({
+        queryKey: locationKeys.stats(),
+        queryFn: async () => {
+            const res = await locationApi.getStats();
+            return res.data;
+        },
+        staleTime: 5 * 60 * 1000,
     });
 };
 
@@ -261,6 +267,8 @@ export const useBulkLocationActionsMutation = () => {
 };
 
 export const useLocationUploadMutations = () => {
+    const { t } = useTranslation('location');
+
     return {
         uploadThumbnailMutation: useMutation({
             mutationFn: async (file: File) => {
@@ -271,7 +279,7 @@ export const useLocationUploadMutations = () => {
                 });
                 return res.data;
             },
-            onError: () => toast.error('Upload thumbnail failed'),
+            onError: () => toast.error(t('messages.upload_error')),
         }),
         uploadGalleryMutation: useMutation({
             mutationFn: async (files: File[]) => {
@@ -287,7 +295,7 @@ export const useLocationUploadMutations = () => {
                 );
                 return results;
             },
-            onError: () => toast.error('Upload gallery failed'),
+            onError: () => toast.error(t('messages.upload_error')),
         }),
         deleteImageMutation: useMutation({
             mutationFn: (publicId: string) =>

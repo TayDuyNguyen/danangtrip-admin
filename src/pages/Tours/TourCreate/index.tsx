@@ -5,7 +5,6 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { AxiosError } from 'axios';
-import type { ErrorResponse } from '@/types';
 import {
     Save,
     FileText,
@@ -25,6 +24,7 @@ import { createTourSchema, type CreateTourInput } from '@/validations/tour.schem
 import { useTourMutations, useTourCategoriesQuery } from '@/hooks/useTourQueries';
 import { ROUTES } from '@/routes/routes';
 import { extractCreatedTourId, computeDiscountedPrice, slugifyVietnamese, scrollToFirstError, cn } from '@/utils';
+import { getLocalizedApiErrorMessage } from '@/utils/apiError';
 import CustomSelect from '@/components/ui/CustomSelect';
 import { TextInput } from '@/components/ui/TextInput';
 import { CurrencyInput } from '@/components/ui/CurrencyInput';
@@ -142,9 +142,7 @@ function AddTour() {
                 } else {
                     navigate(ROUTES.TOURS_LIST);
                 }
-            } catch (error) {
-                console.error('Submit error:', error);
-            }
+            } catch { /* mutation error handled by hook onError */ }
         },
         [createTourMutation, navigate]
     );
@@ -158,7 +156,10 @@ function AddTour() {
 
     const createErrorDetail =
         createTourMutation.error instanceof AxiosError
-            ? (createTourMutation.error as AxiosError<ErrorResponse>).response?.data?.message
+            ? getLocalizedApiErrorMessage(
+                t('messages.create_error'),
+                createTourMutation.error
+            )
             : undefined;
 
     const categoryOptions = categories.map((cat) => ({

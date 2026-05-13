@@ -15,6 +15,7 @@ import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 import { AxiosError } from 'axios';
 import type { ErrorResponse } from '@/types';
+import { getLocalizedApiErrorMessage } from '@/utils/apiError';
 
 const Login = () => {
     const navigate = useNavigate();
@@ -55,13 +56,12 @@ const Login = () => {
         } catch (error) {
             const err = error as AxiosError<ErrorResponse>;
             const errData = err.response?.data;
-            const serverMsg = errData?.errors
-                ? Object.values(errData.errors).flat().join(', ')
-                : (errData?.message || t('incorrect_credentials'));
+            const fallback = errData?.errors ? t('check_again') : t('incorrect_credentials');
+            const localizedError = getLocalizedApiErrorMessage(fallback, error);
 
-            setErr(serverMsg);
-            toast.error(serverMsg, {
-                description: t('check_again'),
+            setErr(localizedError);
+            toast.error(t('login_error'), {
+                description: localizedError,
             });
         }
     }

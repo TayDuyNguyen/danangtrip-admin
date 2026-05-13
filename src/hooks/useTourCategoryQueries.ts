@@ -3,6 +3,7 @@ import { tourCategoryApi } from '@/api/tourCategoryApi';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 import type { CategoryListParams, RawTourCategory } from '@/dataHelper/tourCategory.dataHelper';
+import { getLocalizedApiErrorMessage } from '@/utils/apiError';
 
 /**
  * Query Keys Factory
@@ -45,9 +46,7 @@ export const useTourCategoryMutations = () => {
             invalidate();
         },
         onError: (error: unknown) => {
-            const axiosError = error as { response?: { data?: { message?: string } } };
-            const message = axiosError.response?.data?.message || t('categories.messages.create_error');
-            toast.error(message);
+            toast.error(getLocalizedApiErrorMessage(t('categories.messages.create_error'), error));
         }
     });
 
@@ -60,9 +59,7 @@ export const useTourCategoryMutations = () => {
             invalidate();
         },
         onError: (error: unknown) => {
-            const axiosError = error as { response?: { data?: { message?: string } } };
-            const message = axiosError.response?.data?.message || t('categories.messages.update_error');
-            toast.error(message);
+            toast.error(getLocalizedApiErrorMessage(t('categories.messages.update_error'), error));
         }
     });
 
@@ -75,9 +72,7 @@ export const useTourCategoryMutations = () => {
             invalidate();
         },
         onError: (error: unknown) => {
-            const axiosError = error as { response?: { data?: { message?: string } } };
-            const message = axiosError.response?.data?.message || t('categories.messages.update_error');
-            toast.error(message);
+            toast.error(getLocalizedApiErrorMessage(t('categories.messages.update_error'), error));
         }
     });
 
@@ -89,9 +84,7 @@ export const useTourCategoryMutations = () => {
             invalidate();
         },
         onError: (error: unknown) => {
-            const axiosError = error as { response?: { data?: { message?: string } } };
-            const message = axiosError.response?.data?.message || t('categories.messages.delete_error');
-            toast.error(message);
+            toast.error(getLocalizedApiErrorMessage(t('categories.messages.delete_error'), error));
         }
     });
 
@@ -103,9 +96,7 @@ export const useTourCategoryMutations = () => {
             invalidate();
         },
         onError: (error: unknown) => {
-            const axiosError = error as { response?: { data?: { message?: string } } };
-            const message = axiosError.response?.data?.message || t('categories.messages.update_error');
-            toast.error(message);
+            toast.error(getLocalizedApiErrorMessage(t('categories.messages.update_error'), error));
         }
     });
 

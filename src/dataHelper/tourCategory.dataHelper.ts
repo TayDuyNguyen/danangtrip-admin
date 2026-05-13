@@ -8,6 +8,7 @@ export interface CategoryListParams {
     search?: string;
     per_page?: number;
     page?: number;
+    all?: boolean;
     with_stats?: boolean;
 }
 

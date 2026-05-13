@@ -14,9 +14,26 @@ interface CategoryTableProps {
 const CategoryTable = ({ categories, onEdit, onDelete, onStatusChange }: CategoryTableProps) => {
     const { t } = useTranslation('tour');
 
-    const renderIcon = (iconName: string) => {
+    const renderIcon = (category: TourCategory) => {
+        const iconName = category.icon || 'Map';
         const IconComponent = (Icons as unknown as Record<string, React.ElementType>)[iconName] || Icons.Map;
-        return <IconComponent size={18} className="text-[#14b8a6]" />;
+        
+        // Use icon_background from category, fallback to default teal if not set
+        const bgColor = category.icon_background || '#dff7f4';
+        
+        // Compute foreground color based on background
+        const fgColor = bgColor.toLowerCase() === '#000000' || bgColor.toLowerCase() === '#1e293b' 
+            ? '#ffffff' 
+            : '#334155';
+
+        return (
+            <div 
+                className="w-10 h-10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform"
+                style={{ backgroundColor: bgColor }}
+            >
+                <IconComponent size={20} style={{ color: fgColor }} />
+            </div>
+        );
     };
 
     return (
@@ -67,9 +84,7 @@ const CategoryTable = ({ categories, onEdit, onDelete, onStatusChange }: Categor
                                     </span>
                                 </td>
                                 <td className="px-6 py-5">
-                                    <div className="w-10 h-10 bg-[#dff7f4] rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                                        {renderIcon(category.icon)}
-                                    </div>
+                                    {renderIcon(category)}
                                 </td>
                                 <td className="px-6 py-5">
                                     <div className="flex flex-col">

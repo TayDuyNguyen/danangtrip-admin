@@ -40,6 +40,7 @@
         "per_page": "{{count}} / trang"
     },
     "status": {
+        "all": "TẤT CẢ",
         "active": "ĐANG HOẠT ĐỘNG",
         "inactive": "TẠM DỪNG"
     },
@@ -55,6 +56,7 @@
         "delete_warning": "Tất cả đánh giá, lượt yêu thích và dữ liệu liên quan sẽ bị xóa theo.",
         "delete_success": "Xóa địa điểm thành công",
         "delete_error": "Có lỗi xảy ra khi xóa địa điểm",
+        "no_data": "Không có dữ liệu",
         "load_error": "Không thể tải chi tiết địa điểm.",
         "update_success": "Cập nhật thành công",
         "update_error": "Cập nhật thất bại",
@@ -63,8 +65,10 @@
         "bulk_partial_error": "Một số mục không thể cập nhật",
         "create_success": "Tạo địa điểm thành công",
         "create_error": "Có lỗi xảy ra khi tạo địa điểm",
+        "upload_error": "Lỗi khi tải ảnh lên",
         "create_error_title": "Lỗi tạo địa điểm",
-        "discard_confirm": "Bạn có chắc chắn muốn hủy bỏ? Các thay đổi sẽ không được lưu."
+        "discard_confirm": "Bạn có chắc chắn muốn hủy bỏ? Các thay đổi sẽ không được lưu.",
+        "no_data_subtitle": "Thử thay đổi bộ lọc hoặc thêm danh mục mới để bắt đầu."
     },
     "validation": {
         "required": "{{field}} là bắt buộc",
@@ -72,6 +76,9 @@
         "max_length": "{{field}} tối đa {{max}} ký tự",
         "number": "{{field}} phải là số",
         "positive": "{{field}} phải là số dương",
+        "lowercase": "Chỉ được nhập chữ thường",
+        "slug_invalid": "Slug chỉ được chứa chữ thường, số và dấu gạch ngang",
+        "color_invalid": "Màu phải là mã hex hợp lệ",
         "url": "Định dạng URL không hợp lệ",
         "email": "Định dạng email không hợp lệ",
         "max_gte_min": "Giá cao nhất phải lớn hơn hoặc bằng giá thấp nhất"
@@ -100,6 +107,7 @@
             "slug": "Đường dẫn (Slug)",
             "slug_placeholder": "chua-linh-ung-bai-but",
             "slug_auto": "Tự động tạo",
+            "slug_auto_helper": "Slug sẽ tự cập nhật theo tên khi bạn đang tạo mới.",
             "category": "Danh mục",
             "category_placeholder": "Chọn danh mục",
             "subcategory": "Danh mục phụ",
@@ -153,8 +161,11 @@
             "update_location": "Cập nhật địa điểm",
             "creating": "Đang lưu...",
             "updating": "Đang cập nhật...",
-            "cancel": "Hủy bỏ"
-        }
+            "cancel": "Hủy bỏ",
+            "save_changes": "Lưu thay đổi",
+            "retry": "Thử lại"
+        },
+        "edit_subtitle": "Cập nhật thông tin danh mục địa điểm và trạng thái hiển thị"
     },
     "edit_title": "Chỉnh sửa Địa điểm",
     "edit_subtitle": "Cập nhật thông tin chi tiết cho địa điểm {{name}}",
@@ -225,6 +236,80 @@
             "fri": "Thứ 6",
             "sat": "Thứ 7",
             "sun": "Chủ nhật"
+        }
+    },
+    "categories": {
+        "breadcrumb_list": "Danh mục Địa điểm",
+        "add": "Thêm danh mục",
+        "edit": "Chỉnh sửa danh mục",
+        "badge_new": "Mới",
+        "title": "Danh mục Địa điểm",
+        "subtitle": "Quản lý các loại hình địa điểm (Ẩm thực, Lưu trú, Tham quan...)",
+        "search_placeholder": "Tìm theo tên danh mục hoặc slug...",
+        "actions": {
+            "add": "Thêm danh mục",
+            "edit": "Sửa danh mục",
+            "delete": "Xóa danh mục"
+        },
+        "stats": {
+            "total": "TỔNG DANH MỤC",
+            "active": "ĐANG HOẠT ĐỘNG",
+            "inactive": "TẠM DỪNG"
+        },
+        "reorder": {
+            "disabled_title": "Tắt tìm kiếm và bộ lọc để sắp xếp lại",
+            "button_sort": "Sắp xếp thứ tự",
+            "button_sorting": "Đang sắp xếp",
+            "results_label": "TỔNG MỤC",
+            "bar_title": "Chế độ sắp xếp đang bật",
+            "bar_hint": "Kéo thả các thẻ để cập nhật thứ tự hiển thị",
+            "cancel": "Hủy",
+            "save": "Lưu thứ tự"
+        },
+        "icon_browser": {
+            "title": "Thư viện icon",
+            "search_placeholder": "Tìm icon...",
+            "more_prefix": "Cần thêm biểu tượng?",
+            "more_link_label": "Xem Lucide Icons"
+        },
+        "table": {
+            "header_icon": "Biểu tượng",
+            "name": "Tên danh mục",
+            "slug": "Slug",
+            "status": "Trạng thái",
+            "sort_order": "Thứ tự",
+            "actions": "Thao tác",
+            "items_count": "Số địa điểm"
+        },
+        "form": {
+            "name": "Tên danh mục",
+            "name_placeholder": "VD: Ẩm thực địa phương",
+            "slug": "Slug / Đường dẫn",
+            "slug_placeholder": "am-thuc-dia-phuong",
+            "description": "Mô tả",
+            "description_placeholder": "Mô tả ngắn về loại hình địa điểm này...",
+            "status": "Trạng thái hoạt động",
+            "sort_order": "Thứ tự hiển thị",
+            "order": "Vị trí hiển thị",
+            "order_placeholder_auto": "Tự động",
+            "order_drag_hint": "Đổi bằng kéo thả",
+            "image": "Hình ảnh đại diện",
+            "image_placeholder": "https://... hoặc để trống",
+            "icon": "Icon (class hoặc URL)",
+            "icon_placeholder": "VD: MapPinned",
+            "icon_background": "Màu nền icon"
+        },
+        "messages": {
+            "create_success": "Tạo danh mục thành công",
+            "update_success": "Cập nhật danh mục thành công",
+            "delete_success": "Xóa danh mục thành công",
+            "status_update_success": "Cập nhật trạng thái thành công",
+            "load_error": "Không thể tải danh mục địa điểm",
+            "load_error_subtitle": "Kiểm tra backend hoặc thử tải lại để lấy lại danh sách mới nhất.",
+            "delete_error": "Xóa danh mục thất bại",
+            "delete_blocked": "Không thể xóa danh mục đang có danh mục con hoặc địa điểm",
+            "delete_confirm_title": "Xóa danh mục?",
+            "delete_confirm_desc": "Bạn có chắc chắn muốn xóa danh mục <strong>{{name}}</strong>? Hành động này không thể hoàn tác."
         }
     }
 }

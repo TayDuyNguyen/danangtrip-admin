@@ -2,5 +2,76 @@
   "network_error": "Không thể kết nối mạng. Vui lòng kiểm tra lại đường truyền.",
   "permission_denied": "Bạn không có quyền thực hiện hành động này.",
   "server_error": "Lỗi máy chủ hệ thống. Vui lòng thử lại sau.",
-  "general_error": "Đã có lỗi xảy ra. Vui lòng thử lại."
+  "general_error": "Đã có lỗi xảy ra. Vui lòng thử lại.",
+  "api_errors": {
+    "validation_failed": "Vui lòng kiểm tra lại thông tin đã nhập và thử lại.",
+    "auth_invalid_credentials": "Email hoặc mật khẩu bạn nhập không đúng.",
+    "auth_session_expired": "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.",
+    "auth_unauthenticated": "Vui lòng đăng nhập để tiếp tục.",
+    "auth_forbidden": "Bạn không có quyền thực hiện hành động này.",
+    "resource_not_found": "Không tìm thấy thông tin bạn yêu cầu.",
+    "request_method_not_allowed": "Hành động này không được hỗ trợ.",
+    "request_throttled": "Bạn thao tác quá nhanh. Vui lòng đợi ít phút rồi thử lại.",
+    "request_already_processed": "Yêu cầu này đã được xử lý trước đó.",
+    "request_conflict": "Thông tin này đã tồn tại trong hệ thống.",
+    "request_invalid_state": "Không thể hoàn tất hành động này vào lúc này.",
+    "request_bad_request": "Không thể xử lý yêu cầu. Vui lòng kiểm tra lại thông tin và thử lại.",
+    "request_unknown": "Không thể hoàn tất yêu cầu lúc này.",
+    "server_error": "Hệ thống đang bận. Vui lòng thử lại sau.",
+
+    "category_not_found": "Không tìm thấy danh mục.",
+    "category_has_subcategories": "Không thể xóa danh mục vì có danh mục con.",
+    "category_has_locations": "Không thể xóa danh mục vì đang có địa điểm liên kết.",
+    "category_has_tours": "Không thể xóa danh mục vì đang có tour liên kết.",
+
+    "tour_not_found": "Không tìm thấy tour.",
+    "schedule_not_found": "Không tìm thấy lịch khởi hành.",
+    "schedule_has_bookings": "Không thể xóa lịch khởi hành vì đang có đơn đặt.",
+
+    "location_not_found": "Không tìm thấy địa điểm.",
+
+    "user_not_found": "Không tìm thấy người dùng.",
+    "user_cannot_change_own_status": "Bạn không thể thay đổi trạng thái của chính mình.",
+    "user_cannot_change_own_role": "Bạn không thể thay đổi vai trò của chính mình.",
+    "user_cannot_change_own_role_or_status": "Bạn không thể thay đổi vai trò hoặc trạng thái của chính mình.",
+    "user_cannot_delete_own_account": "Bạn không thể xóa tài khoản của chính mình.",
+
+    "booking_not_found": "Không tìm thấy đơn đặt.",
+    "booking_already_paid": "Đơn đặt này đã được thanh toán.",
+    "booking_already_cancelled_or_completed": "Đơn đặt đã bị hủy hoặc đã hoàn thành.",
+
+    "payment_not_found": "Không tìm thấy thanh toán.",
+    "payment_already_processed": "Thanh toán đã được xử lý trước đó.",
+
+    "email_already_verified": "Email đã được xác minh.",
+
+    "favorite_already_exists": "Mục này đã có trong danh sách yêu thích.",
+    "favorite_not_found": "Không tìm thấy mục yêu thích.",
+
+    "rating_not_found": "Không tìm thấy đánh giá.",
+    "rating_already_rated": "Bạn đã đánh giá mục này rồi.",
+
+    "contact_not_found": "Không tìm thấy liên hệ.",
+    "contact_already_replied": "Liên hệ này đã được phản hồi.",
+
+    "blog_not_found": "Không tìm thấy bài viết.",
+    "blog_category_not_found": "Không tìm thấy danh mục blog.",
+
+    "tag_not_found": "Không tìm thấy tag.",
+    "tag_name_already_exists": "Tên tag này đã tồn tại.",
+    "tag_slug_already_exists": "Slug tag này đã tồn tại.",
+
+    "amenity_not_found": "Không tìm thấy tiện ích.",
+    "amenity_name_already_exists": "Tên tiện ích này đã tồn tại.",
+
+    "subcategory_not_found": "Không tìm thấy danh mục phụ.",
+    "notification_not_found": "Không tìm thấy thông báo.",
+
+    "slug_already_taken": "Slug này đã tồn tại.",
+    "slug_already_in_use": "Slug này đang được sử dụng.",
+    "username_already_taken": "Tên người dùng này đã được sử dụng.",
+    "email_already_registered": "Địa chỉ email này đã được đăng ký.",
+    "email_already_taken": "Địa chỉ email này đã được sử dụng.",
+    "categories_not_found": "Một hoặc nhiều danh mục không tìm thấy."
+  }
 }

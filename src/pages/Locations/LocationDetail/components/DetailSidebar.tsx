@@ -130,7 +130,7 @@ const DetailSidebar = ({ location }: DetailSidebarProps) => {
 
                         {/* Info Tip */}
                         <div className="flex gap-3 p-4 rounded-2xl bg-indigo-50 border border-indigo-100/50 text-indigo-700">
-                            <Info size={20} className="flex-shrink-0 mt-0.5" />
+                            <Info size={20} className="shrink-0 mt-0.5" />
                             <p className="text-[13px] font-medium leading-relaxed">
                                 {t('detail.management.status_tip')}
                             </p>

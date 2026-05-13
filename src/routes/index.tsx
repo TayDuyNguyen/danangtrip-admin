@@ -19,6 +19,7 @@ const LocationList = React.lazy(() => import('@/pages/Locations/LocationList'));
 const LocationCreate = React.lazy(() => import('@/pages/Locations/LocationCreate'));
 const LocationEdit = React.lazy(() => import('@/pages/Locations/LocationEdit'));
 const LocationDetail = React.lazy(() => import('@/pages/Locations/LocationDetail'));
+const LocationCategories = React.lazy(() => import('@/pages/Locations/LocationCategories'));
 import ErrorPage from '@/pages/ErrorPage';
 
 /**
@@ -79,6 +80,7 @@ const router = createBrowserRouter([
                     { path: ROUTES.LOCATIONS_CREATE, element: withSuspense(LocationCreate) },
                     { path: ROUTES.LOCATIONS_EDIT, element: withSuspense(LocationEdit) },
                     { path: ROUTES.LOCATIONS_DETAIL, element: withSuspense(LocationDetail) },
+                    { path: ROUTES.LOCATIONS_CATEGORIES, element: withSuspense(LocationCategories) },
                 ]
             }
         ],

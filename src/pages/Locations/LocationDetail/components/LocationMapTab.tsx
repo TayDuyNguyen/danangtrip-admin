@@ -36,7 +36,7 @@ const LocationMapTab = ({ location }: LocationMapTabProps) => {
                 )}
             </div>
 
-            <div className="aspect-[21/9] w-full rounded-[32px] overflow-hidden border border-slate-100 shadow-inner bg-slate-100 relative group">
+            <div className="aspect-21/9 w-full rounded-[32px] overflow-hidden border border-slate-100 shadow-inner bg-slate-100 relative group">
                 {hasCoordinates ? (
                     <iframe
                         title={t('detail.tabs.map')}

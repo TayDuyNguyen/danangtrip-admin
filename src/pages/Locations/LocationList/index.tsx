@@ -14,6 +14,7 @@ import DeleteLocationModal from '../components/DeleteLocationModal';
 
 import {
     useLocationsQuery,
+    useLocationStatsQuery,
     useDeleteLocationMutation,
     useUpdateLocationFeaturedMutation,
     useBulkLocationActionsMutation,
@@ -46,9 +47,13 @@ const LocationListPage = () => {
         data,
         isLoading,
         isFetching,
-        isError,
         refetch,
     } = useLocationsQuery(filters);
+    const {
+        data: statsData,
+        isLoading: isStatsLoading,
+        isError: isStatsError,
+    } = useLocationStatsQuery();
     const deleteMutation = useDeleteLocationMutation();
     const updateFeaturedMutation = useUpdateLocationFeaturedMutation();
     const bulkMutation = useBulkLocationActionsMutation();
@@ -156,7 +161,12 @@ const LocationListPage = () => {
             </div>
 
             {/* Stats Summary */}
-            <LocationStats stats={data?.stats} isLoading={isLoading} isError={isError} />
+            <LocationStats stats={statsData ? {
+                total: statsData.total,
+                active: statsData.active,
+                featured: statsData.featured,
+                views: statsData.total_views >= 1000 ? `${(statsData.total_views / 1000).toFixed(1)}K` : `${statsData.total_views}`,
+            } : data?.stats} isLoading={isStatsLoading && !data} isError={isStatsError && !data} />
 
             {/* Filter Section */}
             <LocationFilter 
