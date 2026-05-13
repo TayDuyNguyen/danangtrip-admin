@@ -11,6 +11,8 @@ export type ValidationErrors = Record<string, string[]>;
 export interface ApiResponse<T = unknown> {
     code: number;
     message: string;
+    error_key?: string;
+    user_message?: string;
     data?: T;
     errors?: ValidationErrors;
 }
@@ -22,6 +24,8 @@ export interface ApiResponse<T = unknown> {
 export interface ErrorResponse {
     code: number;
     message: string;
+    error_key?: string;
+    user_message?: string;
     data?: unknown;
     errors?: ValidationErrors;
 }
@@ -52,6 +56,12 @@ export interface Paginator<T> {
 export interface PaginationParams {
     page?: number;
     limit?: number;
+    per_page?: number;
+    q?: string;
+    search?: string;
+    status?: string;
+    all?: boolean;
+    with_stats?: boolean;
     sort?: string;
     order?: 'asc' | 'desc';
 }

@@ -12,6 +12,12 @@ import CustomSelect from '@/components/ui/CustomSelect';
 import { cn } from '@/utils/cn';
 import { motion, AnimatePresence } from 'framer-motion';
 
+const normalizeReorderList = (items: TourCategory[]) =>
+    items.map((category, index) => ({
+        ...category,
+        sort_order: index + 1,
+    }));
+
 const TourCategories = () => {
     const { t } = useTranslation('tour');
     
@@ -30,6 +36,7 @@ const TourCategories = () => {
     const { data, isLoading, isError, refetch } = useTourCategoriesQuery({ 
         search: searchQuery,
         status: statusFilter,
+        all: true,
         with_stats: true 
     });
     const { createMutation, updateMutation, deleteMutation, statusMutation, reorderMutation } = useTourCategoryMutations();
@@ -52,19 +59,29 @@ const TourCategories = () => {
 
     const handleReorderToggle = () => {
         if (!isReorderMode) {
-            setReorderList([...categories].sort((a, b) => a.sort_order - b.sort_order));
+            setReorderList(normalizeReorderList([...categories].sort((a, b) => a.sort_order - b.sort_order)));
         }
         setIsReorderMode(!isReorderMode);
     };
 
+    const handleReorderChange = (items: TourCategory[]) => {
+        setReorderList(normalizeReorderList(items));
+    };
+
     const handleReorderSave = () => {
-        const items = reorderList.map((cat, index) => ({
+        const normalizedList = normalizeReorderList(reorderList);
+        setReorderList(normalizedList);
+
+        const items = normalizedList.map((cat, index) => ({
             id: cat.id,
             sort_order: index + 1 // Normalize to 1..N
         }));
 
         reorderMutation.mutate(items, {
-            onSuccess: () => setIsReorderMode(false)
+            onSuccess: async () => {
+                await refetch();
+                setIsReorderMode(false);
+            }
         });
     };
 
@@ -86,11 +103,11 @@ const TourCategories = () => {
         status: 'active' | 'inactive';
         icon_background: string;
     }) => {
-        // Construct API data explicitly to omit icon_background (Rule §14.5)
         const apiData = {
             name: formData.name,
             slug: formData.slug,
             icon: formData.icon,
+            icon_background: formData.icon_background,
             description: formData.description,
             sort_order: formData.sort_order,
             status: formData.status
@@ -246,7 +263,7 @@ const TourCategories = () => {
                 onDelete={handleDeleteClick}
                 onStatusChange={handleStatusChange}
                 isReorderMode={isReorderMode}
-                onReorderChange={setReorderList}
+                onReorderChange={handleReorderChange}
             />
 
             {/* Reorder Floating Bar */}

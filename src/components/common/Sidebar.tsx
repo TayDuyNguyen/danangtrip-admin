@@ -147,17 +147,18 @@ const Sidebar = () => {
                                 {hasSub && isOpen && !isCollapsed && (
                                     <div className="mt-1 mb-1 ml-4 pl-4 border-l-2 border-slate-100 space-y-1 animate-in slide-in-from-top-2 duration-200">
                                         {item.subItems?.map(sub => (
-                                            <NavLink
-                                                key={sub.path}
-                                                to={sub.path}
-                                                className={({ isActive }) => `
-                                                    flex items-center gap-2 px-4 py-2.5 rounded-lg transition-all duration-200
-                                                    ${isActive
-                                                        ? 'bg-[#14b8a6]/10 text-[#0f766e] font-black'
-                                                        : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50 font-bold'}
-                                                    text-[13px]
-                                                `}
-                                            >
+                                                <NavLink
+                                                    key={sub.path}
+                                                    to={sub.path}
+                                                    end={true}
+                                                    className={({ isActive }) => `
+                                                        flex items-center gap-2 px-4 py-2.5 rounded-lg transition-all duration-200
+                                                        ${isActive
+                                                            ? 'bg-[#14b8a6]/10 text-[#0f766e] font-black'
+                                                            : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50 font-bold'}
+                                                        text-[13px]
+                                                    `}
+                                                >
                                                 <div className="w-1.5 h-1.5 rounded-full bg-current opacity-50"></div>
                                                 {t(sub.label)}
                                             </NavLink>

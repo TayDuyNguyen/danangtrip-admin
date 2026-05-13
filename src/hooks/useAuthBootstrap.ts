@@ -52,8 +52,7 @@ export const useAuthBootstrap = () => {
 
         const runBootstrap = bootstrapPromise ?? (
             bootstrapPromise = bootstrapAuthSession()
-                .catch((error) => {
-                    console.error('Auth bootstrap failed:', error);
+                .catch(() => {
                     useUserStore.getState().logout();
                 })
                 .finally(() => {

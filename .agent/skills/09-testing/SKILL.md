@@ -45,6 +45,11 @@ Provide URLs when activating this skill:
 ```text
 Dev server URL: http://localhost:5173
 Feature URL:    http://localhost:5173/admin/locations
+
+Login URL: http://localhost:5173/login
+Username: [admin@danangtrip.vn] 
+Password: [password]
+
 ```
 
 If no browser URL is available, browser-based phases must be reported as `NOT RUN` with a specific reason.

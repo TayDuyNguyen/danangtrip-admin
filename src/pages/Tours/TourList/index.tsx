@@ -93,8 +93,7 @@ const TourList = () => {
             }
             setDeleteConfig(null);
             setRowSelection({}); // Clear selection after successful delete
-        } catch (error) {
-            console.error('Delete error:', error);
+        } catch {
             toast.error(t('messages.delete_error'));
         }
     };
@@ -104,8 +103,7 @@ const TourList = () => {
             await Promise.all(ids.map(id => statusMutation.mutateAsync({ id, status })));
             toast.success(t('messages.status_update_success', { count: ids.length }));
             setRowSelection({});
-        } catch (error) {
-            console.error('Bulk status error:', error);
+        } catch {
             toast.error(t('messages.status_update_error'));
         }
     };

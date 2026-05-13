@@ -36,7 +36,7 @@ const CategoryGrid = ({ categories, onEdit, onDelete, onStatusChange, isReorderM
                 onReorder={onReorderChange}
                 className="flex w-full flex-col gap-4" // Chuyển sang dạng List dọc để kéo thả mượt hơn
             >
-                {categories.map((category) => (
+                {categories.map((category, index) => (
                     <Reorder.Item 
                         key={category.id} 
                         value={category}
@@ -46,6 +46,7 @@ const CategoryGrid = ({ categories, onEdit, onDelete, onStatusChange, isReorderM
                     >
                         <CategoryCard 
                             category={category} 
+                            displayOrder={index + 1}
                             onEdit={onEdit} 
                             onDelete={onDelete} 
                             onStatusChange={onStatusChange}

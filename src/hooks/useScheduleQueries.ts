@@ -4,7 +4,6 @@ import { scheduleApi, type ScheduleStatsQuery } from '@/api/scheduleApi';
 import type { ScheduleFilters, Schedule } from '@/types/schedule';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
-import { AxiosError } from 'axios';
 
 export const SCHEDULE_QUERY_KEYS = {
     all: ['schedules'] as const,
@@ -78,17 +77,6 @@ export const useUpdateSchedule = () => {
     });
 };
 
-function extractErrorMessage(err: unknown): string | undefined {
-    if (err instanceof AxiosError) {
-        const data = err.response?.data as { message?: string } | undefined;
-        return data?.message;
-    }
-    if (err instanceof Error) {
-        return err.message;
-    }
-    return undefined;
-}
-
 export const useDeleteSchedule = () => {
     const queryClient = useQueryClient();
     const { t } = useTranslation();
@@ -102,8 +90,8 @@ export const useDeleteSchedule = () => {
             queryClient.invalidateQueries({ queryKey: ['tour-detail-schedules'] });
             toast.success(t('common:success.delete'));
         },
-        onError: (err: unknown) => {
-            toast.error(extractErrorMessage(err) || t('common:error.delete'));
+        onError: () => {
+            toast.error(t('common:error.delete'));
         },
     });
 };
@@ -123,8 +111,8 @@ export const useUpdateScheduleStatus = () => {
             queryClient.invalidateQueries({ queryKey: ['tour-detail-schedules'] });
             toast.success(t('common:success.update'));
         },
-        onError: (err: unknown) => {
-            toast.error(extractErrorMessage(err) || t('common:error.update'));
+        onError: () => {
+            toast.error(t('common:error.update'));
         },
     });
 };
@@ -143,8 +131,8 @@ export const useBulkUpdateScheduleStatus = () => {
             queryClient.invalidateQueries({ queryKey: ['tour-detail-schedules'] });
             toast.success(t('common:success.update_bulk'));
         },
-        onError: (err: unknown) => {
-            toast.error(extractErrorMessage(err) || t('common:error.update_bulk'));
+        onError: () => {
+            toast.error(t('common:error.update_bulk'));
         },
     });
 };

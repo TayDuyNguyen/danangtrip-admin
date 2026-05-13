@@ -40,6 +40,7 @@
         "per_page": "{{count}} / page"
     },
     "status": {
+        "all": "ALL",
         "active": "ACTIVE",
         "inactive": "INACTIVE"
     },
@@ -55,6 +56,7 @@
         "delete_warning": "All reviews, favorites, and related data will also be deleted.",
         "delete_success": "Location deleted successfully",
         "delete_error": "Error deleting location",
+        "no_data": "No data available",
         "load_error": "Unable to load location details.",
         "update_success": "Updated successfully",
         "update_error": "Update failed",
@@ -63,8 +65,10 @@
         "bulk_partial_error": "Some items could not be updated",
         "create_success": "Location created successfully",
         "create_error": "Error creating location",
+        "upload_error": "Failed to upload image",
         "create_error_title": "Creation Error",
-        "discard_confirm": "Are you sure you want to discard? Changes will not be saved."
+        "discard_confirm": "Are you sure you want to discard? Changes will not be saved.",
+        "no_data_subtitle": "Try adjusting filters or add a new category to get started."
     },
     "validation": {
         "required": "{{field}} is required",
@@ -72,6 +76,9 @@
         "max_length": "{{field}} must be at most {{max}} characters",
         "number": "{{field}} must be a number",
         "positive": "{{field}} must be a positive number",
+        "lowercase": "Only lowercase letters are allowed",
+        "slug_invalid": "Slug may only contain lowercase letters, numbers, and hyphens",
+        "color_invalid": "Color must be a valid hex value",
         "url": "Invalid URL format",
         "email": "Invalid email format",
         "max_gte_min": "Max price must be greater than or equal to min price"
@@ -100,6 +107,7 @@
             "slug": "Slug",
             "slug_placeholder": "linh-ung-pagoda",
             "slug_auto": "Auto-generate",
+            "slug_auto_helper": "Slug will follow the name automatically while creating a new item.",
             "category": "Category",
             "category_placeholder": "Select category",
             "subcategory": "Subcategory",
@@ -153,8 +161,11 @@
             "update_location": "Update Location",
             "creating": "Saving...",
             "updating": "Updating...",
-            "cancel": "Cancel"
-        }
+            "cancel": "Cancel",
+            "save_changes": "Save changes",
+            "retry": "Retry"
+        },
+        "edit_subtitle": "Update the location category details and visibility state"
     },
     "edit_title": "Edit Location",
     "edit_subtitle": "Update details for {{name}}",
@@ -225,6 +236,80 @@
             "fri": "Friday",
             "sat": "Saturday",
             "sun": "Sunday"
+        }
+    },
+    "categories": {
+        "breadcrumb_list": "Location Categories",
+        "add": "Add category",
+        "edit": "Edit category",
+        "badge_new": "New",
+        "title": "Location Categories",
+        "subtitle": "Manage place types (Dining, Accommodation, Sightseeing...)",
+        "search_placeholder": "Search by category name or slug...",
+        "actions": {
+            "add": "Add Category",
+            "edit": "Edit Category",
+            "delete": "Delete Category"
+        },
+        "stats": {
+            "total": "TOTAL CATEGORIES",
+            "active": "ACTIVE",
+            "inactive": "INACTIVE"
+        },
+        "reorder": {
+            "disabled_title": "Clear search and filters before reordering",
+            "button_sort": "Reorder",
+            "button_sorting": "Sorting",
+            "results_label": "TOTAL ITEMS",
+            "bar_title": "Reorder mode is active",
+            "bar_hint": "Drag cards to update display order",
+            "cancel": "Cancel",
+            "save": "Save order"
+        },
+        "icon_browser": {
+            "title": "Icon browser",
+            "search_placeholder": "Search icons...",
+            "more_prefix": "Need more icons?",
+            "more_link_label": "Browse Lucide Icons"
+        },
+        "table": {
+            "header_icon": "Icon",
+            "name": "Category Name",
+            "slug": "Slug",
+            "status": "Status",
+            "sort_order": "Order",
+            "actions": "Actions",
+            "items_count": "Places count"
+        },
+        "form": {
+            "name": "Category Name",
+            "name_placeholder": "e.g. Local cuisine",
+            "slug": "Slug / URL Path",
+            "slug_placeholder": "local-cuisine",
+            "description": "Description",
+            "description_placeholder": "Short description for this location category...",
+            "status": "Active Status",
+            "sort_order": "Sort Order",
+            "order": "Display order",
+            "order_placeholder_auto": "Automatic",
+            "order_drag_hint": "Change via drag and drop",
+            "image": "Thumbnail Image",
+            "image_placeholder": "https://... or leave blank",
+            "icon": "Icon (class or URL)",
+            "icon_placeholder": "e.g. MapPinned",
+            "icon_background": "Icon background"
+        },
+        "messages": {
+            "create_success": "Category created successfully",
+            "update_success": "Category updated successfully",
+            "delete_success": "Category deleted successfully",
+            "status_update_success": "Status updated successfully",
+            "load_error": "Unable to load location categories",
+            "load_error_subtitle": "Check the backend or retry to fetch the latest category list.",
+            "delete_error": "Failed to delete category",
+            "delete_blocked": "Cannot delete a category that still has subcategories or locations",
+            "delete_confirm_title": "Delete Category?",
+            "delete_confirm_desc": "Are you sure you want to delete category <strong>{{name}}</strong>? This action cannot be undone."
         }
     }
 }

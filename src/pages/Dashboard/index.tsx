@@ -118,8 +118,8 @@ const Dashboard = () => {
             { from_date: range.from, to_date: range.to, fallbackFilename },
             {
                 onSuccess: () => toast.success(t('tables.export_success')),
-                onError: (err) => {
-                    toast.error(err instanceof Error ? err.message : t('tables.export_failed'));
+                onError: () => {
+                    toast.error(t('tables.export_failed'));
                 },
             }
         );

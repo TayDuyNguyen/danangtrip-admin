@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
 import { AlertTriangle, X } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 
@@ -42,7 +42,12 @@ const DeleteLocationModal = ({
                     </h3>
                     
                     <p className="text-slate-500 text-sm font-medium leading-relaxed mb-4">
-                        {t('messages.delete_confirm', { name: locationName })}
+                        <Trans
+                            t={t}
+                            i18nKey="messages.delete_confirm"
+                            values={{ name: locationName }}
+                            components={{ strong: <strong className="text-slate-900 font-black" /> }}
+                        />
                     </p>
 
                     <div className="flex gap-3 rounded-2xl border border-tertiary-border bg-tertiary p-4">

@@ -17,7 +17,7 @@ const DetailHero = ({ location }: DetailHeroProps) => {
 
     return (
         <div className="relative group overflow-hidden rounded-[32px] bg-white border border-slate-100 shadow-sm animate-in zoom-in-95 duration-500">
-            <div className="relative aspect-[16/9] w-full overflow-hidden bg-slate-100">
+            <div className="relative aspect-video w-full overflow-hidden bg-slate-100">
                 {selectedImage ? (
                     <img
                         src={selectedImage}
@@ -81,7 +81,7 @@ const DetailHero = ({ location }: DetailHeroProps) => {
                         <button
                             key={`${img}-${idx}`}
                             onClick={() => setSelectedImage(img)}
-                            className={`relative flex-shrink-0 w-24 aspect-[4/3] rounded-2xl overflow-hidden border-2 transition-all ${
+                            className={`relative shrink-0 w-24 aspect-4/3 rounded-2xl overflow-hidden border-2 transition-all ${
                                 selectedImage === img
                                     ? 'border-primary shadow-lg scale-95'
                                     : 'border-transparent hover:border-slate-200 grayscale-[0.5] hover:grayscale-0'
