@@ -10,7 +10,33 @@
         "breadcrumb_parent": "Tour Management",
         "breadcrumb_list": "Tour list",
         "breadcrumb_create": "Create new",
-        "breadcrumb_edit": "Edit"
+        "breadcrumb_edit": "Edit",
+        "breadcrumb_detail": "Tour details"
+    },
+    "detail": {
+        "title_placeholder": "Loading tour...",
+        "sections": {
+            "hero": "Images & Overview",
+            "description": "Description",
+            "pricing": "Pricing",
+            "itinerary": "Itinerary",
+            "services": "Services",
+            "schedules": "Schedules",
+            "reviews": "Reviews"
+        },
+        "actions": {
+            "view_public": "View Public Page",
+            "edit_tour": "Edit Tour",
+            "delete_tour": "Permanently Delete",
+            "add_schedule": "Add Departure"
+        },
+        "tabs": {
+            "short_desc": "Short Desc",
+            "full_desc": "Full Desc"
+        },
+        "stats": {
+            "views": "Views"
+        }
     },
     "stats": {
         "title": "Tour Statistics",
@@ -104,6 +130,7 @@
         "export_success": "Preparing export file...",
         "export_error": "Error exporting Excel file",
         "no_data": "No tours found",
+        "no_content": "No content details yet",
         "no_data_subtitle": "Try changing filters or create a new tour",
         "upload_error": "Failed to upload image",
         "create_error_title": "Could not create tour"
@@ -244,9 +271,11 @@
             "view_docs": "View detailed documentation",
             "status_public": "Visible to the public",
             "status_hidden": "Hidden from the site",
-            "status_sold_out_hint": "Not accepting bookings",
-            "featured_helper": "Show in Featured tours",
-            "hot_helper": "Show in Hot tours",
+            "status_sold_out_hint": "No booking",
+            "featured_helper": "Show in Featured section",
+            "hot_helper": "Show in Hot section",
+            "unfeature": "Unset featured",
+            "unhot": "Unset hot tour",
             "completion_label": "{{percent}}% complete",
             "checklist_name": "Tour name",
             "checklist_category": "Tour category",

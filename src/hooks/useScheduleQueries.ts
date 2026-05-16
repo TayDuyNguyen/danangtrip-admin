@@ -137,14 +137,14 @@ export const useBulkUpdateScheduleStatus = () => {
     });
 };
 
-/** Limit for schedule preview in tour list modal (invalidation key `tour-detail-schedules`). */
+/** Limit for schedule preview on tour detail (invalidation key `tour-detail-schedules`). */
 export const TOUR_DETAIL_MODAL_SCHEDULE_LIMIT = 5;
 
 /** Limit for departure list block on tour edit page. */
 export const TOUR_EDIT_DEPARTURE_SCHEDULE_LIMIT = 25;
 
 /**
- * Schedules preview for `TourDetailModal` — data flow: hook → `scheduleApi` (PROJECT_RULES §4).
+ * Schedules preview for tour detail page — data flow: hook → `scheduleApi` (PROJECT_RULES §4).
  */
 export function useTourDetailModalSchedules(tourId: string | number | null | undefined, isOpen: boolean) {
     const scheduleFilters = useMemo(

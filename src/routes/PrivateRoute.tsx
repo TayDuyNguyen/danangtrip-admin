@@ -12,7 +12,7 @@ const PrivateRoute = () => {
     }
 
     return (
-        isAuthenticated && hasRole(user, 'admin') ? <Outlet /> : <Navigate to={ROUTES.LOGIN} replace />
+        isAuthenticated && hasRole(user, ['admin', 'staff']) ? <Outlet /> : <Navigate to={ROUTES.LOGIN} replace />
     );
 }
 

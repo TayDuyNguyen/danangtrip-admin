@@ -9,6 +9,7 @@ const Dashboard = React.lazy(() => import('@/pages/Dashboard'));
 const Login = React.lazy(() => import('@/pages/Login'));
 const PageNotFound = React.lazy(() => import('@/pages/PageNotFound'));
 const TourList = React.lazy(() => import('@/pages/Tours/TourList'));
+const TourDetail = React.lazy(() => import('@/pages/Tours/TourDetail'));
 const AddTour = React.lazy(() => import('@/pages/Tours/TourCreate'));
 const EditTour = React.lazy(() => import('@/pages/Tours/TourEdit'));
 const TourCategories = React.lazy(() => import('@/pages/Tours/TourCategories'));
@@ -70,6 +71,7 @@ const router = createBrowserRouter([
                 children: [
                     { path: ROUTES.DASHBOARD, element: withSuspense(Dashboard) },
                     { path: ROUTES.TOURS_LIST, element: withSuspense(TourList) },
+                    { path: ROUTES.TOURS_DETAIL, element: withSuspense(TourDetail) },
                     { path: ROUTES.TOURS_CREATE, element: withSuspense(AddTour) },
                     { path: ROUTES.TOURS_EDIT, element: withSuspense(EditTour) },
                     { path: ROUTES.TOURS_CATEGORIES, element: withSuspense(TourCategories) },

@@ -49,6 +49,14 @@ const processQueus = (error: Error | null, token: string | null = null) => {
     failedQueue = [];
 };
 
+const isAuthEndpoint = (url: string | undefined) =>
+    Boolean(
+        url &&
+            (url.includes(API_ENDPOINTS.AUTH.LOGIN) ||
+                url.includes(API_ENDPOINTS.AUTH.REFRESH_TOKEN) ||
+                url.includes(API_ENDPOINTS.AUTH.LOGOUT))
+    );
+
 /**
  * Clears tokens, resets user state and redirects to login page
  * (Xóa token, reset trạng thái user và chuyển hướng về trang đăng nhập)
@@ -137,8 +145,8 @@ axiosClient.interceptors.request.use(
                     config.headers.Authorization = `Bearer ${newToken}`;
                 } else {
                     processQueus(new Error("Refresh failed"), null);
-                    handleLogout();
-                    return Promise.reject(new Error("Session expired"));
+                    // Keep using the current token and let the response interceptor decide on real 401s.
+                    config.headers.Authorization = `Bearer ${token}`;
                 }
             } finally {
                 isRefreshing = false;
@@ -149,7 +157,8 @@ axiosClient.interceptors.request.use(
                 failedQueue.push({ resolve, reject });
             }).then((token) => {
                 if (token) config.headers.Authorization = `Bearer ${token}`;
-                return config;
+                else if (getAccessToken()) config.headers.Authorization = `Bearer ${getAccessToken()}`;
+                return applyCommonHeaders(config);
             });
         } else {
             if (token) {
@@ -218,10 +227,7 @@ axiosClient.interceptors.response.use(
         // Handle 401 Unauthorized
         if (status === 401 || data?.code === 401) {
             // Skip for login or refresh endpoints to avoid loops
-            if (
-                originalRequest?.url?.includes(API_ENDPOINTS.AUTH.LOGIN) ||
-                originalRequest?.url?.includes(API_ENDPOINTS.AUTH.REFRESH_TOKEN)
-            ) {
+            if (isAuthEndpoint(originalRequest?.url)) {
                 return Promise.reject(error);
             }
 
@@ -262,6 +268,10 @@ axiosClient.interceptors.response.use(
         }
 
         if (status === 403) {
+            if (isAuthEndpoint(originalRequest?.url)) {
+                handleLogout();
+                return Promise.reject(error);
+            }
             toast.warning(getLocalizedApiErrorMessage(i18next.t("translation:permission_denied"), error));
         }
 

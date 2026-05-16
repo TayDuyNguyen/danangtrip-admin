@@ -3,12 +3,6 @@ import { NavLink, useLocation } from 'react-router-dom';
 import {
     LayoutDashboard,
     Map,
-    Hotel,
-    ShoppingCart,
-    FileText,
-    Users,
-    Bell,
-    Settings,
     LogOut,
     ChevronDown,
     MapPin,
@@ -39,12 +33,6 @@ const navItems = [
             { label: 'sidebar.location_categories', path: ROUTES.LOCATIONS_CATEGORIES },
         ]
     },
-    { icon: Hotel, label: 'sidebar.hotels', path: '/admin/hotels' },
-    { icon: ShoppingCart, label: 'sidebar.orders', path: '/admin/orders' },
-    { icon: FileText, label: 'sidebar.posts', path: '/admin/posts' },
-    { icon: Users, label: 'sidebar.users', path: '/admin/users' },
-    { icon: Bell, label: 'sidebar.notifications', path: '/admin/notifications' },
-    { icon: Settings, label: 'sidebar.settings', path: '/admin/settings' },
 ];
 
 const Sidebar = () => {

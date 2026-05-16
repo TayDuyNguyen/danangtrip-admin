@@ -11,16 +11,24 @@ export type ScheduleStatsQuery = Pick<ScheduleFilters, 'tour_id' | 'start_date' 
 
 function apiStatusFromUi(status: string): string {
     const normalized = String(status).trim().toLowerCase();
-    if (normalized === 'available' || normalized === 'full' || normalized === 'cancelled') {
+    if (normalized === 'available' || normalized === 'cancelled') {
         return normalized;
     }
     if (normalized === 'active' || normalized === 'open') {
         return 'available';
     }
-    if (normalized === 'inactive' || normalized === 'closed' || normalized === 'sold_out') {
-        return 'full';
+    if (normalized === 'inactive' || normalized === 'closed') {
+        return 'cancelled';
     }
     return normalized;
+}
+
+function apiBookingAvailabilityFromUi(value: string): string {
+    const normalized = String(value).trim().toLowerCase();
+    if (normalized === 'sold_out' || normalized === 'sold-out' || normalized === 'soldout') {
+        return 'sold_out';
+    }
+    return normalized === 'open' ? 'open' : normalized;
 }
 
 function unwrapApiData<T>(payload: unknown): T {
@@ -50,6 +58,9 @@ export const scheduleApi = {
         }
         if (filters.status && filters.status !== 'all') {
             params.status = apiStatusFromUi(filters.status);
+        }
+        if (filters.bookingAvailability && filters.bookingAvailability !== 'all') {
+            params.booking_availability = apiBookingAvailabilityFromUi(filters.bookingAvailability);
         }
         if (filters.start_date) {
             params.from = filters.start_date;

@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { tourApi } from '@/api/tourApi';
-import type { TourFilters, TourListData } from '@/dataHelper/tour.dataHelper';
+import type { TourFilters, TourListData, TourItem } from '@/dataHelper/tour.dataHelper';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 import { AxiosError } from 'axios';
@@ -90,6 +90,16 @@ export const useTourMutations = () => {
                     };
                 }
             );
+
+            // Optimistic update for detail view
+            queryClient.setQueryData<TourItem>(
+                tourKeys.detail(newData.id),
+                (old) => {
+                    if (!old) return old;
+                    return { ...old, status: newData.status };
+                }
+            );
+
             return { previousQueries };
         },
         onSuccess: () => {
@@ -124,6 +134,16 @@ export const useTourMutations = () => {
                     };
                 }
             );
+
+            // Optimistic update for detail view
+            queryClient.setQueryData<TourItem>(
+                tourKeys.detail(newData.id),
+                (old) => {
+                    if (!old) return old;
+                    return { ...old, is_featured: newData.is_featured };
+                }
+            );
+
             return { previousQueries };
         },
         onSuccess: () => {
@@ -158,6 +178,16 @@ export const useTourMutations = () => {
                     };
                 }
             );
+
+            // Optimistic update for detail view
+            queryClient.setQueryData<TourItem>(
+                tourKeys.detail(newData.id),
+                (old) => {
+                    if (!old) return old;
+                    return { ...old, is_hot: newData.is_hot };
+                }
+            );
+
             return { previousQueries };
         },
         onSuccess: () => {

@@ -56,13 +56,6 @@ export const SchedulePreviewBox = ({ control }: SchedulePreviewBoxProps) => {
                         {t('schedules:status.available')}
                     </span>
                 );
-            case 'FULL':
-                return (
-                    <span className="inline-flex items-center gap-1.5 rounded-full bg-red-50 px-2.5 py-1 text-[11px] font-bold text-red-700 border border-red-100">
-                        <span className="h-1.5 w-1.5 rounded-full bg-red-500" />
-                        {t('schedules:status.full')}
-                    </span>
-                );
             case 'CANCELLED':
                 return (
                     <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 px-2.5 py-1 text-[11px] font-bold text-slate-600 border border-slate-100">

@@ -1,5 +1,5 @@
 import { splitLines } from "@/utils/text";
-import { toNumberSafe, toArraySafe } from "@/utils/safeConverters";
+import { toNumberSafe } from "@/utils/safeConverters";
 import type { TourItem } from "./tour.dataHelper";
 
 /** Raw API shape for tour resources (responses and admin payloads). */
@@ -25,8 +25,8 @@ export interface RawTour {
     min_people: number | string;
     available_from: string | null;
     available_to: string | null;
-    thumbnail: string | null;
-    images: string[] | null;
+    thumbnail: string | { url?: string | null } | null;
+    images: string[] | Array<{ url?: string | null }> | string | null;
     video_url: string | null;
     location_ids?: number[] | null;
     /** API: active | inactive; legacy sold_out normalized in mapFromRaw */
@@ -42,6 +42,7 @@ export interface RawTour {
     created_at: string;
     updated_at: string;
     category?: RawTourCategory;
+    category_name?: string | null;
 }
 
 export interface RawTourCategory {
@@ -88,6 +89,65 @@ function normalizeTourVisibility(raw: RawTour): {
     return { status, booking_availability };
 }
 
+function parseMaybeJson<T>(value: unknown): T | null {
+    if (typeof value !== 'string') return null;
+    try {
+        return JSON.parse(value) as T;
+    } catch {
+        return null;
+    }
+}
+
+function normalizeImageUrl(value: unknown): string {
+    if (typeof value === 'string') {
+        const trimmed = value.trim();
+        if (!trimmed) return '';
+        
+        // If it's already a full URL or base64, return as is
+        if (trimmed.startsWith('http') || trimmed.startsWith('data:')) {
+            return trimmed;
+        }
+
+        // If it starts with /uploads or similar relative path, prefix with API host
+        // We use the global import.meta.env or a safe fallback
+        const apiUrl = (import.meta.env?.VITE_API_URL as string) || 'http://localhost:8000/api/v1';
+        const apiHost = apiUrl.split('/api/v1')[0] || apiUrl.split('/v1')[0] || 'http://localhost:8000';
+        
+        return `${apiHost}${trimmed.startsWith('/') ? '' : '/'}${trimmed}`;
+    }
+    
+    if (value && typeof value === 'object') {
+        const candidate = (value as { url?: unknown }).url;
+        return typeof candidate === 'string' ? normalizeImageUrl(candidate) : '';
+    }
+    return '';
+}
+
+function normalizeImageArray(value: unknown): string[] {
+    const parsed = parseMaybeJson<unknown>(value);
+    const source = parsed ?? value;
+    if (!Array.isArray(source)) return [];
+    return source
+        .map((item) => normalizeImageUrl(item))
+        .filter(Boolean);
+}
+
+function normalizeItineraryItems(
+    value: unknown,
+): Array<{ day: number; title: string; content: string }> {
+    const parsed = parseMaybeJson<unknown>(value);
+    const source = parsed ?? value;
+    if (!Array.isArray(source)) return [];
+
+    return source
+        .filter((item): item is Record<string, unknown> => Boolean(item && typeof item === 'object'))
+        .map((item, index) => ({
+            day: toNumberSafe(item.day, index + 1) || index + 1,
+            title: typeof item.title === 'string' ? item.title : '',
+            content: typeof item.content === 'string' ? item.content : '',
+        }));
+}
+
 export const tourMapper = {
     /** API → UI */
     mapFromRaw(raw: RawTour): TourViewModel {
@@ -99,12 +159,7 @@ export const tourMapper = {
             tour_category_id: toNumberSafe(raw.tour_category_id),
             description: raw.description || '',
             short_desc: raw.short_desc || '',
-            itinerary: Array.isArray(raw.itinerary) 
-                ? raw.itinerary.map((item: Record<string, unknown>, index) => ({
-                    ...item,
-                    day: toNumberSafe(item.day) || index + 1
-                  })) as Array<{ day: number; title: string; content: string }>
-                : [],
+            itinerary: normalizeItineraryItems(raw.itinerary),
             inclusions: inclusionsToFormField(raw.inclusions) || '',
             exclusions: inclusionsToFormField(raw.exclusions) || '',
             price_adult: toNumberSafe(raw.price_adult),
@@ -118,8 +173,8 @@ export const tourMapper = {
             min_people: raw.min_people !== null ? toNumberSafe(raw.min_people) : null,
             available_from: raw.available_from || '',
             available_to: raw.available_to || '',
-            thumbnail: raw.thumbnail || '',
-            images: toArraySafe<string>(raw.images),
+            thumbnail: normalizeImageUrl(raw.thumbnail),
+            images: normalizeImageArray(raw.images),
             video_url: raw.video_url || null,
             status,
             booking_availability,
@@ -134,7 +189,7 @@ export const tourMapper = {
                     : null,
             created_at: raw.created_at || '',
             updated_at: raw.updated_at || '',
-            categoryName: raw.category?.name,
+            categoryName: raw.category?.name || raw.category_name || '',
             location_ids: Array.isArray(raw.location_ids) ? raw.location_ids.map(id => toNumberSafe(id)) : [],
         };
     },

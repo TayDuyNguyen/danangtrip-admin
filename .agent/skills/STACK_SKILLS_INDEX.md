@@ -290,20 +290,27 @@ Reality check note:
 The examples below are fallback templates.
 Dates and slugs are examples only; replace them with the current task values.
 
+**Tài liệu tham chiếu cho mỗi màn hình:**
+- Page doc: `d:/DATN/DATN_Tài liệu/docs/page/<admin_xxx>.md`
+- Screen HTML: `d:/DATN/DATN_Tài liệu/screen/3_Admin_Flows/<xx-Ten_Man>.html`
+- Screen PNG: `d:/DATN/DATN_Tài liệu/screen/3_Admin_Flows/<xx-Ten_Man>.png`
+- API docs: `d:/DATN/DATN_Tài liệu/docs/api/api_list.md`
+
 ### Skill 01 - Screen Analysis
 
 ```text
-Activate 01-screen-analysis
+Activate 01-screen-analysis [.agent/skills/01-screen-analysis/SKILL.md]
 
 Context:
 - Repo: [d:/DATN/danangtrip-admin]
-- Feature slug: [tour-list]
-- Screen name: [Tour list]
-- Figma/Stitch: [https://www.figma.com/... | https://stitch.withgoogle.com/... | NONE]
-- Input source: [path to mockup | SRS section | NONE]
+- Feature slug: [tour-detail]
+- Screen name: [Chi tiết Tour]
+- Page doc: [d:/DATN/DATN_Tài liệu/docs/page/admin_tours_detail.md]
+- Screen prototype: [d:/DATN/DATN_Tài liệu/screen/3_Admin_Flows/09.4-Chi_Tiet_Tour.html]
+- Screen screenshot: [d:/DATN/DATN_Tài liệu/screen/3_Admin_Flows/09.4-Chi_Tiet_Tour.png]
 - DESIGN.md: [d:/DATN/danangtrip-admin/DESIGN.md]
-- API docs: [path to API docs | NONE]
-- Output: [.agent/artifacts/analysis/YYYY-MM-DD__tour-list__screen-analysis.md]
+- API docs: [d:/DATN/DATN_Tài liệu/docs/api/api_list.md]
+- Output: [.agent/artifacts/analysis/YYYY-MM-DD__tour-detail__screen-analysis.md]
 ```
 
 Expected output:
@@ -317,13 +324,13 @@ Expected output:
 ### Skill 02 - Project Setup Audit
 
 ```text
-Activate 02-project-setup
+Activate 02-project-setup [.agent/skills/02-project-setup/SKILL.md]
 
 Context:
 - Repo: [d:/DATN/danangtrip-admin]
-- Feature slug: [project-base | tour-list]
+- Feature slug: [tour-detail]
 - Audit reason: [new sprint | stack drift suspicion | onboarding]
-- Output: [.agent/artifacts/audits/YYYY-MM-DD__project-base__project-audit.md]
+- Output: [.agent/artifacts/audits/YYYY-MM-DD__tour-detail__project-audit.md]
 ```
 
 Expected output:
@@ -334,15 +341,16 @@ Expected output:
 ### Skill 03 - Types And API Contract
 
 ```text
-Activate 03-types-api-contract
+Activate 03-types-api-contract [.agent/skills/03-types-api-contract/SKILL.md]
 
 Context:
 - Repo: [d:/DATN/danangtrip-admin]
-- Feature slug: [tour-list]
-- Analysis file: [.agent/artifacts/analysis/YYYY-MM-DD__tour-list__screen-analysis.md]
-- API docs: [path to API docs]
-- Relevant endpoints: [GET /admin/tours, POST /admin/tours, PUT /admin/tours/:id, DELETE /admin/tours/:id]
-- Output: [.agent/artifacts/api-contracts/YYYY-MM-DD__tour-list__api-contract.md]
+- Feature slug: [tour-detail]
+- Analysis file: [.agent/artifacts/analysis/YYYY-MM-DD__tour-detail__screen-analysis.md]
+- Page doc: [d:/DATN/DATN_Tài liệu/docs/page/admin_tours_detail.md]
+- API docs: [d:/DATN/DATN_Tài liệu/docs/api/api_list.md]
+- Relevant endpoints: [GET /admin/tours/:id, PATCH /admin/tours/:id/status, DELETE /admin/tours/:id]
+- Output: [.agent/artifacts/api-contracts/YYYY-MM-DD__tour-detail__api-contract.md]
 ```
 
 Expected output:
@@ -356,16 +364,16 @@ Expected output:
 ### Skill 04 - Layout And Routing
 
 ```text
-Activate 04-layout-routing
+Activate 04-layout-routing [.agent/skills/04-layout-routing/SKILL.md]
 
 Context:
 - Repo: [d:/DATN/danangtrip-admin]
-- Feature slug: [tour-list]
-- Analysis file: [.agent/artifacts/analysis/YYYY-MM-DD__tour-list__screen-analysis.md]
-- Target route path: [/tours]
+- Feature slug: [tour-detail]
+- Analysis file: [.agent/artifacts/analysis/YYYY-MM-DD__tour-detail__screen-analysis.md]
+- Target route path: [/admin/tours/:id]
 - New routes: [yes | no]
-- New menu item: [yes | no]
-- Output: [.agent/artifacts/routing/YYYY-MM-DD__tour-list__route-plan.md]
+- New menu item: [no]
+- Output: [.agent/artifacts/routing/YYYY-MM-DD__tour-detail__route-plan.md]
 ```
 
 Expected output:
@@ -378,14 +386,15 @@ Expected output:
 ### Skill 05 - UI Components
 
 ```text
-Activate 05-ui-components
+Activate 05-ui-components [.agent/skills/05-ui-components/SKILL.md]
 
 Context:
 - Repo: [d:/DATN/danangtrip-admin]
-- Feature slug: [tour-list]
-- Analysis file: [.agent/artifacts/analysis/YYYY-MM-DD__tour-list__screen-analysis.md]
-- Components to focus on: [TourTable, TourFormModal, TourFilterBar | NONE]
-- Output: [.agent/artifacts/ui-specs/YYYY-MM-DD__tour-list__ui-spec.md]
+- Feature slug: [tour-detail]
+- Analysis file: [.agent/artifacts/analysis/YYYY-MM-DD__tour-detail__screen-analysis.md]
+- Screen prototype: [d:/DATN/DATN_Tài liệu/screen/3_Admin_Flows/09.4-Chi_Tiet_Tour.html]
+- Components to focus on: [TourDetailHeader, TourInfoSection, TourScheduleTable, TourGallery | NONE]
+- Output: [.agent/artifacts/ui-specs/YYYY-MM-DD__tour-detail__ui-spec.md]
 ```
 
 Expected output:
@@ -399,16 +408,16 @@ Expected output:
 ### Skill 06 - Data Integration
 
 ```text
-Activate 06-data-integration
+Activate 06-data-integration [.agent/skills/06-data-integration/SKILL.md]
 
 Context:
 - Repo: [d:/DATN/danangtrip-admin]
-- Feature slug: [tour-list]
-- API contract: [.agent/artifacts/api-contracts/YYYY-MM-DD__tour-list__api-contract.md]
-- UI spec: [.agent/artifacts/ui-specs/YYYY-MM-DD__tour-list__ui-spec.md]
-- Queries: [useTourList, useTourDetail, useCategoryList]
-- Mutations: [useCreateTour, useUpdateTour, useDeleteTour, useToggleTourStatus]
-- Output: [.agent/artifacts/integration/YYYY-MM-DD__tour-list__data-integration.md]
+- Feature slug: [tour-detail]
+- API contract: [.agent/artifacts/api-contracts/YYYY-MM-DD__tour-detail__api-contract.md]
+- UI spec: [.agent/artifacts/ui-specs/YYYY-MM-DD__tour-detail__ui-spec.md]
+- Queries: [useTourDetail, useTourSchedules, useTourImages]
+- Mutations: [useToggleTourStatus, useDeleteTour, useToggleFeatured]
+- Output: [.agent/artifacts/integration/YYYY-MM-DD__tour-detail__data-integration.md]
 ```
 
 Expected output:
@@ -421,16 +430,17 @@ Expected output:
 ### Skill 07 - Interactions
 
 ```text
-Activate 07-interactions
+Activate 07-interactions [.agent/skills/07-interactions/SKILL.md]
 
 Context:
 - Repo: [d:/DATN/danangtrip-admin]
-- Feature slug: [tour-list]
-- Analysis file: [.agent/artifacts/analysis/YYYY-MM-DD__tour-list__screen-analysis.md]
-- Data integration: [.agent/artifacts/integration/YYYY-MM-DD__tour-list__data-integration.md]
-- Main actions: [create, update, delete, search, filter, pagination, export]
-- Destructive actions: [single delete, bulk delete]
-- Output: [.agent/artifacts/interaction-specs/YYYY-MM-DD__tour-list__interaction-spec.md]
+- Feature slug: [tour-detail]
+- Analysis file: [.agent/artifacts/analysis/YYYY-MM-DD__tour-detail__screen-analysis.md]
+- Data integration: [.agent/artifacts/integration/YYYY-MM-DD__tour-detail__data-integration.md]
+- Page doc: [d:/DATN/DATN_Tài liệu/docs/page/admin_tours_detail.md]
+- Main actions: [view detail, toggle status, toggle featured/hot, delete, navigate to edit/schedules]
+- Destructive actions: [delete tour]
+- Output: [.agent/artifacts/interaction-specs/YYYY-MM-DD__tour-detail__interaction-spec.md]
 ```
 
 Expected output:
@@ -444,16 +454,16 @@ Expected output:
 ### Skill 08 - Auth And Permissions
 
 ```text
-Activate 08-auth-permissions
+Activate 08-auth-permissions [.agent/skills/08-auth-permissions/SKILL.md]
 
 Context:
 - Repo: [d:/DATN/danangtrip-admin]
-- Feature slug: [tour-list]
-- Route plan: [.agent/artifacts/routing/YYYY-MM-DD__tour-list__route-plan.md]
-- Interaction spec: [.agent/artifacts/interaction-specs/YYYY-MM-DD__tour-list__interaction-spec.md]
+- Feature slug: [tour-detail]
+- Route plan: [.agent/artifacts/routing/YYYY-MM-DD__tour-detail__route-plan.md]
+- Interaction spec: [.agent/artifacts/interaction-specs/YYYY-MM-DD__tour-detail__interaction-spec.md]
 - Feature type: [authenticated-only | role-based]
 - Relevant roles: [admin, staff]
-- Output: [.agent/artifacts/auth/YYYY-MM-DD__tour-list__auth-permissions-review.md]
+- Output: [.agent/artifacts/auth/YYYY-MM-DD__tour-detail__auth-permissions-review.md]
 ```
 
 Expected output:
@@ -467,15 +477,15 @@ Expected output:
 ### Skill 09 - Testing
 
 ```text
-Activate 09-testing
+Activate 09-testing [.agent/skills/09-testing/SKILL.md]
 
 Context:
 - Repo: [d:/DATN/danangtrip-admin]
-- Feature slug: [tour-list]
-- Analysis file: [.agent/artifacts/analysis/YYYY-MM-DD__tour-list__screen-analysis.md]
-- Interaction spec: [.agent/artifacts/interaction-specs/YYYY-MM-DD__tour-list__interaction-spec.md]
-- Auth review: [.agent/artifacts/auth/YYYY-MM-DD__tour-list__auth-permissions-review.md]
-- Output: [.agent/artifacts/test-cases/YYYY-MM-DD__tour-list__test-report.md]
+- Feature slug: [tour-detail]
+- Analysis file: [.agent/artifacts/analysis/YYYY-MM-DD__tour-detail__screen-analysis.md]
+- Interaction spec: [.agent/artifacts/interaction-specs/YYYY-MM-DD__tour-detail__interaction-spec.md]
+- Auth review: [.agent/artifacts/auth/YYYY-MM-DD__tour-detail__auth-permissions-review.md]
+- Output: [.agent/artifacts/test-cases/YYYY-MM-DD__tour-detail__test-report.md]
 ```
 
 Expected output:
@@ -490,16 +500,16 @@ Expected output:
 ### Skill 10 - Optimization And Deploy
 
 ```text
-Activate 10-optimization-deploy
+Activate 10-optimization-deploy [.agent/skills/10-optimization-deploy/SKILL.md]
 
 Context:
 - Repo: [d:/DATN/danangtrip-admin]
-- Feature slug: [tour-list]
-- Test report: [.agent/artifacts/test-cases/YYYY-MM-DD__tour-list__test-report.md]
+- Feature slug: [tour-detail]
+- Test report: [.agent/artifacts/test-cases/YYYY-MM-DD__tour-detail__test-report.md]
 - Test verdict: [READY | READY WITH RISKS | NOT READY]
 - Existing artifacts: [analysis, api-contract, route-plan, ui-spec, data-integration, interaction-spec, auth-review, test-report]
-- Output deploy: [.agent/artifacts/deploy/YYYY-MM-DD__tour-list__deploy-report.md]
-- Output review: [.agent/artifacts/review/YYYY-MM-DD__tour-list__review.md]
+- Output deploy: [.agent/artifacts/deploy/YYYY-MM-DD__tour-detail__deploy-report.md]
+- Output review: [.agent/artifacts/review/YYYY-MM-DD__tour-detail__review.md]
 ```
 
 Expected output:

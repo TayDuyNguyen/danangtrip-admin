@@ -4,9 +4,9 @@ import type { Resolver } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useTourEditDepartureSchedules, useDeleteSchedule } from '@/hooks/useScheduleQueries';
-import { ScheduleStatus, type Schedule } from '@/types/schedule';
+import { ScheduleBookingAvailability, ScheduleStatus, type Schedule } from '@/types/schedule';
 import {
     Save,
     FileText,
@@ -70,11 +70,15 @@ const SCROLL_FIELD_ORDER: string[] = [
 function EditTour() {
     const { t, i18n } = useTranslation(['tour', 'common', 'schedules']);
     const navigate = useNavigate();
+    const location = useLocation();
     const { id } = useParams<{ id: string }>();
     const [isScrolled, setIsScrolled] = useState(false);
     const [autoSlug, setAutoSlug] = useState(false);
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     const [schedulePendingDelete, setSchedulePendingDelete] = useState<Schedule | null>(null);
+    const returnPath =
+        (location.state as { fromPath?: string } | null)?.fromPath ||
+        (id ? ROUTES.TOURS_DETAIL.replace(':id', String(id)) : ROUTES.TOURS_LIST);
 
     useEffect(() => {
         const handleScroll = (e: Event) => {
@@ -183,7 +187,7 @@ function EditTour() {
                 });
 
                 if (Object.keys(partialData).length === 0) {
-                    navigate(ROUTES.TOURS_LIST);
+                    navigate(returnPath);
                     return;
                 }
 
@@ -194,7 +198,7 @@ function EditTour() {
                     id,
                     data: mappedData as Record<string, unknown>
                 });
-                navigate(ROUTES.TOURS_LIST);
+                navigate(returnPath);
             } catch {
                 toast.error(t('common:error_occurred'));
             }
@@ -309,7 +313,7 @@ function EditTour() {
                     <div className="flex flex-wrap items-center gap-3 shrink-0">
                         <button
                             type="button"
-                            onClick={() => navigate(ROUTES.TOURS_LIST)}
+                            onClick={() => navigate(returnPath)}
                             className="px-5 py-2.5 text-sm font-semibold rounded-md border border-[#E2E8F0] bg-white text-[#64748B] hover:border-[#EF4444] hover:text-[#EF4444] transition-colors"
                         >
                             {t('form.actions.cancel')}
@@ -775,11 +779,11 @@ function EditTour() {
                                                         {row.bookedSlots}/{row.totalSlots}
                                                     </span>
                                                     <span className="px-2 py-1 rounded-lg bg-white border border-slate-200 text-xs font-bold text-slate-600">
-                                                        {row.status === ScheduleStatus.AVAILABLE
-                                                            ? t('schedules:status.available')
-                                                            : row.status === ScheduleStatus.FULL
+                                                        {row.status === ScheduleStatus.CANCELLED
+                                                            ? t('schedules:status.cancelled')
+                                                            : row.bookingAvailability === ScheduleBookingAvailability.SOLD_OUT
                                                                 ? t('schedules:status.full')
-                                                                : t('schedules:status.cancelled')}
+                                                                : t('schedules:status.available')}
                                                     </span>
                                                     <button
                                                         type="button"

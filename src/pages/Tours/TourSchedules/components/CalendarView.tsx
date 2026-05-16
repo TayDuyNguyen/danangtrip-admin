@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import type { Schedule } from '@/types/schedule';
-import { ScheduleStatus } from '@/types/schedule';
+import { ScheduleBookingAvailability, ScheduleStatus } from '@/types/schedule';
 
 interface CalendarViewProps {
     schedules?: Schedule[];
@@ -38,7 +38,7 @@ const CalendarView = ({ schedules, selectedDate, onSelectDate }: CalendarViewPro
             
             current.total++;
             if (schedule.status === ScheduleStatus.AVAILABLE) current.available++;
-            if (schedule.status === ScheduleStatus.FULL) current.full++;
+            if (schedule.bookingAvailability === ScheduleBookingAvailability.SOLD_OUT) current.full++;
             if (schedule.status === ScheduleStatus.CANCELLED) current.cancelled++;
             
             map.set(dateStr, current);

@@ -35,7 +35,7 @@ interface Props {
     onPageChange: (page: number) => void;
     onLimitChange: (limit: number) => void;
     onEdit: (id: number) => void;
-    onView: (tour: TourItem) => void;
+    onView: (id: number) => void;
     onDelete: (id: number, name: string) => void;
     onToggleFeatured: (id: number, value: boolean) => void;
     onToggleHot: (id: number, value: boolean) => void;
@@ -260,7 +260,7 @@ const TourTable = ({
             cell: info => (
                 <div className="flex items-center justify-end gap-1.5 pr-2">
                     <button 
-                        onClick={() => onView(info.row.original)}
+                        onClick={() => onView(info.row.original.id)}
                         title={t('actions.view', { ns: 'common' })}
                         className="w-[30px] h-[30px] flex items-center justify-center bg-surface border border-[#E2E8F0] rounded-[6px] text-[#64748B] hover:text-[#14b8a6] hover:border-[#14b8a6] transition-all group/btn"
                     >

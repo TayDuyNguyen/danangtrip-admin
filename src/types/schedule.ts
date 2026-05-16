@@ -3,7 +3,6 @@
  */
 export const ScheduleStatus = {
     AVAILABLE: 'AVAILABLE',
-    FULL: 'FULL', // legacy value kept for backward-compatibility in old components
     CANCELLED: 'CANCELLED',
 } as const;
 
@@ -45,6 +44,7 @@ export interface ScheduleFilters {
     q?: string;
     tour_id?: string | number;
     status?: string;
+    bookingAvailability?: string;
     start_date?: string;
     end_date?: string;
     page?: number;

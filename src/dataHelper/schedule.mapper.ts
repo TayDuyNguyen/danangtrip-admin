@@ -8,7 +8,7 @@ function toYmd(value: string): string {
 
 function normalizeStatus(raw: string): ScheduleStatus {
     const u = (raw || '').toLowerCase();
-    if (u === 'available') {
+    if (u === 'available' || u === 'full') {
         return 'AVAILABLE';
     }
     if (u === 'cancelled') {
@@ -89,6 +89,9 @@ export const scheduleMapper = {
         }
         if (data.status !== undefined) {
             out.status = String(data.status).toLowerCase();
+        }
+        if (data.bookingAvailability !== undefined) {
+            out.booking_availability = data.bookingAvailability === 'SOLD_OUT' ? 'sold_out' : 'open';
         }
         return out;
     },

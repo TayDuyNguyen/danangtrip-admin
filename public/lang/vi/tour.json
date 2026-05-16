@@ -10,7 +10,33 @@
         "breadcrumb_parent": "Quản lý Tour",
         "breadcrumb_list": "Danh sách Tour",
         "breadcrumb_create": "Tạo mới",
-        "breadcrumb_edit": "Chỉnh sửa"
+        "breadcrumb_edit": "Chỉnh sửa",
+        "breadcrumb_detail": "Chi tiết tour"
+    },
+    "detail": {
+        "title_placeholder": "Đang tải tour...",
+        "sections": {
+            "hero": "Ảnh & Thông tin nhanh",
+            "description": "Mô tả",
+            "pricing": "Bảng giá",
+            "itinerary": "Lịch trình",
+            "services": "Dịch vụ",
+            "schedules": "Lịch khởi hành",
+            "reviews": "Đánh giá"
+        },
+        "actions": {
+            "view_public": "Xem trang công khai",
+            "edit_tour": "Chỉnh sửa Tour",
+            "delete_tour": "Xóa vĩnh viễn",
+            "add_schedule": "Thêm lịch khởi hành"
+        },
+        "tabs": {
+            "short_desc": "Mô tả ngắn",
+            "full_desc": "Chi tiết"
+        },
+        "stats": {
+            "views": "Lượt xem"
+        }
     },
     "stats": {
         "title": "Thống kê tour",
@@ -104,6 +130,7 @@
         "export_success": "Đang chuẩn bị tệp xuất bản...",
         "export_error": "Lỗi khi tải tệp Excel",
         "no_data": "Không tìm thấy tour nào",
+        "no_content": "Chưa có nội dung chi tiết",
         "no_data_subtitle": "Thử thay đổi bộ lọc hoặc tạo tour mới",
         "upload_error": "Lỗi khi tải ảnh lên",
         "create_error_title": "Không thể tạo tour"
@@ -247,6 +274,8 @@
             "status_sold_out_hint": "Không nhận đặt",
             "featured_helper": "Hiển thị trong mục Tour nổi bật",
             "hot_helper": "Hiển thị trong mục Tour Hot",
+            "unfeature": "Bỏ gắn nổi bật",
+            "unhot": "Bỏ gắn tour hot",
             "completion_label": "{{percent}}% hoàn thành",
             "checklist_name": "Tên tour",
             "checklist_category": "Danh mục tour",

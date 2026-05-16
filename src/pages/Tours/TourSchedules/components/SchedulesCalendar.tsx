@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, RotateCcw, RefreshCw } from 'lucide-react';
 import { useSchedules } from '@/hooks/useScheduleQueries';
 import { clsx } from 'clsx';
-import { ScheduleStatus } from '@/types/schedule';
+import { ScheduleBookingAvailability, ScheduleStatus } from '@/types/schedule';
 import { useTranslation } from 'react-i18next';
 
 type Props = {
@@ -93,7 +93,8 @@ const SchedulesCalendar = ({ tourId, selectedDate, onSelectDate }: Props) => {
             
             if (schedule.status === ScheduleStatus.AVAILABLE) {
                 current.hasAvailable = true;
-            } else {
+            }
+            if (schedule.status === ScheduleStatus.CANCELLED || schedule.bookingAvailability === ScheduleBookingAvailability.SOLD_OUT) {
                 current.hasFullOrCancelled = true;
             }
             

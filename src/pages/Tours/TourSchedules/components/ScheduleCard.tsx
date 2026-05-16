@@ -1,5 +1,5 @@
 import type { Schedule } from '@/types/schedule';
-import { ScheduleStatus } from '@/types/schedule';
+import { ScheduleBookingAvailability, ScheduleStatus } from '@/types/schedule';
 import Badge from '@/components/ui/Badge';
 import ProgressBar from '@/components/ui/ProgressBar';
 import { formatCurrency } from '@/utils/pricing';
@@ -27,7 +27,6 @@ export function ScheduleCard({
     const getStatusVariant = (status: ScheduleStatus) => {
         switch (status) {
             case ScheduleStatus.AVAILABLE: return 'success';
-            case ScheduleStatus.FULL: return 'error';
             case ScheduleStatus.CANCELLED: return 'neutral';
             default: return 'default';
         }
@@ -36,7 +35,6 @@ export function ScheduleCard({
     const getStatusLabel = (status: ScheduleStatus) => {
         switch (status) {
             case ScheduleStatus.AVAILABLE: return t('schedules:status.available');
-            case ScheduleStatus.FULL: return t('schedules:status.full');
             case ScheduleStatus.CANCELLED: return t('schedules:status.cancelled');
             default: return status;
         }
@@ -85,7 +83,6 @@ export function ScheduleCard({
                         title={t('common:actions.edit')}
                     >
                         <option value={ScheduleStatus.AVAILABLE}>{t('schedules:status.available')}</option>
-                        <option value={ScheduleStatus.FULL}>{t('schedules:status.full')}</option>
                         <option value={ScheduleStatus.CANCELLED}>{t('schedules:status.cancelled')}</option>
                     </select>
                 </div>
@@ -112,7 +109,7 @@ export function ScheduleCard({
                         <ProgressBar 
                             value={schedule.bookedSlots} 
                             max={schedule.totalSlots} 
-                            color={schedule.status === ScheduleStatus.FULL ? 'red' : 'blue'}
+                            color={schedule.bookingAvailability === ScheduleBookingAvailability.SOLD_OUT ? 'red' : 'blue'}
                         />
                     </div>
 
