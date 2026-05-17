@@ -62,6 +62,12 @@ export const API_ENDPOINTS = {
         STATUS_COUNTS: '/admin/bookings/status-counts',
         UPDATE_STATUS: (id: string | number) => `/admin/bookings/${id}/status`,
     },
+    // Payments management
+    PAYMENTS: {
+        LIST: '/admin/payments',
+        DETAIL: (id: string | number) => `/admin/payments/${id}`,
+        REFUND: (id: string | number) => `/admin/payments/${id}/refund`,
+    },
     // Schedule management
     SCHEDULES: {
         LIST: '/admin/tour-schedules',

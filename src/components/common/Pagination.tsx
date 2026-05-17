@@ -38,13 +38,13 @@ const Pagination = ({ currentPage, totalItems, pageSize, onPageChange, className
     };
 
     return (
-        <div className={clsx("flex items-center gap-2", className)}>
+        <div className={clsx("flex items-center gap-1.5", className)}>
             <button
                 onClick={() => onPageChange(currentPage - 1)}
                 disabled={currentPage === 1}
-                className="w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-slate-200 text-slate-400 hover:border-[#14b8a6] hover:text-[#14b8a6] disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm active:scale-90"
+                className="w-[32px] h-[32px] flex items-center justify-center rounded-md bg-white border border-[#E2E8F0] text-[#64748B] hover:border-[#14b8a6] hover:text-[#14b8a6] disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-150 shadow-sm active:scale-90"
             >
-                <ChevronLeft size={18} />
+                <ChevronLeft size={16} />
             </button>
 
             <div className="flex items-center gap-1.5">
@@ -56,10 +56,10 @@ const Pagination = ({ currentPage, totalItems, pageSize, onPageChange, className
                             <button
                                 onClick={() => onPageChange(p as number)}
                                 className={clsx(
-                                    "w-10 h-10 flex items-center justify-center rounded-xl text-[13px] font-black transition-all shadow-sm",
+                                    "w-[32px] h-[32px] flex items-center justify-center rounded-md text-[13px] font-bold transition-all duration-150 shadow-sm",
                                     p === currentPage
                                         ? "bg-[#14b8a6] text-white border-[#14b8a6]"
-                                        : "bg-white border border-slate-200 text-slate-500 hover:border-[#14b8a6] hover:text-[#14b8a6] active:scale-95"
+                                        : "bg-white border border-[#E2E8F0] text-[#64748B] hover:border-[#14b8a6] hover:text-[#14b8a6] active:scale-95"
                                 )}
                             >
                                 {p}
@@ -72,9 +72,9 @@ const Pagination = ({ currentPage, totalItems, pageSize, onPageChange, className
             <button
                 onClick={() => onPageChange(currentPage + 1)}
                 disabled={currentPage >= totalPages}
-                className="w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-slate-200 text-slate-400 hover:border-[#14b8a6] hover:text-[#14b8a6] disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm active:scale-90"
+                className="w-[32px] h-[32px] flex items-center justify-center rounded-md bg-white border border-[#E2E8F0] text-[#64748B] hover:border-[#14b8a6] hover:text-[#14b8a6] disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-150 shadow-sm active:scale-90"
             >
-                <ChevronRight size={18} />
+                <ChevronRight size={16} />
             </button>
         </div>
     );
