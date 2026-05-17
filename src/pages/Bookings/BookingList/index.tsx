@@ -143,14 +143,14 @@ const BookingList = () => {
             </div>
 
             {total > 0 && (
-                <div className="mt-8 bg-white border border-slate-200 rounded-2xl p-6 shadow-sm flex items-center justify-between">
-                    <span className="text-[13px] text-slate-400 font-bold">
+                <div className="mt-8 bg-white border border-[#E2E8F0] rounded-[16px] px-6 py-4 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div className="text-[13px] font-medium text-[#64748B] font-sans">
                         {t('common:pagination.showing_summary', {
                             start: (page - 1) * limit + 1,
                             end: Math.min(page * limit, total),
                             total
                         })}
-                    </span>
+                    </div>
                     <Pagination
                         currentPage={page}
                         totalItems={total}

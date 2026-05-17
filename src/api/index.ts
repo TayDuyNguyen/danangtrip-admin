@@ -7,3 +7,4 @@ export * from './locationApi';
 export * from './categoryApi';
 export * from './scheduleApi';
 export * from './bookingApi';
+export * from './paymentApi';

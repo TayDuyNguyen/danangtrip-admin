@@ -14,4 +14,5 @@ export const ROUTES = {
     LOCATIONS_DETAIL: '/admin/locations/detail/:id',
     LOCATIONS_CATEGORIES: '/admin/locations/categories',
     BOOKINGS_LIST: '/admin/bookings',
+    PAYMENTS_LIST: '/admin/payments',
 } as const;
