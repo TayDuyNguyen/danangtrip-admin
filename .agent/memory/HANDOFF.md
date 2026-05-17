@@ -1,28 +1,25 @@
-# Handoff
+# Handoff: Admin Bookings List
 
-## Last Updated
-- Date: 2026-05-12
+- **Feature:** `admin-bookings-list`
+- **Status:** Source-validated and gate-clean, with browser QA still not run
+- **Last Updated:** 2026-05-17
 
-## What Was Done
-- Added repo facts and drift checks.
-- Added a working-memory layer under `.agent/memory/`.
-- Updated rules and pipeline skills to point future sessions toward current working state.
+## 1. Current QA Reality
 
-## What Future Sessions Should Read First
-1. `.agent/memory/WORKING_STATE.md`
-2. `.agent/rules/REPO_FACTS.md`
-3. `.agent/rules/PROJECT_RULES.md`
-4. Relevant latest files under `.agent/artifacts/`
+The bookings bugfixes cleared the original functional blockers, and the follow-up i18n issues found on 2026-05-17 were also fixed. Static gates are clean and the latest test report is `READY`, but browser-based QA still has not run because no local dev session or credentials were provided.
 
-## If Continuing This Area
-- Keep `WORKING_STATE.md` fresh.
-- Append concise notes to `SESSION_LOG.md` after each meaningful session.
-- Add ADR-style notes to `decisions/` when a new repo-wide convention is chosen.
+## 2. Verification Summary
 
-## Remaining Risks
-- Legacy docs may still contain outdated examples or encoding noise.
-- The memory layer helps only if each future session updates it consistently.
+- **Lint:** PASS
+- **Typecheck:** PASS
+- **Build:** PASS
+- **Prepush Check:** PASS
+- **Console Test:** SKIPPED because no server was running at `http://localhost:5173`
+- **Browser QA:** NOT RUN because no working dev session or credentials were provided
+- **Overall Verdict:** READY with browser-verification gap
 
-## Recommended Next Upgrade
-- Normalize old markdown encoding under `.agent/` to clean UTF-8.
-- Add feature-specific handoff notes when multiple admin features are active in parallel.
+## 3. Next Recommended Tasks
+
+- Run a real browser smoke pass once `http://localhost:5173` and credentials are available.
+- Add the missing interaction-spec and auth-review artifacts for `admin-bookings-list` if the pipeline still requires them.
+- If the user accepts the current test coverage limits, continue with handoff/deploy docs using the updated 2026-05-17 report.

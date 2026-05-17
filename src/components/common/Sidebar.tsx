@@ -40,7 +40,7 @@ const navItems = [
         ]
     },
     { icon: Hotel, label: 'sidebar.hotels', path: '/admin/hotels' },
-    { icon: ShoppingCart, label: 'sidebar.orders', path: '/admin/orders' },
+    { icon: ShoppingCart, label: 'sidebar.orders', path: ROUTES.BOOKINGS_LIST },
     { icon: FileText, label: 'sidebar.posts', path: '/admin/posts' },
     { icon: Users, label: 'sidebar.users', path: '/admin/users' },
     { icon: Bell, label: 'sidebar.notifications', path: '/admin/notifications' },

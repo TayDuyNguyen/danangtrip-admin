@@ -56,6 +56,12 @@ export const API_ENDPOINTS = {
         IMAGES: '/upload/images',
         DELETE: '/upload/image',
     },
+    // Bookings management
+    BOOKINGS: {
+        LIST: '/admin/bookings',
+        STATUS_COUNTS: '/admin/bookings/status-counts',
+        UPDATE_STATUS: (id: string | number) => `/admin/bookings/${id}/status`,
+    },
     // Schedule management
     SCHEDULES: {
         LIST: '/admin/tour-schedules',
