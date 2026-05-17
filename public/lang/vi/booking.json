@@ -1,0 +1,87 @@
+{
+    "page": {
+        "title": "Danh sach Don hang",
+        "subtitle": "Quan ly toan bo don dat tour cua khach hang"
+    },
+    "breadcrumb": {
+        "group": "Don hang & Thanh toan",
+        "current": "Danh sach Don hang"
+    },
+    "stats": {
+        "total_label": "TONG DON HANG",
+        "pending_label": "CHO XAC NHAN",
+        "confirmed_label": "DA XAC NHAN",
+        "cancelled_label": "DA HUY"
+    },
+    "filters": {
+        "search_placeholder": "Tim theo ma don, ten khach hang, email...",
+        "status_label": "Trang thai don",
+        "payment_label": "Thanh toan",
+        "all_status": "Tat ca trang thai",
+        "all_payment": "Tat ca thanh toan",
+        "from_label": "Tu ngay",
+        "to_label": "Den ngay",
+        "button_apply": "Loc",
+        "button_reset": "Dat lai",
+        "active_filtering": "DANG LOC THEO:"
+    },
+    "status": {
+        "pending": "Cho xac nhan",
+        "confirmed": "Da xac nhan",
+        "completed": "Hoan tat",
+        "cancelled": "Da huy"
+    },
+    "payment_status": {
+        "pending": "Cho thanh toan",
+        "paid": "Da thanh toan",
+        "success": "Thanh cong",
+        "failed": "That bai",
+        "refunded": "Hoan tien"
+    },
+    "labels": {
+        "total_amount": "TONG TIEN",
+        "booked_at": "Ngay dat",
+        "departure_date": "Ngay khoi hanh",
+        "upcoming": "SAP TOI",
+        "reason": "LY DO",
+        "no_category": "Khong phan loai",
+        "customer": "Khach hang",
+        "email": "Email",
+        "tour_summary": "Thong tin tour",
+        "category": "Danh muc",
+        "payment_status": "Trang thai thanh toan",
+        "booking_status": "Trang thai don",
+        "schedule_window": "Khung thoi gian",
+        "booking_code": "Ma don"
+    },
+    "actions": {
+        "confirm": "Xac nhan don",
+        "cancel": "Huy don"
+    },
+    "dialog": {
+        "cancel_title": "Huy don hang nay?",
+        "cancel_description": "Don {{code}} cua {{name}} se bi huy.",
+        "reason_label": "Ly do huy",
+        "reason_placeholder": "Nhap ly do huy don...",
+        "cancel_warning": "Khach hang se nhan duoc thong bao huy don qua email tu dong tu he thong.",
+        "confirm_cancel": "Xac nhan huy",
+        "detail_title": "Chi tiet don hang",
+        "detail_subtitle": "Xem thong tin khach hang, lich trinh, thanh toan va thao tac xu ly trong cung mot hop thoai."
+    },
+    "validation": {
+        "reason_required": "Vui long nhap ly do huy don.",
+        "reason_min_length": "Ly do huy don phai co it nhat {{min}} ky tu.",
+        "reason_max_length": "Ly do huy don chi duoc toi da {{max}} ky tu."
+    },
+    "empty": {
+        "title": "Khong tim thay don hang nao",
+        "subtitle": "Thu thay doi bo loc hoac khoang thoi gian"
+    },
+    "messages": {
+        "confirm_success": "Da xac nhan don hang thanh cong",
+        "cancel_success": "Da huy don hang thanh cong",
+        "update_error": "Co loi xay ra khi cap nhat don hang",
+        "export_success": "Dang tai file Excel...",
+        "export_error": "Co loi xay ra khi xuat du lieu"
+    }
+}

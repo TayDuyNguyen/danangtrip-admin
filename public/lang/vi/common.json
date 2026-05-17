@@ -38,7 +38,13 @@
         "deleting": "Đang xóa...",
         "saving": "Đang lưu...",
         "reset": "Đặt lại",
-        "cancel": "Hủy"
+        "cancel": "Hủy",
+        "export_excel": "Xuất Excel",
+        "exporting": "Đang xuất...",
+        "processing": "Đang xử lý..."
+    },
+    "breadcrumb": {
+        "home": "Trang chủ"
     },
     "confirm_delete": "Bạn có chắc muốn xóa mục này?",
     "error": {
@@ -72,7 +78,7 @@
         "location_list": "Danh sách Địa điểm",
         "location_categories": "Danh mục địa điểm",
         "hotels": "Khách sạn",
-        "orders": "Đặt hàng",
+        "orders": "Quản lý Đơn hàng",
         "posts": "Bài viết",
         "articles": "Duyệt bài viết",
         "users": "Người dùng",

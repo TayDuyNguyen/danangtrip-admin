@@ -20,11 +20,11 @@ const LocationCreate = React.lazy(() => import('@/pages/Locations/LocationCreate
 const LocationEdit = React.lazy(() => import('@/pages/Locations/LocationEdit'));
 const LocationDetail = React.lazy(() => import('@/pages/Locations/LocationDetail'));
 const LocationCategories = React.lazy(() => import('@/pages/Locations/LocationCategories'));
+const BookingList = React.lazy(() => import('@/pages/Bookings/BookingList'));
 import ErrorPage from '@/pages/ErrorPage';
 
 /**
  * Page loader component
- * (Component để hiển thị loader khi tải trang)
  */
 const PageLoader = () => (
     <div className='flex items-center justify-center min-h-screen'>
@@ -34,7 +34,6 @@ const PageLoader = () => (
 
 /**
  * Suspense wrapper component
- * (Component để wrap component với Suspense để hiển thị loader khi tải trang)
  */
 const withSuspense = (Component: React.ComponentType) => (
     <Suspense fallback={<PageLoader />}>
@@ -44,7 +43,6 @@ const withSuspense = (Component: React.ComponentType) => (
 
 /**
  * Router component
- * (Component để định nghĩa đường dẫn của ứng dụng)
  */
 const router = createBrowserRouter([
     {
@@ -52,7 +50,6 @@ const router = createBrowserRouter([
         element: <Navigate to={ROUTES.LOGIN} replace />,
         errorElement: <ErrorPage />
     },
-    // Public routes — chỉ truy cập khi chưa đăng nhập
     {
         element: <PublicRoute />,
         errorElement: <ErrorPage />,
@@ -60,7 +57,6 @@ const router = createBrowserRouter([
             { path: ROUTES.LOGIN, element: withSuspense(Login) },
         ],
     },
-    // Private routes — yêu cầu đăng nhập
     {
         element: <PrivateRoute />,
         errorElement: <ErrorPage />,
@@ -81,6 +77,7 @@ const router = createBrowserRouter([
                     { path: ROUTES.LOCATIONS_EDIT, element: withSuspense(LocationEdit) },
                     { path: ROUTES.LOCATIONS_DETAIL, element: withSuspense(LocationDetail) },
                     { path: ROUTES.LOCATIONS_CATEGORIES, element: withSuspense(LocationCategories) },
+                    { path: ROUTES.BOOKINGS_LIST, element: withSuspense(BookingList) },
                 ]
             }
         ],
