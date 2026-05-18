@@ -33,10 +33,13 @@ const TourScheduleEdit = () => {
     const { data: tour, isLoading: isLoadingTour } = useTourDetailQuery(schedule?.tourId);
     const updateScheduleMutation = useUpdateSchedule();
 
-    const schema = useMemo(() => getScheduleSchema(t), [t]);
+    const resolver = useMemo(() => {
+        const schema = getScheduleSchema(t, true, schedule?.bookedSlots || 0);
+        return yupResolver(schema);
+    }, [t, schedule]);
 
     const methods = useForm<ScheduleFormValues>({
-        resolver: yupResolver(schema) as Resolver<ScheduleFormValues>,
+        resolver: resolver as Resolver<ScheduleFormValues>,
         defaultValues: {
             startDate: '',
             endDate: '',
@@ -47,6 +50,14 @@ const TourScheduleEdit = () => {
             status: 'AVAILABLE',
         },
     });
+
+    const isPastSchedule = useMemo(() => {
+        if (!schedule?.startDate) return false;
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const start = new Date(schedule.startDate);
+        return start < today;
+    }, [schedule]);
 
     const { reset } = methods;
 
@@ -143,7 +154,25 @@ const TourScheduleEdit = () => {
             {/* Main Content Grid */}
             <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
                 {/* Form Side */}
-                <div className="lg:col-span-7">
+                <div className="lg:col-span-7 space-y-6">
+                    {isPastSchedule && (
+                        <div className="rounded-2xl border border-amber-200 bg-amber-50/50 p-5 backdrop-blur-sm shadow-sm transition-all hover:shadow-md">
+                            <div className="flex gap-4">
+                                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-amber-800 animate-bounce">
+                                    <i className="ri-alert-line text-xl" />
+                                </div>
+                                <div className="space-y-1">
+                                    <h4 className="text-[14px] font-bold text-amber-800">
+                                        {t('schedules:validation.past_event_title')}
+                                    </h4>
+                                    <p className="text-[12px] leading-relaxed text-amber-700/90">
+                                        {t('schedules:validation.past_event_desc')}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
                     <div className="rounded-2xl border border-slate-200 bg-white/70 backdrop-blur-md p-8 shadow-sm transition-all hover:shadow-md">
                         <FormProvider {...methods}>
                             <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-6">

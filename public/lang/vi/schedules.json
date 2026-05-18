@@ -29,7 +29,10 @@
     },
     "validation": {
         "start_date_future": "Ngày khởi hành phải từ hôm nay trở đi",
-        "end_date_after": "Ngày kết thúc phải sau hoặc bằng ngày khởi hành"
+        "end_date_after": "Ngày kết thúc phải sau hoặc bằng ngày khởi hành",
+        "total_slots_min_booked": "Số lượng chỗ tối đa không thể nhỏ hơn số lượng ghế đã đặt ({{count}} ghế)",
+        "past_event_title": "Lịch khởi hành trong quá khứ",
+        "past_event_desc": "Cảnh báo: Bạn đang chỉnh sửa một lịch trình đã hoặc đang diễn ra. Hãy cẩn trọng để tránh ảnh hưởng đến dữ liệu khách hàng cũ."
     },
     "notices": {
         "price_override_help": "Nếu bạn để trống các ô giá, hệ thống sẽ tự động sử dụng giá mặc định từ tour gốc cho lịch khởi hành này."

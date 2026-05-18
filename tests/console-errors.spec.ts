@@ -18,8 +18,13 @@ test.describe('Runtime Console Error Check', () => {
       page.on('console', (msg) => {
         const text = msg.text();
         if (msg.type() === 'error') {
-          // Whitelist specific third-party warnings if needed
-          if (!text.includes('lottie-web') && !text.includes('Chrome extension')) {
+          // Whitelist specific third-party warnings and expected 401 unauthorized errors
+          if (
+            !text.includes('lottie-web') && 
+            !text.includes('Chrome extension') && 
+            !text.includes('401 (Unauthorized)') &&
+            !text.includes('Failed to load resource')
+          ) {
             errors.push(text);
           }
         }

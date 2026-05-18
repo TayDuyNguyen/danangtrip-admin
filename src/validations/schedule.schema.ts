@@ -5,11 +5,12 @@ import type { TFunction } from 'i18next';
  * Validation schema for adding a new tour schedule.
  * (Schema xác thực khi thêm lịch khởi hành tour mới)
  */
-export const getScheduleSchema = (t: TFunction) => {
+export const getScheduleSchema = (t: TFunction, isEdit = false, bookedSlots = 0) => {
     return Yup.object().shape({
         startDate: Yup.string()
             .required(t('validation:common.required', { field: t('schedules:fields.start_date') }))
             .test('is-future', t('schedules:validation.start_date_future'), (value) => {
+                if (isEdit) return true;
                 if (!value) return false;
                 const today = new Date();
                 today.setHours(0, 0, 0, 0);
@@ -26,7 +27,12 @@ export const getScheduleSchema = (t: TFunction) => {
         totalSlots: Yup.number()
             .transform((value) => (isNaN(value) ? undefined : value))
             .required(t('validation:common.required', { field: t('schedules:fields.max_people') }))
-            .min(1, t('validation:common.min_number', { field: t('schedules:fields.max_people'), min: 1 })),
+            .min(1, t('validation:common.min_number', { field: t('schedules:fields.max_people'), min: 1 }))
+            .test('min-booked', t('schedules:validation.total_slots_min_booked', { count: bookedSlots }), (value) => {
+                if (!isEdit || bookedSlots <= 0) return true;
+                if (value === undefined || value === null || isNaN(value)) return true;
+                return value >= bookedSlots;
+            }),
         priceAdult: Yup.number()
             .transform((value) => (isNaN(value) ? undefined : value))
             .nullable()

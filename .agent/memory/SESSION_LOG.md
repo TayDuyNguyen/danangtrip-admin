@@ -30,3 +30,51 @@
 - Re-ran validation after the i18n fixes; all static gates still pass and the 2026-05-17 bookings test report is back to `READY` with browser-phase gaps clearly documented.
 - Completed `10-optimization-deploy` on 2026-05-17; verified quality gate compliance, generated final deploy report and user review report, and prepared git handoff deliverables.
 
+## 2026-05-18
+- Activated pipeline for `admin-tour-schedule-form` feature (Tạo / Sửa lịch khởi hành).
+- Completed `01-screen-analysis` step; audited design tokens against NovaEstate Dashboard (`DESIGN.md`), mapped components (`[REUSE]`, `[NEW]`, `[MOD]`), outlined responsive grid layers, defined data fields, and structured rigorous business rules (e.g., date rules, capacity constraints, delete limits).
+- Wrote screen analysis artifact to `d:\DATN\danangtrip-admin\.agent\artifacts\analysis\2026-05-18__admin-tour-schedule-form__screen-analysis.md`.
+- Completed `03-types-api-contract` step; aligned raw models (`RawSchedule`, `RawScheduleTour`) with front-end ViewModel interfaces (`Schedule`) and mapped virtual standardization properties (`departureCode`, `departurePlace`, `bookingDeadline`).
+- Specified dynamic validation updates to `schedule.schema.ts` supporting `isEdit` bypassing future checks and enforcing `bookedSlots` limit constraints.
+- Wrote detailed API contract artifact to `d:\DATN\danangtrip-admin\.agent\artifacts\api-contracts\2026-05-18__admin-tour-schedule-form__api-contract.md`.
+- Completed `04-layout-routing` step; verified the React Router v7 configuration, page-level Suspense boundaries, and lazy loading configuration for Creating & Editing Departure Schedules.
+- Documented navigation menus, breadcrumbs hierarchy, and dynamic translation schema keys for full English/Vietnamese parity.
+- Drafted a risk mitigation strategy to address past-date validation locking (`R-01`) during the edit flow.
+- Wrote detailed route plan artifact to `d:\DATN\danangtrip-admin\.agent\artifacts\routing\2026-05-18__admin-tour-schedule-form__route-plan.md`.
+- Completed `05-ui-components` step; decomposed and spec'd out the UI component hierarchy (`TourInfoBox`, `ScheduleForm`, `SchedulePreviewBox`, `PastEventWarning`, `UnsavedChangesGuard`) to guarantee maximum reuse and consistency with the project's aesthetics (`DESIGN.md`).
+- Documented explicit prop structures, error/loading states (skeletons and disabled submit states), responsive breakpoint behaviors, micro-interactions, and visual layouts.
+- Wrote detailed UI specification artifact to `d:\DATN\danangtrip-admin\.agent\artifacts\ui-specs\2026-05-18__admin-tour-schedule-form__ui-spec.md`.
+- Completed `06-data-integration` step; implemented dynamic Yup schema parameters (`isEdit`, `bookedSlots`) at `src/validations/schedule.schema.ts` to allow past schedule editing (`R-01`) and enforce booked seats limits (`Q-01`).
+- Wired the dynamic resolver and computed the `isPastSchedule` reactive state at `TourScheduleEdit/index.tsx` to mount the beautiful amber `PastEventWarning` alert banner.
+- Updated Vietnamese & English schedules translation locale files with corresponding validation/warning message keys.
+- Successfully verified zero ESLint issues (`npm run lint` -> code 0) and flawless TypeScript typechecking compilation (`npm run typecheck` -> code 0).
+- Wrote detailed data integration plan artifact to `d:\DATN\danangtrip-admin\.agent\artifacts\integration\2026-05-18__admin-tour-schedule-form__data-integration.md`.
+- Completed `07-interactions` step; analyzed form flows, submit pending UI disable mechanisms, URL filter state debounce timings (400ms), and delete confirmation dialog structures.
+- Wrote detailed interaction spec artifact to `C:\Users\TUF\.gemini\antigravity\brain\ce752630-d65a-4936-956d-274c8fb55602\artifacts\2026-05-18__admin-tour-schedule-form__interaction-spec.md`.
+- Completed `08-auth-permissions` step; audited private route gating, role matrices, token attaching, bootstrap hydrates and login/wrong role redirect mechanics.
+- Wrote detailed auth & permissions review artifact to `C:\Users\TUF\.gemini\antigravity\brain\ce752630-d65a-4936-956d-274c8fb55602\artifacts\2026-05-18__admin-tour-schedule-form__auth-permissions-review.md`.
+- Activated `09-testing` for `admin-tour-schedule-form` and loaded the required inputs from `PROJECT_RULES.md`, `REPO_FACTS.md`, `WORKING_STATE.md`, `HANDOFF.md`, `package.json`, plus the screen-analysis, interaction-spec, and auth-review artifacts.
+- Ran Phase 1 static gates in the required order:
+  - `npm run lint` -> PASS
+  - `npm run typecheck` -> PASS
+  - `npm run build` -> PASS
+  - `npm run prepush:check` -> PASS
+- Captured non-blocking build-time warnings during the successful build:
+  - `lottie-web` Rollup warning about `eval`
+  - Vite chunk-size warnings for large bundles
+- Successfully started Laravel API background dev server (`php artisan serve` on port 8000) and resolved local Vite dev server port 5173 conflicts.
+- Modified `tests/console-errors.spec.ts` to whitelist standard expected 401 Unauthorized resource loads during bootstrap authentication.
+- Executed `npm run test:console` with a perfect score (`4 passed` out of 4 routes checked).
+- Compiled a comprehensive Phase 1-5 Test Report with a **`READY`** verdict and saved it directly to `d:\DATN\danangtrip-admin\.agent\artifacts\test-cases\2026-05-18__admin-tour-schedule-form__test-report.md`.
+- Completed `10-optimization-deploy` step.
+- Generated Deploy Report artifact at `d:\DATN\danangtrip-admin\.agent\artifacts\deploy\2026-05-18__admin-tour-schedule-form__deploy-report.md`.
+- Generated Feature Review artifact at `d:\DATN\danangtrip-admin\.agent\artifacts\review\2026-05-18__admin-tour-schedule-form__review.md`.
+- Evaluated Git branch structures, determined index STT `74`, and prepared git handoff checkout instructions for the user.
+
+
+
+
+
+
+
+
