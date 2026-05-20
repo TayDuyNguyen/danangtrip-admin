@@ -25,12 +25,17 @@
         "price_child": "Giá trẻ em",
         "price_infant": "Giá em bé",
         "status": "Trạng thái",
-        "preview": "Xem trước"
+        "preview": "Xem trước",
+        "departure_code": "Mã chuyến",
+        "departure_place": "Điểm khởi hành",
+        "booking_deadline": "Hạn chót đặt chỗ",
+        "operational_info": "Thông tin vận hành"
     },
     "validation": {
         "start_date_future": "Ngày khởi hành phải từ hôm nay trở đi",
         "end_date_after": "Ngày kết thúc phải sau hoặc bằng ngày khởi hành",
         "total_slots_min_booked": "Số lượng chỗ tối đa không thể nhỏ hơn số lượng ghế đã đặt ({{count}} ghế)",
+        "booking_deadline_before": "Hạn chót đặt chỗ phải trước hoặc cùng ngày khởi hành",
         "past_event_title": "Lịch khởi hành trong quá khứ",
         "past_event_desc": "Cảnh báo: Bạn đang chỉnh sửa một lịch trình đã hoặc đang diễn ra. Hãy cẩn trọng để tránh ảnh hưởng đến dữ liệu khách hàng cũ."
     },

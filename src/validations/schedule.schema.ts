@@ -46,5 +46,18 @@ export const getScheduleSchema = (t: TFunction, isEdit = false, bookedSlots = 0)
             .nullable()
             .min(0, t('common:validation.min_number', { field: t('schedules:fields.price_infant'), min: 0 })),
         status: Yup.string().required(t('common:validation.required', { field: t('schedules:fields.status') })),
+        departureCode: Yup.string()
+            .nullable()
+            .max(50, t('common:validation.max_length', { field: t('schedules:fields.departure_code'), max: 50 })),
+        departurePlace: Yup.string()
+            .nullable()
+            .max(255, t('common:validation.max_length', { field: t('schedules:fields.departure_place'), max: 255 })),
+        bookingDeadline: Yup.string()
+            .nullable()
+            .test('is-before-start', t('schedules:validation.booking_deadline_before'), function (value) {
+                const { startDate } = this.parent;
+                if (!value || !startDate) return true;
+                return new Date(value) <= new Date(startDate);
+            }),
     });
 };

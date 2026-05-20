@@ -16,7 +16,9 @@
         "people": "người"
     },
     "notices": {
-        "important": "Lưu ý quan trọng"
+        "important": "Lưu ý quan trọng",
+        "unsaved_changes_title": "Thay đổi chưa được lưu",
+        "unsaved_changes_body": "Bạn có những thay đổi chưa được lưu. Bạn có chắc chắn muốn rời khỏi trang này không?"
     },
     "helpers": {
         "date_range_tip": "Ngày kết thúc thường là ngày tour kết thúc thực tế."
@@ -41,7 +43,9 @@
         "cancel": "Hủy",
         "export_excel": "Xuất Excel",
         "exporting": "Đang xuất...",
-        "processing": "Đang xử lý..."
+        "processing": "Đang xử lý...",
+        "stay": "Ở lại",
+        "leave": "Rời đi"
     },
     "breadcrumb": {
         "home": "Trang chủ"

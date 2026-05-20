@@ -25,12 +25,17 @@
         "price_child": "Child price",
         "price_infant": "Infant price",
         "status": "Status",
-        "preview": "Preview"
+        "preview": "Preview",
+        "departure_code": "Departure code",
+        "departure_place": "Departure place",
+        "booking_deadline": "Booking deadline",
+        "operational_info": "Operational information"
     },
     "validation": {
         "start_date_future": "Start date must be today or in the future",
         "end_date_after": "End date must be after or equal to start date",
         "total_slots_min_booked": "Maximum capacity cannot be less than booked slots ({{count}} seats)",
+        "booking_deadline_before": "Booking deadline must be before or equal to start date",
         "past_event_title": "Past departure schedule",
         "past_event_desc": "Warning: You are editing a schedule that has already occurred or is currently ongoing. Please proceed with caution to avoid affecting historical customer booking data."
     },

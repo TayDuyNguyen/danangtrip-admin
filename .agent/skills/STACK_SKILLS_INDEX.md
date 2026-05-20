@@ -302,6 +302,57 @@ Reality check note:
 2. `05-ui-components`
 3. `09-testing`
 
+## Current Decision Snapshot
+
+Date locked for this index: `2026-05-20`
+
+### Single Chosen Screen Only
+
+- Repo: `danangtrip-admin`
+- Only screen to implement now: `Chỉnh sửa lịch khởi hành`
+- Feature slug: `admin-tour-schedule-edit`
+- Main route: `/admin/tours/schedules/edit/:id`
+- Main file: `src/pages/Tours/TourScheduleEdit/index.tsx`
+- Rule: do not switch to schedule list hardening, bookings detail, reports, promotions, or any other screen until this screen is finished through `10-optimization-deploy`.
+
+### Candidate Screens Reviewed
+
+| Candidate | Priority | Why it is relevant now | Why it is not the current first pick |
+| --- | --- | --- | --- |
+| `admin-tour-schedule-edit` | High | Directly feeds the booking funnel through schedule quality, already has docs, real route/file targets, and clear known gaps. | Selected as the current first pick. |
+| `admin-tour-schedule-list hardening` | High | Important operational hub and already partially implemented. | List is already more complete; edit still has the sharper functional gaps. |
+| `admin-tour-schedule-create parity` | High | Needed for future authoring consistency. | Create is already closer to the intended design than edit. |
+| `admin-bookings-detail` | Medium | Strong operations value and ties to payment/support. | More downstream; does not unblock schedule quality for public booking first. |
+| `admin-promotions` | Medium | Important future conversion lever. | Mostly planned and not ready to beat schedule stabilization in implementation order. |
+
+### Selected Next Screen
+
+- Screen: `Chỉnh sửa lịch khởi hành`
+- Feature slug: `admin-tour-schedule-edit`
+- Main route: `/admin/tours/schedules/edit/:id`
+- Main file: `src/pages/Tours/TourScheduleEdit/index.tsx`
+- Decision basis:
+  - The benchmark and schedule docs emphasize departure-code, departure-place, booking-deadline, seat state, and price override quality.
+  - The repo already has a real route, edit page, create-form reference, list reference, and API/query foundations.
+  - This screen is the cleanest place to stabilize the schedule contract before the web departure-selection screen consumes it.
+
+### Known Edit Gaps To Close
+
+- Stats or info context block for the current schedule
+- Clear schedule info box for operators
+- Delete or deactivate flow if repo reality supports it
+- Unsaved-changes guard
+- Explicit mapping between UI field names and backend payload names
+
+### Cross-Project Rollout Order
+
+1. `danangtrip-admin` implements `admin-tour-schedule-edit`
+2. `danangtrip-web` implements `tour-departure-select`
+3. `danangtrip-web` then strengthens booking checkout based on the finalized schedule contract
+
+Dependency rule:
+- This admin screen is the current system-first implementation target because it curates the schedule data shape used by the public booking funnel.
+
 ## Recommended Current Screen Prompt
 
 Use this ready prompt for the next recommended `danangtrip-admin` screen: schedule edit hardening for operations.
@@ -317,6 +368,11 @@ Primary target route: `/admin/tours/schedules/edit/:id`
 Primary React Router file target: `src/pages/Tours/TourScheduleEdit/index.tsx`
 Related files: `src/pages/Tours/TourSchedules/index.tsx`, `src/pages/Tours/TourScheduleCreate/index.tsx`
 Feature type: authenticated admin/staff operations screen that stabilizes schedule data for the booking funnel and closes the edit-flow gaps called out by the planning docs.
+
+SINGLE-SCREEN LOCK
+- You are working on exactly one screen only: `Chỉnh sửa lịch khởi hành`.
+- You MUST NOT switch to bookings detail, promotions, reports, settings, or any unrelated admin screen in this run.
+- If you discover an adjacent issue in list or create flows, record it as dependency or follow-up and continue only with the edit-screen scope.
 
 MANDATORY READ ORDER BEFORE ANY WORK
 1. `D:\DATN\danangtrip-admin\AGENTS.md`
@@ -435,6 +491,88 @@ ARTIFACT TARGETS
 BEGIN NOW
 Start with step `01-screen-analysis`.
 Do not implement code for later steps until the current step is approved.
+```
+
+## Project Kickoff Prompt
+
+Use this when you want the AI to start the currently recommended admin work from zero context and still stay aligned with the system-level rollout order.
+
+```text
+SYSTEM ROLE
+
+You are the execution planner and implementation agent for `D:\DATN\danangtrip-admin`.
+
+CURRENT PRIORITY
+
+- Repo: `D:\DATN\danangtrip-admin`
+- Screen: `Chỉnh sửa lịch khởi hành`
+- Feature slug: `admin-tour-schedule-edit`
+- Main route: `/admin/tours/schedules/edit/:id`
+- Main file target: `D:\DATN\danangtrip-admin\src\pages\Tours\TourScheduleEdit\index.tsx`
+- System role: this is the first implementation target before `danangtrip-web` finalizes departure selection
+
+SCOPE LOCK
+
+- Only build `Chỉnh sửa lịch khởi hành`.
+- Do not expand scope into schedule list hardening, create parity, bookings detail, reports, promotions, or settings.
+- If another screen is needed, write it down as the next recommendation instead of implementing it now.
+
+GOAL
+
+Stabilize the schedule-edit flow so operators can:
+1. load current schedule data safely
+2. review essential schedule context
+3. edit dates, capacity, departure metadata, and price overrides
+4. validate the form against real API constraints
+5. preserve downstream compatibility with public schedule display and booking calculations
+6. handle destructive or guarded actions safely when supported
+
+MANDATORY READ ORDER
+
+1. `D:\DATN\DATN_Tài liệu\docs\reference\travel_com_benchmark_flow.md`
+2. `D:\DATN\DATN_Tài liệu\docs\reference\screen_gap_analysis.md`
+3. `D:\DATN\DATN_Tài liệu\docs\reference\list_page.md`
+4. `D:\DATN\DATN_Tài liệu\docs\page\admin_tour_schedules_edit.md`
+5. `D:\DATN\DATN_Tài liệu\docs\page\admin_tour_schedules_create.md`
+6. `D:\DATN\DATN_Tài liệu\docs\page\admin_tour_schedules_list.md`
+7. `D:\DATN\danangtrip-admin\.agent\skills\STACK_SKILLS_INDEX.md`
+8. `D:\DATN\danangtrip-admin\src\routes\routes.ts`
+9. `D:\DATN\danangtrip-admin\src\api\scheduleApi.ts`
+10. `D:\DATN\danangtrip-admin\src\types\schedule.ts`
+11. `D:\DATN\danangtrip-admin\src\validations\schedule.schema.ts`
+12. `D:\DATN\danangtrip-admin\src\pages\Tours\TourScheduleEdit\index.tsx`
+13. `D:\DATN\danangtrip-admin\src\pages\Tours\TourScheduleCreate\components\ScheduleForm.tsx`
+14. `D:\DATN\danangtrip-admin\src\pages\Tours\TourSchedules\components\StatsSummary.tsx`
+15. `D:\DATN\danangtrip-admin\src\pages\Tours\TourSchedules\components\ScheduleDeleteDialog.tsx`
+
+EXECUTION MODE
+
+- Run the local `.agent` pipeline.
+- Default step order for this feature:
+  - `01-screen-analysis`
+  - `03-types-api-contract`
+  - `04-layout-routing`
+  - `05-ui-components`
+  - `06-data-integration`
+  - `07-interactions`
+  - `08-auth-permissions`
+  - `09-testing`
+  - `10-optimization-deploy`
+- Stop after each step for approval.
+- If docs and repo differ, follow repo reality and record the mismatch.
+- If route naming differs between docs and repo, preserve repo reality and record the route mismatch explicitly in the routing artifact.
+
+SUCCESS CRITERIA
+
+- The edit page exposes the operational fields needed by schedule management.
+- The UI clearly shows current schedule context and protects destructive actions.
+- The form submission contract matches the real admin API.
+- The schedule shape remains compatible with web departure-selection and booking calculations.
+- Artifacts and memory files are updated for every completed step.
+
+BEGIN
+
+Start with `01-screen-analysis`.
 ```
 
 ## Files Commonly Read Before Most Tasks

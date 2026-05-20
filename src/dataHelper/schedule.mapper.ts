@@ -61,6 +61,9 @@ export const scheduleMapper = {
                 : null,
             status: normalizeStatus(raw.status),
             bookingAvailability: normalizeBookingAvailability(raw.booking_availability, raw.status),
+            departureCode: raw.departure_code ?? null,
+            departurePlace: raw.departure_place ?? null,
+            bookingDeadline: raw.booking_deadline ? toYmd(raw.booking_deadline) : null,
         };
     },
 
@@ -89,6 +92,15 @@ export const scheduleMapper = {
         }
         if (data.status !== undefined) {
             out.status = String(data.status).toLowerCase();
+        }
+        if (data.departureCode !== undefined) {
+            out.departure_code = data.departureCode;
+        }
+        if (data.departurePlace !== undefined) {
+            out.departure_place = data.departurePlace;
+        }
+        if (data.bookingDeadline !== undefined) {
+            out.booking_deadline = data.bookingDeadline;
         }
         return out;
     },
