@@ -148,6 +148,7 @@
         "password_min": "Password must be at least 6 characters",
         "required": "This field is required",
         "number_too_small": "Value is too small",
+        "min_number": "{{field}} must be greater than or equal to {{min}}",
         "file_too_large": "File size is too large"
     }
 }

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import {
     LayoutDashboard,
     Map,
@@ -19,6 +19,8 @@ import {
 import { ROUTES } from '@/routes/routes';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/store';
+import { useUserStore } from '@/store/useUserStore';
+import { useLogoutQuery } from '@/hooks/useAuthQuery';
 
 /**
  * Nested navigation items for the sidebar
@@ -53,6 +55,20 @@ const Sidebar = () => {
     const { user } = useAuth();
     const { t } = useTranslation('common');
     const location = useLocation();
+    const navigate = useNavigate();
+    const logoutMutation = useLogoutQuery();
+
+    const handleLogoutClick = () => {
+        logoutMutation.mutate(undefined, {
+            onSettled: () => {
+                useUserStore.getState().logout();
+                navigate(ROUTES.LOGIN);
+            }
+        });
+        // Clear local storage and redirect immediately in case mutation hangs
+        useUserStore.getState().logout();
+        navigate(ROUTES.LOGIN);
+    };
     
     const [isCollapsed, setIsCollapsed] = useState(false);
     
@@ -196,7 +212,11 @@ const Sidebar = () => {
                                 <p className="text-slate-400 text-[11px] font-bold uppercase tracking-widest truncate mt-0.5">{t('header.admin_role')}</p>
                             </div>
                         </div>
-                        <button className="text-slate-400 hover:text-slate-900 transition-colors shrink-0" title={t('sidebar.logout')}>
+                        <button 
+                            onClick={handleLogoutClick}
+                            className="text-slate-400 hover:text-slate-900 transition-colors shrink-0" 
+                            title={t('sidebar.logout')}
+                        >
                             <LogOut size={18} />
                         </button>
                     </div>
@@ -215,7 +235,11 @@ const Sidebar = () => {
                                 </span>
                             )}
                         </div>
-                        <button className="text-slate-400 hover:text-slate-900 transition-colors shrink-0 p-2 hover:bg-slate-50 rounded-lg" title={t('sidebar.logout')}>
+                        <button 
+                            onClick={handleLogoutClick}
+                            className="text-slate-400 hover:text-slate-900 transition-colors shrink-0 p-2 hover:bg-slate-50 rounded-lg" 
+                            title={t('sidebar.logout')}
+                        >
                             <LogOut size={20} />
                         </button>
                     </div>

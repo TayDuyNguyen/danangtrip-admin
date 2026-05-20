@@ -304,19 +304,19 @@ Reality check note:
 
 ## Recommended Current Screen Prompt
 
-Use this ready prompt for the next recommended `danangtrip-admin` screen: tour schedule create/edit standardization for operations.
+Use this ready prompt for the next recommended `danangtrip-admin` screen: schedule edit hardening for operations.
 
 ```text
 SYSTEM EXECUTION CONTRACT
 
 Act as the execution agent for repository: `D:\DATN\danangtrip-admin`
 
-Your job is to implement the recommended admin screen set: `Tạo / Sửa lịch khởi hành`
-Feature slug: `admin-tour-schedule-form`
-Primary target routes: `/admin/tours/schedules/create` and `/admin/tours/schedules/:id/edit`
-Primary React Router file targets: `src/pages/Tours/TourScheduleCreate/index.tsx` and `src/pages/Tours/TourScheduleEdit/index.tsx`
-Related list file: `src/pages/Tours/TourSchedules/index.tsx`
-Feature type: authenticated admin/staff operations screen that standardizes schedule data for the booking funnel.
+Your job is to implement the recommended admin screen: `Chỉnh sửa lịch khởi hành`
+Feature slug: `admin-tour-schedule-edit`
+Primary target route: `/admin/tours/schedules/edit/:id`
+Primary React Router file target: `src/pages/Tours/TourScheduleEdit/index.tsx`
+Related files: `src/pages/Tours/TourSchedules/index.tsx`, `src/pages/Tours/TourScheduleCreate/index.tsx`
+Feature type: authenticated admin/staff operations screen that stabilizes schedule data for the booking funnel and closes the edit-flow gaps called out by the planning docs.
 
 MANDATORY READ ORDER BEFORE ANY WORK
 1. `D:\DATN\danangtrip-admin\AGENTS.md`
@@ -329,8 +329,8 @@ MANDATORY READ ORDER BEFORE ANY WORK
 8. Screen and API references listed below
 
 SCREEN REFERENCES
-- Primary create doc: `D:\DATN\DATN_Tài liệu\docs\page\admin_tour_schedules_create.md`
 - Primary edit doc: `D:\DATN\DATN_Tài liệu\docs\page\admin_tour_schedules_edit.md`
+- Related create doc: `D:\DATN\DATN_Tài liệu\docs\page\admin_tour_schedules_create.md`
 - Related list doc: `D:\DATN\DATN_Tài liệu\docs\page\admin_tour_schedules_list.md`
 - Related tour docs: `D:\DATN\DATN_Tài liệu\docs\page\admin_tours_create.md`, `D:\DATN\DATN_Tài liệu\docs\page\admin_tours_edit.md`, `D:\DATN\DATN_Tài liệu\docs\page\admin_tours_detail.md`
 - Admin page list: `D:\DATN\DATN_Tài liệu\docs\reference\list_page.md`
@@ -359,18 +359,19 @@ SKILL PATHS
 PROTOTYPE REFERENCES
 - Prototype mapping: `D:\DATN\DATN_Tài liệu\screen\4_Others\01-Screen_To_Docs_Mapping.md`
 - Prototype classification: `D:\DATN\DATN_Tài liệu\screen\4_Others\00-Bang_Phan_Loai_Man_Hinh.md`
-- Schedule list image: `D:\DATN\DATN_Tài liệu\screen\3_Admin_Flows\09.5-Lich_Khoi_Hanh.png`
-- Schedule list HTML/code: `D:\DATN\DATN_Tài liệu\screen\3_Admin_Flows\09.5-Lich_Khoi_Hanh.html`
-- Schedule create image: `D:\DATN\DATN_Tài liệu\screen\3_Admin_Flows\09.6-Them_Lich_Khoi_Hanh.png`
-- Schedule create HTML/code: `D:\DATN\DATN_Tài liệu\screen\3_Admin_Flows\09.6-Them_Lich_Khoi_Hanh.html`
 - Schedule edit image: `D:\DATN\DATN_Tài liệu\screen\3_Admin_Flows\09.7-Chinh_Sua_Lich_Khoi_Hanh.png`
 - Schedule edit HTML/code: `D:\DATN\DATN_Tài liệu\screen\3_Admin_Flows\09.7-Chinh_Sua_Lich_Khoi_Hanh.html`
+- Related schedule create image: `D:\DATN\DATN_Tài liệu\screen\3_Admin_Flows\09.6-Them_Lich_Khoi_Hanh.png`
+- Related schedule create HTML/code: `D:\DATN\DATN_Tài liệu\screen\3_Admin_Flows\09.6-Them_Lich_Khoi_Hanh.html`
+- Related schedule list image: `D:\DATN\DATN_Tài liệu\screen\3_Admin_Flows\09.5-Lich_Khoi_Hanh.png`
+- Related schedule list HTML/code: `D:\DATN\DATN_Tài liệu\screen\3_Admin_Flows\09.5-Lich_Khoi_Hanh.html`
 
 PROTOTYPE USAGE RULES
 - Treat the `.png` files as the visual reference and the `.html` files as implementation reference only.
 - Adapt prototype markup to this repo's React Router, Vite, Tailwind v4, component, i18n, and API patterns.
-- Prefer `09.6-Them_Lich_Khoi_Hanh` and `09.7-Chinh_Sua_Lich_Khoi_Hanh` as the primary references for the form screens.
-- Reuse current schedule list and form code where possible instead of rebuilding the whole flow.
+- Prefer `09.7-Chinh_Sua_Lich_Khoi_Hanh` as the primary reference for the target screen.
+- Use `09.6-Them_Lich_Khoi_Hanh` and `09.5-Lich_Khoi_Hanh` only to preserve create-flow parity and list navigation context.
+- Reuse current edit and create form code where possible instead of rebuilding the whole flow.
 - Do not copy external image URLs blindly from prototype HTML if local/public assets or API images are available.
 
 REPO CONTEXT TO READ
@@ -385,22 +386,24 @@ REPO CONTEXT TO READ
 - `D:\DATN\danangtrip-admin\src\hooks\useScheduleQueries.ts`
 - `D:\DATN\danangtrip-admin\src\hooks\useTourQueries.ts`
 - `D:\DATN\danangtrip-admin\src\pages\Tours\TourSchedules\index.tsx`
-- `D:\DATN\danangtrip-admin\src\pages\Tours\TourScheduleCreate\index.tsx`
 - `D:\DATN\danangtrip-admin\src\pages\Tours\TourScheduleCreate\components\ScheduleForm.tsx`
 - `D:\DATN\danangtrip-admin\src\pages\Tours\TourScheduleEdit\index.tsx`
+- `D:\DATN\danangtrip-admin\src\pages\Tours\TourSchedules\components\StatsSummary.tsx`
+- `D:\DATN\danangtrip-admin\src\pages\Tours\TourSchedules\components\ScheduleDeleteDialog.tsx`
 - `D:\DATN\danangtrip-admin\src\routes\routes.ts`
 - `D:\DATN\danangtrip-admin\src\routes\index.tsx`
 
 REQUIRED API FLOW
-- Load selectable tour context and existing schedule data from the current admin API contracts.
-- Create schedule: use the existing admin create schedule endpoint and contract from `scheduleApi`.
+- Load the existing schedule detail and related tour context from the current admin API contracts.
 - Edit schedule: use the existing admin update schedule endpoint and contract from `scheduleApi`.
+- Preserve compatibility with existing create flow; reuse its shape as the comparison baseline instead of redesigning both screens together.
 - Standardize and expose the operational fields called out in the benchmark docs: `departure_code`, `departure_place`, `booking_deadline`, status, capacity, sold or remaining seats, and price overrides when applicable.
 - Cross-check actual payload keys against the current repo types because the UI already uses `startDate`, `endDate`, `totalSlots`, and `bookedSlots`; preserve repo reality and record any server-client naming mismatch in the artifact.
 
 EXPECTED UX
-- The create and edit screens must support tour context, core schedule dates, booking deadline, departure place, departure code, capacity, booked or remaining seat visibility, adult-child-infant pricing, status, validation, preview, submit success, submit failure, and back navigation to the schedules list.
-- Use the existing admin visual language from `TourSchedules`, `TourScheduleCreate`, `TourScheduleEdit`, and `TourCreate`.
+- The edit screen must support existing schedule context, core schedule dates, booking deadline, departure place, departure code, capacity, booked or remaining seat visibility, adult-child-infant pricing, status, validation, submit success, submit failure, delete or deactivate flow if supported by repo reality, unsaved-change protection, and clear back navigation to the schedules list.
+- Pull in missing operational context blocks from the docs and related list screen where helpful, especially stats/info blocks and destructive-action affordances.
+- Use the existing admin visual language from `TourSchedules`, `TourScheduleEdit`, `TourScheduleCreate`, and `TourCreate`.
 - Keep the routes protected by the existing `PrivateRoute`.
 - Add or update i18n keys if the touched UI text is translated in this repo.
 - Preserve compatibility with the downstream web booking funnel, especially the fields used for availability and booking calculations.
@@ -418,16 +421,16 @@ Execute in this exact order, stopping after each step for approval:
 9. `10-optimization-deploy`
 
 ARTIFACT TARGETS
-- Analysis: `.agent/artifacts/analysis/YYYY-MM-DD__admin-tour-schedule-form__screen-analysis.md`
-- API contract: `.agent/artifacts/api-contracts/YYYY-MM-DD__admin-tour-schedule-form__api-contract.md`
-- Routing: `.agent/artifacts/routing/YYYY-MM-DD__admin-tour-schedule-form__route-plan.md`
-- UI spec: `.agent/artifacts/ui-specs/YYYY-MM-DD__admin-tour-schedule-form__ui-spec.md`
-- Data integration: `.agent/artifacts/integration/YYYY-MM-DD__admin-tour-schedule-form__data-integration.md`
-- Interaction spec: `.agent/artifacts/interaction-specs/YYYY-MM-DD__admin-tour-schedule-form__interaction-spec.md`
-- Auth review: `.agent/artifacts/auth/YYYY-MM-DD__admin-tour-schedule-form__auth-permissions-review.md`
-- Test report: `.agent/artifacts/test-cases/YYYY-MM-DD__admin-tour-schedule-form__test-report.md`
-- Deploy report: `.agent/artifacts/deploy/YYYY-MM-DD__admin-tour-schedule-form__deploy-report.md`
-- Final review: `.agent/artifacts/review/YYYY-MM-DD__admin-tour-schedule-form__review.md`
+- Analysis: `.agent/artifacts/analysis/YYYY-MM-DD__admin-tour-schedule-edit__screen-analysis.md`
+- API contract: `.agent/artifacts/api-contracts/YYYY-MM-DD__admin-tour-schedule-edit__api-contract.md`
+- Routing: `.agent/artifacts/routing/YYYY-MM-DD__admin-tour-schedule-edit__route-plan.md`
+- UI spec: `.agent/artifacts/ui-specs/YYYY-MM-DD__admin-tour-schedule-edit__ui-spec.md`
+- Data integration: `.agent/artifacts/integration/YYYY-MM-DD__admin-tour-schedule-edit__data-integration.md`
+- Interaction spec: `.agent/artifacts/interaction-specs/YYYY-MM-DD__admin-tour-schedule-edit__interaction-spec.md`
+- Auth review: `.agent/artifacts/auth/YYYY-MM-DD__admin-tour-schedule-edit__auth-permissions-review.md`
+- Test report: `.agent/artifacts/test-cases/YYYY-MM-DD__admin-tour-schedule-edit__test-report.md`
+- Deploy report: `.agent/artifacts/deploy/YYYY-MM-DD__admin-tour-schedule-edit__deploy-report.md`
+- Final review: `.agent/artifacts/review/YYYY-MM-DD__admin-tour-schedule-edit__review.md`
 
 BEGIN NOW
 Start with step `01-screen-analysis`.
@@ -452,7 +455,7 @@ Do not implement code for later steps until the current step is approved.
 The examples below are fallback templates.
 Dates and slugs are examples only; replace them with the current task values.
 
-### Current Recommended Screen - Admin Tour Schedule Form
+### Current Recommended Screen - Admin Tour Schedule Edit
 
 Use this prompt when manually activating the local skill pipeline for the recommended admin screen.
 
@@ -461,16 +464,16 @@ Activate full pipeline for current recommended screen
 
 Context:
 - Repo: [D:\DATN\danangtrip-admin]
-- Feature slug: [admin-tour-schedule-form]
-- Screen name: [Tạo / Sửa lịch khởi hành]
-- Primary target routes: [/admin/tours/schedules/create; /admin/tours/schedules/:id/edit]
-- Target page files: [D:\DATN\danangtrip-admin\src\pages\Tours\TourScheduleCreate\index.tsx; D:\DATN\danangtrip-admin\src\pages\Tours\TourScheduleEdit\index.tsx]
-- Related list file: [D:\DATN\danangtrip-admin\src\pages\Tours\TourSchedules\index.tsx]
+- Feature slug: [admin-tour-schedule-edit]
+- Screen name: [Chỉnh sửa lịch khởi hành]
+- Primary target route: [/admin/tours/schedules/edit/:id]
+- Target page file: [D:\DATN\danangtrip-admin\src\pages\Tours\TourScheduleEdit\index.tsx]
+- Related files: [D:\DATN\danangtrip-admin\src\pages\Tours\TourSchedules\index.tsx; D:\DATN\danangtrip-admin\src\pages\Tours\TourScheduleCreate\index.tsx]
 - Route registration: [D:\DATN\danangtrip-admin\src\routes\routes.ts; D:\DATN\danangtrip-admin\src\routes\index.tsx]
 - Auth requirement: [Admin or staff; protected by existing PrivateRoute]
 - DESIGN.md: [D:\DATN\danangtrip-admin\DESIGN.md]
-- Primary docs: [D:\DATN\DATN_Tài liệu\docs\page\admin_tour_schedules_create.md; D:\DATN\DATN_Tài liệu\docs\page\admin_tour_schedules_edit.md]
-- Related docs: [D:\DATN\DATN_Tài liệu\docs\page\admin_tour_schedules_list.md; D:\DATN\DATN_Tài liệu\docs\page\admin_tours_create.md; D:\DATN\DATN_Tài liệu\docs\reference\travel_com_benchmark_flow.md; D:\DATN\DATN_Tài liệu\docs\reference\screen_gap_analysis.md]
+- Primary doc: [D:\DATN\DATN_Tài liệu\docs\page\admin_tour_schedules_edit.md]
+- Related docs: [D:\DATN\DATN_Tài liệu\docs\page\admin_tour_schedules_create.md; D:\DATN\DATN_Tài liệu\docs\page\admin_tour_schedules_list.md; D:\DATN\DATN_Tài liệu\docs\page\admin_tours_create.md; D:\DATN\DATN_Tài liệu\docs\reference\travel_com_benchmark_flow.md; D:\DATN\DATN_Tài liệu\docs\reference\screen_gap_analysis.md]
 - API docs: [D:\DATN\DATN_Tài liệu\docs\api\api_list.md]
 - Endpoint matrix: [D:\DATN\danangtrip-admin\API_ENDPOINT_MATRIX.md]
 - Backend API repo: [D:\DATN\danangtrip-api]
@@ -480,24 +483,26 @@ Context:
 - Backend schema note: [D:\DATN\danangtrip-api\SCHEMA_CURRENT_ANNOTATED.md]
 - Prototype mapping: [D:\DATN\DATN_Tài liệu\screen\4_Others\01-Screen_To_Docs_Mapping.md]
 - Prototype classification: [D:\DATN\DATN_Tài liệu\screen\4_Others\00-Bang_Phan_Loai_Man_Hinh.md]
-- Prototype images: [D:\DATN\DATN_Tài liệu\screen\3_Admin_Flows\09.6-Them_Lich_Khoi_Hanh.png; D:\DATN\DATN_Tài liệu\screen\3_Admin_Flows\09.7-Chinh_Sua_Lich_Khoi_Hanh.png]
-- Prototype HTML/code: [D:\DATN\DATN_Tài liệu\screen\3_Admin_Flows\09.6-Them_Lich_Khoi_Hanh.html; D:\DATN\DATN_Tài liệu\screen\3_Admin_Flows\09.7-Chinh_Sua_Lich_Khoi_Hanh.html]
+- Primary prototype image: [D:\DATN\DATN_Tài liệu\screen\3_Admin_Flows\09.7-Chinh_Sua_Lich_Khoi_Hanh.png]
+- Primary prototype HTML/code: [D:\DATN\DATN_Tài liệu\screen\3_Admin_Flows\09.7-Chinh_Sua_Lich_Khoi_Hanh.html]
+- Related create prototype: [D:\DATN\DATN_Tài liệu\screen\3_Admin_Flows\09.6-Them_Lich_Khoi_Hanh.png; D:\DATN\DATN_Tài liệu\screen\3_Admin_Flows\09.6-Them_Lich_Khoi_Hanh.html]
 - Related list prototype: [D:\DATN\DATN_Tài liệu\screen\3_Admin_Flows\09.5-Lich_Khoi_Hanh.html]
-- Existing implementation references: [D:\DATN\danangtrip-admin\src\pages\Tours\TourSchedules\index.tsx; D:\DATN\danangtrip-admin\src\pages\Tours\TourScheduleCreate\components\ScheduleForm.tsx; D:\DATN\danangtrip-admin\src\pages\Tours\TourCreate\index.tsx]
+- Existing implementation references: [D:\DATN\danangtrip-admin\src\pages\Tours\TourSchedules\index.tsx; D:\DATN\danangtrip-admin\src\pages\Tours\TourScheduleEdit\index.tsx; D:\DATN\danangtrip-admin\src\pages\Tours\TourScheduleCreate\components\ScheduleForm.tsx; D:\DATN\danangtrip-admin\src\pages\Tours\TourSchedules\components\StatsSummary.tsx; D:\DATN\danangtrip-admin\src\pages\Tours\TourSchedules\components\ScheduleDeleteDialog.tsx]
 - API/context files to inspect: [D:\DATN\danangtrip-admin\src\constants\endpoints.ts; D:\DATN\danangtrip-admin\src\api\scheduleApi.ts; D:\DATN\danangtrip-admin\src\types\schedule.ts; D:\DATN\danangtrip-admin\src\validations\schedule.schema.ts; D:\DATN\danangtrip-admin\src\hooks\useScheduleQueries.ts]
 - Main fields to standardize: [departure_code; departure_place; booking_deadline; start_date; end_date; total_slots; booked_slots or remaining_slots; price_adult; price_child; price_infant; status]
 - Contract note: [current repo already uses startDate, endDate, totalSlots, bookedSlots; verify mapping to backend payload names before editing the form]
 - Compatibility note: [this screen feeds the web departure-selection and booking flow, so preserve fields needed by GET /tours/{id}/schedules and booking availability checks]
+- Edit-gap note: [priority gaps from planning docs are stats block, info block, delete flow, dedicated schedule info box, and unsaved changes guard]
 - Skill paths: [D:\DATN\danangtrip-admin\.agent\skills\01-screen-analysis\SKILL.md; D:\DATN\danangtrip-admin\.agent\skills\03-types-api-contract\SKILL.md; D:\DATN\danangtrip-admin\.agent\skills\04-layout-routing\SKILL.md; D:\DATN\danangtrip-admin\.agent\skills\05-ui-components\SKILL.md; D:\DATN\danangtrip-admin\.agent\skills\06-data-integration\SKILL.md; D:\DATN\danangtrip-admin\.agent\skills\07-interactions\SKILL.md; D:\DATN\danangtrip-admin\.agent\skills\08-auth-permissions\SKILL.md; D:\DATN\danangtrip-admin\.agent\skills\09-testing\SKILL.md; D:\DATN\danangtrip-admin\.agent\skills\10-optimization-deploy\SKILL.md]
-- Output prefix: [.agent/artifacts/<group>/YYYY-MM-DD__admin-tour-schedule-form__...md]
+- Output prefix: [.agent/artifacts/<group>/YYYY-MM-DD__admin-tour-schedule-edit__...md]
 
 Execution:
 - Start with `01-screen-analysis`.
 - Before each step, read the matching `SKILL.md` from `Skill paths`.
-- Use `09.6` and `09.7` as the main visual references, and `09.5` only to preserve navigation/list context.
+- Use `09.7` as the main visual reference, and `09.6` plus `09.5` only to preserve parity with create flow and list navigation.
 - Adapt prototype code to repo patterns; do not paste prototype HTML directly.
 - During API-contract step, standardize the missing operational fields and record any server-client naming mismatch.
-- Reuse the existing create/edit schedule flow where possible instead of rebuilding a second form system.
+- Reuse the existing create/edit schedule flow where possible, but prioritize closing the edit-screen gaps first.
 - Stop after each pipeline step for approval.
 ```
 
@@ -508,18 +513,18 @@ Activate 01-screen-analysis
 
 Context:
 - Repo: [D:\DATN\danangtrip-admin]
-- Feature slug: [admin-tour-schedule-form]
-- Screen name: [Tạo / Sửa lịch khởi hành]
+- Feature slug: [admin-tour-schedule-edit]
+- Screen name: [Chỉnh sửa lịch khởi hành]
 - Figma/Stitch: [NONE]
-- Input source: [D:\DATN\DATN_Tài liệu\docs\page\admin_tour_schedules_create.md]
-- Related sources: [D:\DATN\DATN_Tài liệu\docs\page\admin_tour_schedules_edit.md; D:\DATN\DATN_Tài liệu\docs\page\admin_tour_schedules_list.md; D:\DATN\DATN_Tài liệu\docs\reference\travel_com_benchmark_flow.md]
-- Prototype image: [D:\DATN\DATN_Tài liệu\screen\3_Admin_Flows\09.6-Them_Lich_Khoi_Hanh.png]
-- Prototype HTML/code: [D:\DATN\DATN_Tài liệu\screen\3_Admin_Flows\09.6-Them_Lich_Khoi_Hanh.html]
-- Related edit prototype: [D:\DATN\DATN_Tài liệu\screen\3_Admin_Flows\09.7-Chinh_Sua_Lich_Khoi_Hanh.html]
+- Input source: [D:\DATN\DATN_Tài liệu\docs\page\admin_tour_schedules_edit.md]
+- Related sources: [D:\DATN\DATN_Tài liệu\docs\page\admin_tour_schedules_create.md; D:\DATN\DATN_Tài liệu\docs\page\admin_tour_schedules_list.md; D:\DATN\DATN_Tài liệu\docs\reference\travel_com_benchmark_flow.md]
+- Prototype image: [D:\DATN\DATN_Tài liệu\screen\3_Admin_Flows\09.7-Chinh_Sua_Lich_Khoi_Hanh.png]
+- Prototype HTML/code: [D:\DATN\DATN_Tài liệu\screen\3_Admin_Flows\09.7-Chinh_Sua_Lich_Khoi_Hanh.html]
+- Related create prototype: [D:\DATN\DATN_Tài liệu\screen\3_Admin_Flows\09.6-Them_Lich_Khoi_Hanh.html]
 - DESIGN.md: [D:\DATN\danangtrip-admin\DESIGN.md]
 - API docs: [D:\DATN\DATN_Tài liệu\docs\api\api_list.md]
 - Skill path: [D:\DATN\danangtrip-admin\.agent\skills\01-screen-analysis\SKILL.md]
-- Output: [.agent/artifacts/analysis/YYYY-MM-DD__admin-tour-schedule-form__screen-analysis.md]
+- Output: [.agent/artifacts/analysis/YYYY-MM-DD__admin-tour-schedule-edit__screen-analysis.md]
 ```
 
 Expected output:
@@ -554,16 +559,16 @@ Activate 03-types-api-contract
 
 Context:
 - Repo: [D:\DATN\danangtrip-admin]
-- Feature slug: [admin-tour-schedule-form]
-- Analysis file: [.agent/artifacts/analysis/YYYY-MM-DD__admin-tour-schedule-form__screen-analysis.md]
+- Feature slug: [admin-tour-schedule-edit]
+- Analysis file: [.agent/artifacts/analysis/YYYY-MM-DD__admin-tour-schedule-edit__screen-analysis.md]
 - API docs: [D:\DATN\DATN_Tài liệu\docs\api\api_list.md]
 - Endpoint matrix: [D:\DATN\danangtrip-admin\API_ENDPOINT_MATRIX.md]
-- Relevant endpoints: [GET /admin/tour-schedules/{id}, POST /admin/tour-schedules, PUT/PATCH /admin/tour-schedules/{id}, GET /admin/tours]
+- Relevant endpoints: [GET /admin/tour-schedules/{id}, PUT/PATCH /admin/tour-schedules/{id}, DELETE /admin/tour-schedules/{id}, GET /admin/tours]
 - Existing API foundation: [D:\DATN\danangtrip-admin\src\constants\endpoints.ts; D:\DATN\danangtrip-admin\src\api\scheduleApi.ts; D:\DATN\danangtrip-admin\src\api\tourApi.ts]
 - Existing types/validation: [D:\DATN\danangtrip-admin\src\types\schedule.ts; D:\DATN\danangtrip-admin\src\validations\schedule.schema.ts]
 - Standardization focus: [departure_code, departure_place, booking_deadline, capacity, booked or remaining seats, price overrides]
 - Skill path: [D:\DATN\danangtrip-admin\.agent\skills\03-types-api-contract\SKILL.md]
-- Output: [.agent/artifacts/api-contracts/YYYY-MM-DD__admin-tour-schedule-form__api-contract.md]
+- Output: [.agent/artifacts/api-contracts/YYYY-MM-DD__admin-tour-schedule-edit__api-contract.md]
 ```
 
 Expected output:
@@ -581,15 +586,15 @@ Activate 04-layout-routing
 
 Context:
 - Repo: [D:\DATN\danangtrip-admin]
-- Feature slug: [admin-tour-schedule-form]
-- Analysis file: [.agent/artifacts/analysis/YYYY-MM-DD__admin-tour-schedule-form__screen-analysis.md]
-- Target route paths: [/admin/tours/schedules/create; /admin/tours/schedules/:id/edit]
-- Target page files: [D:\DATN\danangtrip-admin\src\pages\Tours\TourScheduleCreate\index.tsx; D:\DATN\danangtrip-admin\src\pages\Tours\TourScheduleEdit\index.tsx]
+- Feature slug: [admin-tour-schedule-edit]
+- Analysis file: [.agent/artifacts/analysis/YYYY-MM-DD__admin-tour-schedule-edit__screen-analysis.md]
+- Target route path: [/admin/tours/schedules/edit/:id]
+- Target page file: [D:\DATN\danangtrip-admin\src\pages\Tours\TourScheduleEdit\index.tsx]
 - Route files: [D:\DATN\danangtrip-admin\src\routes\routes.ts; D:\DATN\danangtrip-admin\src\routes\index.tsx]
 - New routes: [no if already registered; update only if gaps exist]
 - Menu impact: [normally none beyond preserving schedule-list navigation]
 - Skill path: [D:\DATN\danangtrip-admin\.agent\skills\04-layout-routing\SKILL.md]
-- Output: [.agent/artifacts/routing/YYYY-MM-DD__admin-tour-schedule-form__route-plan.md]
+- Output: [.agent/artifacts/routing/YYYY-MM-DD__admin-tour-schedule-edit__route-plan.md]
 ```
 
 Expected output:
@@ -606,15 +611,15 @@ Activate 05-ui-components
 
 Context:
 - Repo: [D:\DATN\danangtrip-admin]
-- Feature slug: [admin-tour-schedule-form]
-- Analysis file: [.agent/artifacts/analysis/YYYY-MM-DD__admin-tour-schedule-form__screen-analysis.md]
-- Prototype image: [D:\DATN\DATN_Tài liệu\screen\3_Admin_Flows\09.6-Them_Lich_Khoi_Hanh.png]
-- Prototype HTML/code: [D:\DATN\DATN_Tài liệu\screen\3_Admin_Flows\09.6-Them_Lich_Khoi_Hanh.html]
-- Related edit prototype: [D:\DATN\DATN_Tài liệu\screen\3_Admin_Flows\09.7-Chinh_Sua_Lich_Khoi_Hanh.html]
-- Components to focus on: [ScheduleForm, SchedulePreviewBox, TourInfoBox, schedule field groups for operation metadata]
-- Existing UI references: [D:\DATN\danangtrip-admin\src\pages\Tours\TourScheduleCreate\components\ScheduleForm.tsx; D:\DATN\danangtrip-admin\src\pages\Tours\TourCreate\index.tsx; D:\DATN\danangtrip-admin\src\pages\Tours\TourSchedules\components\ScheduleCard.tsx]
+- Feature slug: [admin-tour-schedule-edit]
+- Analysis file: [.agent/artifacts/analysis/YYYY-MM-DD__admin-tour-schedule-edit__screen-analysis.md]
+- Prototype image: [D:\DATN\DATN_Tài liệu\screen\3_Admin_Flows\09.7-Chinh_Sua_Lich_Khoi_Hanh.png]
+- Prototype HTML/code: [D:\DATN\DATN_Tài liệu\screen\3_Admin_Flows\09.7-Chinh_Sua_Lich_Khoi_Hanh.html]
+- Related create prototype: [D:\DATN\DATN_Tài liệu\screen\3_Admin_Flows\09.6-Them_Lich_Khoi_Hanh.html]
+- Components to focus on: [ScheduleForm, SchedulePreviewBox, TourInfoBox, ScheduleInfoBox, destructive action area, unsaved changes guard]
+- Existing UI references: [D:\DATN\danangtrip-admin\src\pages\Tours\TourScheduleEdit\index.tsx; D:\DATN\danangtrip-admin\src\pages\Tours\TourScheduleCreate\components\ScheduleForm.tsx; D:\DATN\danangtrip-admin\src\pages\Tours\TourSchedules\components\StatsSummary.tsx; D:\DATN\danangtrip-admin\src\pages\Tours\TourSchedules\components\ScheduleDeleteDialog.tsx]
 - Skill path: [D:\DATN\danangtrip-admin\.agent\skills\05-ui-components\SKILL.md]
-- Output: [.agent/artifacts/ui-specs/YYYY-MM-DD__admin-tour-schedule-form__ui-spec.md]
+- Output: [.agent/artifacts/ui-specs/YYYY-MM-DD__admin-tour-schedule-edit__ui-spec.md]
 ```
 
 Expected output:
@@ -632,14 +637,14 @@ Activate 06-data-integration
 
 Context:
 - Repo: [D:\DATN\danangtrip-admin]
-- Feature slug: [admin-tour-schedule-form]
-- API contract: [.agent/artifacts/api-contracts/YYYY-MM-DD__admin-tour-schedule-form__api-contract.md]
-- UI spec: [.agent/artifacts/ui-specs/YYYY-MM-DD__admin-tour-schedule-form__ui-spec.md]
-- Queries: [schedule detail for edit, tour lookup for create or edit context]
-- Mutations: [create schedule, update schedule]
+- Feature slug: [admin-tour-schedule-edit]
+- API contract: [.agent/artifacts/api-contracts/YYYY-MM-DD__admin-tour-schedule-edit__api-contract.md]
+- UI spec: [.agent/artifacts/ui-specs/YYYY-MM-DD__admin-tour-schedule-edit__ui-spec.md]
+- Queries: [schedule detail for edit, related tour lookup if needed for context]
+- Mutations: [update schedule, optional delete or status update if supported by repo reality]
 - Invalidations: [tour schedules list and affected schedule detail]
 - Skill path: [D:\DATN\danangtrip-admin\.agent\skills\06-data-integration\SKILL.md]
-- Output: [.agent/artifacts/integration/YYYY-MM-DD__admin-tour-schedule-form__data-integration.md]
+- Output: [.agent/artifacts/integration/YYYY-MM-DD__admin-tour-schedule-edit__data-integration.md]
 ```
 
 Expected output:
@@ -656,13 +661,13 @@ Activate 07-interactions
 
 Context:
 - Repo: [D:\DATN\danangtrip-admin]
-- Feature slug: [admin-tour-schedule-form]
-- Analysis file: [.agent/artifacts/analysis/YYYY-MM-DD__admin-tour-schedule-form__screen-analysis.md]
-- Data integration: [.agent/artifacts/integration/YYYY-MM-DD__admin-tour-schedule-form__data-integration.md]
-- Main actions: [select tour, fill schedule fields, validate dates and capacity, submit create, submit edit, preview changes, navigate back to list]
-- Destructive actions: [none unless edit flow exposes cancel or status deactivation in current repo reality]
+- Feature slug: [admin-tour-schedule-edit]
+- Analysis file: [.agent/artifacts/analysis/YYYY-MM-DD__admin-tour-schedule-edit__screen-analysis.md]
+- Data integration: [.agent/artifacts/integration/YYYY-MM-DD__admin-tour-schedule-edit__data-integration.md]
+- Main actions: [load current schedule, edit fields, validate dates and capacity, submit update, preview changes if present, navigate back to list]
+- Destructive actions: [delete schedule or change status if supported by repo reality]
 - Skill path: [D:\DATN\danangtrip-admin\.agent\skills\07-interactions\SKILL.md]
-- Output: [.agent/artifacts/interaction-specs/YYYY-MM-DD__admin-tour-schedule-form__interaction-spec.md]
+- Output: [.agent/artifacts/interaction-specs/YYYY-MM-DD__admin-tour-schedule-edit__interaction-spec.md]
 ```
 
 Expected output:
@@ -680,13 +685,13 @@ Activate 08-auth-permissions
 
 Context:
 - Repo: [D:\DATN\danangtrip-admin]
-- Feature slug: [admin-tour-schedule-form]
-- Route plan: [.agent/artifacts/routing/YYYY-MM-DD__admin-tour-schedule-form__route-plan.md]
-- Interaction spec: [.agent/artifacts/interaction-specs/YYYY-MM-DD__admin-tour-schedule-form__interaction-spec.md]
+- Feature slug: [admin-tour-schedule-edit]
+- Route plan: [.agent/artifacts/routing/YYYY-MM-DD__admin-tour-schedule-edit__route-plan.md]
+- Interaction spec: [.agent/artifacts/interaction-specs/YYYY-MM-DD__admin-tour-schedule-edit__interaction-spec.md]
 - Feature type: [authenticated-only | role-based]
 - Relevant roles: [admin, staff]
 - Skill path: [D:\DATN\danangtrip-admin\.agent\skills\08-auth-permissions\SKILL.md]
-- Output: [.agent/artifacts/auth/YYYY-MM-DD__admin-tour-schedule-form__auth-permissions-review.md]
+- Output: [.agent/artifacts/auth/YYYY-MM-DD__admin-tour-schedule-edit__auth-permissions-review.md]
 ```
 
 Expected output:
@@ -704,12 +709,12 @@ Activate 09-testing
 
 Context:
 - Repo: [D:\DATN\danangtrip-admin]
-- Feature slug: [admin-tour-schedule-form]
-- Analysis file: [.agent/artifacts/analysis/YYYY-MM-DD__admin-tour-schedule-form__screen-analysis.md]
-- Interaction spec: [.agent/artifacts/interaction-specs/YYYY-MM-DD__admin-tour-schedule-form__interaction-spec.md]
-- Auth review: [.agent/artifacts/auth/YYYY-MM-DD__admin-tour-schedule-form__auth-permissions-review.md]
+- Feature slug: [admin-tour-schedule-edit]
+- Analysis file: [.agent/artifacts/analysis/YYYY-MM-DD__admin-tour-schedule-edit__screen-analysis.md]
+- Interaction spec: [.agent/artifacts/interaction-specs/YYYY-MM-DD__admin-tour-schedule-edit__interaction-spec.md]
+- Auth review: [.agent/artifacts/auth/YYYY-MM-DD__admin-tour-schedule-edit__auth-permissions-review.md]
 - Skill path: [D:\DATN\danangtrip-admin\.agent\skills\09-testing\SKILL.md]
-- Output: [.agent/artifacts/test-cases/YYYY-MM-DD__admin-tour-schedule-form__test-report.md]
+- Output: [.agent/artifacts/test-cases/YYYY-MM-DD__admin-tour-schedule-edit__test-report.md]
 ```
 
 Expected output:
@@ -728,13 +733,13 @@ Activate 10-optimization-deploy
 
 Context:
 - Repo: [D:\DATN\danangtrip-admin]
-- Feature slug: [admin-tour-schedule-form]
-- Test report: [.agent/artifacts/test-cases/YYYY-MM-DD__admin-tour-schedule-form__test-report.md]
+- Feature slug: [admin-tour-schedule-edit]
+- Test report: [.agent/artifacts/test-cases/YYYY-MM-DD__admin-tour-schedule-edit__test-report.md]
 - Test verdict: [READY | READY WITH RISKS | NOT READY]
 - Existing artifacts: [analysis, api-contract, route-plan, ui-spec, data-integration, interaction-spec, auth-review, test-report]
 - Skill path: [D:\DATN\danangtrip-admin\.agent\skills\10-optimization-deploy\SKILL.md]
-- Output deploy: [.agent/artifacts/deploy/YYYY-MM-DD__admin-tour-schedule-form__deploy-report.md]
-- Output review: [.agent/artifacts/review/YYYY-MM-DD__admin-tour-schedule-form__review.md]
+- Output deploy: [.agent/artifacts/deploy/YYYY-MM-DD__admin-tour-schedule-edit__deploy-report.md]
+- Output review: [.agent/artifacts/review/YYYY-MM-DD__admin-tour-schedule-edit__review.md]
 ```
 
 Expected output:
