@@ -129,6 +129,79 @@ export const ScheduleForm = () => {
                 </div>
             </div>
 
+            {/* Section: Operational Information */}
+            <div className="space-y-6">
+                <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+                        <i className="ri-settings-4-line text-lg" />
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <h3 className="text-[16px] font-bold text-slate-800">
+                            {t('schedules:fields.operational_info', 'Thông tin vận hành')}
+                        </h3>
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+                    <div className="space-y-2">
+                        <label className="text-[13px] font-bold text-slate-700">
+                            {t('schedules:fields.departure_code')}
+                        </label>
+                        <TextInput
+                            placeholder="VD: VN123"
+                            {...register('departureCode')}
+                            invalid={!!errors.departureCode}
+                            leftIcon={<i className="ri-qr-code-line text-blue-500" />}
+                            className="h-12 rounded-xl border-slate-200 bg-slate-50/50 focus:bg-white transition-all"
+                        />
+                        {errors.departureCode && (
+                            <p className="flex items-center gap-1 text-[11px] font-medium text-red-500">
+                                <i className="ri-error-warning-line" />
+                                {errors.departureCode.message as string}
+                            </p>
+                        )}
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="text-[13px] font-bold text-slate-700">
+                            {t('schedules:fields.departure_place')}
+                        </label>
+                        <TextInput
+                            placeholder="VD: Sân bay Đà Nẵng"
+                            {...register('departurePlace')}
+                            invalid={!!errors.departurePlace}
+                            leftIcon={<i className="ri-map-pin-2-line text-blue-500" />}
+                            className="h-12 rounded-xl border-slate-200 bg-slate-50/50 focus:bg-white transition-all"
+                        />
+                        {errors.departurePlace && (
+                            <p className="flex items-center gap-1 text-[11px] font-medium text-red-500">
+                                <i className="ri-error-warning-line" />
+                                {errors.departurePlace.message as string}
+                            </p>
+                        )}
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="text-[13px] font-bold text-slate-700">
+                            {t('schedules:fields.booking_deadline')}
+                        </label>
+                        <TextInput
+                            type="date"
+                            {...register('bookingDeadline')}
+                            invalid={!!errors.bookingDeadline}
+                            leftIcon={<i className="ri-time-line text-blue-500" />}
+                            className="h-12 rounded-xl border-slate-200 bg-slate-50/50 focus:bg-white transition-all"
+                        />
+                        {errors.bookingDeadline && (
+                            <p className="flex items-center gap-1 text-[11px] font-medium text-red-500">
+                                <i className="ri-error-warning-line" />
+                                {errors.bookingDeadline.message as string}
+                            </p>
+                        )}
+                    </div>
+                </div>
+            </div>
+
             {/* Section: Price Customization */}
             <div className="space-y-6">
                 <div className="relative py-4">

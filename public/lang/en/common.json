@@ -16,7 +16,9 @@
         "people": "people"
     },
     "notices": {
-        "important": "Important notice"
+        "important": "Important notice",
+        "unsaved_changes_title": "Unsaved Changes",
+        "unsaved_changes_body": "You have unsaved changes. Are you sure you want to leave this page?"
     },
     "helpers": {
         "date_range_tip": "The end date is usually when the tour actually finishes."
@@ -41,7 +43,9 @@
         "cancel": "Cancel",
         "export_excel": "Export Excel",
         "exporting": "Exporting...",
-        "processing": "Processing..."
+        "processing": "Processing...",
+        "stay": "Stay",
+        "leave": "Leave"
     },
     "breadcrumb": {
         "home": "Home"

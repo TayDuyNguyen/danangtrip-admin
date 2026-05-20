@@ -12,6 +12,8 @@ import { TourInfoBox } from '../TourScheduleCreate/components/TourInfoBox';
 import { ScheduleForm } from '../TourScheduleCreate/components/ScheduleForm';
 import { SchedulePreviewBox } from '../TourScheduleCreate/components/SchedulePreviewBox';
 import { ScheduleStatsBlock } from './components/ScheduleStatsBlock';
+import { ScheduleInfoBox } from './components/ScheduleInfoBox';
+import { UnsavedChangesGuard } from '@/components/common/UnsavedChangesGuard';
 import ScheduleDeleteDialog from '../TourSchedules/components/ScheduleDeleteDialog';
 import { Button } from '@/components/ui/Button';
 import { ROUTES } from '@/routes/routes';
@@ -54,6 +56,9 @@ const TourScheduleEdit = () => {
             priceChild: null,
             priceInfant: null,
             status: 'AVAILABLE',
+            departureCode: '',
+            departurePlace: '',
+            bookingDeadline: '',
         },
     });
 
@@ -77,6 +82,9 @@ const TourScheduleEdit = () => {
                 priceChild: schedule.priceChild,
                 priceInfant: schedule.priceInfant,
                 status: schedule.status,
+                departureCode: schedule.departureCode || '',
+                departurePlace: schedule.departurePlace || '',
+                bookingDeadline: schedule.bookingDeadline || '',
             });
         }
     }, [schedule, reset]);
@@ -95,6 +103,9 @@ const TourScheduleEdit = () => {
                     priceChild: data.priceChild,
                     priceInfant: data.priceInfant,
                     status: data.status as ScheduleStatus,
+                    departureCode: data.departureCode,
+                    departurePlace: data.departurePlace,
+                    bookingDeadline: data.bookingDeadline,
                 },
             },
             {
@@ -146,6 +157,7 @@ const TourScheduleEdit = () => {
                         {t('common:actions.edit')}
                     </h1>
                     <TourInfoBox tour={tour} isLoading={isLoadingTour} />
+                    {schedule && <ScheduleInfoBox schedule={schedule} />}
                 </div>
 
                 <div className="hidden items-center gap-3 md:flex">
@@ -279,6 +291,8 @@ const TourScheduleEdit = () => {
                 schedule={schedule ?? null}
                 isDeleting={deleteScheduleMutation.isPending}
             />
+
+            <UnsavedChangesGuard isDirty={methods.formState.isDirty} />
         </div>
     );
 };

@@ -166,4 +166,7 @@
 - Executed lint checks (`npm run lint`), typescript type-checking (`npm run typecheck`), production builds (`npm run build`), and prepush checks (`npm run prepush:check`) successfully.
 - Bootstrapped local development Vite server and executed Playwright console error test checks (`npm run test:console`), completing with 4/4 route tests passed.
 - Audited layouts, UI responsive structures, component boundaries, and Vietnamese/English translation parity for schedules module.
-- Generated the comprehensive QA Test Report artifact at `.agent/artifacts/test-cases/2026-05-20__admin-tour-schedule-edit__test-report.md`.
+- Generated the comprehensive QA Test Report artifact at `.agent/artifacts/test-cases/2026-05-20__admin-tour-schedule-edit__test-report.md`.2 0 2 6 - 0 5 - 2 0 :   C o m p l e t e d   0 1 - s c r e e n - a n a l y s i s   f o r   a d m i n - t o u r - s c h e d u l e - e d i t .   I d e n t i f i e d   m i s s i n g   o p e r a t i o n a l   f i e l d s   a n d   U I   g u a r d s .  
+ 2 0 2 6 - 0 5 - 2 0 :   C o m p l e t e d   0 3 - t y p e s - a p i - c o n t r a c t .   C r e a t e d   b a c k e n d   m i g r a t i o n   a n d   u p d a t e d   a d m i n   t y p e s / m a p p e r / v a l i d a t i o n   w i t h   n e w   o p e r a t i o n a l   f i e l d s .  
+ 2 0 2 6 - 0 5 - 2 0 :   C o m p l e t e d   0 4 - l a y o u t - r o u t i n g .   A d d e d   n e w   i 1 8 n   k e y s   f o r   o p e r a t i o n a l   f i e l d s .  
+ 

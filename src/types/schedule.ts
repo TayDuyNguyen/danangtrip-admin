@@ -36,6 +36,9 @@ export interface Schedule {
     priceInfant: number | null;
     status: ScheduleStatus;
     bookingAvailability: ScheduleBookingAvailability;
+    departureCode: string | null;
+    departurePlace: string | null;
+    bookingDeadline: string | null;
 }
 
 /**
@@ -64,4 +67,7 @@ export interface ScheduleFormValues {
     priceChild: number | null;
     priceInfant: number | null;
     status: string;
+    departureCode: string | null;
+    departurePlace: string | null;
+    bookingDeadline: string | null;
 }
