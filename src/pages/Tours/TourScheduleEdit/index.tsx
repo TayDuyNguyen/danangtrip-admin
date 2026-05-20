@@ -1,4 +1,4 @@
-import { useMemo, useEffect } from 'react';
+import { useMemo, useEffect, useState } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useForm, FormProvider } from 'react-hook-form';
@@ -7,10 +7,12 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { getScheduleSchema } from '@/validations/schedule.schema';
 import type { ScheduleFormValues, ScheduleStatus } from '@/types/schedule';
 import { useTourDetailQuery } from '@/hooks/useTourQueries';
-import { useSchedule, useUpdateSchedule } from '@/hooks/useScheduleQueries';
+import { useSchedule, useUpdateSchedule, useDeleteSchedule } from '@/hooks/useScheduleQueries';
 import { TourInfoBox } from '../TourScheduleCreate/components/TourInfoBox';
 import { ScheduleForm } from '../TourScheduleCreate/components/ScheduleForm';
 import { SchedulePreviewBox } from '../TourScheduleCreate/components/SchedulePreviewBox';
+import { ScheduleStatsBlock } from './components/ScheduleStatsBlock';
+import ScheduleDeleteDialog from '../TourSchedules/components/ScheduleDeleteDialog';
 import { Button } from '@/components/ui/Button';
 import { ROUTES } from '@/routes/routes';
 import LoadingReact from '@/components/loading';
@@ -29,9 +31,13 @@ const TourScheduleEdit = () => {
         (location.state as ScheduleLocationState | null)?.fromTourEdit === true;
     const { t } = useTranslation(['schedules', 'common']);
 
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+
     const { data: schedule, isLoading: isLoadingSchedule } = useSchedule(id);
     const { data: tour, isLoading: isLoadingTour } = useTourDetailQuery(schedule?.tourId);
+    
     const updateScheduleMutation = useUpdateSchedule();
+    const deleteScheduleMutation = useDeleteSchedule();
 
     const resolver = useMemo(() => {
         const schema = getScheduleSchema(t, true, schedule?.bookedSlots || 0);
@@ -104,6 +110,16 @@ const TourScheduleEdit = () => {
         );
     };
 
+    const handleDelete = () => {
+        if (!id) return;
+        deleteScheduleMutation.mutate(id, {
+            onSuccess: () => {
+                setIsDeleteDialogOpen(false);
+                navigate(ROUTES.TOURS_SCHEDULES);
+            }
+        });
+    };
+
     const handleCancel = () => {
         navigate(-1);
     };
@@ -173,12 +189,29 @@ const TourScheduleEdit = () => {
                         </div>
                     )}
 
-                    <div className="rounded-2xl border border-slate-200 bg-white/70 backdrop-blur-md p-8 shadow-sm transition-all hover:shadow-md">
+                    <div className="rounded-2xl border border-slate-200 bg-white/70 backdrop-blur-md p-8 shadow-sm transition-all hover:shadow-md flex flex-col justify-between">
                         <FormProvider {...methods}>
                             <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-6">
                                 <ScheduleForm />
                             </form>
                         </FormProvider>
+                        
+                        {/* Delete Button Area at bottom of form */}
+                        <div className="mt-12 pt-6 border-t border-slate-100 flex justify-between items-center">
+                            <Button
+                                variant="outline"
+                                onClick={() => setIsDeleteDialogOpen(true)}
+                                disabled={updateScheduleMutation.isPending}
+                                className="h-10 rounded-xl px-5 border-red-200 bg-white text-red-500 font-bold hover:bg-red-50 hover:border-red-300 hover:text-red-600 transition-all"
+                            >
+                                <i className="ri-delete-bin-line mr-2" />
+                                {t('schedules:actions.delete_this', 'Xóa lịch này')}
+                            </Button>
+                            
+                            <div className="text-[12px] text-slate-400 italic">
+                                {t('schedules:notices.delete_warning_hint', 'Hành động không thể hoàn tác')}
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -210,6 +243,13 @@ const TourScheduleEdit = () => {
                                 </div>
                             </div>
                         </div>
+
+                        {schedule && (
+                            <ScheduleStatsBlock 
+                                totalSlots={schedule.totalSlots} 
+                                bookedSlots={schedule.bookedSlots} 
+                            />
+                        )}
                     </div>
                 </div>
             </div>
@@ -231,6 +271,14 @@ const TourScheduleEdit = () => {
                     {t('common:actions.edit')}
                 </Button>
             </div>
+
+            <ScheduleDeleteDialog 
+                isOpen={isDeleteDialogOpen}
+                onClose={() => setIsDeleteDialogOpen(false)}
+                onConfirm={handleDelete}
+                schedule={schedule ?? null}
+                isDeleting={deleteScheduleMutation.isPending}
+            />
         </div>
     );
 };

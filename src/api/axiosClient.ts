@@ -217,10 +217,11 @@ axiosClient.interceptors.response.use(
 
         // Handle 401 Unauthorized
         if (status === 401 || data?.code === 401) {
-            // Skip for login or refresh endpoints to avoid loops
+            // Skip for login, refresh, or logout endpoints to avoid loops
             if (
                 originalRequest?.url?.includes(API_ENDPOINTS.AUTH.LOGIN) ||
-                originalRequest?.url?.includes(API_ENDPOINTS.AUTH.REFRESH_TOKEN)
+                originalRequest?.url?.includes(API_ENDPOINTS.AUTH.REFRESH_TOKEN) ||
+                originalRequest?.url?.includes(API_ENDPOINTS.AUTH.LOGOUT)
             ) {
                 return Promise.reject(error);
             }

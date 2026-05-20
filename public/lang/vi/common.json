@@ -147,6 +147,7 @@
         "password_min": "Mật khẩu phải từ 6 ký tự trở lên",
         "required": "Trường này là bắt buộc",
         "number_too_small": "Giá trị quá nhỏ",
+        "min_number": "{{field}} phải lớn hơn hoặc bằng {{min}}",
         "file_too_large": "Kích thước tệp quá lớn"
     }
 }

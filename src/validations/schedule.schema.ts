@@ -8,7 +8,7 @@ import type { TFunction } from 'i18next';
 export const getScheduleSchema = (t: TFunction, isEdit = false, bookedSlots = 0) => {
     return Yup.object().shape({
         startDate: Yup.string()
-            .required(t('validation:common.required', { field: t('schedules:fields.start_date') }))
+            .required(t('common:validation.required', { field: t('schedules:fields.start_date') }))
             .test('is-future', t('schedules:validation.start_date_future'), (value) => {
                 if (isEdit) return true;
                 if (!value) return false;
@@ -18,7 +18,7 @@ export const getScheduleSchema = (t: TFunction, isEdit = false, bookedSlots = 0)
                 return start >= today;
             }),
         endDate: Yup.string()
-            .required(t('validation:common.required', { field: t('schedules:fields.end_date') }))
+            .required(t('common:validation.required', { field: t('schedules:fields.end_date') }))
             .test('is-after-start', t('schedules:validation.end_date_after'), function (value) {
                 const { startDate } = this.parent;
                 if (!value || !startDate) return true;
@@ -26,8 +26,8 @@ export const getScheduleSchema = (t: TFunction, isEdit = false, bookedSlots = 0)
             }),
         totalSlots: Yup.number()
             .transform((value) => (isNaN(value) ? undefined : value))
-            .required(t('validation:common.required', { field: t('schedules:fields.max_people') }))
-            .min(1, t('validation:common.min_number', { field: t('schedules:fields.max_people'), min: 1 }))
+            .required(t('common:validation.required', { field: t('schedules:fields.max_people') }))
+            .min(1, t('common:validation.min_number', { field: t('schedules:fields.max_people'), min: 1 }))
             .test('min-booked', t('schedules:validation.total_slots_min_booked', { count: bookedSlots }), (value) => {
                 if (!isEdit || bookedSlots <= 0) return true;
                 if (value === undefined || value === null || isNaN(value)) return true;
@@ -36,15 +36,15 @@ export const getScheduleSchema = (t: TFunction, isEdit = false, bookedSlots = 0)
         priceAdult: Yup.number()
             .transform((value) => (isNaN(value) ? undefined : value))
             .nullable()
-            .min(0, t('validation:common.min_number', { field: t('schedules:fields.price_adult'), min: 0 })),
+            .min(0, t('common:validation.min_number', { field: t('schedules:fields.price_adult'), min: 0 })),
         priceChild: Yup.number()
             .transform((value) => (isNaN(value) ? undefined : value))
             .nullable()
-            .min(0, t('validation:common.min_number', { field: t('schedules:fields.price_child'), min: 0 })),
+            .min(0, t('common:validation.min_number', { field: t('schedules:fields.price_child'), min: 0 })),
         priceInfant: Yup.number()
             .transform((value) => (isNaN(value) ? undefined : value))
             .nullable()
-            .min(0, t('validation:common.min_number', { field: t('schedules:fields.price_infant'), min: 0 })),
-        status: Yup.string().required(t('validation:common.required', { field: t('schedules:fields.status') })),
+            .min(0, t('common:validation.min_number', { field: t('schedules:fields.price_infant'), min: 0 })),
+        status: Yup.string().required(t('common:validation.required', { field: t('schedules:fields.status') })),
     });
 };
