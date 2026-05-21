@@ -13,6 +13,7 @@ import { toNumberSafe, toArraySafe } from "./dashboard.mapper";
 export const mapPaymentItem = (raw: AdminRawPaymentItem): PaymentItem => {
     return {
         id: raw.id,
+        bookingId: raw.booking?.id || undefined,
         transactionCode: raw.transaction_code,
         bookingCode: raw.booking?.booking_code || "",
         customerName: raw.booking?.customer_name || "N/A",
@@ -23,6 +24,7 @@ export const mapPaymentItem = (raw: AdminRawPaymentItem): PaymentItem => {
         status: raw.payment_status,
         refundedAt: raw.refunded_at,
         refundReason: raw.refund_reason,
+        paidAt: raw.paid_at,
         transactionDate: raw.created_at,
         tourName: raw.booking?.tour_name || "N/A",
         tourThumbnail: raw.booking?.tour_thumbnail || undefined,

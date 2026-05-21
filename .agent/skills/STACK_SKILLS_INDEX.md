@@ -304,75 +304,76 @@ Reality check note:
 
 ## Current Decision Snapshot
 
-Date locked for this index: `2026-05-20`
+Date locked for this index: `2026-05-21`
 
 ### Single Chosen Screen Only
 
 - Repo: `danangtrip-admin`
-- Only screen to implement now: `Chi tiết Đơn hàng`
-- Feature slug: `admin-bookings-detail`
-- Main route: `/admin/bookings/:id`
-- Main file: `src/pages/Bookings/BookingDetail/index.tsx`
-- Rule: do not switch to payments detail, reports, users detail, or any other screen until this screen is finished through `10-optimization-deploy`.
+- Only screen to implement now: `Chi tiết giao dịch`
+- Feature slug: `admin-payments-detail`
+- Main route: `/admin/payments/:id`
+- Main file: `src/pages/Payments/PaymentDetail/index.tsx`
+- Rule: do not switch to users detail, promotions, reports, settings, or any other screen until this screen is finished through `10-optimization-deploy`.
 
 ### Candidate Screens Reviewed
 
 | Candidate | Priority | Why it is relevant now | Why it is not the current first pick |
 | --- | --- | --- | --- |
-| `admin-bookings-detail` | High | API exists, list screen already exists, but detail is still missing as a real route/page. This is the clearest operational gap after booking and payment flow work. | Selected as the current first pick. |
-| `admin-payments-detail` | High | API and docs exist, and payment list is already implemented. | Better after booking detail because booking becomes the primary operator entry point. |
-| `admin-users-detail` | Medium | Useful for support context. | Less directly tied to the post-booking operations gap. |
-| `admin-tour-schedule-list hardening` | Medium | Existing page may still benefit from improvements. | Lower priority than the missing booking-detail route. |
-| `admin-promotions` | Low | Planned business feature. | API is still planned and does not beat order-operations visibility. |
+| `admin-payments-detail` | High | Bookings detail is already in place, payment list already exists, and the repo already has `paymentApi.getDetail`, `paymentApi.refund`, and `usePaymentQueries` foundations to build a real payment detail route. | Selected as the current first pick. |
+| `admin-users-detail` | Medium | Useful for support workflows after booking and payment context stabilizes. | Less directly tied to payment traceability and refund operations. |
+| `admin-tour-schedule-list hardening` | Medium | Existing operational pages may still need cleanup. | Lower priority than closing the missing payment-detail route. |
+| `admin-promotions` | Low | Business-relevant feature. | API is still planned and not a better next step than transaction operations. |
+| `admin-site-settings` | Low | Helpful for removing hardcoded contact/payment settings later. | Planned and not on the critical post-booking path yet. |
 
 ### Selected Next Screen
 
-- Screen: `Chi tiết Đơn hàng`
-- Feature slug: `admin-bookings-detail`
-- Main route: `/admin/bookings/:id`
-- Main file: `src/pages/Bookings/BookingDetail/index.tsx`
+- Screen: `Chi tiết giao dịch`
+- Feature slug: `admin-payments-detail`
+- Main route: `/admin/payments/:id`
+- Main file: `src/pages/Payments/PaymentDetail/index.tsx`
 - Decision basis:
-  - The booking and payment funnel is now much more complete, so operator visibility into each order is the next highest-value gap.
-  - The repo already has booking list UI, badges, dialogs, and API foundations that can be reused into a dedicated detail page.
-  - The API has real `GET /admin/bookings/{id}` and `PATCH /admin/bookings/{id}/status`, while planned passengers and timeline endpoints can be recorded as gaps instead of blocking the screen.
+  - The booking detail page is already completed, so the next admin operational gap is transaction traceability and refund control.
+  - The payment list screen and refund dialog already exist, which makes a dedicated detail page a natural route-level expansion instead of a new domain.
+  - The API contract already exposes `GET /admin/payments/{id}` and `POST /admin/payments/{id}/refund`.
+  - This screen is the right place to normalize payment status, gateway metadata, refund rules, and links back to booking detail.
 
 ### Known Detail Gaps To Close
 
-- No real route/page yet; only list dialog exists
-- Need reusable booking summary, status history, and action panels
-- Need clear handling for planned passengers or timeline endpoints that may not exist yet
-- Need explicit status-action mapping for confirm, cancel, and complete flows
-- Need invoice/open-linked-user handling based on real route availability
+- No real payment-detail route/page yet
+- Need reusable summary and timeline panels for transaction audit
+- Need clean link-back behavior to booking detail and payment list
+- Need refund gating that respects the real backend contract and current payment status
+- Need repo-reality auth wording to stay `admin-only`, not `admin/staff`
 
 ### Cross-Project Rollout Order
 
-1. `danangtrip-admin` implements `admin-bookings-detail`
-2. `danangtrip-web` implements `user-bookings-list`
-3. `danangtrip-web` then implements `user-booking-detail`
+1. `danangtrip-web` implements `user-booking-detail`
+2. `danangtrip-admin` implements `admin-payments-detail`
+3. `danangtrip-web` follows with `user-booking-by-code`
 
 Dependency rule:
-- This admin screen is the current system-first implementation target because it defines the operational view of booking status changes that web bookings history must reflect.
+- Keep payment status labels, invoice expectations, refund behavior, and booking-payment linking aligned with the real API contract and the web booking-detail flow.
 
 ## Recommended Current Screen Prompt
 
-Use this ready prompt for the next recommended `danangtrip-admin` screen: booking detail operations.
+Use this ready prompt for the next recommended `danangtrip-admin` screen: payment detail operations.
 
 ```text
 SYSTEM EXECUTION CONTRACT
 
 Act as the execution agent for repository: `D:\DATN\danangtrip-admin`
 
-Your job is to implement the recommended admin screen: `Chi tiết Đơn hàng`
-Feature slug: `admin-bookings-detail`
-Primary target route: `/admin/bookings/:id`
-Primary React Router file target: `src/pages/Bookings/BookingDetail/index.tsx`
-Related files: `src/pages/Bookings/BookingList/index.tsx`, `src/pages/Payments/PaymentList/index.tsx`
-Feature type: authenticated admin/staff operations screen for viewing a booking in depth and performing status actions safely.
+Your job is to implement the recommended admin screen: `Chi tiết giao dịch`
+Feature slug: `admin-payments-detail`
+Primary target route: `/admin/payments/:id`
+Primary React Router file target: `src/pages/Payments/PaymentDetail/index.tsx`
+Related current entry point: `src/pages/Payments/PaymentList/index.tsx`
+Feature type: authenticated admin operations screen for transaction audit, booking linkage, and refund handling.
 
 SINGLE-SCREEN LOCK
-- You are working on exactly one screen only: `Chi tiết Đơn hàng`.
-- You MUST NOT switch to payments detail, promotions, reports, settings, or any unrelated admin screen in this run.
-- If you discover an adjacent issue in list or payment flows, record it as dependency or follow-up and continue only with the booking-detail scope.
+- You are working on exactly one screen only: `Chi tiết giao dịch`.
+- You MUST NOT switch to users detail, promotions, reports, settings, or unrelated admin pages in this run.
+- If you discover an adjacent issue in payment list or booking detail, record it as dependency or follow-up and continue only with the payment-detail scope.
 
 MANDATORY READ ORDER BEFORE ANY WORK
 1. `D:\DATN\danangtrip-admin\AGENTS.md`
@@ -385,9 +386,9 @@ MANDATORY READ ORDER BEFORE ANY WORK
 8. Screen and API references listed below
 
 SCREEN REFERENCES
-- Primary detail doc: `D:\DATN\DATN_Tài liệu\docs\page\admin_bookings_detail.md`
-- Related list doc: `D:\DATN\DATN_Tài liệu\docs\page\admin_bookings_list.md`
-- Related payment doc: `D:\DATN\DATN_Tài liệu\docs\page\admin_payments_detail.md`
+- Primary detail doc: `D:\DATN\DATN_Tài liệu\docs\page\admin_payments_detail.md`
+- Related list doc: `D:\DATN\DATN_Tài liệu\docs\page\admin_payments_list.md`
+- Related booking doc: `D:\DATN\DATN_Tài liệu\docs\page\admin_bookings_detail.md`
 - Admin page list: `D:\DATN\DATN_Tài liệu\docs\reference\list_page.md`
 - Flow priority note: `D:\DATN\DATN_Tài liệu\docs\reference\travel_com_benchmark_flow.md`
 - Gap analysis: `D:\DATN\DATN_Tài liệu\docs\reference\screen_gap_analysis.md`
@@ -411,57 +412,36 @@ SKILL PATHS
 - `09-testing`: `D:\DATN\danangtrip-admin\.agent\skills\09-testing\SKILL.md`
 - `10-optimization-deploy`: `D:\DATN\danangtrip-admin\.agent\skills\10-optimization-deploy\SKILL.md`
 
-PROTOTYPE REFERENCES
-- Prototype mapping: `D:\DATN\DATN_Tài liệu\screen\4_Others\01-Screen_To_Docs_Mapping.md`
-- Prototype classification: `D:\DATN\DATN_Tài liệu\screen\4_Others\00-Bang_Phan_Loai_Man_Hinh.md`
-- Schedule edit image: `D:\DATN\DATN_Tài liệu\screen\3_Admin_Flows\09.7-Chinh_Sua_Lich_Khoi_Hanh.png`
-- Schedule edit HTML/code: `D:\DATN\DATN_Tài liệu\screen\3_Admin_Flows\09.7-Chinh_Sua_Lich_Khoi_Hanh.html`
-- Related schedule create image: `D:\DATN\DATN_Tài liệu\screen\3_Admin_Flows\09.6-Them_Lich_Khoi_Hanh.png`
-- Related schedule create HTML/code: `D:\DATN\DATN_Tài liệu\screen\3_Admin_Flows\09.6-Them_Lich_Khoi_Hanh.html`
-- Related schedule list image: `D:\DATN\DATN_Tài liệu\screen\3_Admin_Flows\09.5-Lich_Khoi_Hanh.png`
-- Related schedule list HTML/code: `D:\DATN\DATN_Tài liệu\screen\3_Admin_Flows\09.5-Lich_Khoi_Hanh.html`
-
-PROTOTYPE USAGE RULES
-- Treat the `.png` files as the visual reference and the `.html` files as implementation reference only.
-- Adapt prototype markup to this repo's React Router, Vite, Tailwind v4, component, i18n, and API patterns.
-- Prefer `09.7-Chinh_Sua_Lich_Khoi_Hanh` as the primary reference for the target screen.
-- Use `09.6-Them_Lich_Khoi_Hanh` and `09.5-Lich_Khoi_Hanh` only to preserve create-flow parity and list navigation context.
-- Reuse current edit and create form code where possible instead of rebuilding the whole flow.
-- Do not copy external image URLs blindly from prototype HTML if local/public assets or API images are available.
-
 REPO CONTEXT TO READ
 - `D:\DATN\danangtrip-admin\DESIGN.md`
 - `D:\DATN\danangtrip-admin\package.json`
 - `D:\DATN\danangtrip-admin\src\constants\endpoints.ts`
 - `D:\DATN\danangtrip-admin\src\api\axiosClient.ts`
-- `D:\DATN\danangtrip-admin\src\api\scheduleApi.ts`
-- `D:\DATN\danangtrip-admin\src\api\tourApi.ts`
-- `D:\DATN\danangtrip-admin\src\types\schedule.ts`
-- `D:\DATN\danangtrip-admin\src\validations\schedule.schema.ts`
-- `D:\DATN\danangtrip-admin\src\hooks\useScheduleQueries.ts`
-- `D:\DATN\danangtrip-admin\src\hooks\useTourQueries.ts`
-- `D:\DATN\danangtrip-admin\src\pages\Tours\TourSchedules\index.tsx`
-- `D:\DATN\danangtrip-admin\src\pages\Tours\TourScheduleCreate\components\ScheduleForm.tsx`
-- `D:\DATN\danangtrip-admin\src\pages\Tours\TourScheduleEdit\index.tsx`
-- `D:\DATN\danangtrip-admin\src\pages\Tours\TourSchedules\components\StatsSummary.tsx`
-- `D:\DATN\danangtrip-admin\src\pages\Tours\TourSchedules\components\ScheduleDeleteDialog.tsx`
+- `D:\DATN\danangtrip-admin\src\api\paymentApi.ts`
+- `D:\DATN\danangtrip-admin\src\api\bookingApi.ts`
+- `D:\DATN\danangtrip-admin\src\hooks\usePaymentQueries.ts`
+- `D:\DATN\danangtrip-admin\src\dataHelper\payment.dataHelper.ts`
+- `D:\DATN\danangtrip-admin\src\dataHelper\payment.mapper.ts`
+- `D:\DATN\danangtrip-admin\src\pages\Payments\PaymentList\index.tsx`
+- `D:\DATN\danangtrip-admin\src\pages\Payments\PaymentList\components\RefundPaymentDialog.tsx`
+- `D:\DATN\danangtrip-admin\src\pages\Bookings\BookingDetail\index.tsx`
 - `D:\DATN\danangtrip-admin\src\routes\routes.ts`
 - `D:\DATN\danangtrip-admin\src\routes\index.tsx`
 
 REQUIRED API FLOW
-- Load the existing schedule detail and related tour context from the current admin API contracts.
-- Edit schedule: use the existing admin update schedule endpoint and contract from `scheduleApi`.
-- Preserve compatibility with existing create flow; reuse its shape as the comparison baseline instead of redesigning both screens together.
-- Standardize and expose the operational fields called out in the benchmark docs: `departure_code`, `departure_place`, `booking_deadline`, status, capacity, sold or remaining seats, and price overrides when applicable.
-- Cross-check actual payload keys against the current repo types because the UI already uses `startDate`, `endDate`, `totalSlots`, and `bookedSlots`; preserve repo reality and record any server-client naming mismatch in the artifact.
+- Load payment detail from `GET /admin/payments/{id}`.
+- Trigger refund from `POST /admin/payments/{id}/refund` with the required `refund_reason`.
+- Link to `/admin/bookings/:id` when the payment has a related booking and the route exists.
+- If the detail payload does not expose a dedicated timeline structure, derive a minimal transaction timeline from created/payment/refund/callback fields already present in repo reality.
+- Preserve list invalidation and refund feedback behavior already used in the payment list screen.
 
 EXPECTED UX
-- The edit screen must support existing schedule context, core schedule dates, booking deadline, departure place, departure code, capacity, booked or remaining seat visibility, adult-child-infant pricing, status, validation, submit success, submit failure, delete or deactivate flow if supported by repo reality, unsaved-change protection, and clear back navigation to the schedules list.
-- Pull in missing operational context blocks from the docs and related list screen where helpful, especially stats/info blocks and destructive-action affordances.
-- Use the existing admin visual language from `TourSchedules`, `TourScheduleEdit`, `TourScheduleCreate`, and `TourCreate`.
-- Keep the routes protected by the existing `PrivateRoute`.
+- Show transaction code, payment status, gateway, method, amount, paid/refunded timestamps, and booking linkage clearly.
+- Provide a safe refund action only when the real contract and payment state allow it.
+- Make booking context visible enough for operators to cross-check payment against order state without leaving the screen blindly.
+- Reuse existing payment list and refund dialog patterns before creating new primitives.
+- Keep the route protected by the existing `PrivateRoute` and current admin-only reality.
 - Add or update i18n keys if the touched UI text is translated in this repo.
-- Preserve compatibility with the downstream web booking funnel, especially the fields used for availability and booking calculations.
 
 PIPELINE ORDER
 Execute in this exact order, stopping after each step for approval:
@@ -476,16 +456,16 @@ Execute in this exact order, stopping after each step for approval:
 9. `10-optimization-deploy`
 
 ARTIFACT TARGETS
-- Analysis: `.agent/artifacts/analysis/YYYY-MM-DD__admin-bookings-detail__screen-analysis.md`
-- API contract: `.agent/artifacts/api-contracts/YYYY-MM-DD__admin-bookings-detail__api-contract.md`
-- Routing: `.agent/artifacts/routing/YYYY-MM-DD__admin-bookings-detail__route-plan.md`
-- UI spec: `.agent/artifacts/ui-specs/YYYY-MM-DD__admin-bookings-detail__ui-spec.md`
-- Data integration: `.agent/artifacts/integration/YYYY-MM-DD__admin-bookings-detail__data-integration.md`
-- Interaction spec: `.agent/artifacts/interaction-specs/YYYY-MM-DD__admin-bookings-detail__interaction-spec.md`
-- Auth review: `.agent/artifacts/auth/YYYY-MM-DD__admin-bookings-detail__auth-permissions-review.md`
-- Test report: `.agent/artifacts/test-cases/YYYY-MM-DD__admin-bookings-detail__test-report.md`
-- Deploy report: `.agent/artifacts/deploy/YYYY-MM-DD__admin-bookings-detail__deploy-report.md`
-- Final review: `.agent/artifacts/review/YYYY-MM-DD__admin-bookings-detail__review.md`
+- Analysis: `.agent/artifacts/analysis/YYYY-MM-DD__admin-payments-detail__screen-analysis.md`
+- API contract: `.agent/artifacts/api-contracts/YYYY-MM-DD__admin-payments-detail__api-contract.md`
+- Routing: `.agent/artifacts/routing/YYYY-MM-DD__admin-payments-detail__route-plan.md`
+- UI spec: `.agent/artifacts/ui-specs/YYYY-MM-DD__admin-payments-detail__ui-spec.md`
+- Data integration: `.agent/artifacts/integration/YYYY-MM-DD__admin-payments-detail__data-integration.md`
+- Interaction spec: `.agent/artifacts/interaction-specs/YYYY-MM-DD__admin-payments-detail__interaction-spec.md`
+- Auth review: `.agent/artifacts/auth/YYYY-MM-DD__admin-payments-detail__auth-permissions-review.md`
+- Test report: `.agent/artifacts/test-cases/YYYY-MM-DD__admin-payments-detail__test-report.md`
+- Deploy report: `.agent/artifacts/deploy/YYYY-MM-DD__admin-payments-detail__deploy-report.md`
+- Final review: `.agent/artifacts/review/YYYY-MM-DD__admin-payments-detail__review.md`
 
 BEGIN NOW
 Start with step `01-screen-analysis`.
@@ -504,45 +484,45 @@ You are the execution planner and implementation agent for `D:\DATN\danangtrip-a
 CURRENT PRIORITY
 
 - Repo: `D:\DATN\danangtrip-admin`
-- Screen: `Chi tiết Đơn hàng`
-- Feature slug: `admin-bookings-detail`
-- Main route: `/admin/bookings/:id`
-- Main file target: `D:\DATN\danangtrip-admin\src\pages\Bookings\BookingDetail\index.tsx`
-- System role: this is the first implementation target before `danangtrip-web` finalizes user bookings history
+- Screen: `Chi tiết giao dịch`
+- Feature slug: `admin-payments-detail`
+- Main route: `/admin/payments/:id`
+- Main file target: `D:\DATN\danangtrip-admin\src\pages\Payments\PaymentDetail\index.tsx`
+- System role: this work follows the completed booking-detail rollout and stabilizes the transaction side of the admin operation flow
 
 SCOPE LOCK
 
-- Only build `Chi tiết Đơn hàng`.
-- Do not expand scope into payments detail, users detail, reports, promotions, or settings.
+- Only build `Chi tiết giao dịch`.
+- Do not expand scope into users detail, promotions, reports, settings, or unrelated admin pages.
 - If another screen is needed, write it down as the next recommendation instead of implementing it now.
 
 GOAL
 
-Stabilize the booking-detail flow so operators can:
-1. load current booking data safely
-2. inspect customer, tour, schedule, and payment context in one place
-3. review booking status and payment status clearly
-4. perform confirm, cancel, or complete actions with the real API contract
-5. degrade safely when planned passengers or timeline endpoints are not available
-6. navigate back to list and related entities without losing operational context
+Stabilize the payment-detail flow so operators can:
+1. load current transaction data safely
+2. inspect gateway, method, amount, status, and booking context in one place
+3. review payment and refund state clearly
+4. perform refund actions with the real API contract
+5. navigate back to payment list or related booking without losing operational context
+6. audit transaction history even when the backend only exposes partial timeline fields
 
 MANDATORY READ ORDER
 
 1. `D:\DATN\DATN_Tài liệu\docs\reference\travel_com_benchmark_flow.md`
 2. `D:\DATN\DATN_Tài liệu\docs\reference\screen_gap_analysis.md`
 3. `D:\DATN\DATN_Tài liệu\docs\reference\list_page.md`
-4. `D:\DATN\DATN_Tài liệu\docs\page\admin_bookings_detail.md`
-5. `D:\DATN\DATN_Tài liệu\docs\page\admin_bookings_list.md`
-6. `D:\DATN\DATN_Tài liệu\docs\page\admin_payments_detail.md`
+4. `D:\DATN\DATN_Tài liệu\docs\page\admin_payments_detail.md`
+5. `D:\DATN\DATN_Tài liệu\docs\page\admin_payments_list.md`
+6. `D:\DATN\DATN_Tài liệu\docs\page\admin_bookings_detail.md`
 7. `D:\DATN\danangtrip-admin\.agent\skills\STACK_SKILLS_INDEX.md`
 8. `D:\DATN\danangtrip-admin\src\routes\routes.ts`
-9. `D:\DATN\danangtrip-admin\src\api\bookingApi.ts`
-10. `D:\DATN\danangtrip-admin\src\types\booking.ts`
-11. `D:\DATN\danangtrip-admin\src\pages\Bookings\BookingList\index.tsx`
-12. `D:\DATN\danangtrip-admin\src\pages\Bookings\BookingList\components\BookingDetailDialog.tsx`
-13. `D:\DATN\danangtrip-admin\src\pages\Bookings\BookingList\components\BookingTimeline.tsx`
-14. `D:\DATN\danangtrip-admin\src\pages\Bookings\BookingList\components\BookingCancelDialog.tsx`
-15. `D:\DATN\danangtrip-admin\src\pages\Payments\PaymentList\components\RefundPaymentDialog.tsx`
+9. `D:\DATN\danangtrip-admin\src\api\paymentApi.ts`
+10. `D:\DATN\danangtrip-admin\src\hooks\usePaymentQueries.ts`
+11. `D:\DATN\danangtrip-admin\src\dataHelper\payment.dataHelper.ts`
+12. `D:\DATN\danangtrip-admin\src\dataHelper\payment.mapper.ts`
+13. `D:\DATN\danangtrip-admin\src\pages\Payments\PaymentList\index.tsx`
+14. `D:\DATN\danangtrip-admin\src\pages\Payments\PaymentList\components\RefundPaymentDialog.tsx`
+15. `D:\DATN\danangtrip-admin\src\pages\Bookings\BookingDetail\index.tsx`
 
 EXECUTION MODE
 
@@ -559,14 +539,14 @@ EXECUTION MODE
   - `10-optimization-deploy`
 - Stop after each step for approval.
 - If docs and repo differ, follow repo reality and record the mismatch.
-- If route naming differs between docs and repo, preserve repo reality and record the route mismatch explicitly in the routing artifact.
+- If a dedicated timeline structure is not present, preserve repo reality and document the fallback timeline logic explicitly in the artifact set.
 
 SUCCESS CRITERIA
 
-- The detail page exposes the operational fields needed by booking support and status management.
-- The UI clearly shows customer, tour, schedule, and payment context.
-- The action buttons use the real admin status API.
-- Planned passenger or timeline sections are either implemented from real APIs or clearly marked as unavailable by repo reality.
+- The detail page exposes the operational fields needed by payment support and refund handling.
+- The UI clearly shows transaction and linked-booking context.
+- The refund action uses the real admin payment API and invalidates the right queries.
+- The route remains aligned with current admin-only auth reality.
 - Artifacts and memory files are updated for every completed step.
 
 BEGIN
@@ -592,7 +572,7 @@ Start with `01-screen-analysis`.
 The examples below are fallback templates.
 Dates and slugs are examples only; replace them with the current task values.
 
-### Current Recommended Screen - Admin Bookings Detail
+### Current Recommended Screen - Admin Payments Detail
 
 Use this prompt when manually activating the local skill pipeline for the recommended admin screen.
 
@@ -601,16 +581,16 @@ Activate full pipeline for current recommended screen
 
 Context:
 - Repo: [D:\DATN\danangtrip-admin]
-- Feature slug: [admin-bookings-detail]
-- Screen name: [Chi tiết Đơn hàng]
-- Primary target route: [/admin/bookings/:id]
-- Target page file: [D:\DATN\danangtrip-admin\src\pages\Bookings\BookingDetail\index.tsx]
-- Related files: [D:\DATN\danangtrip-admin\src\pages\Bookings\BookingList\index.tsx; D:\DATN\danangtrip-admin\src\pages\Payments\PaymentList\index.tsx]
+- Feature slug: [admin-payments-detail]
+- Screen name: [Chi tiết giao dịch]
+- Primary target route: [/admin/payments/:id]
+- Target page file: [D:\DATN\danangtrip-admin\src\pages\Payments\PaymentDetail\index.tsx]
+- Related files: [D:\DATN\danangtrip-admin\src\pages\Payments\PaymentList\index.tsx; D:\DATN\danangtrip-admin\src\pages\Bookings\BookingDetail\index.tsx]
 - Route registration: [D:\DATN\danangtrip-admin\src\routes\routes.ts; D:\DATN\danangtrip-admin\src\routes\index.tsx]
-- Auth requirement: [Admin or staff; protected by existing PrivateRoute]
+- Auth requirement: [Admin only; protected by existing PrivateRoute]
 - DESIGN.md: [D:\DATN\danangtrip-admin\DESIGN.md]
-- Primary doc: [D:\DATN\DATN_Tài liệu\docs\page\admin_bookings_detail.md]
-- Related docs: [D:\DATN\DATN_Tài liệu\docs\page\admin_bookings_list.md; D:\DATN\DATN_Tài liệu\docs\page\admin_payments_detail.md; D:\DATN\DATN_Tài liệu\docs\reference\travel_com_benchmark_flow.md; D:\DATN\DATN_Tài liệu\docs\reference\screen_gap_analysis.md]
+- Primary doc: [D:\DATN\DATN_Tài liệu\docs\page\admin_payments_detail.md]
+- Related docs: [D:\DATN\DATN_Tài liệu\docs\page\admin_payments_list.md; D:\DATN\DATN_Tài liệu\docs\page\admin_bookings_detail.md; D:\DATN\DATN_Tài liệu\docs\reference\travel_com_benchmark_flow.md; D:\DATN\DATN_Tài liệu\docs\reference\screen_gap_analysis.md]
 - API docs: [D:\DATN\DATN_Tài liệu\docs\api\api_list.md]
 - Endpoint matrix: [D:\DATN\danangtrip-admin\API_ENDPOINT_MATRIX.md]
 - Backend API repo: [D:\DATN\danangtrip-api]
@@ -621,21 +601,21 @@ Context:
 - Prototype mapping: [D:\DATN\DATN_Tài liệu\screen\4_Others\01-Screen_To_Docs_Mapping.md]
 - Prototype classification: [D:\DATN\DATN_Tài liệu\screen\4_Others\00-Bang_Phan_Loai_Man_Hinh.md]
 - Primary prototype image: [Use doc-driven layout if a dedicated image is missing in repo reality]
-- Existing implementation references: [D:\DATN\danangtrip-admin\src\pages\Bookings\BookingList\index.tsx; D:\DATN\danangtrip-admin\src\pages\Bookings\BookingList\components\BookingDetailDialog.tsx; D:\DATN\danangtrip-admin\src\pages\Bookings\BookingList\components\BookingTimeline.tsx; D:\DATN\danangtrip-admin\src\pages\Payments\PaymentList\components\RefundPaymentDialog.tsx]
-- API/context files to inspect: [D:\DATN\danangtrip-admin\src\constants\endpoints.ts; D:\DATN\danangtrip-admin\src\api\bookingApi.ts; D:\DATN\danangtrip-admin\src\types\booking.ts; D:\DATN\danangtrip-admin\src\hooks\useBookingQueries.ts]
-- Main fields to standardize: [booking_status; payment_status; booking_code; booked_at; customer info; schedule info; totals]
-- Contract note: [passengers and timeline are documented but may still be planned; confirm real route support before implementing those sections]
-- Compatibility note: [this screen should align operator-visible status semantics with the user bookings history screen]
-- Detail-gap note: [priority gaps are real route/page creation, action sidebar, status timeline, and handling of planned sub-sections]
+- Existing implementation references: [D:\DATN\danangtrip-admin\src\pages\Payments\PaymentList\index.tsx; D:\DATN\danangtrip-admin\src\pages\Payments\PaymentList\components\RefundPaymentDialog.tsx; D:\DATN\danangtrip-admin\src\pages\Bookings\BookingDetail\index.tsx]
+- API/context files to inspect: [D:\DATN\danangtrip-admin\src\constants\endpoints.ts; D:\DATN\danangtrip-admin\src\api\paymentApi.ts; D:\DATN\danangtrip-admin\src\dataHelper\payment.dataHelper.ts; D:\DATN\danangtrip-admin\src\dataHelper\payment.mapper.ts; D:\DATN\danangtrip-admin\src\hooks\usePaymentQueries.ts]
+- Main fields to standardize: [payment_status; transaction_code; gateway; method; amount fields; refund_reason; booking linkage]
+- Contract note: [use real detail and refund contracts first; derive timeline from payload if no dedicated transaction-history structure exists]
+- Compatibility note: [this screen should align operator-visible payment semantics with user booking detail and invoice expectations]
+- Detail-gap note: [priority gaps are real route/page creation, refund gating, booking linkage, and transaction timeline presentation]
 - Skill paths: [D:\DATN\danangtrip-admin\.agent\skills\01-screen-analysis\SKILL.md; D:\DATN\danangtrip-admin\.agent\skills\03-types-api-contract\SKILL.md; D:\DATN\danangtrip-admin\.agent\skills\04-layout-routing\SKILL.md; D:\DATN\danangtrip-admin\.agent\skills\05-ui-components\SKILL.md; D:\DATN\danangtrip-admin\.agent\skills\06-data-integration\SKILL.md; D:\DATN\danangtrip-admin\.agent\skills\07-interactions\SKILL.md; D:\DATN\danangtrip-admin\.agent\skills\08-auth-permissions\SKILL.md; D:\DATN\danangtrip-admin\.agent\skills\09-testing\SKILL.md; D:\DATN\danangtrip-admin\.agent\skills\10-optimization-deploy\SKILL.md]
-- Output prefix: [.agent/artifacts/<group>/YYYY-MM-DD__admin-bookings-detail__...md]
+- Output prefix: [.agent/artifacts/<group>/YYYY-MM-DD__admin-payments-detail__...md]
 
 Execution:
 - Start with `01-screen-analysis`.
 - Before each step, read the matching `SKILL.md` from `Skill paths`.
-- Use the booking-detail doc as the main UX reference and adapt it to repo layout patterns; do not paste prototype HTML directly.
-- During API-contract step, separate real endpoints from planned endpoints and record the gap explicitly.
-- Reuse the existing booking list dialog and status components where possible, but prioritize creating a real route/page.
+- Use the payment-detail doc as the main UX reference and adapt it to repo layout patterns; do not paste prototype HTML directly.
+- During API-contract step, separate real transaction fields from inferred timeline convenience fields and record the gap explicitly.
+- Reuse the existing payment list and refund dialog patterns where possible, but prioritize creating a real route/page.
 - Stop after each pipeline step for approval.
 ```
 
@@ -646,16 +626,16 @@ Activate 01-screen-analysis
 
 Context:
 - Repo: [D:\DATN\danangtrip-admin]
-- Feature slug: [admin-bookings-detail]
-- Screen name: [Chi tiết Đơn hàng]
+- Feature slug: [admin-payments-detail]
+- Screen name: [Chi tiết giao dịch]
 - Figma/Stitch: [NONE]
-- Input source: [D:\DATN\DATN_Tài liệu\docs\page\admin_bookings_detail.md]
-- Related sources: [D:\DATN\DATN_Tài liệu\docs\page\admin_bookings_list.md; D:\DATN\DATN_Tài liệu\docs\page\admin_payments_detail.md; D:\DATN\DATN_Tài liệu\docs\reference\travel_com_benchmark_flow.md]
-- Prototype note: [Use screen doc and current booking list dialog as main references]
+- Input source: [D:\DATN\DATN_Tài liệu\docs\page\admin_payments_detail.md]
+- Related sources: [D:\DATN\DATN_Tài liệu\docs\page\admin_payments_list.md; D:\DATN\DATN_Tài liệu\docs\page\admin_bookings_detail.md; D:\DATN\DATN_Tài liệu\docs\reference\travel_com_benchmark_flow.md]
+- Prototype note: [Use screen doc and current payment list + refund dialog as main references]
 - DESIGN.md: [D:\DATN\danangtrip-admin\DESIGN.md]
 - API docs: [D:\DATN\DATN_Tài liệu\docs\api\api_list.md]
 - Skill path: [D:\DATN\danangtrip-admin\.agent\skills\01-screen-analysis\SKILL.md]
-- Output: [.agent/artifacts/analysis/YYYY-MM-DD__admin-bookings-detail__screen-analysis.md]
+- Output: [.agent/artifacts/analysis/YYYY-MM-DD__admin-payments-detail__screen-analysis.md]
 ```
 
 Expected output:
@@ -690,16 +670,16 @@ Activate 03-types-api-contract
 
 Context:
 - Repo: [D:\DATN\danangtrip-admin]
-- Feature slug: [admin-bookings-detail]
-- Analysis file: [.agent/artifacts/analysis/YYYY-MM-DD__admin-bookings-detail__screen-analysis.md]
+- Feature slug: [admin-payments-detail]
+- Analysis file: [.agent/artifacts/analysis/YYYY-MM-DD__admin-payments-detail__screen-analysis.md]
 - API docs: [D:\DATN\DATN_Tài liệu\docs\api\api_list.md]
 - Endpoint matrix: [D:\DATN\danangtrip-admin\API_ENDPOINT_MATRIX.md]
-- Relevant endpoints: [GET /admin/bookings/{id}, PATCH /admin/bookings/{id}/status, GET /user/bookings/{id}/invoice]
-- Existing API foundation: [D:\DATN\danangtrip-admin\src\constants\endpoints.ts; D:\DATN\danangtrip-admin\src\api\bookingApi.ts; D:\DATN\danangtrip-admin\src\api\paymentApi.ts]
-- Existing types/validation: [D:\DATN\danangtrip-admin\src\types\api.ts; create or extend booking view-models in repo reality]
-- Standardization focus: [booking_status, payment_status, booking_code, amount fields, customer block, route params]
+- Relevant endpoints: [GET /admin/payments/{id}, POST /admin/payments/{id}/refund]
+- Existing API foundation: [D:\DATN\danangtrip-admin\src\constants\endpoints.ts; D:\DATN\danangtrip-admin\src\api\paymentApi.ts; D:\DATN\danangtrip-admin\src\api\bookingApi.ts]
+- Existing types/validation: [D:\DATN\danangtrip-admin\src\types\api.ts; D:\DATN\danangtrip-admin\src\dataHelper\payment.dataHelper.ts; create or extend payment detail view-models in repo reality]
+- Standardization focus: [payment_status, transaction_code, gateway, method, amount fields, refund fields, booking linkage, route params]
 - Skill path: [D:\DATN\danangtrip-admin\.agent\skills\03-types-api-contract\SKILL.md]
-- Output: [.agent/artifacts/api-contracts/YYYY-MM-DD__admin-bookings-detail__api-contract.md]
+- Output: [.agent/artifacts/api-contracts/YYYY-MM-DD__admin-payments-detail__api-contract.md]
 ```
 
 Expected output:
@@ -717,15 +697,15 @@ Activate 04-layout-routing
 
 Context:
 - Repo: [D:\DATN\danangtrip-admin]
-- Feature slug: [admin-bookings-detail]
-- Analysis file: [.agent/artifacts/analysis/YYYY-MM-DD__admin-bookings-detail__screen-analysis.md]
-- Target route path: [/admin/bookings/:id]
-- Target page file: [D:\DATN\danangtrip-admin\src\pages\Bookings\BookingDetail\index.tsx]
+- Feature slug: [admin-payments-detail]
+- Analysis file: [.agent/artifacts/analysis/YYYY-MM-DD__admin-payments-detail__screen-analysis.md]
+- Target route path: [/admin/payments/:id]
+- Target page file: [D:\DATN\danangtrip-admin\src\pages\Payments\PaymentDetail\index.tsx]
 - Route files: [D:\DATN\danangtrip-admin\src\routes\routes.ts; D:\DATN\danangtrip-admin\src\routes\index.tsx]
 - New routes: [yes]
-- Menu impact: [preserve booking-list navigation and breadcrumb path]
+- Menu impact: [preserve payment-list navigation and breadcrumb path]
 - Skill path: [D:\DATN\danangtrip-admin\.agent\skills\04-layout-routing\SKILL.md]
-- Output: [.agent/artifacts/routing/YYYY-MM-DD__admin-bookings-detail__route-plan.md]
+- Output: [.agent/artifacts/routing/YYYY-MM-DD__admin-payments-detail__route-plan.md]
 ```
 
 Expected output:
@@ -742,12 +722,12 @@ Activate 05-ui-components
 
 Context:
 - Repo: [D:\DATN\danangtrip-admin]
-- Feature slug: [admin-bookings-detail]
-- Analysis file: [.agent/artifacts/analysis/YYYY-MM-DD__admin-bookings-detail__screen-analysis.md]
-- Components to focus on: [BookingDetailPageShell, BookingHeader, BookingInfoCard, CustomerInfoCard, TourBookingCard, BookingActionsSidebar, BookingStatusTimeline]
-- Existing UI references: [D:\DATN\danangtrip-admin\src\pages\Bookings\BookingList\components\BookingDetailDialog.tsx; D:\DATN\danangtrip-admin\src\pages\Bookings\BookingList\components\BookingTimeline.tsx; D:\DATN\danangtrip-admin\src\pages\Payments\PaymentList\components\RefundPaymentDialog.tsx]
+- Feature slug: [admin-payments-detail]
+- Analysis file: [.agent/artifacts/analysis/YYYY-MM-DD__admin-payments-detail__screen-analysis.md]
+- Components to focus on: [PaymentDetailPageShell, PaymentHeader, PaymentSummaryCard, PaymentGatewayCard, PaymentBookingLinkCard, PaymentTimelineCard, PaymentActionsSidebar, RefundPaymentDialog]
+- Existing UI references: [D:\DATN\danangtrip-admin\src\pages\Payments\PaymentList\index.tsx; D:\DATN\danangtrip-admin\src\pages\Payments\PaymentList\components\RefundPaymentDialog.tsx; D:\DATN\danangtrip-admin\src\pages\Bookings\BookingDetail\index.tsx]
 - Skill path: [D:\DATN\danangtrip-admin\.agent\skills\05-ui-components\SKILL.md]
-- Output: [.agent/artifacts/ui-specs/YYYY-MM-DD__admin-bookings-detail__ui-spec.md]
+- Output: [.agent/artifacts/ui-specs/YYYY-MM-DD__admin-payments-detail__ui-spec.md]
 ```
 
 Expected output:
@@ -765,14 +745,14 @@ Activate 06-data-integration
 
 Context:
 - Repo: [D:\DATN\danangtrip-admin]
-- Feature slug: [admin-bookings-detail]
-- API contract: [.agent/artifacts/api-contracts/YYYY-MM-DD__admin-bookings-detail__api-contract.md]
-- UI spec: [.agent/artifacts/ui-specs/YYYY-MM-DD__admin-bookings-detail__ui-spec.md]
-- Queries: [booking detail]
-- Mutations: [update booking status]
-- Invalidations: [bookings list and affected booking detail]
+- Feature slug: [admin-payments-detail]
+- API contract: [.agent/artifacts/api-contracts/YYYY-MM-DD__admin-payments-detail__api-contract.md]
+- UI spec: [.agent/artifacts/ui-specs/YYYY-MM-DD__admin-payments-detail__ui-spec.md]
+- Queries: [payment detail]
+- Mutations: [refund payment]
+- Invalidations: [payments list, affected payment detail, and booking detail if linked data changes]
 - Skill path: [D:\DATN\danangtrip-admin\.agent\skills\06-data-integration\SKILL.md]
-- Output: [.agent/artifacts/integration/YYYY-MM-DD__admin-bookings-detail__data-integration.md]
+- Output: [.agent/artifacts/integration/YYYY-MM-DD__admin-payments-detail__data-integration.md]
 ```
 
 Expected output:
@@ -789,13 +769,13 @@ Activate 07-interactions
 
 Context:
 - Repo: [D:\DATN\danangtrip-admin]
-- Feature slug: [admin-bookings-detail]
-- Analysis file: [.agent/artifacts/analysis/YYYY-MM-DD__admin-bookings-detail__screen-analysis.md]
-- Data integration: [.agent/artifacts/integration/YYYY-MM-DD__admin-bookings-detail__data-integration.md]
-- Main actions: [load booking, confirm, cancel, complete, open invoice, navigate to related user or list]
-- Destructive actions: [cancel booking]
+- Feature slug: [admin-payments-detail]
+- Analysis file: [.agent/artifacts/analysis/YYYY-MM-DD__admin-payments-detail__screen-analysis.md]
+- Data integration: [.agent/artifacts/integration/YYYY-MM-DD__admin-payments-detail__data-integration.md]
+- Main actions: [load payment detail, open linked booking, open refund dialog, submit refund reason, navigate back to payments list]
+- Destructive actions: [refund payment]
 - Skill path: [D:\DATN\danangtrip-admin\.agent\skills\07-interactions\SKILL.md]
-- Output: [.agent/artifacts/interaction-specs/YYYY-MM-DD__admin-bookings-detail__interaction-spec.md]
+- Output: [.agent/artifacts/interaction-specs/YYYY-MM-DD__admin-payments-detail__interaction-spec.md]
 ```
 
 Expected output:
@@ -813,13 +793,13 @@ Activate 08-auth-permissions
 
 Context:
 - Repo: [D:\DATN\danangtrip-admin]
-- Feature slug: [admin-bookings-detail]
-- Route plan: [.agent/artifacts/routing/YYYY-MM-DD__admin-bookings-detail__route-plan.md]
-- Interaction spec: [.agent/artifacts/interaction-specs/YYYY-MM-DD__admin-bookings-detail__interaction-spec.md]
+- Feature slug: [admin-payments-detail]
+- Route plan: [.agent/artifacts/routing/YYYY-MM-DD__admin-payments-detail__route-plan.md]
+- Interaction spec: [.agent/artifacts/interaction-specs/YYYY-MM-DD__admin-payments-detail__interaction-spec.md]
 - Feature type: [authenticated-only | role-based]
-- Relevant roles: [admin, staff]
+- Relevant roles: [admin]
 - Skill path: [D:\DATN\danangtrip-admin\.agent\skills\08-auth-permissions\SKILL.md]
-- Output: [.agent/artifacts/auth/YYYY-MM-DD__admin-bookings-detail__auth-permissions-review.md]
+- Output: [.agent/artifacts/auth/YYYY-MM-DD__admin-payments-detail__auth-permissions-review.md]
 ```
 
 Expected output:
@@ -837,12 +817,12 @@ Activate 09-testing
 
 Context:
 - Repo: [D:\DATN\danangtrip-admin]
-- Feature slug: [admin-bookings-detail]
-- Analysis file: [.agent/artifacts/analysis/YYYY-MM-DD__admin-bookings-detail__screen-analysis.md]
-- Interaction spec: [.agent/artifacts/interaction-specs/YYYY-MM-DD__admin-bookings-detail__interaction-spec.md]
-- Auth review: [.agent/artifacts/auth/YYYY-MM-DD__admin-bookings-detail__auth-permissions-review.md]
+- Feature slug: [admin-payments-detail]
+- Analysis file: [.agent/artifacts/analysis/YYYY-MM-DD__admin-payments-detail__screen-analysis.md]
+- Interaction spec: [.agent/artifacts/interaction-specs/YYYY-MM-DD__admin-payments-detail__interaction-spec.md]
+- Auth review: [.agent/artifacts/auth/YYYY-MM-DD__admin-payments-detail__auth-permissions-review.md]
 - Skill path: [D:\DATN\danangtrip-admin\.agent\skills\09-testing\SKILL.md]
-- Output: [.agent/artifacts/test-cases/YYYY-MM-DD__admin-bookings-detail__test-report.md]
+- Output: [.agent/artifacts/test-cases/YYYY-MM-DD__admin-payments-detail__test-report.md]
 ```
 
 Expected output:
@@ -861,13 +841,13 @@ Activate 10-optimization-deploy
 
 Context:
 - Repo: [D:\DATN\danangtrip-admin]
-- Feature slug: [admin-bookings-detail]
-- Test report: [.agent/artifacts/test-cases/YYYY-MM-DD__admin-bookings-detail__test-report.md]
+- Feature slug: [admin-payments-detail]
+- Test report: [.agent/artifacts/test-cases/YYYY-MM-DD__admin-payments-detail__test-report.md]
 - Test verdict: [READY | READY WITH RISKS | NOT READY]
 - Existing artifacts: [analysis, api-contract, route-plan, ui-spec, data-integration, interaction-spec, auth-review, test-report]
 - Skill path: [D:\DATN\danangtrip-admin\.agent\skills\10-optimization-deploy\SKILL.md]
-- Output deploy: [.agent/artifacts/deploy/YYYY-MM-DD__admin-bookings-detail__deploy-report.md]
-- Output review: [.agent/artifacts/review/YYYY-MM-DD__admin-bookings-detail__review.md]
+- Output deploy: [.agent/artifacts/deploy/YYYY-MM-DD__admin-payments-detail__deploy-report.md]
+- Output review: [.agent/artifacts/review/YYYY-MM-DD__admin-payments-detail__review.md]
 ```
 
 Expected output:

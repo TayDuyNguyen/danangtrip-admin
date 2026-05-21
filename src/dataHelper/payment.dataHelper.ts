@@ -9,6 +9,7 @@ export interface AdminRawPaymentItem {
     payment_status: PaymentStatus;
     refunded_at?: string | null;
     refund_reason?: string | null;
+    paid_at?: string | null;
     created_at: string;
     updated_at: string;
     booking?: {
@@ -33,6 +34,7 @@ export interface AdminRawPaymentListResponse {
 
 export interface PaymentItem {
     id: number;
+    bookingId?: number;
     transactionCode: string;
     bookingCode: string;
     customerName: string;
@@ -43,6 +45,7 @@ export interface PaymentItem {
     status: PaymentStatus;
     refundedAt?: string | null;
     refundReason?: string | null;
+    paidAt?: string | null;
     transactionDate: string;
     tourName: string;
     tourThumbnail?: string;

@@ -113,21 +113,26 @@ export const PaymentTable = ({
                                 >
                                     {/* Transaction Code */}
                                     <td className="py-4 px-6">
-                                        <span className="text-slate-900 font-bold tracking-tight">
+                                        <Link
+                                            to={ROUTES.PAYMENTS_DETAIL.replace(':id', String(payment.id))}
+                                            className="text-slate-900 font-bold tracking-tight hover:text-[#14B8A6] transition-colors"
+                                        >
                                             {payment.transactionCode}
-                                        </span>
+                                        </Link>
                                     </td>
 
                                     {/* Booking Code Link */}
                                     <td className="py-4 px-6">
-                                        {payment.bookingCode ? (
+                                        {payment.bookingCode && payment.bookingId ? (
                                             <Link
-                                                to={`${ROUTES.BOOKINGS_LIST}/${payment.id}`}
+                                                to={ROUTES.BOOKINGS_DETAIL.replace(':id', String(payment.bookingId))}
                                                 className="inline-flex items-center gap-1 text-[#14B8A6] hover:text-[#0f766e] font-bold group"
                                             >
                                                 <span>{payment.bookingCode}</span>
                                                 <ExternalLink size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" />
                                             </Link>
+                                        ) : payment.bookingCode ? (
+                                            <span className="text-slate-900 font-bold">{payment.bookingCode}</span>
                                         ) : (
                                             <span className="text-slate-400">—</span>
                                         )}
@@ -182,27 +187,34 @@ export const PaymentTable = ({
 
                                     {/* Actions */}
                                     <td className="py-4 px-6 text-right">
-                                        {showRefundAction ? (
-                                            <div className="relative inline-block group/btn">
-                                                <button
-                                                    onClick={() => onRefundClick(payment)}
-                                                    disabled={!isAdmin}
-                                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg bg-rose-50 border border-rose-100 text-rose-600 disabled:opacity-50 disabled:bg-slate-50 disabled:border-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed hover:bg-rose-600 hover:text-white transition-all duration-200 shadow-xs shadow-rose-100/50 hover:shadow-lg hover:shadow-rose-500/20"
-                                                >
-                                                    <RefreshCw size={12} />
-                                                    <span>{t("action.refund", "Hoàn tiền")}</span>
-                                                </button>
+                                        <div className="flex justify-end items-center gap-2">
+                                            <Link
+                                                to={ROUTES.PAYMENTS_DETAIL.replace(':id', String(payment.id))}
+                                                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg bg-slate-50 border border-slate-200 text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-all duration-200 shadow-xs"
+                                            >
+                                                <span>{t("action.detail", "Chi tiết")}</span>
+                                            </Link>
 
-                                                {/* Tooltip for Staff */}
-                                                {!isAdmin && (
-                                                    <div className="absolute right-0 bottom-full mb-2 w-48 hidden group-hover/btn:block bg-slate-900/95 backdrop-blur-xs text-white text-[10px] font-bold py-1.5 px-3 rounded-lg shadow-xl leading-normal text-center z-50">
-                                                        {t("action.refund_tooltip_staff", "Chỉ người quản trị mới có quyền thực hiện hoàn tiền")}
-                                                    </div>
-                                                )}
-                                            </div>
-                                        ) : (
-                                            <span className="text-slate-400">—</span>
-                                        )}
+                                            {showRefundAction && (
+                                                <div className="relative inline-block group/btn">
+                                                    <button
+                                                        onClick={() => onRefundClick(payment)}
+                                                        disabled={!isAdmin}
+                                                        className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg bg-rose-50 border border-rose-100 text-rose-600 disabled:opacity-50 disabled:bg-slate-50 disabled:border-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed hover:bg-rose-600 hover:text-white transition-all duration-200 shadow-xs shadow-rose-100/50 hover:shadow-lg hover:shadow-rose-500/20"
+                                                    >
+                                                        <RefreshCw size={12} />
+                                                        <span>{t("action.refund", "Hoàn tiền")}</span>
+                                                    </button>
+
+                                                    {/* Tooltip for Staff */}
+                                                    {!isAdmin && (
+                                                        <div className="absolute right-0 bottom-full mb-2 w-48 hidden group-hover/btn:block bg-slate-900/95 backdrop-blur-xs text-white text-[10px] font-bold py-1.5 px-3 rounded-lg shadow-xl leading-normal text-center z-50">
+                                                            {t("action.refund_tooltip_staff", "Chỉ người quản trị mới có quyền thực hiện hoàn tiền")}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            )}
+                                        </div>
                                     </td>
                                 </tr>
                             );
