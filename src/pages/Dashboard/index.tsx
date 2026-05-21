@@ -2,6 +2,7 @@ import { useMemo, useState, useCallback } from 'react';
 import { RefreshCcw, Calendar, TrendingUp, Download } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useQueryClient } from '@tanstack/react-query';
+import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/store';
 import {
     useDashboardStatsQuery,
@@ -40,12 +41,65 @@ const Dashboard = () => {
     const queryClient = useQueryClient();
     const [refreshing, setRefreshing] = useState(false);
     const exportMutation = useBookingsExportMutation();
+    const [searchParams, setSearchParams] = useSearchParams();
 
-    // Filter states
-    const [revenuePeriod, setRevenuePeriod] = useState<'day' | 'week' | 'month' | 'year'>('day');
-    const [bookingTrendDays, setBookingTrendDays] = useState<7 | 30 | 90>(30);
-    const [bookingsPage, setBookingsPage] = useState(1);
-    const [bookingsStatus, setBookingsStatus] = useState<'pending' | 'confirmed' | 'completed' | 'cancelled' | ''>('');
+    // 1. revenuePeriod
+    const rawRevenuePeriod = searchParams.get('revenue_period') ?? 'day';
+    const revenuePeriod = (['day', 'week', 'month', 'year'].includes(rawRevenuePeriod) 
+        ? rawRevenuePeriod 
+        : 'day') as 'day' | 'week' | 'month' | 'year';
+
+    const setRevenuePeriod = useCallback((val: 'day' | 'week' | 'month' | 'year') => {
+        setSearchParams(prev => {
+            const next = new URLSearchParams(prev);
+            next.set('revenue_period', val);
+            return next;
+        }, { replace: true });
+    }, [setSearchParams]);
+
+    // 2. bookingTrendDays
+    const rawTrendDays = Number(searchParams.get('trend_days') ?? '30');
+    const bookingTrendDays = ([7, 30, 90].includes(rawTrendDays) 
+        ? rawTrendDays 
+        : 30) as 7 | 30 | 90;
+
+    const setBookingTrendDays = useCallback((val: 7 | 30 | 90) => {
+        setSearchParams(prev => {
+            const next = new URLSearchParams(prev);
+            next.set('trend_days', String(val));
+            return next;
+        }, { replace: true });
+    }, [setSearchParams]);
+
+    // 3. bookingsPage
+    const bookingsPage = Number(searchParams.get('page') ?? '1');
+
+    const setBookingsPage = useCallback((page: number) => {
+        setSearchParams(prev => {
+            const next = new URLSearchParams(prev);
+            next.set('page', String(page));
+            return next;
+        }, { replace: true });
+    }, [setSearchParams]);
+
+    // 4. bookingsStatus
+    const rawStatus = searchParams.get('status') ?? '';
+    const bookingsStatus = (['pending', 'confirmed', 'completed', 'cancelled', ''].includes(rawStatus)
+        ? rawStatus
+        : '') as 'pending' | 'confirmed' | 'completed' | 'cancelled' | '';
+
+    const setBookingsStatus = useCallback((status: 'pending' | 'confirmed' | 'completed' | 'cancelled' | '') => {
+        setSearchParams(prev => {
+            const next = new URLSearchParams(prev);
+            if (status) {
+                next.set('status', status);
+            } else {
+                next.delete('status');
+            }
+            next.set('page', '1'); // Reset to page 1 on status change
+            return next;
+        }, { replace: true });
+    }, [setSearchParams]);
 
     /**
      * Helper to calculate date ranges for specific filters

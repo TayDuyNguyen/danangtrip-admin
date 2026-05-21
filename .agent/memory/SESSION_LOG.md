@@ -211,5 +211,15 @@
 - Completed `08-auth-permissions` step for `admin-payments-detail` feature.
 - Generated Auth & Permissions Review artifact at `.agent/artifacts/auth/2026-05-21__admin-payments-detail__auth-permissions-review.md`.
 - Updated `WORKING_STATE.md` to transition to Step 09.
-
-
+- Activated `admin-dashboard` feature pipeline for screen hardening.
+- Completed `01-screen-analysis` step for `admin-dashboard` feature. Created and saved screen analysis artifact under `.agent/artifacts/analysis/`.
+- Completed `03-types-api-contract` step for `admin-dashboard` feature. Audited and verified raw API response models, ViewModel types, query keys, and resilient fallback mappers. Created and saved API contract artifact under `.agent/artifacts/api-contracts/`.
+- Completed `04-layout-routing` step for `admin-dashboard` feature. Audited and verified route definitions, lazy splitting, sidebar integration, and bilingual translation key parity. Created and saved Route Plan artifact under `.agent/artifacts/routing/`.
+- Completed `05-ui-components` step for `admin-dashboard` feature. Audited and verified glassmorphic layout styling, premium Outfit font scaling, Recharts enter transitions, and robust component prop interfaces. Created and saved UI Specification artifact under `.agent/artifacts/ui-specs/`.
+- Reran and hardened Step `05-ui-components` for `admin-dashboard`. Compiled a comprehensive, high-fidelity UI Specification artifact covering visual hierarchy, design tokens, loading/empty/error states, and responsive layout specifications.
+- Completed `06-data-integration` step for `admin-dashboard` feature. Configured an independent parallel multi-query structure, mapped resilient fallback endpoints for ratings/contacts count extractions, defined spreadsheet download stream mutations, and planned cross-module cache invalidations. Created and saved Data Integration Plan under `.agent/artifacts/integration/`.
+- Completed `07-interactions` step for `admin-dashboard` feature. Defined atomic URLSearchParams syncing for dates, period, status, and paginated orders lists. Documented state transitions, manual query refresh hooks, and debounce behaviors. Created and saved Interaction Spec under `.agent/artifacts/interaction-specs/`.
+- Completed `08-auth-permissions` step for `admin-dashboard` feature. Verified that `/dashboard` is protected strictly by global `PrivateRoute` with absolute role gates restricting access to the `admin` role. Created and saved Auth & Permissions Review under `.agent/artifacts/auth/`.
+- Completed `09-testing` step for `admin-dashboard` feature. Certified that React 19 / TanStack Query v5 static compilation gates are clean. Verified `npm run lint`, `npm run typecheck`, `npm run build`, and `npm run prepush:check` all pass with **0 blocking errors**. Generated Test Report under `.agent/artifacts/test-cases/`.
+- Completed `10-optimization-deploy` step for `admin-dashboard` feature. Formulated multi-query caching policies, detailed Excel download stream mutations, evaluated bundle thresholds, and created comprehensive Deploy Report (`.agent/artifacts/deploy/`) and Feature Review (`.agent/artifacts/review/`) summaries.
+- Re-ran Step 10 validation for `admin-dashboard`. Verified `npm.cmd run prepush:check` passes with 0 blocking errors and documented non-blocking Vite warnings for `lottie-web` eval and large chunks. Updated deploy/review artifacts with branch `feat/DATN-79/admin-dashboard` and commit handoff recommendation.
