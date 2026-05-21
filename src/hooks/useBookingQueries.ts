@@ -2,12 +2,19 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { bookingApi } from '@/api/bookingApi';
 import { 
     mapBookingList, 
-    mapBookingStatusCounts 
+    mapBookingStatusCounts,
+    mapBookingDetail
 } from '@/dataHelper/booking.mapper';
 import type { 
     BookingListFilters 
 } from '@/dataHelper/booking.dataHelper';
-import { prepareSpreadsheetDownload, downloadBlobFile } from '@/utils';
+import { 
+    prepareSpreadsheetDownload, 
+    downloadBlobFile,
+    getContentDispositionHeader,
+    parseContentDispositionFilename,
+    sanitizeDownloadFilename
+} from '@/utils';
 
 export const bookingKeys = {
     all: ['bookings'] as const,
@@ -15,6 +22,7 @@ export const bookingKeys = {
     list: (filters: BookingListFilters, page: number, limit: number) => 
         ([...bookingKeys.lists(), { ...filters, page, limit }] as const),
     stats: (params?: Record<string, unknown>) => [...bookingKeys.all, 'stats', params || {}] as const,
+    detail: (id: string | number) => [...bookingKeys.all, 'detail', id] as const,
 };
 
 export const useAdminBookingsQuery = (filters: BookingListFilters, page: number, limit: number) => {
@@ -39,14 +47,28 @@ export const useAdminBookingStatsQuery = (params?: Record<string, unknown>) => {
     });
 };
 
+export const useAdminBookingDetailQuery = (id: number | string) => {
+    return useQuery({
+        queryKey: bookingKeys.detail(id),
+        queryFn: async () => {
+            const response = await bookingApi.getDetail(id);
+            return mapBookingDetail(response.data);
+        },
+        enabled: !!id,
+        staleTime: 1000 * 30, // 30 seconds
+    });
+};
+
 export const useBookingMutations = () => {
     const queryClient = useQueryClient();
 
     const updateStatusMutation = useMutation({
         mutationFn: ({ id, status, reason }: { id: number | string; status: string; reason?: string }) =>
             bookingApi.updateStatus(id, { booking_status: status, cancellation_reason: reason }),
-        onSuccess: () => {
+        onSuccess: (_, variables) => {
             queryClient.invalidateQueries({ queryKey: bookingKeys.all });
+            // Invalidate detail query as well to sync detail screen
+            queryClient.invalidateQueries({ queryKey: bookingKeys.detail(variables.id) });
             // Also invalidate dashboard stats since bookings affect them
             queryClient.invalidateQueries({ queryKey: ['dashboard'] });
         },
@@ -62,8 +84,24 @@ export const useBookingMutations = () => {
         },
     });
 
+    const getInvoiceMutation = useMutation({
+        mutationFn: async ({ id, fallbackFilename }: { id: number | string; fallbackFilename: string }) => {
+            const response = await bookingApi.getInvoice(id);
+            const blob = response.data;
+            if (!(blob instanceof Blob)) {
+                throw new Error('Invalid PDF response');
+            }
+            const cd = getContentDispositionHeader(response.headers as Record<string, unknown>);
+            const fromHeader = parseContentDispositionFilename(cd);
+            const filename = fromHeader ? sanitizeDownloadFilename(fromHeader) : fallbackFilename;
+            downloadBlobFile(blob, filename);
+        },
+    });
+
     return {
         updateStatusMutation,
         exportMutation,
+        getInvoiceMutation,
     };
 };
+

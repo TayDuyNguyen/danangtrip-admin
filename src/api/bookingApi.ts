@@ -5,6 +5,7 @@ import type {
     AdminRawBookingStatusCounts,
     AdminRawBookingItem,
     BookingListFilters,
+    RawBookingDetail,
 } from "@/dataHelper/booking.dataHelper";
 import type { ApiResponse } from "@/types";
 import type { AxiosResponse } from "axios";
@@ -24,4 +25,13 @@ export const bookingApi = {
             params,
             responseType: 'blob',
         }) as Promise<AxiosResponse<Blob>>,
+
+    getDetail: (id: number | string): Promise<ApiResponse<RawBookingDetail>> =>
+        axiosClient.get(API_ENDPOINTS.BOOKINGS.DETAIL(id)),
+
+    getInvoice: (id: number | string): Promise<AxiosResponse<Blob>> =>
+        axiosClient.get(API_ENDPOINTS.BOOKINGS.INVOICE(id), {
+            responseType: 'blob',
+        }) as Promise<AxiosResponse<Blob>>,
 };
+

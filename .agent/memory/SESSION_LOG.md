@@ -153,20 +153,49 @@
 - Evaluated Git branch structures, determined index STT `74`, and prepared git handoff checkout instructions for the user.
 
  2 0 2 6 - 0 5 - 1 9 :   C o m p l e t e d   0 1 - s c r e e n - a n a l y s i s   f o r   a d m i n - t o u r - s c h e d u l e - e d i t .   A r t i f a c t   s a v e d .  
- 2 0 2 6 - 0 5 - 1 9 :   C o m p l e t e d   0 3 - t y p e s - a p i - c o n t r a c t   f o r   a d m i n - t o u r - s c h e d u l e - e d i t .   A r t i f a c t   s a v e d .   F o u n d a t i o n   i s   s o l i d .  
+ 2 0 2 6 - 0 5 - 1 9 :   C o m p l e t e d   0 3 - t y p e s - a p i - c o n t r a c t   f o r   a d m i n - t o u r - s c h e d u l e - e d i t .   F o u n d a t i o n   i s   s o l i d .  
  2 0 2 6 - 0 5 - 1 9 :   C o m p l e t e d   0 4 - l a y o u t - r o u t i n g   f o r   a d m i n - t o u r - s c h e d u l e - e d i t .   R o u t e   p l a n   a r t i f a c t   c r e a t e d .  
  2 0 2 6 - 0 5 - 1 9 :   C o m p l e t e d   0 5 - u i - c o m p o n e n t s   a r t i f a c t   g e n e r a t i o n   f o r   a d m i n - t o u r - s c h e d u l e - e d i t .  
  2 0 2 6 - 0 5 - 1 9 :   C o m p l e t e d   0 5   i m p l e m e n t a t i o n   a n d   0 6 - d a t a - i n t e g r a t i o n   f o r   a d m i n - t o u r - s c h e d u l e - e d i t .  
  2 0 2 6 - 0 5 - 1 9 :   C o m p l e t e d   0 7 - i n t e r a c t i o n s   s p e c   f o r   a d m i n - t o u r - s c h e d u l e - e d i t .  
  2 0 2 6 - 0 5 - 1 9 :   C o m p l e t e d   0 8 - a u t h - p e r m i s s i o n s   f o r   a d m i n - t o u r - s c h e d u l e - e d i t .  
- 2 0 2 6 - 0 5 - 1 9 :   C o m p l e t e d   0 9 - t e s t i n g   f o r   a d m i n - t o u r - s c h e d u l e - e d i t .   S t a t i c   g a t e s   p a s s e d .  
-
-## 2026-05-20
+ 2 0 2 6 - 0 5 - 1 9 :   C o m p l e t e d   0 9 - t e s t i n g   f o r   a d m i n - t o u r - s c h e d u l e - e d i t .   S t a t i c   g a t e s   p a s s e d .
 - Activated `09-testing` step for `admin-tour-schedule-edit` feature.
 - Executed lint checks (`npm run lint`), typescript type-checking (`npm run typecheck`), production builds (`npm run build`), and prepush checks (`npm run prepush:check`) successfully.
 - Bootstrapped local development Vite server and executed Playwright console error test checks (`npm run test:console`), completing with 4/4 route tests passed.
 - Audited layouts, UI responsive structures, component boundaries, and Vietnamese/English translation parity for schedules module.
-- Generated the comprehensive QA Test Report artifact at `.agent/artifacts/test-cases/2026-05-20__admin-tour-schedule-edit__test-report.md`.2 0 2 6 - 0 5 - 2 0 :   C o m p l e t e d   0 1 - s c r e e n - a n a l y s i s   f o r   a d m i n - t o u r - s c h e d u l e - e d i t .   I d e n t i f i e d   m i s s i n g   o p e r a t i o n a l   f i e l d s   a n d   U I   g u a r d s .  
- 2 0 2 6 - 0 5 - 2 0 :   C o m p l e t e d   0 3 - t y p e s - a p i - c o n t r a c t .   C r e a t e d   b a c k e n d   m i g r a t i o n   a n d   u p d a t e d   a d m i n   t y p e s / m a p p e r / v a l i d a t i o n   w i t h   n e w   o p e r a t i o n a l   f i e l d s .  
- 2 0 2 6 - 0 5 - 2 0 :   C o m p l e t e d   0 4 - l a y o u t - r o u t i n g .   A d d e d   n e w   i 1 8 n   k e y s   f o r   o p e r a t i o n a l   f i e l d s .  
- 
+- Generated the comprehensive QA Test Report artifact at `.agent/artifacts/test-cases/2026-05-20__admin-tour-schedule-edit__test-report.md`.
+
+- Completed `01-screen-analysis` step for `admin-bookings-detail` feature.
+- Analyzed design specifications, API endpoints, mappers, and business requirements.
+- Addressed database/API gaps (passengers & detailed status histories) using smart virtual front-end mappers and mock layouts.
+- Wrote detailed screen-analysis report to `D:\DATN\danangtrip-admin\.agent\artifacts\analysis\2026-05-20__admin-bookings-detail__screen-analysis.md`.
+- Completed `02-project-setup` step for `admin-bookings-detail` feature.
+- Audited project dependencies, TS paths, environmental configs, and axios request/response interceptors.
+- Output audit report to `.agent/artifacts/audits/2026-05-20__admin-bookings-detail__project-audit.md`.
+- Completed `03-types-api-contract` step for `admin-bookings-detail` feature.
+- Defined Raw and ViewModel TypeScript interfaces for detailed bookings, booking items, customers, and schedules.
+- Added API endpoints (`DETAIL`, `INVOICE`) to `endpoints.ts`, implemented service methods (`getDetail`, `getInvoice`) in `bookingApi.ts`, mapped shapes in `booking.mapper.ts`, and exported the `useAdminBookingDetailQuery` query hook & `getInvoiceMutation` in `useBookingQueries.ts`.
+- Output API contract document to `.agent/artifacts/api-contracts/2026-05-20__admin-bookings-detail__api-contract.md`.
+- Verified code correctness via successful `npm run typecheck` run.
+- Completed `04-layout-routing` step for `admin-bookings-detail` feature.
+- Verified that dynamic route `/admin/bookings/:id` is registered with lazy loading and React Router v7 under `PrivateRoute` in `src/routes/index.tsx`.
+- Verified layout structure within `MainLayout.tsx` and sidebar navigation mapping within `Sidebar.tsx`.
+- Generated detailed Route Plan artifact and verified Vietnamese and English locale namespaces in `booking.json`.
+- Output Route Plan artifact to `.agent/artifacts/routing/2026-05-20__admin-bookings-detail__route-plan.md` and verified clean compilation of the page skeleton.
+
+- Completed `05-ui-components` and `06-data-integration` steps for `admin-bookings-detail` feature.
+- Fixed unused variable `idx`, unused import `PaymentStatus`, and duplicate default export `export default BookingDetail;` inside `src/pages/Bookings/BookingDetail/index.tsx`.
+- Verified 100% correct type-checking and lint compliance by running `npm run typecheck` (completed successfully with Code 0) and `npm run lint` (completed successfully with Code 0).
+- Successfully wired view details action in `BookingList/index.tsx` to route the Eye button to our new dedicated `/admin/bookings/:id` page instead of a dialog popup.
+- Output walkthrough report to `.agent/artifacts/walkthroughs/2026-05-20__admin-bookings-detail__walkthrough.md` and saved a copy to App Data Directory.
+- Completed `09-testing` step for `admin-bookings-detail` feature. Verified clean linting, typechecking, and production build checks using `npm run prepush:check` quality gate runner.
+- Created `2026-05-20__admin-bookings-detail__test-report.md` artifact documenting QA verdict (`READY WITH RISKS`).
+- Generated final Deploy Report (`2026-05-20__admin-bookings-detail__deploy-report.md`) and Feature Review Report (`2026-05-20__admin-bookings-detail__review.md`).
+- Formulated Conventional Commits message and git branch checkout commands for checkout branch index `77` (`feat/DATN-77/admin-bookings-detail`).
+- Executed Step 5: UI Components Verification & Audit for `admin-bookings-detail` feature.
+- Reviewed and audited `src/pages/Bookings/BookingDetail/index.tsx` for visual aesthetics, explicit type safety, loading/skeleton layout, and bilingual i18n parity, verifying 100% compliance with `DESIGN.md` and UI Spec artifacts.
+- Executed Step 6: Data Integration Verification & Invalidation Planning for `admin-bookings-detail` feature.
+- Reviewed API mapping pipeline (`mapBookingDetail`), hierarchical caching keys (`bookingKeys`), query hook (`useAdminBookingDetailQuery`), status mutations (`updateStatusMutation`), and invoice streaming (`getInvoiceMutation`).
+- Created detailed Data Integration Plan artifact `.agent/artifacts/integration/2026-05-20__admin-bookings-detail__data-integration.md` and replicated in brain store.
+

@@ -21,6 +21,7 @@ const LocationEdit = React.lazy(() => import('@/pages/Locations/LocationEdit'));
 const LocationDetail = React.lazy(() => import('@/pages/Locations/LocationDetail'));
 const LocationCategories = React.lazy(() => import('@/pages/Locations/LocationCategories'));
 const BookingList = React.lazy(() => import('@/pages/Bookings/BookingList'));
+const BookingDetail = React.lazy(() => import('@/pages/Bookings/BookingDetail'));
 const PaymentList = React.lazy(() => import('@/pages/Payments/PaymentList'));
 import ErrorPage from '@/pages/ErrorPage';
 
@@ -79,6 +80,7 @@ const router = createBrowserRouter([
                     { path: ROUTES.LOCATIONS_DETAIL, element: withSuspense(LocationDetail) },
                     { path: ROUTES.LOCATIONS_CATEGORIES, element: withSuspense(LocationCategories) },
                     { path: ROUTES.BOOKINGS_LIST, element: withSuspense(BookingList) },
+                    { path: ROUTES.BOOKINGS_DETAIL, element: withSuspense(BookingDetail) },
                     { path: ROUTES.PAYMENTS_LIST, element: withSuspense(PaymentList) },
                 ]
             }

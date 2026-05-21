@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
+import { ROUTES } from '@/routes/routes';
 import { 
     useAdminBookingsQuery, 
     useAdminBookingStatsQuery, 
@@ -22,6 +24,7 @@ import Pagination from '@/components/common/Pagination';
 
 const BookingList = () => {
     const { t } = useTranslation('booking');
+    const navigate = useNavigate();
     
     // State
     const [page, setPage] = useState(1);
@@ -136,7 +139,7 @@ const BookingList = () => {
                 <BookingTimeline 
                     data={bookings}
                     isLoading={isListLoading}
-                    onView={setDetailConfig}
+                    onView={(booking) => navigate(ROUTES.BOOKINGS_DETAIL.replace(':id', booking.id.toString()))}
                     onConfirm={handleConfirmBooking}
                     onCancel={handleCancelClick}
                 />
