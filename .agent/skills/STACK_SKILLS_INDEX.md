@@ -309,70 +309,70 @@ Date locked for this index: `2026-05-20`
 ### Single Chosen Screen Only
 
 - Repo: `danangtrip-admin`
-- Only screen to implement now: `Chỉnh sửa lịch khởi hành`
-- Feature slug: `admin-tour-schedule-edit`
-- Main route: `/admin/tours/schedules/edit/:id`
-- Main file: `src/pages/Tours/TourScheduleEdit/index.tsx`
-- Rule: do not switch to schedule list hardening, bookings detail, reports, promotions, or any other screen until this screen is finished through `10-optimization-deploy`.
+- Only screen to implement now: `Chi tiết Đơn hàng`
+- Feature slug: `admin-bookings-detail`
+- Main route: `/admin/bookings/:id`
+- Main file: `src/pages/Bookings/BookingDetail/index.tsx`
+- Rule: do not switch to payments detail, reports, users detail, or any other screen until this screen is finished through `10-optimization-deploy`.
 
 ### Candidate Screens Reviewed
 
 | Candidate | Priority | Why it is relevant now | Why it is not the current first pick |
 | --- | --- | --- | --- |
-| `admin-tour-schedule-edit` | High | Directly feeds the booking funnel through schedule quality, already has docs, real route/file targets, and clear known gaps. | Selected as the current first pick. |
-| `admin-tour-schedule-list hardening` | High | Important operational hub and already partially implemented. | List is already more complete; edit still has the sharper functional gaps. |
-| `admin-tour-schedule-create parity` | High | Needed for future authoring consistency. | Create is already closer to the intended design than edit. |
-| `admin-bookings-detail` | Medium | Strong operations value and ties to payment/support. | More downstream; does not unblock schedule quality for public booking first. |
-| `admin-promotions` | Medium | Important future conversion lever. | Mostly planned and not ready to beat schedule stabilization in implementation order. |
+| `admin-bookings-detail` | High | API exists, list screen already exists, but detail is still missing as a real route/page. This is the clearest operational gap after booking and payment flow work. | Selected as the current first pick. |
+| `admin-payments-detail` | High | API and docs exist, and payment list is already implemented. | Better after booking detail because booking becomes the primary operator entry point. |
+| `admin-users-detail` | Medium | Useful for support context. | Less directly tied to the post-booking operations gap. |
+| `admin-tour-schedule-list hardening` | Medium | Existing page may still benefit from improvements. | Lower priority than the missing booking-detail route. |
+| `admin-promotions` | Low | Planned business feature. | API is still planned and does not beat order-operations visibility. |
 
 ### Selected Next Screen
 
-- Screen: `Chỉnh sửa lịch khởi hành`
-- Feature slug: `admin-tour-schedule-edit`
-- Main route: `/admin/tours/schedules/edit/:id`
-- Main file: `src/pages/Tours/TourScheduleEdit/index.tsx`
+- Screen: `Chi tiết Đơn hàng`
+- Feature slug: `admin-bookings-detail`
+- Main route: `/admin/bookings/:id`
+- Main file: `src/pages/Bookings/BookingDetail/index.tsx`
 - Decision basis:
-  - The benchmark and schedule docs emphasize departure-code, departure-place, booking-deadline, seat state, and price override quality.
-  - The repo already has a real route, edit page, create-form reference, list reference, and API/query foundations.
-  - This screen is the cleanest place to stabilize the schedule contract before the web departure-selection screen consumes it.
+  - The booking and payment funnel is now much more complete, so operator visibility into each order is the next highest-value gap.
+  - The repo already has booking list UI, badges, dialogs, and API foundations that can be reused into a dedicated detail page.
+  - The API has real `GET /admin/bookings/{id}` and `PATCH /admin/bookings/{id}/status`, while planned passengers and timeline endpoints can be recorded as gaps instead of blocking the screen.
 
-### Known Edit Gaps To Close
+### Known Detail Gaps To Close
 
-- Stats or info context block for the current schedule
-- Clear schedule info box for operators
-- Delete or deactivate flow if repo reality supports it
-- Unsaved-changes guard
-- Explicit mapping between UI field names and backend payload names
+- No real route/page yet; only list dialog exists
+- Need reusable booking summary, status history, and action panels
+- Need clear handling for planned passengers or timeline endpoints that may not exist yet
+- Need explicit status-action mapping for confirm, cancel, and complete flows
+- Need invoice/open-linked-user handling based on real route availability
 
 ### Cross-Project Rollout Order
 
-1. `danangtrip-admin` implements `admin-tour-schedule-edit`
-2. `danangtrip-web` implements `tour-departure-select`
-3. `danangtrip-web` then strengthens booking checkout based on the finalized schedule contract
+1. `danangtrip-admin` implements `admin-bookings-detail`
+2. `danangtrip-web` implements `user-bookings-list`
+3. `danangtrip-web` then implements `user-booking-detail`
 
 Dependency rule:
-- This admin screen is the current system-first implementation target because it curates the schedule data shape used by the public booking funnel.
+- This admin screen is the current system-first implementation target because it defines the operational view of booking status changes that web bookings history must reflect.
 
 ## Recommended Current Screen Prompt
 
-Use this ready prompt for the next recommended `danangtrip-admin` screen: schedule edit hardening for operations.
+Use this ready prompt for the next recommended `danangtrip-admin` screen: booking detail operations.
 
 ```text
 SYSTEM EXECUTION CONTRACT
 
 Act as the execution agent for repository: `D:\DATN\danangtrip-admin`
 
-Your job is to implement the recommended admin screen: `Chỉnh sửa lịch khởi hành`
-Feature slug: `admin-tour-schedule-edit`
-Primary target route: `/admin/tours/schedules/edit/:id`
-Primary React Router file target: `src/pages/Tours/TourScheduleEdit/index.tsx`
-Related files: `src/pages/Tours/TourSchedules/index.tsx`, `src/pages/Tours/TourScheduleCreate/index.tsx`
-Feature type: authenticated admin/staff operations screen that stabilizes schedule data for the booking funnel and closes the edit-flow gaps called out by the planning docs.
+Your job is to implement the recommended admin screen: `Chi tiết Đơn hàng`
+Feature slug: `admin-bookings-detail`
+Primary target route: `/admin/bookings/:id`
+Primary React Router file target: `src/pages/Bookings/BookingDetail/index.tsx`
+Related files: `src/pages/Bookings/BookingList/index.tsx`, `src/pages/Payments/PaymentList/index.tsx`
+Feature type: authenticated admin/staff operations screen for viewing a booking in depth and performing status actions safely.
 
 SINGLE-SCREEN LOCK
-- You are working on exactly one screen only: `Chỉnh sửa lịch khởi hành`.
-- You MUST NOT switch to bookings detail, promotions, reports, settings, or any unrelated admin screen in this run.
-- If you discover an adjacent issue in list or create flows, record it as dependency or follow-up and continue only with the edit-screen scope.
+- You are working on exactly one screen only: `Chi tiết Đơn hàng`.
+- You MUST NOT switch to payments detail, promotions, reports, settings, or any unrelated admin screen in this run.
+- If you discover an adjacent issue in list or payment flows, record it as dependency or follow-up and continue only with the booking-detail scope.
 
 MANDATORY READ ORDER BEFORE ANY WORK
 1. `D:\DATN\danangtrip-admin\AGENTS.md`
@@ -385,10 +385,9 @@ MANDATORY READ ORDER BEFORE ANY WORK
 8. Screen and API references listed below
 
 SCREEN REFERENCES
-- Primary edit doc: `D:\DATN\DATN_Tài liệu\docs\page\admin_tour_schedules_edit.md`
-- Related create doc: `D:\DATN\DATN_Tài liệu\docs\page\admin_tour_schedules_create.md`
-- Related list doc: `D:\DATN\DATN_Tài liệu\docs\page\admin_tour_schedules_list.md`
-- Related tour docs: `D:\DATN\DATN_Tài liệu\docs\page\admin_tours_create.md`, `D:\DATN\DATN_Tài liệu\docs\page\admin_tours_edit.md`, `D:\DATN\DATN_Tài liệu\docs\page\admin_tours_detail.md`
+- Primary detail doc: `D:\DATN\DATN_Tài liệu\docs\page\admin_bookings_detail.md`
+- Related list doc: `D:\DATN\DATN_Tài liệu\docs\page\admin_bookings_list.md`
+- Related payment doc: `D:\DATN\DATN_Tài liệu\docs\page\admin_payments_detail.md`
 - Admin page list: `D:\DATN\DATN_Tài liệu\docs\reference\list_page.md`
 - Flow priority note: `D:\DATN\DATN_Tài liệu\docs\reference\travel_com_benchmark_flow.md`
 - Gap analysis: `D:\DATN\DATN_Tài liệu\docs\reference\screen_gap_analysis.md`
@@ -396,8 +395,8 @@ SCREEN REFERENCES
 - Endpoint matrix: `D:\DATN\danangtrip-admin\API_ENDPOINT_MATRIX.md`
 - Backend API repo: `D:\DATN\danangtrip-api`
 - Backend routes: `D:\DATN\danangtrip-api\routes\api.php`
-- Backend tour docs: `D:\DATN\danangtrip-api\api-doc\tours.js`
-- Backend schedule docs: `D:\DATN\danangtrip-api\api-doc\tourSchedules.js`
+- Backend booking docs: `D:\DATN\danangtrip-api\api-doc\bookings.js`
+- Backend payment docs: `D:\DATN\danangtrip-api\api-doc\payments.js`
 - Backend schema note: `D:\DATN\danangtrip-api\SCHEMA_CURRENT_ANNOTATED.md`
 
 SKILL PATHS
@@ -477,16 +476,16 @@ Execute in this exact order, stopping after each step for approval:
 9. `10-optimization-deploy`
 
 ARTIFACT TARGETS
-- Analysis: `.agent/artifacts/analysis/YYYY-MM-DD__admin-tour-schedule-edit__screen-analysis.md`
-- API contract: `.agent/artifacts/api-contracts/YYYY-MM-DD__admin-tour-schedule-edit__api-contract.md`
-- Routing: `.agent/artifacts/routing/YYYY-MM-DD__admin-tour-schedule-edit__route-plan.md`
-- UI spec: `.agent/artifacts/ui-specs/YYYY-MM-DD__admin-tour-schedule-edit__ui-spec.md`
-- Data integration: `.agent/artifacts/integration/YYYY-MM-DD__admin-tour-schedule-edit__data-integration.md`
-- Interaction spec: `.agent/artifacts/interaction-specs/YYYY-MM-DD__admin-tour-schedule-edit__interaction-spec.md`
-- Auth review: `.agent/artifacts/auth/YYYY-MM-DD__admin-tour-schedule-edit__auth-permissions-review.md`
-- Test report: `.agent/artifacts/test-cases/YYYY-MM-DD__admin-tour-schedule-edit__test-report.md`
-- Deploy report: `.agent/artifacts/deploy/YYYY-MM-DD__admin-tour-schedule-edit__deploy-report.md`
-- Final review: `.agent/artifacts/review/YYYY-MM-DD__admin-tour-schedule-edit__review.md`
+- Analysis: `.agent/artifacts/analysis/YYYY-MM-DD__admin-bookings-detail__screen-analysis.md`
+- API contract: `.agent/artifacts/api-contracts/YYYY-MM-DD__admin-bookings-detail__api-contract.md`
+- Routing: `.agent/artifacts/routing/YYYY-MM-DD__admin-bookings-detail__route-plan.md`
+- UI spec: `.agent/artifacts/ui-specs/YYYY-MM-DD__admin-bookings-detail__ui-spec.md`
+- Data integration: `.agent/artifacts/integration/YYYY-MM-DD__admin-bookings-detail__data-integration.md`
+- Interaction spec: `.agent/artifacts/interaction-specs/YYYY-MM-DD__admin-bookings-detail__interaction-spec.md`
+- Auth review: `.agent/artifacts/auth/YYYY-MM-DD__admin-bookings-detail__auth-permissions-review.md`
+- Test report: `.agent/artifacts/test-cases/YYYY-MM-DD__admin-bookings-detail__test-report.md`
+- Deploy report: `.agent/artifacts/deploy/YYYY-MM-DD__admin-bookings-detail__deploy-report.md`
+- Final review: `.agent/artifacts/review/YYYY-MM-DD__admin-bookings-detail__review.md`
 
 BEGIN NOW
 Start with step `01-screen-analysis`.
@@ -505,45 +504,45 @@ You are the execution planner and implementation agent for `D:\DATN\danangtrip-a
 CURRENT PRIORITY
 
 - Repo: `D:\DATN\danangtrip-admin`
-- Screen: `Chỉnh sửa lịch khởi hành`
-- Feature slug: `admin-tour-schedule-edit`
-- Main route: `/admin/tours/schedules/edit/:id`
-- Main file target: `D:\DATN\danangtrip-admin\src\pages\Tours\TourScheduleEdit\index.tsx`
-- System role: this is the first implementation target before `danangtrip-web` finalizes departure selection
+- Screen: `Chi tiết Đơn hàng`
+- Feature slug: `admin-bookings-detail`
+- Main route: `/admin/bookings/:id`
+- Main file target: `D:\DATN\danangtrip-admin\src\pages\Bookings\BookingDetail\index.tsx`
+- System role: this is the first implementation target before `danangtrip-web` finalizes user bookings history
 
 SCOPE LOCK
 
-- Only build `Chỉnh sửa lịch khởi hành`.
-- Do not expand scope into schedule list hardening, create parity, bookings detail, reports, promotions, or settings.
+- Only build `Chi tiết Đơn hàng`.
+- Do not expand scope into payments detail, users detail, reports, promotions, or settings.
 - If another screen is needed, write it down as the next recommendation instead of implementing it now.
 
 GOAL
 
-Stabilize the schedule-edit flow so operators can:
-1. load current schedule data safely
-2. review essential schedule context
-3. edit dates, capacity, departure metadata, and price overrides
-4. validate the form against real API constraints
-5. preserve downstream compatibility with public schedule display and booking calculations
-6. handle destructive or guarded actions safely when supported
+Stabilize the booking-detail flow so operators can:
+1. load current booking data safely
+2. inspect customer, tour, schedule, and payment context in one place
+3. review booking status and payment status clearly
+4. perform confirm, cancel, or complete actions with the real API contract
+5. degrade safely when planned passengers or timeline endpoints are not available
+6. navigate back to list and related entities without losing operational context
 
 MANDATORY READ ORDER
 
 1. `D:\DATN\DATN_Tài liệu\docs\reference\travel_com_benchmark_flow.md`
 2. `D:\DATN\DATN_Tài liệu\docs\reference\screen_gap_analysis.md`
 3. `D:\DATN\DATN_Tài liệu\docs\reference\list_page.md`
-4. `D:\DATN\DATN_Tài liệu\docs\page\admin_tour_schedules_edit.md`
-5. `D:\DATN\DATN_Tài liệu\docs\page\admin_tour_schedules_create.md`
-6. `D:\DATN\DATN_Tài liệu\docs\page\admin_tour_schedules_list.md`
+4. `D:\DATN\DATN_Tài liệu\docs\page\admin_bookings_detail.md`
+5. `D:\DATN\DATN_Tài liệu\docs\page\admin_bookings_list.md`
+6. `D:\DATN\DATN_Tài liệu\docs\page\admin_payments_detail.md`
 7. `D:\DATN\danangtrip-admin\.agent\skills\STACK_SKILLS_INDEX.md`
 8. `D:\DATN\danangtrip-admin\src\routes\routes.ts`
-9. `D:\DATN\danangtrip-admin\src\api\scheduleApi.ts`
-10. `D:\DATN\danangtrip-admin\src\types\schedule.ts`
-11. `D:\DATN\danangtrip-admin\src\validations\schedule.schema.ts`
-12. `D:\DATN\danangtrip-admin\src\pages\Tours\TourScheduleEdit\index.tsx`
-13. `D:\DATN\danangtrip-admin\src\pages\Tours\TourScheduleCreate\components\ScheduleForm.tsx`
-14. `D:\DATN\danangtrip-admin\src\pages\Tours\TourSchedules\components\StatsSummary.tsx`
-15. `D:\DATN\danangtrip-admin\src\pages\Tours\TourSchedules\components\ScheduleDeleteDialog.tsx`
+9. `D:\DATN\danangtrip-admin\src\api\bookingApi.ts`
+10. `D:\DATN\danangtrip-admin\src\types\booking.ts`
+11. `D:\DATN\danangtrip-admin\src\pages\Bookings\BookingList\index.tsx`
+12. `D:\DATN\danangtrip-admin\src\pages\Bookings\BookingList\components\BookingDetailDialog.tsx`
+13. `D:\DATN\danangtrip-admin\src\pages\Bookings\BookingList\components\BookingTimeline.tsx`
+14. `D:\DATN\danangtrip-admin\src\pages\Bookings\BookingList\components\BookingCancelDialog.tsx`
+15. `D:\DATN\danangtrip-admin\src\pages\Payments\PaymentList\components\RefundPaymentDialog.tsx`
 
 EXECUTION MODE
 
@@ -564,10 +563,10 @@ EXECUTION MODE
 
 SUCCESS CRITERIA
 
-- The edit page exposes the operational fields needed by schedule management.
-- The UI clearly shows current schedule context and protects destructive actions.
-- The form submission contract matches the real admin API.
-- The schedule shape remains compatible with web departure-selection and booking calculations.
+- The detail page exposes the operational fields needed by booking support and status management.
+- The UI clearly shows customer, tour, schedule, and payment context.
+- The action buttons use the real admin status API.
+- Planned passenger or timeline sections are either implemented from real APIs or clearly marked as unavailable by repo reality.
 - Artifacts and memory files are updated for every completed step.
 
 BEGIN
@@ -593,7 +592,7 @@ Start with `01-screen-analysis`.
 The examples below are fallback templates.
 Dates and slugs are examples only; replace them with the current task values.
 
-### Current Recommended Screen - Admin Tour Schedule Edit
+### Current Recommended Screen - Admin Bookings Detail
 
 Use this prompt when manually activating the local skill pipeline for the recommended admin screen.
 
@@ -602,45 +601,41 @@ Activate full pipeline for current recommended screen
 
 Context:
 - Repo: [D:\DATN\danangtrip-admin]
-- Feature slug: [admin-tour-schedule-edit]
-- Screen name: [Chỉnh sửa lịch khởi hành]
-- Primary target route: [/admin/tours/schedules/edit/:id]
-- Target page file: [D:\DATN\danangtrip-admin\src\pages\Tours\TourScheduleEdit\index.tsx]
-- Related files: [D:\DATN\danangtrip-admin\src\pages\Tours\TourSchedules\index.tsx; D:\DATN\danangtrip-admin\src\pages\Tours\TourScheduleCreate\index.tsx]
+- Feature slug: [admin-bookings-detail]
+- Screen name: [Chi tiết Đơn hàng]
+- Primary target route: [/admin/bookings/:id]
+- Target page file: [D:\DATN\danangtrip-admin\src\pages\Bookings\BookingDetail\index.tsx]
+- Related files: [D:\DATN\danangtrip-admin\src\pages\Bookings\BookingList\index.tsx; D:\DATN\danangtrip-admin\src\pages\Payments\PaymentList\index.tsx]
 - Route registration: [D:\DATN\danangtrip-admin\src\routes\routes.ts; D:\DATN\danangtrip-admin\src\routes\index.tsx]
 - Auth requirement: [Admin or staff; protected by existing PrivateRoute]
 - DESIGN.md: [D:\DATN\danangtrip-admin\DESIGN.md]
-- Primary doc: [D:\DATN\DATN_Tài liệu\docs\page\admin_tour_schedules_edit.md]
-- Related docs: [D:\DATN\DATN_Tài liệu\docs\page\admin_tour_schedules_create.md; D:\DATN\DATN_Tài liệu\docs\page\admin_tour_schedules_list.md; D:\DATN\DATN_Tài liệu\docs\page\admin_tours_create.md; D:\DATN\DATN_Tài liệu\docs\reference\travel_com_benchmark_flow.md; D:\DATN\DATN_Tài liệu\docs\reference\screen_gap_analysis.md]
+- Primary doc: [D:\DATN\DATN_Tài liệu\docs\page\admin_bookings_detail.md]
+- Related docs: [D:\DATN\DATN_Tài liệu\docs\page\admin_bookings_list.md; D:\DATN\DATN_Tài liệu\docs\page\admin_payments_detail.md; D:\DATN\DATN_Tài liệu\docs\reference\travel_com_benchmark_flow.md; D:\DATN\DATN_Tài liệu\docs\reference\screen_gap_analysis.md]
 - API docs: [D:\DATN\DATN_Tài liệu\docs\api\api_list.md]
 - Endpoint matrix: [D:\DATN\danangtrip-admin\API_ENDPOINT_MATRIX.md]
 - Backend API repo: [D:\DATN\danangtrip-api]
 - Backend routes: [D:\DATN\danangtrip-api\routes\api.php]
-- Backend schedule docs: [D:\DATN\danangtrip-api\api-doc\tourSchedules.js]
-- Backend tour docs: [D:\DATN\danangtrip-api\api-doc\tours.js]
+- Backend booking docs: [D:\DATN\danangtrip-api\api-doc\bookings.js]
+- Backend payment docs: [D:\DATN\danangtrip-api\api-doc\payments.js]
 - Backend schema note: [D:\DATN\danangtrip-api\SCHEMA_CURRENT_ANNOTATED.md]
 - Prototype mapping: [D:\DATN\DATN_Tài liệu\screen\4_Others\01-Screen_To_Docs_Mapping.md]
 - Prototype classification: [D:\DATN\DATN_Tài liệu\screen\4_Others\00-Bang_Phan_Loai_Man_Hinh.md]
-- Primary prototype image: [D:\DATN\DATN_Tài liệu\screen\3_Admin_Flows\09.7-Chinh_Sua_Lich_Khoi_Hanh.png]
-- Primary prototype HTML/code: [D:\DATN\DATN_Tài liệu\screen\3_Admin_Flows\09.7-Chinh_Sua_Lich_Khoi_Hanh.html]
-- Related create prototype: [D:\DATN\DATN_Tài liệu\screen\3_Admin_Flows\09.6-Them_Lich_Khoi_Hanh.png; D:\DATN\DATN_Tài liệu\screen\3_Admin_Flows\09.6-Them_Lich_Khoi_Hanh.html]
-- Related list prototype: [D:\DATN\DATN_Tài liệu\screen\3_Admin_Flows\09.5-Lich_Khoi_Hanh.html]
-- Existing implementation references: [D:\DATN\danangtrip-admin\src\pages\Tours\TourSchedules\index.tsx; D:\DATN\danangtrip-admin\src\pages\Tours\TourScheduleEdit\index.tsx; D:\DATN\danangtrip-admin\src\pages\Tours\TourScheduleCreate\components\ScheduleForm.tsx; D:\DATN\danangtrip-admin\src\pages\Tours\TourSchedules\components\StatsSummary.tsx; D:\DATN\danangtrip-admin\src\pages\Tours\TourSchedules\components\ScheduleDeleteDialog.tsx]
-- API/context files to inspect: [D:\DATN\danangtrip-admin\src\constants\endpoints.ts; D:\DATN\danangtrip-admin\src\api\scheduleApi.ts; D:\DATN\danangtrip-admin\src\types\schedule.ts; D:\DATN\danangtrip-admin\src\validations\schedule.schema.ts; D:\DATN\danangtrip-admin\src\hooks\useScheduleQueries.ts]
-- Main fields to standardize: [departure_code; departure_place; booking_deadline; start_date; end_date; total_slots; booked_slots or remaining_slots; price_adult; price_child; price_infant; status]
-- Contract note: [current repo already uses startDate, endDate, totalSlots, bookedSlots; verify mapping to backend payload names before editing the form]
-- Compatibility note: [this screen feeds the web departure-selection and booking flow, so preserve fields needed by GET /tours/{id}/schedules and booking availability checks]
-- Edit-gap note: [priority gaps from planning docs are stats block, info block, delete flow, dedicated schedule info box, and unsaved changes guard]
+- Primary prototype image: [Use doc-driven layout if a dedicated image is missing in repo reality]
+- Existing implementation references: [D:\DATN\danangtrip-admin\src\pages\Bookings\BookingList\index.tsx; D:\DATN\danangtrip-admin\src\pages\Bookings\BookingList\components\BookingDetailDialog.tsx; D:\DATN\danangtrip-admin\src\pages\Bookings\BookingList\components\BookingTimeline.tsx; D:\DATN\danangtrip-admin\src\pages\Payments\PaymentList\components\RefundPaymentDialog.tsx]
+- API/context files to inspect: [D:\DATN\danangtrip-admin\src\constants\endpoints.ts; D:\DATN\danangtrip-admin\src\api\bookingApi.ts; D:\DATN\danangtrip-admin\src\types\booking.ts; D:\DATN\danangtrip-admin\src\hooks\useBookingQueries.ts]
+- Main fields to standardize: [booking_status; payment_status; booking_code; booked_at; customer info; schedule info; totals]
+- Contract note: [passengers and timeline are documented but may still be planned; confirm real route support before implementing those sections]
+- Compatibility note: [this screen should align operator-visible status semantics with the user bookings history screen]
+- Detail-gap note: [priority gaps are real route/page creation, action sidebar, status timeline, and handling of planned sub-sections]
 - Skill paths: [D:\DATN\danangtrip-admin\.agent\skills\01-screen-analysis\SKILL.md; D:\DATN\danangtrip-admin\.agent\skills\03-types-api-contract\SKILL.md; D:\DATN\danangtrip-admin\.agent\skills\04-layout-routing\SKILL.md; D:\DATN\danangtrip-admin\.agent\skills\05-ui-components\SKILL.md; D:\DATN\danangtrip-admin\.agent\skills\06-data-integration\SKILL.md; D:\DATN\danangtrip-admin\.agent\skills\07-interactions\SKILL.md; D:\DATN\danangtrip-admin\.agent\skills\08-auth-permissions\SKILL.md; D:\DATN\danangtrip-admin\.agent\skills\09-testing\SKILL.md; D:\DATN\danangtrip-admin\.agent\skills\10-optimization-deploy\SKILL.md]
-- Output prefix: [.agent/artifacts/<group>/YYYY-MM-DD__admin-tour-schedule-edit__...md]
+- Output prefix: [.agent/artifacts/<group>/YYYY-MM-DD__admin-bookings-detail__...md]
 
 Execution:
 - Start with `01-screen-analysis`.
 - Before each step, read the matching `SKILL.md` from `Skill paths`.
-- Use `09.7` as the main visual reference, and `09.6` plus `09.5` only to preserve parity with create flow and list navigation.
-- Adapt prototype code to repo patterns; do not paste prototype HTML directly.
-- During API-contract step, standardize the missing operational fields and record any server-client naming mismatch.
-- Reuse the existing create/edit schedule flow where possible, but prioritize closing the edit-screen gaps first.
+- Use the booking-detail doc as the main UX reference and adapt it to repo layout patterns; do not paste prototype HTML directly.
+- During API-contract step, separate real endpoints from planned endpoints and record the gap explicitly.
+- Reuse the existing booking list dialog and status components where possible, but prioritize creating a real route/page.
 - Stop after each pipeline step for approval.
 ```
 
@@ -651,18 +646,16 @@ Activate 01-screen-analysis
 
 Context:
 - Repo: [D:\DATN\danangtrip-admin]
-- Feature slug: [admin-tour-schedule-edit]
-- Screen name: [Chỉnh sửa lịch khởi hành]
+- Feature slug: [admin-bookings-detail]
+- Screen name: [Chi tiết Đơn hàng]
 - Figma/Stitch: [NONE]
-- Input source: [D:\DATN\DATN_Tài liệu\docs\page\admin_tour_schedules_edit.md]
-- Related sources: [D:\DATN\DATN_Tài liệu\docs\page\admin_tour_schedules_create.md; D:\DATN\DATN_Tài liệu\docs\page\admin_tour_schedules_list.md; D:\DATN\DATN_Tài liệu\docs\reference\travel_com_benchmark_flow.md]
-- Prototype image: [D:\DATN\DATN_Tài liệu\screen\3_Admin_Flows\09.7-Chinh_Sua_Lich_Khoi_Hanh.png]
-- Prototype HTML/code: [D:\DATN\DATN_Tài liệu\screen\3_Admin_Flows\09.7-Chinh_Sua_Lich_Khoi_Hanh.html]
-- Related create prototype: [D:\DATN\DATN_Tài liệu\screen\3_Admin_Flows\09.6-Them_Lich_Khoi_Hanh.html]
+- Input source: [D:\DATN\DATN_Tài liệu\docs\page\admin_bookings_detail.md]
+- Related sources: [D:\DATN\DATN_Tài liệu\docs\page\admin_bookings_list.md; D:\DATN\DATN_Tài liệu\docs\page\admin_payments_detail.md; D:\DATN\DATN_Tài liệu\docs\reference\travel_com_benchmark_flow.md]
+- Prototype note: [Use screen doc and current booking list dialog as main references]
 - DESIGN.md: [D:\DATN\danangtrip-admin\DESIGN.md]
 - API docs: [D:\DATN\DATN_Tài liệu\docs\api\api_list.md]
 - Skill path: [D:\DATN\danangtrip-admin\.agent\skills\01-screen-analysis\SKILL.md]
-- Output: [.agent/artifacts/analysis/YYYY-MM-DD__admin-tour-schedule-edit__screen-analysis.md]
+- Output: [.agent/artifacts/analysis/YYYY-MM-DD__admin-bookings-detail__screen-analysis.md]
 ```
 
 Expected output:
@@ -697,16 +690,16 @@ Activate 03-types-api-contract
 
 Context:
 - Repo: [D:\DATN\danangtrip-admin]
-- Feature slug: [admin-tour-schedule-edit]
-- Analysis file: [.agent/artifacts/analysis/YYYY-MM-DD__admin-tour-schedule-edit__screen-analysis.md]
+- Feature slug: [admin-bookings-detail]
+- Analysis file: [.agent/artifacts/analysis/YYYY-MM-DD__admin-bookings-detail__screen-analysis.md]
 - API docs: [D:\DATN\DATN_Tài liệu\docs\api\api_list.md]
 - Endpoint matrix: [D:\DATN\danangtrip-admin\API_ENDPOINT_MATRIX.md]
-- Relevant endpoints: [GET /admin/tour-schedules/{id}, PUT/PATCH /admin/tour-schedules/{id}, DELETE /admin/tour-schedules/{id}, GET /admin/tours]
-- Existing API foundation: [D:\DATN\danangtrip-admin\src\constants\endpoints.ts; D:\DATN\danangtrip-admin\src\api\scheduleApi.ts; D:\DATN\danangtrip-admin\src\api\tourApi.ts]
-- Existing types/validation: [D:\DATN\danangtrip-admin\src\types\schedule.ts; D:\DATN\danangtrip-admin\src\validations\schedule.schema.ts]
-- Standardization focus: [departure_code, departure_place, booking_deadline, capacity, booked or remaining seats, price overrides]
+- Relevant endpoints: [GET /admin/bookings/{id}, PATCH /admin/bookings/{id}/status, GET /user/bookings/{id}/invoice]
+- Existing API foundation: [D:\DATN\danangtrip-admin\src\constants\endpoints.ts; D:\DATN\danangtrip-admin\src\api\bookingApi.ts; D:\DATN\danangtrip-admin\src\api\paymentApi.ts]
+- Existing types/validation: [D:\DATN\danangtrip-admin\src\types\api.ts; create or extend booking view-models in repo reality]
+- Standardization focus: [booking_status, payment_status, booking_code, amount fields, customer block, route params]
 - Skill path: [D:\DATN\danangtrip-admin\.agent\skills\03-types-api-contract\SKILL.md]
-- Output: [.agent/artifacts/api-contracts/YYYY-MM-DD__admin-tour-schedule-edit__api-contract.md]
+- Output: [.agent/artifacts/api-contracts/YYYY-MM-DD__admin-bookings-detail__api-contract.md]
 ```
 
 Expected output:
@@ -724,15 +717,15 @@ Activate 04-layout-routing
 
 Context:
 - Repo: [D:\DATN\danangtrip-admin]
-- Feature slug: [admin-tour-schedule-edit]
-- Analysis file: [.agent/artifacts/analysis/YYYY-MM-DD__admin-tour-schedule-edit__screen-analysis.md]
-- Target route path: [/admin/tours/schedules/edit/:id]
-- Target page file: [D:\DATN\danangtrip-admin\src\pages\Tours\TourScheduleEdit\index.tsx]
+- Feature slug: [admin-bookings-detail]
+- Analysis file: [.agent/artifacts/analysis/YYYY-MM-DD__admin-bookings-detail__screen-analysis.md]
+- Target route path: [/admin/bookings/:id]
+- Target page file: [D:\DATN\danangtrip-admin\src\pages\Bookings\BookingDetail\index.tsx]
 - Route files: [D:\DATN\danangtrip-admin\src\routes\routes.ts; D:\DATN\danangtrip-admin\src\routes\index.tsx]
-- New routes: [no if already registered; update only if gaps exist]
-- Menu impact: [normally none beyond preserving schedule-list navigation]
+- New routes: [yes]
+- Menu impact: [preserve booking-list navigation and breadcrumb path]
 - Skill path: [D:\DATN\danangtrip-admin\.agent\skills\04-layout-routing\SKILL.md]
-- Output: [.agent/artifacts/routing/YYYY-MM-DD__admin-tour-schedule-edit__route-plan.md]
+- Output: [.agent/artifacts/routing/YYYY-MM-DD__admin-bookings-detail__route-plan.md]
 ```
 
 Expected output:
@@ -749,15 +742,12 @@ Activate 05-ui-components
 
 Context:
 - Repo: [D:\DATN\danangtrip-admin]
-- Feature slug: [admin-tour-schedule-edit]
-- Analysis file: [.agent/artifacts/analysis/YYYY-MM-DD__admin-tour-schedule-edit__screen-analysis.md]
-- Prototype image: [D:\DATN\DATN_Tài liệu\screen\3_Admin_Flows\09.7-Chinh_Sua_Lich_Khoi_Hanh.png]
-- Prototype HTML/code: [D:\DATN\DATN_Tài liệu\screen\3_Admin_Flows\09.7-Chinh_Sua_Lich_Khoi_Hanh.html]
-- Related create prototype: [D:\DATN\DATN_Tài liệu\screen\3_Admin_Flows\09.6-Them_Lich_Khoi_Hanh.html]
-- Components to focus on: [ScheduleForm, SchedulePreviewBox, TourInfoBox, ScheduleInfoBox, destructive action area, unsaved changes guard]
-- Existing UI references: [D:\DATN\danangtrip-admin\src\pages\Tours\TourScheduleEdit\index.tsx; D:\DATN\danangtrip-admin\src\pages\Tours\TourScheduleCreate\components\ScheduleForm.tsx; D:\DATN\danangtrip-admin\src\pages\Tours\TourSchedules\components\StatsSummary.tsx; D:\DATN\danangtrip-admin\src\pages\Tours\TourSchedules\components\ScheduleDeleteDialog.tsx]
+- Feature slug: [admin-bookings-detail]
+- Analysis file: [.agent/artifacts/analysis/YYYY-MM-DD__admin-bookings-detail__screen-analysis.md]
+- Components to focus on: [BookingDetailPageShell, BookingHeader, BookingInfoCard, CustomerInfoCard, TourBookingCard, BookingActionsSidebar, BookingStatusTimeline]
+- Existing UI references: [D:\DATN\danangtrip-admin\src\pages\Bookings\BookingList\components\BookingDetailDialog.tsx; D:\DATN\danangtrip-admin\src\pages\Bookings\BookingList\components\BookingTimeline.tsx; D:\DATN\danangtrip-admin\src\pages\Payments\PaymentList\components\RefundPaymentDialog.tsx]
 - Skill path: [D:\DATN\danangtrip-admin\.agent\skills\05-ui-components\SKILL.md]
-- Output: [.agent/artifacts/ui-specs/YYYY-MM-DD__admin-tour-schedule-edit__ui-spec.md]
+- Output: [.agent/artifacts/ui-specs/YYYY-MM-DD__admin-bookings-detail__ui-spec.md]
 ```
 
 Expected output:
@@ -775,14 +765,14 @@ Activate 06-data-integration
 
 Context:
 - Repo: [D:\DATN\danangtrip-admin]
-- Feature slug: [admin-tour-schedule-edit]
-- API contract: [.agent/artifacts/api-contracts/YYYY-MM-DD__admin-tour-schedule-edit__api-contract.md]
-- UI spec: [.agent/artifacts/ui-specs/YYYY-MM-DD__admin-tour-schedule-edit__ui-spec.md]
-- Queries: [schedule detail for edit, related tour lookup if needed for context]
-- Mutations: [update schedule, optional delete or status update if supported by repo reality]
-- Invalidations: [tour schedules list and affected schedule detail]
+- Feature slug: [admin-bookings-detail]
+- API contract: [.agent/artifacts/api-contracts/YYYY-MM-DD__admin-bookings-detail__api-contract.md]
+- UI spec: [.agent/artifacts/ui-specs/YYYY-MM-DD__admin-bookings-detail__ui-spec.md]
+- Queries: [booking detail]
+- Mutations: [update booking status]
+- Invalidations: [bookings list and affected booking detail]
 - Skill path: [D:\DATN\danangtrip-admin\.agent\skills\06-data-integration\SKILL.md]
-- Output: [.agent/artifacts/integration/YYYY-MM-DD__admin-tour-schedule-edit__data-integration.md]
+- Output: [.agent/artifacts/integration/YYYY-MM-DD__admin-bookings-detail__data-integration.md]
 ```
 
 Expected output:
@@ -799,13 +789,13 @@ Activate 07-interactions
 
 Context:
 - Repo: [D:\DATN\danangtrip-admin]
-- Feature slug: [admin-tour-schedule-edit]
-- Analysis file: [.agent/artifacts/analysis/YYYY-MM-DD__admin-tour-schedule-edit__screen-analysis.md]
-- Data integration: [.agent/artifacts/integration/YYYY-MM-DD__admin-tour-schedule-edit__data-integration.md]
-- Main actions: [load current schedule, edit fields, validate dates and capacity, submit update, preview changes if present, navigate back to list]
-- Destructive actions: [delete schedule or change status if supported by repo reality]
+- Feature slug: [admin-bookings-detail]
+- Analysis file: [.agent/artifacts/analysis/YYYY-MM-DD__admin-bookings-detail__screen-analysis.md]
+- Data integration: [.agent/artifacts/integration/YYYY-MM-DD__admin-bookings-detail__data-integration.md]
+- Main actions: [load booking, confirm, cancel, complete, open invoice, navigate to related user or list]
+- Destructive actions: [cancel booking]
 - Skill path: [D:\DATN\danangtrip-admin\.agent\skills\07-interactions\SKILL.md]
-- Output: [.agent/artifacts/interaction-specs/YYYY-MM-DD__admin-tour-schedule-edit__interaction-spec.md]
+- Output: [.agent/artifacts/interaction-specs/YYYY-MM-DD__admin-bookings-detail__interaction-spec.md]
 ```
 
 Expected output:
@@ -823,13 +813,13 @@ Activate 08-auth-permissions
 
 Context:
 - Repo: [D:\DATN\danangtrip-admin]
-- Feature slug: [admin-tour-schedule-edit]
-- Route plan: [.agent/artifacts/routing/YYYY-MM-DD__admin-tour-schedule-edit__route-plan.md]
-- Interaction spec: [.agent/artifacts/interaction-specs/YYYY-MM-DD__admin-tour-schedule-edit__interaction-spec.md]
+- Feature slug: [admin-bookings-detail]
+- Route plan: [.agent/artifacts/routing/YYYY-MM-DD__admin-bookings-detail__route-plan.md]
+- Interaction spec: [.agent/artifacts/interaction-specs/YYYY-MM-DD__admin-bookings-detail__interaction-spec.md]
 - Feature type: [authenticated-only | role-based]
 - Relevant roles: [admin, staff]
 - Skill path: [D:\DATN\danangtrip-admin\.agent\skills\08-auth-permissions\SKILL.md]
-- Output: [.agent/artifacts/auth/YYYY-MM-DD__admin-tour-schedule-edit__auth-permissions-review.md]
+- Output: [.agent/artifacts/auth/YYYY-MM-DD__admin-bookings-detail__auth-permissions-review.md]
 ```
 
 Expected output:
@@ -847,12 +837,12 @@ Activate 09-testing
 
 Context:
 - Repo: [D:\DATN\danangtrip-admin]
-- Feature slug: [admin-tour-schedule-edit]
-- Analysis file: [.agent/artifacts/analysis/YYYY-MM-DD__admin-tour-schedule-edit__screen-analysis.md]
-- Interaction spec: [.agent/artifacts/interaction-specs/YYYY-MM-DD__admin-tour-schedule-edit__interaction-spec.md]
-- Auth review: [.agent/artifacts/auth/YYYY-MM-DD__admin-tour-schedule-edit__auth-permissions-review.md]
+- Feature slug: [admin-bookings-detail]
+- Analysis file: [.agent/artifacts/analysis/YYYY-MM-DD__admin-bookings-detail__screen-analysis.md]
+- Interaction spec: [.agent/artifacts/interaction-specs/YYYY-MM-DD__admin-bookings-detail__interaction-spec.md]
+- Auth review: [.agent/artifacts/auth/YYYY-MM-DD__admin-bookings-detail__auth-permissions-review.md]
 - Skill path: [D:\DATN\danangtrip-admin\.agent\skills\09-testing\SKILL.md]
-- Output: [.agent/artifacts/test-cases/YYYY-MM-DD__admin-tour-schedule-edit__test-report.md]
+- Output: [.agent/artifacts/test-cases/YYYY-MM-DD__admin-bookings-detail__test-report.md]
 ```
 
 Expected output:
@@ -871,13 +861,13 @@ Activate 10-optimization-deploy
 
 Context:
 - Repo: [D:\DATN\danangtrip-admin]
-- Feature slug: [admin-tour-schedule-edit]
-- Test report: [.agent/artifacts/test-cases/YYYY-MM-DD__admin-tour-schedule-edit__test-report.md]
+- Feature slug: [admin-bookings-detail]
+- Test report: [.agent/artifacts/test-cases/YYYY-MM-DD__admin-bookings-detail__test-report.md]
 - Test verdict: [READY | READY WITH RISKS | NOT READY]
 - Existing artifacts: [analysis, api-contract, route-plan, ui-spec, data-integration, interaction-spec, auth-review, test-report]
 - Skill path: [D:\DATN\danangtrip-admin\.agent\skills\10-optimization-deploy\SKILL.md]
-- Output deploy: [.agent/artifacts/deploy/YYYY-MM-DD__admin-tour-schedule-edit__deploy-report.md]
-- Output review: [.agent/artifacts/review/YYYY-MM-DD__admin-tour-schedule-edit__review.md]
+- Output deploy: [.agent/artifacts/deploy/YYYY-MM-DD__admin-bookings-detail__deploy-report.md]
+- Output review: [.agent/artifacts/review/YYYY-MM-DD__admin-bookings-detail__review.md]
 ```
 
 Expected output:
