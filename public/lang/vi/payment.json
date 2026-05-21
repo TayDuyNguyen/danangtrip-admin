@@ -64,5 +64,35 @@
   "export": {
     "toast_success": "Đã xuất báo cáo giao dịch thành công!",
     "toast_error": "Có lỗi xảy ra khi xuất báo cáo giao dịch: {{message}}"
+  },
+  "detail": {
+    "breadcrumb_home": "Bảng điều khiển",
+    "breadcrumb_payments": "Giao dịch",
+    "breadcrumb_detail": "Chi tiết",
+    "title": "Chi tiết giao dịch",
+    "subtitle": "Xem chi tiết thông tin và lịch sử thanh toán của giao dịch",
+    "section_payment_info": "Thông tin Thanh toán",
+    "section_booking_customer": "Đơn đặt & Khách hàng",
+    "section_timeline": "Lịch sử Trạng thái",
+    "label_transaction_code": "Mã giao dịch",
+    "label_booking_code": "Mã đơn đặt",
+    "label_amount": "Số tiền thanh toán",
+    "label_gateway": "Cổng thanh toán",
+    "label_status": "Trạng thái",
+    "label_created_at": "Thời gian khởi tạo",
+    "label_paid_at": "Thời gian thanh toán",
+    "label_refunded_at": "Thời gian hoàn tiền",
+    "label_refund_reason": "Lý do hoàn tiền",
+    "customer_title": "Thông tin khách hàng",
+    "customer_name": "Họ và tên",
+    "customer_email": "Email",
+    "tour_title": "Thông tin Tour du lịch",
+    "tour_name": "Tên Tour",
+    "timeline_created": "Yêu cầu thanh toán được tạo",
+    "timeline_success": "Thanh toán thành công qua cổng {{gateway}}",
+    "timeline_failed": "Thanh toán thất bại",
+    "timeline_refunded": "Hoàn tiền thành công: {{reason}}",
+    "back_to_list": "Quay lại danh sách",
+    "not_found": "Không tìm thấy giao dịch hoặc giao dịch không tồn tại."
   }
 }

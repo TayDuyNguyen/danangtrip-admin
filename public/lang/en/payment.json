@@ -64,5 +64,35 @@
   "export": {
     "toast_success": "Transaction report exported successfully!",
     "toast_error": "An error occurred while exporting transactions: {{message}}"
+  },
+  "detail": {
+    "breadcrumb_home": "Dashboard",
+    "breadcrumb_payments": "Payments",
+    "breadcrumb_detail": "Detail",
+    "title": "Payment Details",
+    "subtitle": "View payment transaction details and history",
+    "section_payment_info": "Payment Information",
+    "section_booking_customer": "Booking & Customer",
+    "section_timeline": "Status Timeline",
+    "label_transaction_code": "Transaction Code",
+    "label_booking_code": "Booking Code",
+    "label_amount": "Payment Amount",
+    "label_gateway": "Payment Gateway",
+    "label_status": "Status",
+    "label_created_at": "Created At",
+    "label_paid_at": "Paid At",
+    "label_refunded_at": "Refunded At",
+    "label_refund_reason": "Refund Reason",
+    "customer_title": "Customer Information",
+    "customer_name": "Customer Name",
+    "customer_email": "Email",
+    "tour_title": "Tour Information",
+    "tour_name": "Tour Name",
+    "timeline_created": "Payment request created",
+    "timeline_success": "Payment succeeded via {{gateway}}",
+    "timeline_failed": "Payment failed",
+    "timeline_refunded": "Refunded successfully: {{reason}}",
+    "back_to_list": "Back to list",
+    "not_found": "Payment transaction not found or does not exist."
   }
 }
