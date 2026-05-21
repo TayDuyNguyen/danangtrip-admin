@@ -45,6 +45,12 @@ const navItems = [
     { icon: Hotel, label: 'sidebar.hotels', path: '/admin/hotels' },
     { icon: ShoppingCart, label: 'sidebar.orders', path: ROUTES.BOOKINGS_LIST },
     { icon: CreditCard, label: 'sidebar.payments', path: ROUTES.PAYMENTS_LIST },
+    {
+        icon: FileText, label: 'sidebar.reports', path: '/admin/reports',
+        subItems: [
+            { label: 'sidebar.reports_ratings', path: ROUTES.REPORTS_RATINGS },
+        ]
+    },
     { icon: FileText, label: 'sidebar.posts', path: '/admin/posts' },
     { icon: Users, label: 'sidebar.users', path: '/admin/users' },
     { icon: Bell, label: 'sidebar.notifications', path: '/admin/notifications' },
@@ -75,7 +81,8 @@ const Sidebar = () => {
     // State to track which submenus are open
     const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({
         '/admin/tours': location.pathname.startsWith('/admin/tours'),
-        '/admin/locations': location.pathname.startsWith('/admin/locations')
+        '/admin/locations': location.pathname.startsWith('/admin/locations'),
+        '/admin/reports': location.pathname.startsWith('/admin/reports')
     });
 
     const toggleMenu = (path: string) => {

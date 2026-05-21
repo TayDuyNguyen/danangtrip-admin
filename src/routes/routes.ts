@@ -17,4 +17,5 @@ export const ROUTES = {
     BOOKINGS_DETAIL: '/admin/bookings/:id',
     PAYMENTS_LIST: '/admin/payments',
     PAYMENTS_DETAIL: '/admin/payments/:id',
+    REPORTS_RATINGS: '/admin/reports/ratings',
 } as const;

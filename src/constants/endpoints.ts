@@ -24,6 +24,12 @@ export const API_ENDPOINTS = {
     // Fallback endpoints for missing stats fields
     RATINGS: {
         LIST: '/admin/ratings',
+        APPROVE: (id: string | number) => `/admin/ratings/${id}/approve`,
+        REJECT: (id: string | number) => `/admin/ratings/${id}/reject`,
+        DELETE: (id: string | number) => `/admin/ratings/${id}`,
+    },
+    REPORTS: {
+        RATINGS: '/admin/reports/ratings',
     },
     CONTACTS: {
         LIST: '/admin/contacts',
@@ -33,6 +39,7 @@ export const API_ENDPOINTS = {
         BOOKINGS: '/admin/bookings/export',
         PAYMENTS: '/admin/payments/export',
         TOURS: '/admin/tours/export',
+        RATINGS: '/admin/ratings/export',
     },
     // Tours management
     TOURS: {
