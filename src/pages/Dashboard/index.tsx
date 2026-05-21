@@ -2,6 +2,7 @@ import { useMemo, useState, useCallback } from 'react';
 import { RefreshCcw, Calendar, TrendingUp, Download } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useQueryClient } from '@tanstack/react-query';
+import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/store';
 import {
     useDashboardStatsQuery,
@@ -40,12 +41,65 @@ const Dashboard = () => {
     const queryClient = useQueryClient();
     const [refreshing, setRefreshing] = useState(false);
     const exportMutation = useBookingsExportMutation();
+    const [searchParams, setSearchParams] = useSearchParams();
 
-    // Filter states
-    const [revenuePeriod, setRevenuePeriod] = useState<'day' | 'week' | 'month' | 'year'>('day');
-    const [bookingTrendDays, setBookingTrendDays] = useState<7 | 30 | 90>(30);
-    const [bookingsPage, setBookingsPage] = useState(1);
-    const [bookingsStatus, setBookingsStatus] = useState<'pending' | 'confirmed' | 'completed' | 'cancelled' | ''>('');
+    // 1. revenuePeriod
+    const rawRevenuePeriod = searchParams.get('revenue_period') ?? 'day';
+    const revenuePeriod = (['day', 'week', 'month', 'year'].includes(rawRevenuePeriod) 
+        ? rawRevenuePeriod 
+        : 'day') as 'day' | 'week' | 'month' | 'year';
+
+    const setRevenuePeriod = useCallback((val: 'day' | 'week' | 'month' | 'year') => {
+        setSearchParams(prev => {
+            const next = new URLSearchParams(prev);
+            next.set('revenue_period', val);
+            return next;
+        }, { replace: true });
+    }, [setSearchParams]);
+
+    // 2. bookingTrendDays
+    const rawTrendDays = Number(searchParams.get('trend_days') ?? '30');
+    const bookingTrendDays = ([7, 30, 90].includes(rawTrendDays) 
+        ? rawTrendDays 
+        : 30) as 7 | 30 | 90;
+
+    const setBookingTrendDays = useCallback((val: 7 | 30 | 90) => {
+        setSearchParams(prev => {
+            const next = new URLSearchParams(prev);
+            next.set('trend_days', String(val));
+            return next;
+        }, { replace: true });
+    }, [setSearchParams]);
+
+    // 3. bookingsPage
+    const bookingsPage = Number(searchParams.get('page') ?? '1');
+
+    const setBookingsPage = useCallback((page: number) => {
+        setSearchParams(prev => {
+            const next = new URLSearchParams(prev);
+            next.set('page', String(page));
+            return next;
+        }, { replace: true });
+    }, [setSearchParams]);
+
+    // 4. bookingsStatus
+    const rawStatus = searchParams.get('status') ?? '';
+    const bookingsStatus = (['pending', 'confirmed', 'completed', 'cancelled', ''].includes(rawStatus)
+        ? rawStatus
+        : '') as 'pending' | 'confirmed' | 'completed' | 'cancelled' | '';
+
+    const setBookingsStatus = useCallback((status: 'pending' | 'confirmed' | 'completed' | 'cancelled' | '') => {
+        setSearchParams(prev => {
+            const next = new URLSearchParams(prev);
+            if (status) {
+                next.set('status', status);
+            } else {
+                next.delete('status');
+            }
+            next.set('page', '1'); // Reset to page 1 on status change
+            return next;
+        }, { replace: true });
+    }, [setSearchParams]);
 
     /**
      * Helper to calculate date ranges for specific filters
@@ -118,8 +172,8 @@ const Dashboard = () => {
             { from_date: range.from, to_date: range.to, fallbackFilename },
             {
                 onSuccess: () => toast.success(t('tables.export_success')),
-                onError: (err) => {
-                    toast.error(err instanceof Error ? err.message : t('tables.export_failed'));
+                onError: () => {
+                    toast.error(t('tables.export_failed'));
                 },
             }
         );
@@ -130,9 +184,9 @@ const Dashboard = () => {
         const status = bookingStatusCountsQuery.data;
         if (!status) return [];
         return [
-            { name: t('status.completed'), value: status.completed, color: '#10b981' },
-            { name: t('status.confirmed'), value: status.confirmed, color: '#3b82f6' },
-            { name: t('status.pending'), value: status.pending, color: '#f59e0b' },
+            { name: t('status.completed'), value: status.completed, color: '#14b8a6' },
+            { name: t('status.confirmed'), value: status.confirmed, color: '#0f172a' },
+            { name: t('status.pending'), value: status.pending, color: '#94a3b8' },
             { name: t('status.cancelled'), value: status.cancelled, color: '#ef4444' },
         ];
     }, [bookingStatusCountsQuery.data, t]);
@@ -152,10 +206,10 @@ const Dashboard = () => {
     return (
         <div className="space-y-8 animate-in fade-in duration-700 slide-in-from-bottom-4 overflow-x-hidden min-w-0" aria-label={t('title')}>
             {/* Header */}
-            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5 pb-6 border-b border-slate-200/60">
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5 pb-6 border-b border-slate-100">
                 <div>
                     <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1.5 flex items-center gap-1.5">
-                        <TrendingUp size={12} className="text-blue-500" />
+                        <TrendingUp size={12} className="text-[#14b8a6]" />
                         {t('title')}
                     </p>
                     <h1 className="text-4xl font-black text-slate-900 tracking-tighter leading-none">
@@ -172,7 +226,7 @@ const Dashboard = () => {
                         onClick={handleExport}
                         disabled={exportMutation.isPending}
                         title={exportMutation.isPending ? t('exporting') : t('export')}
-                        className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl text-sm font-black transition-all flex items-center gap-2 shadow-xl shadow-emerald-900/20 active:scale-95 disabled:opacity-50"
+                        className="px-5 py-2.5 bg-[#14b8a6] hover:bg-[#0f766e] text-white rounded-2xl text-sm font-black transition-all flex items-center gap-2 shadow-xl shadow-[#14b8a6]/20 active:scale-95 disabled:opacity-50"
                     >
                         <Download size={16} className={exportMutation.isPending ? 'animate-bounce' : ''} />
                         {exportMutation.isPending ? t('exporting') : t('export')}
@@ -182,7 +236,7 @@ const Dashboard = () => {
                         onClick={handleRefresh}
                         disabled={refreshing}
                         title={refreshing ? t('refreshing') : t('refresh')}
-                        className={`px-5 py-2.5 rounded-2xl text-sm font-black transition-all flex items-center gap-2 shadow-xl active:scale-95 disabled:opacity-50 ${refreshing ? 'bg-blue-50 text-blue-600 shadow-blue-500/10' : 'bg-slate-900 hover:bg-black text-white shadow-slate-900/20'}`}
+                        className={`px-5 py-2.5 rounded-2xl text-sm font-black transition-all flex items-center gap-2 shadow-xl active:scale-95 disabled:opacity-50 ${refreshing ? 'bg-[#dff7f4] text-slate-900 shadow-black/5' : 'bg-slate-900 hover:bg-black text-white shadow-slate-900/20'}`}
                     >
                         <RefreshCcw size={16} className={refreshing ? 'animate-spin' : ''} />
                         {refreshing ? t('refreshing') : t('refresh')}

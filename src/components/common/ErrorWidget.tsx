@@ -6,6 +6,7 @@ interface ErrorWidgetProps {
     title?: string;
     message?: string;
     onRetry?: () => void;
+    onBack?: () => void;
     className?: string;
 }
 
@@ -13,6 +14,7 @@ const ErrorWidget = ({
     title,
     message,
     onRetry,
+    onBack,
     className,
 }: ErrorWidgetProps) => {
     const { t } = useTranslation('dashboard');
@@ -26,14 +28,26 @@ const ErrorWidget = ({
                 {title || t('dashboard:error_states.title')}
             </h4>
             {message && <p className="text-[11px] font-bold text-red-400 mt-1 max-w-[240px] leading-relaxed">{message}</p>}
-            {onRetry && (
-                <button
-                    onClick={onRetry}
-                    className="mt-4 px-4 py-2 bg-white border border-red-100 text-red-600 text-xs font-black rounded-xl hover:bg-red-50 transition-colors flex items-center gap-2 shadow-sm active:scale-95"
-                >
-                    <RefreshCw size={12} />
-                    {t('dashboard:retry')}
-                </button>
+            {(onRetry || onBack) && (
+                <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
+                    {onRetry && (
+                        <button
+                            onClick={onRetry}
+                            className="px-4 py-2 bg-white border border-red-100 text-red-600 text-xs font-black rounded-xl hover:bg-red-50 transition-colors flex items-center gap-2 shadow-sm active:scale-95"
+                        >
+                            <RefreshCw size={12} />
+                            {t('dashboard:retry')}
+                        </button>
+                    )}
+                    {onBack && (
+                        <button
+                            onClick={onBack}
+                            className="px-4 py-2 bg-white border border-red-100 text-red-600 text-xs font-black rounded-xl hover:bg-red-50 transition-colors shadow-sm active:scale-95"
+                        >
+                            {t('common:actions.close')}
+                        </button>
+                    )}
+                </div>
             )}
         </div>
     );

@@ -23,9 +23,9 @@ interface RecentOrdersTableProps {
 
 const STATUS_OPTIONS = [
     { value: '', labelKey: 'filters.all', color: 'bg-slate-100 text-slate-600' },
-    { value: 'pending', labelKey: 'status.pending', color: 'bg-amber-50 text-amber-600 border-amber-100' },
-    { value: 'confirmed', labelKey: 'status.confirmed', color: 'bg-blue-50 text-blue-600 border-blue-100' },
-    { value: 'completed', labelKey: 'status.completed', color: 'bg-emerald-50 text-emerald-600 border-emerald-100' },
+    { value: 'pending', labelKey: 'status.pending', color: 'bg-[#f4fce3] text-[#0f766e] border-[#d9f99d]' },
+    { value: 'confirmed', labelKey: 'status.confirmed', color: 'bg-[#dff7f4] text-[#0f766e] border-[#ccfbf1]' },
+    { value: 'completed', labelKey: 'status.completed', color: 'bg-blue-100 text-[#0f766e] border-blue-200' },
     { value: 'cancelled', labelKey: 'status.cancelled', color: 'bg-red-50 text-red-500 border-red-100' },
 ];
 
@@ -52,24 +52,23 @@ const RecentOrdersTable = ({
     const isEmpty = !isLoading && !isError && orders.length === 0;
 
     const STATUS_CONFIG: Record<string, { label: string; className: string; icon: ReactNode }> = {
-        completed: { label: t('status.completed'), className: 'bg-emerald-50 text-emerald-600 border-emerald-100', icon: <CheckCircle2 size={13} /> },
-        confirmed: { label: t('status.confirmed'), className: 'bg-blue-50 text-blue-600 border-blue-100', icon: <CheckCircle2 size={13} /> },
-        pending:   { label: t('status.pending'),   className: 'bg-amber-50 text-amber-600 border-amber-100', icon: <Clock size={13} /> },
+        completed: { label: t('status.completed'), className: 'bg-blue-100 text-[#0f766e] border-blue-200', icon: <CheckCircle2 size={13} /> },
+        confirmed: { label: t('status.confirmed'), className: 'bg-[#dff7f4] text-[#0f766e] border-[#ccfbf1]', icon: <CheckCircle2 size={13} /> },
+        pending:   { label: t('status.pending'),   className: 'bg-[#f4fce3] text-[#0f766e] border-[#d9f99d]', icon: <Clock size={13} /> },
         cancelled: { label: t('status.cancelled'), className: 'bg-red-50 text-red-500 border-red-100', icon: <XCircle size={13} /> },
     };
 
     const AVATAR_COLORS = [
-        'bg-blue-100 text-blue-600',
-        'bg-sky-100 text-sky-600',
-        'bg-emerald-100 text-emerald-600',
-        'bg-cyan-100 text-cyan-600',
-        'bg-orange-100 text-orange-600',
-        'bg-rose-100 text-rose-600',
-        'bg-teal-100 text-teal-600',
+        'bg-[#dff7f4] text-[#0f766e]',
+        'bg-blue-100 text-[#0f766e]',
+        'bg-[#f4fce3] text-[#0f766e]',
+        'bg-[#ccfbf1] text-[#0f766e]',
+        'bg-slate-100 text-slate-700',
+        'bg-white text-[#14b8a6] border border-slate-200',
     ];
 
     return (
-        <div className="bg-white rounded-[2.5rem] border border-slate-200/60 shadow-sm overflow-hidden flex flex-col">
+        <div className="bg-white rounded-[32px] border border-slate-200/60 shadow-sm overflow-hidden flex flex-col">
             {/* Header */}
             <div className="px-6 py-5 border-b border-slate-100 group/card transition-all duration-300">
                 <div className="flex items-center justify-between mb-4">
@@ -89,13 +88,13 @@ const RecentOrdersTable = ({
                                 onClick={(e) => { e.stopPropagation(); onRefresh(); }}
                                 disabled={isRefreshing}
                                 title={t('charts.refresh_chart')}
-                                className={`p-2 rounded-xl bg-slate-50 hover:bg-blue-50 transition-all ${isRefreshing ? 'opacity-100 text-blue-600 cursor-not-allowed' : 'text-slate-400 hover:text-blue-600 active:scale-90 group-hover/card:opacity-100 opacity-0 lg:opacity-0'}`}
+                                className={`p-2 rounded-xl bg-slate-50 hover:bg-[#dff7f4] transition-all ${isRefreshing ? 'opacity-100 text-[#14b8a6] cursor-not-allowed' : 'text-slate-400 hover:text-[#14b8a6] active:scale-90 group-hover/card:opacity-100 opacity-0 lg:opacity-0'}`}
                             >
                                 <RefreshCw size={14} className={isRefreshing ? 'animate-spin' : ''} />
                             </button>
                         )}
                     </div>
-                    <button className="flex items-center gap-1 text-xs font-black text-blue-600 hover:underline">
+                    <button className="flex items-center gap-1 text-xs font-black text-[#14b8a6] hover:underline">
                         {t('tables.view_all')} <ExternalLink size={12} />
                     </button>
                 </div>
@@ -108,7 +107,7 @@ const RecentOrdersTable = ({
                             onClick={() => onStatusChange(opt.value as BookingStatus)}
                             className={`px-3 py-1.5 rounded-xl text-[11px] font-black border transition-all ${
                                 statusFilter === opt.value
-                                    ? opt.color + ' ring-2 ring-offset-1 ring-blue-200'
+                                    ? opt.color + ' ring-2 ring-offset-1 ring-[#ccfbf1]'
                                     : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300'
                             }`}
                         >
@@ -206,7 +205,7 @@ const RecentOrdersTable = ({
                                                 <span className="text-[12px] font-bold text-slate-400 italic">{item.booked_at}</span>
                                             </td>
                                             <td className="px-3 py-4 text-right">
-                                                <ChevronRight size={16} className="text-slate-300 group-hover:text-blue-500 group-hover:translate-x-0.5 transition-all" />
+                                                <ChevronRight size={16} className="text-slate-300 group-hover:text-[#14b8a6] group-hover:translate-x-0.5 transition-all" />
                                             </td>
                                         </tr>
                                     );
@@ -248,7 +247,7 @@ const RecentOrdersTable = ({
                                                 className={clsx(
                                                     'w-8 h-8 rounded-xl text-[11px] font-black transition-all',
                                                     p === currentPage
-                                                        ? 'bg-blue-600 text-white shadow-sm'
+                                                        ? 'bg-[#14b8a6] text-white shadow-sm'
                                                         : 'bg-white text-slate-600 border border-slate-200 hover:border-slate-300 disabled:opacity-50'
                                                 )}
                                             >
@@ -267,7 +266,7 @@ const RecentOrdersTable = ({
                             </button>
                         </div>
 
-                        <button className="text-[11px] font-black text-blue-600 flex items-center gap-1 hover:underline">
+                        <button className="text-[11px] font-black text-[#14b8a6] flex items-center gap-1 hover:underline">
                             {t('tables.manage_orders')} <ExternalLink size={10} />
                         </button>
                     </div>

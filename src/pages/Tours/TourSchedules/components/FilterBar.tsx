@@ -31,7 +31,6 @@ const FilterBar = ({ tourOptions, filters, onApply, onReset, hasActiveFilters }:
         () => [
             { value: 'all', label: t('common:labels.all') },
             { value: 'available', label: t('schedules:status.available') },
-            { value: 'full', label: t('schedules:status.full') },
             { value: 'cancelled', label: t('schedules:status.cancelled') },
         ],
         [t],
@@ -73,7 +72,7 @@ const FilterBar = ({ tourOptions, filters, onApply, onReset, hasActiveFilters }:
         <div className="bg-white p-5 rounded-2xl border border-[#E2E8F0] space-y-4">
             <div className="flex flex-wrap gap-3 items-end">
                 <div className="flex-1 min-w-[280px]">
-                    <label className="block text-[11px] font-bold text-[#94A3B8] uppercase tracking-wider mb-1.5">
+                    <label className="block text-[11px] font-bold text-text-secondary uppercase tracking-wider mb-1.5">
                         {t('schedules:filters.search_label')}
                     </label>
                     <TextInput
@@ -86,7 +85,7 @@ const FilterBar = ({ tourOptions, filters, onApply, onReset, hasActiveFilters }:
                 </div>
 
                 <div className="w-full sm:w-[220px]">
-                    <label className="block text-[11px] font-bold text-[#94A3B8] uppercase tracking-wider mb-1.5">
+                    <label className="block text-[11px] font-bold text-text-secondary uppercase tracking-wider mb-1.5">
                         {t('schedules:filters.tour_label')}
                     </label>
                     <CustomSelect
@@ -103,7 +102,7 @@ const FilterBar = ({ tourOptions, filters, onApply, onReset, hasActiveFilters }:
                 </div>
 
                 <div className="w-full sm:w-[160px]">
-                    <label className="block text-[11px] font-bold text-[#94A3B8] uppercase tracking-wider mb-1.5">
+                    <label className="block text-[11px] font-bold text-text-secondary uppercase tracking-wider mb-1.5">
                         {t('schedules:filters.status_label')}
                     </label>
                     <CustomSelect
@@ -121,7 +120,7 @@ const FilterBar = ({ tourOptions, filters, onApply, onReset, hasActiveFilters }:
                 </div>
 
                 <div className="w-full sm:w-[150px]">
-                    <label className="block text-[11px] font-bold text-[#94A3B8] uppercase tracking-wider mb-1.5">
+                    <label className="block text-[11px] font-bold text-text-secondary uppercase tracking-wider mb-1.5">
                         {t('schedules:filters.from')}
                     </label>
                     <TextInput
@@ -133,7 +132,7 @@ const FilterBar = ({ tourOptions, filters, onApply, onReset, hasActiveFilters }:
                 </div>
 
                 <div className="w-full sm:w-[150px]">
-                    <label className="block text-[11px] font-bold text-[#94A3B8] uppercase tracking-wider mb-1.5">
+                    <label className="block text-[11px] font-bold text-text-secondary uppercase tracking-wider mb-1.5">
                         {t('schedules:filters.to')}
                     </label>
                     <TextInput
@@ -147,7 +146,7 @@ const FilterBar = ({ tourOptions, filters, onApply, onReset, hasActiveFilters }:
                 <button
                     type="button"
                     onClick={handleApplyClick}
-                    className="h-[48px] px-5 bg-[#0066CC] hover:bg-[#0052a3] text-white rounded-xl flex items-center gap-2 font-bold text-sm transition-all"
+                    className="h-[48px] px-5 bg-[#14b8a6] hover:bg-[#0f766e] text-white rounded-xl flex items-center gap-2 font-bold text-sm transition-all"
                 >
                     <Filter className="w-4 h-4" />
                     {t('common:actions.filter')}

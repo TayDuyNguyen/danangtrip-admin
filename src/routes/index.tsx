@@ -14,11 +14,20 @@ const EditTour = React.lazy(() => import('@/pages/Tours/TourEdit'));
 const TourCategories = React.lazy(() => import('@/pages/Tours/TourCategories'));
 const Schedules = React.lazy(() => import('@/pages/Tours/TourSchedules'));
 const TourScheduleCreate = React.lazy(() => import('@/pages/Tours/TourScheduleCreate'));
+const TourScheduleEdit = React.lazy(() => import('@/pages/Tours/TourScheduleEdit'));
+const LocationList = React.lazy(() => import('@/pages/Locations/LocationList'));
+const LocationCreate = React.lazy(() => import('@/pages/Locations/LocationCreate'));
+const LocationEdit = React.lazy(() => import('@/pages/Locations/LocationEdit'));
+const LocationDetail = React.lazy(() => import('@/pages/Locations/LocationDetail'));
+const LocationCategories = React.lazy(() => import('@/pages/Locations/LocationCategories'));
+const BookingList = React.lazy(() => import('@/pages/Bookings/BookingList'));
+const BookingDetail = React.lazy(() => import('@/pages/Bookings/BookingDetail'));
+const PaymentList = React.lazy(() => import('@/pages/Payments/PaymentList'));
+const PaymentDetail = React.lazy(() => import('@/pages/Payments/PaymentDetail'));
 import ErrorPage from '@/pages/ErrorPage';
 
 /**
  * Page loader component
- * (Component để hiển thị loader khi tải trang)
  */
 const PageLoader = () => (
     <div className='flex items-center justify-center min-h-screen'>
@@ -28,7 +37,6 @@ const PageLoader = () => (
 
 /**
  * Suspense wrapper component
- * (Component để wrap component với Suspense để hiển thị loader khi tải trang)
  */
 const withSuspense = (Component: React.ComponentType) => (
     <Suspense fallback={<PageLoader />}>
@@ -38,7 +46,6 @@ const withSuspense = (Component: React.ComponentType) => (
 
 /**
  * Router component
- * (Component để định nghĩa đường dẫn của ứng dụng)
  */
 const router = createBrowserRouter([
     {
@@ -46,7 +53,6 @@ const router = createBrowserRouter([
         element: <Navigate to={ROUTES.LOGIN} replace />,
         errorElement: <ErrorPage />
     },
-    // Public routes — chỉ truy cập khi chưa đăng nhập
     {
         element: <PublicRoute />,
         errorElement: <ErrorPage />,
@@ -54,7 +60,6 @@ const router = createBrowserRouter([
             { path: ROUTES.LOGIN, element: withSuspense(Login) },
         ],
     },
-    // Private routes — yêu cầu đăng nhập
     {
         element: <PrivateRoute />,
         errorElement: <ErrorPage />,
@@ -69,6 +74,16 @@ const router = createBrowserRouter([
                     { path: ROUTES.TOURS_CATEGORIES, element: withSuspense(TourCategories) },
                     { path: ROUTES.TOURS_SCHEDULES, element: withSuspense(Schedules) },
                     { path: ROUTES.TOURS_SCHEDULE_CREATE, element: withSuspense(TourScheduleCreate) },
+                    { path: ROUTES.TOURS_SCHEDULE_EDIT, element: withSuspense(TourScheduleEdit) },
+                    { path: ROUTES.LOCATIONS_LIST, element: withSuspense(LocationList) },
+                    { path: ROUTES.LOCATIONS_CREATE, element: withSuspense(LocationCreate) },
+                    { path: ROUTES.LOCATIONS_EDIT, element: withSuspense(LocationEdit) },
+                    { path: ROUTES.LOCATIONS_DETAIL, element: withSuspense(LocationDetail) },
+                    { path: ROUTES.LOCATIONS_CATEGORIES, element: withSuspense(LocationCategories) },
+                    { path: ROUTES.BOOKINGS_LIST, element: withSuspense(BookingList) },
+                    { path: ROUTES.BOOKINGS_DETAIL, element: withSuspense(BookingDetail) },
+                    { path: ROUTES.PAYMENTS_LIST, element: withSuspense(PaymentList) },
+                    { path: ROUTES.PAYMENTS_DETAIL, element: withSuspense(PaymentDetail) },
                 ]
             }
         ],

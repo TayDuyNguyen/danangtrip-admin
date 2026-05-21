@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import {
     LayoutDashboard,
     Map,
     Hotel,
     ShoppingCart,
+    CreditCard,
     FileText,
     Users,
     Bell,
@@ -18,6 +19,8 @@ import {
 import { ROUTES } from '@/routes/routes';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/store';
+import { useUserStore } from '@/store/useUserStore';
+import { useLogoutQuery } from '@/hooks/useAuthQuery';
 
 /**
  * Nested navigation items for the sidebar
@@ -32,8 +35,16 @@ const navItems = [
             { label: 'sidebar.tour_schedules', path: ROUTES.TOURS_SCHEDULES },
         ]
     },
+    {
+        icon: MapPin, label: 'sidebar.locations', path: '/admin/locations',
+        subItems: [
+            { label: 'sidebar.location_list', path: ROUTES.LOCATIONS_LIST },
+            { label: 'sidebar.location_categories', path: ROUTES.LOCATIONS_CATEGORIES },
+        ]
+    },
     { icon: Hotel, label: 'sidebar.hotels', path: '/admin/hotels' },
-    { icon: ShoppingCart, label: 'sidebar.orders', path: '/admin/orders' },
+    { icon: ShoppingCart, label: 'sidebar.orders', path: ROUTES.BOOKINGS_LIST },
+    { icon: CreditCard, label: 'sidebar.payments', path: ROUTES.PAYMENTS_LIST },
     { icon: FileText, label: 'sidebar.posts', path: '/admin/posts' },
     { icon: Users, label: 'sidebar.users', path: '/admin/users' },
     { icon: Bell, label: 'sidebar.notifications', path: '/admin/notifications' },
@@ -44,12 +55,27 @@ const Sidebar = () => {
     const { user } = useAuth();
     const { t } = useTranslation('common');
     const location = useLocation();
+    const navigate = useNavigate();
+    const logoutMutation = useLogoutQuery();
+
+    const handleLogoutClick = () => {
+        logoutMutation.mutate(undefined, {
+            onSettled: () => {
+                useUserStore.getState().logout();
+                navigate(ROUTES.LOGIN);
+            }
+        });
+        // Clear local storage and redirect immediately in case mutation hangs
+        useUserStore.getState().logout();
+        navigate(ROUTES.LOGIN);
+    };
     
     const [isCollapsed, setIsCollapsed] = useState(false);
     
     // State to track which submenus are open
     const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({
-        '/admin/tours': location.pathname.startsWith('/admin/tours')
+        '/admin/tours': location.pathname.startsWith('/admin/tours'),
+        '/admin/locations': location.pathname.startsWith('/admin/locations')
     });
 
     const toggleMenu = (path: string) => {
@@ -60,24 +86,24 @@ const Sidebar = () => {
     };
 
     return (
-        <aside className={`bg-slate-900 border-r border-slate-800 flex flex-col h-screen sticky top-0 transition-all duration-300 group z-50 ${isCollapsed ? 'w-20' : 'w-72'}`}>
+        <aside className={`bg-white border-r border-slate-100 flex flex-col h-screen sticky top-0 transition-all duration-300 group z-50 ${isCollapsed ? 'w-20' : 'w-72'}`}>
             {/* Toggle Button */}
             <button
                 onClick={() => setIsCollapsed(!isCollapsed)}
-                className="absolute -right-3.5 top-8 w-7 h-7 bg-slate-800 border border-slate-700 rounded-full flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-700 transition-colors shadow-sm z-50"
+                className="absolute -right-3.5 top-8 w-7 h-7 bg-white border border-slate-100 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-900 hover:bg-slate-50 transition-colors shadow-sm z-50"
             >
                 {isCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
             </button>
 
             {/* Logo Section */}
-            <div className={`p-6 border-b border-slate-800 flex items-center h-[88px] ${isCollapsed ? 'justify-center px-0' : 'justify-between'}`}>
+            <div className={`p-6 border-b border-slate-100 flex items-center h-[88px] ${isCollapsed ? 'justify-center px-0' : 'justify-between'}`}>
                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-linear-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-900/40 shrink-0">
+                    <div className="w-10 h-10 bg-linear-to-br from-[#14b8a6] to-[#0f766e] rounded-2xl flex items-center justify-center shadow-lg shadow-[#14b8a6]/20 shrink-0">
                         <MapPin size={22} className="text-white fill-white/20" />
                     </div>
                     {!isCollapsed && (
                         <div className="min-w-0 transition-opacity duration-200">
-                            <h1 className="text-white font-black text-lg leading-none tracking-tight truncate">DaNangTrip</h1>
+                            <h1 className="text-slate-900 font-black text-lg leading-none tracking-tight truncate">{t('brand.name')}</h1>
                             <p className="text-slate-400 text-[10px] mt-1 font-bold uppercase tracking-widest truncate">{t('sidebar.system')}</p>
                         </div>
                     )}
@@ -101,8 +127,8 @@ const Sidebar = () => {
                                             flex items-center w-full py-3 rounded-xl transition-all duration-200 group/nav relative overflow-hidden
                                             ${isCollapsed ? 'justify-center px-0' : 'justify-between px-4'}
                                             ${isMainActive
-                                                ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/40'
-                                                : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100'}
+                                                ? 'bg-[#14b8a6] text-white shadow-lg shadow-[#14b8a6]/20'
+                                                : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'}
                                         `}
                                     >
                                         <div className={`flex items-center ${isCollapsed ? 'justify-center w-full' : 'gap-3'}`}>
@@ -121,8 +147,8 @@ const Sidebar = () => {
                                             flex items-center py-3 rounded-xl transition-all duration-200 group/nav relative overflow-hidden
                                             ${isCollapsed ? 'justify-center px-0' : 'gap-3 px-4'}
                                             ${isActive
-                                                ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/40'
-                                                : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100'}
+                                                ? 'bg-[#14b8a6] text-white shadow-lg shadow-[#14b8a6]/20'
+                                                : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'}
                                         `}
                                     >
                                         {({ isActive }) => (
@@ -137,19 +163,20 @@ const Sidebar = () => {
 
                                 {/* Sub-items */}
                                 {hasSub && isOpen && !isCollapsed && (
-                                    <div className="mt-1 mb-1 ml-4 pl-4 border-l-2 border-slate-800 space-y-1 animate-in slide-in-from-top-2 duration-200">
+                                    <div className="mt-1 mb-1 ml-4 pl-4 border-l-2 border-slate-100 space-y-1 animate-in slide-in-from-top-2 duration-200">
                                         {item.subItems?.map(sub => (
-                                            <NavLink
-                                                key={sub.path}
-                                                to={sub.path}
-                                                className={({ isActive }) => `
-                                                    flex items-center gap-2 px-4 py-2.5 rounded-lg transition-all duration-200
-                                                    ${isActive
-                                                        ? 'bg-blue-500/10 text-blue-400 font-black'
-                                                        : 'text-slate-500 hover:text-slate-200 hover:bg-slate-800/50 font-bold'}
-                                                    text-[13px]
-                                                `}
-                                            >
+                                                <NavLink
+                                                    key={sub.path}
+                                                    to={sub.path}
+                                                    end={true}
+                                                    className={({ isActive }) => `
+                                                        flex items-center gap-2 px-4 py-2.5 rounded-lg transition-all duration-200
+                                                        ${isActive
+                                                            ? 'bg-[#14b8a6]/10 text-[#0f766e] font-black'
+                                                            : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50 font-bold'}
+                                                        text-[13px]
+                                                    `}
+                                                >
                                                 <div className="w-1.5 h-1.5 rounded-full bg-current opacity-50"></div>
                                                 {t(sub.label)}
                                             </NavLink>
@@ -163,11 +190,11 @@ const Sidebar = () => {
             </nav>
 
             {/* Bottom Section / User Profile Summary */}
-            <div className={`p-4 border-t border-slate-800 ${isCollapsed ? 'flex flex-col items-center gap-4' : ''}`}>
+            <div className={`p-4 border-t border-slate-100 ${isCollapsed ? 'flex flex-col items-center gap-4' : ''}`}>
                 {!isCollapsed ? (
-                    <div className="bg-slate-800/50 rounded-2xl p-4 flex items-center justify-between group cursor-pointer hover:bg-slate-800 transition-colors">
+                    <div className="bg-slate-50 rounded-2xl p-4 flex items-center justify-between group cursor-pointer hover:bg-slate-100 transition-colors border border-slate-100">
                         <div className="flex items-center gap-3 min-w-0">
-                            <div className="w-10 h-10 rounded-xl bg-slate-700 border border-slate-600 flex items-center justify-center text-white font-black shrink-0 shadow-sm relative overflow-hidden">
+                            <div className="w-10 h-10 rounded-xl bg-slate-200 border border-slate-100 flex items-center justify-center text-white font-black shrink-0 shadow-sm relative overflow-hidden">
                                 {user?.avatar ? (
                                     <img
                                         src={user.avatar}
@@ -175,23 +202,27 @@ const Sidebar = () => {
                                         className="w-full h-full object-cover"
                                     />
                                 ) : (
-                                    <span className="text-white text-xs font-black">
+                                    <span className="text-slate-900 text-xs font-black">
                                         {(user?.full_name || t('labels.admin_fallback')).charAt(0).toUpperCase()}
                                     </span>
                                 )}
                             </div>
                             <div className="flex-1 min-w-0">
-                                <p className="text-white text-sm font-black truncate">{user?.full_name || t('labels.admin_fallback')}</p>
-                                <p className="text-slate-500 text-[11px] font-bold uppercase tracking-widest truncate mt-0.5">{t('header.admin_role')}</p>
+                                <p className="text-slate-900 text-sm font-black truncate">{user?.full_name || t('labels.admin_fallback')}</p>
+                                <p className="text-slate-400 text-[11px] font-bold uppercase tracking-widest truncate mt-0.5">{t('header.admin_role')}</p>
                             </div>
                         </div>
-                        <button className="text-slate-500 hover:text-red-400 transition-colors shrink-0" title={t('sidebar.logout')}>
+                        <button 
+                            onClick={handleLogoutClick}
+                            className="text-slate-400 hover:text-slate-900 transition-colors shrink-0" 
+                            title={t('sidebar.logout')}
+                        >
                             <LogOut size={18} />
                         </button>
                     </div>
                 ) : (
                     <div className="flex flex-col items-center gap-4 py-2">
-                        <div className="w-10 h-10 rounded-xl bg-slate-700 border border-slate-600 flex items-center justify-center text-white font-black shrink-0 shadow-sm relative overflow-hidden" title={user?.full_name || t('labels.admin_fallback')}>
+                        <div className="w-10 h-10 rounded-xl bg-slate-200 border border-slate-100 flex items-center justify-center text-white font-black shrink-0 shadow-sm relative overflow-hidden" title={user?.full_name || t('labels.admin_fallback')}>
                             {user?.avatar ? (
                                 <img
                                     src={user.avatar}
@@ -199,12 +230,16 @@ const Sidebar = () => {
                                     className="w-full h-full object-cover"
                                 />
                             ) : (
-                                <span className="text-white text-xs font-black">
+                                <span className="text-slate-900 text-xs font-black">
                                     {(user?.full_name || t('labels.admin_fallback')).charAt(0).toUpperCase()}
                                 </span>
                             )}
                         </div>
-                        <button className="text-slate-500 hover:text-red-400 transition-colors shrink-0 p-2 hover:bg-slate-800 rounded-lg" title={t('sidebar.logout')}>
+                        <button 
+                            onClick={handleLogoutClick}
+                            className="text-slate-400 hover:text-slate-900 transition-colors shrink-0 p-2 hover:bg-slate-50 rounded-lg" 
+                            title={t('sidebar.logout')}
+                        >
                             <LogOut size={20} />
                         </button>
                     </div>

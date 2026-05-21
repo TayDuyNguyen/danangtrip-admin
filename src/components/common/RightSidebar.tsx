@@ -45,14 +45,14 @@ const RightSidebar = ({ isOpen, onClose }: RightSidebarProps) => {
                     <div className="flex p-2 bg-slate-100/50 mx-6 mt-6 rounded-2xl">
                         <button
                             onClick={() => setActiveTab('profile')}
-                            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-bold transition-all ${activeTab === 'profile' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-bold transition-all ${activeTab === 'profile' ? 'bg-white text-[#14b8a6] shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
                         >
                             <User size={16} />
                             {t('common:right_sidebar.profile')}
                         </button>
                         <button
                             onClick={() => setActiveTab('settings')}
-                            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-bold transition-all ${activeTab === 'settings' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-bold transition-all ${activeTab === 'settings' ? 'bg-white text-[#14b8a6] shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
                         >
                             <Settings size={16} />
                             {t('common:right_sidebar.settings')}
@@ -66,10 +66,10 @@ const RightSidebar = ({ isOpen, onClose }: RightSidebarProps) => {
                                 {/* Profile Summary */}
                                 <div className="text-center">
                                     <div className="relative inline-block group mb-4">
-                                        <div className="w-24 h-24 rounded-3xl bg-blue-100 flex items-center justify-center text-blue-600 text-3xl font-bold shadow-xl border-4 border-white overflow-hidden">
+                                        <div className="w-24 h-24 rounded-3xl bg-[#dff7f4] flex items-center justify-center text-[#14b8a6] text-3xl font-bold shadow-xl border-4 border-white overflow-hidden">
                                             A
                                         </div>
-                                        <button className="absolute bottom-1 right-1 p-2 bg-white border border-slate-200 rounded-xl text-slate-600 hover:text-blue-600 shadow-lg transition-all transform scale-0 group-hover:scale-100">
+                                        <button className="absolute bottom-1 right-1 p-2 bg-white border border-slate-200 rounded-xl text-slate-600 hover:text-[#14b8a6] shadow-lg transition-all transform scale-0 group-hover:scale-100">
                                             <Camera size={14} />
                                         </button>
                                     </div>
@@ -79,23 +79,23 @@ const RightSidebar = ({ isOpen, onClose }: RightSidebarProps) => {
 
                                 {/* Quick Info */}
                                 <div className="space-y-4">
-                                    <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 hover:border-blue-200 transition-colors">
+                                    <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 hover:border-[#ccfbf1] transition-colors">
                                         <div className="flex items-center gap-3 mb-1">
-                                            <AtSign size={16} className="text-blue-500" />
+                                            <AtSign size={16} className="text-[#14b8a6]" />
                                             <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{t('common:right_sidebar.info.email')}</span>
                                         </div>
                                         <p className="text-sm font-bold text-slate-700 ml-7">{t('dashboard:profile.default_email')}</p>
                                     </div>
-                                    <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 hover:border-blue-200 transition-colors">
+                                    <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 hover:border-[#ccfbf1] transition-colors">
                                         <div className="flex items-center gap-3 mb-1">
-                                            <Phone size={16} className="text-emerald-500" />
+                                            <Phone size={16} className="text-[#14b8a6]" />
                                             <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{t('common:right_sidebar.info.phone')}</span>
                                         </div>
                                         <p className="text-sm font-bold text-slate-700 ml-7">{t('dashboard:profile.default_phone')}</p>
                                     </div>
-                                    <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 hover:border-blue-200 transition-colors">
+                                    <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 hover:border-[#ccfbf1] transition-colors">
                                         <div className="flex items-center gap-3 mb-1">
-                                            <Clock size={16} className="text-orange-500" />
+                                            <Clock size={16} className="text-[#0f766e]" />
                                             <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{t('common:right_sidebar.info.joined')}</span>
                                         </div>
                                         <p className="text-sm font-bold text-slate-700 ml-7">{t('dashboard:profile.default_joined')}</p>
@@ -113,7 +113,7 @@ const RightSidebar = ({ isOpen, onClose }: RightSidebarProps) => {
                                     </div>
                                     <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">
                                         <span className="text-sm font-bold text-slate-700">{t('common:right_sidebar.preferences.notifications')}</span>
-                                        <div className="w-10 h-5 bg-emerald-500 rounded-full relative cursor-pointer shadow-inner">
+                                        <div className="w-10 h-5 bg-[#14b8a6] rounded-full relative cursor-pointer shadow-inner">
                                             <div className="absolute right-0.5 top-0.5 w-4 h-4 bg-white rounded-full shadow-sm"></div>
                                         </div>
                                     </div>
@@ -124,7 +124,7 @@ const RightSidebar = ({ isOpen, onClose }: RightSidebarProps) => {
                                     <div className="space-y-3">
                                         {[1, 2, 3].map((log) => (
                                             <div key={log} className="flex gap-3 py-2">
-                                                <div className="w-2 h-2 rounded-full bg-blue-500 mt-1.5 shrink-0"></div>
+                                                <div className="w-2 h-2 rounded-full bg-[#14b8a6] mt-1.5 shrink-0"></div>
                                                 <div>
                                                     <p className="text-[13px] font-medium text-slate-700 leading-tight mb-1">{t('common:right_sidebar.logs.login_success', { location: t('dashboard:logs.default_location') })}</p>
                                                     <span className="text-[11px] text-slate-400">{t('common:right_sidebar.logs.time_ago', { count: 10 })}</span>

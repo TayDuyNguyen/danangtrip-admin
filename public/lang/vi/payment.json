@@ -1,0 +1,98 @@
+{
+  "title": "Danh sách Giao dịch",
+  "subtitle": "Quản lý, tìm kiếm và kiểm soát giao dịch thanh toán của khách hàng.",
+  "stats": {
+    "revenue": "Tổng Doanh thu",
+    "success_count": "Giao dịch Thành công",
+    "pending_count": "Giao dịch Đang chờ",
+    "refunded_amount": "Số tiền Hoàn trả"
+  },
+  "filter": {
+    "search_placeholder": "Tìm kiếm mã giao dịch hoặc mã đơn...",
+    "all_statuses": "Tất cả Trạng thái",
+    "all_gateways": "Tất cả Cổng thanh toán",
+    "reset": "Làm mới",
+    "from": "Từ",
+    "to": "Đến",
+    "exporting": "Đang xuất...",
+    "export_excel": "Xuất báo cáo Excel"
+  },
+  "status": {
+    "pending": "Đang chờ",
+    "success": "Thành công",
+    "failed": "Lỗi",
+    "refunded": "Đã hoàn tiền"
+  },
+  "table": {
+    "transaction_code": "Mã Giao dịch",
+    "booking_code": "Đơn hàng",
+    "customer": "Khách hàng",
+    "amount": "Số tiền",
+    "gateway": "Cổng thanh toán",
+    "status": "Trạng thái",
+    "date": "Thời gian",
+    "actions": "Hành động",
+    "empty_title": "Không tìm thấy giao dịch",
+    "empty_desc": "Không có dữ liệu giao dịch nào khớp với bộ lọc hiện tại của bạn.",
+    "showing": "Hiển thị trang",
+    "records": "bản ghi",
+    "prev": "Trước",
+    "next": "Sau"
+  },
+  "action": {
+    "refund": "Hoàn tiền",
+    "refund_tooltip_staff": "Chỉ người quản trị mới có quyền thực hiện hoàn tiền"
+  },
+  "refund": {
+    "dialog_title": "Xác nhận Hoàn tiền",
+    "dialog_desc": "Bạn đang yêu cầu hoàn tiền cho giao dịch của khách hàng. Vui lòng kiểm tra kỹ thông tin.",
+    "warning_title": "LƯU Ý QUAN TRỌNG:",
+    "warning_desc": "Hành động này là không thể thu hồi. Tiền sẽ được gửi hoàn lại qua tài khoản ví điện tử hoặc tài khoản ngân hàng của khách hàng tùy thuộc vào cổng giao dịch thanh toán.",
+    "amount": "Số tiền hoàn:",
+    "reason_label": "Lý do hoàn tiền *",
+    "reason_placeholder": "Nhập chi tiết lý do hoàn tiền (tối thiểu 10 ký tự)...",
+    "btn_cancel": "Hủy bỏ",
+    "btn_confirm": "Xác nhận hoàn tiền",
+    "toast_success": "Yêu cầu hoàn tiền giao dịch {{code}} đã được thực hiện thành công!",
+    "toast_error": "Có lỗi xảy ra khi thực hiện hoàn tiền: {{message}}"
+  },
+  "validation": {
+    "reason_required": "Lý do hoàn tiền là bắt buộc",
+    "reason_min": "Lý do hoàn tiền phải từ 10 ký tự trở lên",
+    "reason_max": "Lý do hoàn tiền tối đa 255 ký tự"
+  },
+  "export": {
+    "toast_success": "Đã xuất báo cáo giao dịch thành công!",
+    "toast_error": "Có lỗi xảy ra khi xuất báo cáo giao dịch: {{message}}"
+  },
+  "detail": {
+    "breadcrumb_home": "Bảng điều khiển",
+    "breadcrumb_payments": "Giao dịch",
+    "breadcrumb_detail": "Chi tiết",
+    "title": "Chi tiết giao dịch",
+    "subtitle": "Xem chi tiết thông tin và lịch sử thanh toán của giao dịch",
+    "section_payment_info": "Thông tin Thanh toán",
+    "section_booking_customer": "Đơn đặt & Khách hàng",
+    "section_timeline": "Lịch sử Trạng thái",
+    "label_transaction_code": "Mã giao dịch",
+    "label_booking_code": "Mã đơn đặt",
+    "label_amount": "Số tiền thanh toán",
+    "label_gateway": "Cổng thanh toán",
+    "label_status": "Trạng thái",
+    "label_created_at": "Thời gian khởi tạo",
+    "label_paid_at": "Thời gian thanh toán",
+    "label_refunded_at": "Thời gian hoàn tiền",
+    "label_refund_reason": "Lý do hoàn tiền",
+    "customer_title": "Thông tin khách hàng",
+    "customer_name": "Họ và tên",
+    "customer_email": "Email",
+    "tour_title": "Thông tin Tour du lịch",
+    "tour_name": "Tên Tour",
+    "timeline_created": "Yêu cầu thanh toán được tạo",
+    "timeline_success": "Thanh toán thành công qua cổng {{gateway}}",
+    "timeline_failed": "Thanh toán thất bại",
+    "timeline_refunded": "Hoàn tiền thành công: {{reason}}",
+    "back_to_list": "Quay lại danh sách",
+    "not_found": "Không tìm thấy giao dịch hoặc giao dịch không tồn tại."
+  }
+}

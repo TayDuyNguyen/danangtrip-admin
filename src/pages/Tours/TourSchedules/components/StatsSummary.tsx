@@ -1,4 +1,3 @@
-import React from 'react';
 import type { ScheduleStats } from '@/dataHelper/schedule.dataHelper';
 import { Calendar, CheckCircle, XCircle, AlertTriangle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -8,7 +7,7 @@ interface StatsSummaryProps {
     loading?: boolean;
 }
 
-const StatsSummary: React.FC<StatsSummaryProps> = ({ stats, loading }) => {
+const StatsSummary = ({ stats, loading }: StatsSummaryProps) => {
     const { t } = useTranslation(['schedules', 'common']);
 
     const items = [
@@ -16,17 +15,17 @@ const StatsSummary: React.FC<StatsSummaryProps> = ({ stats, loading }) => {
             label: t('schedules:stats.total'),
             value: stats?.total_schedules || 0,
             icon: Calendar,
-            color: 'text-blue-600',
-            bg: 'bg-blue-50',
-            border: 'border-blue-100',
+            color: 'text-[#14b8a6]',
+            bg: 'bg-[#dff7f4]',
+            border: 'border-[#ccfbf1]',
         },
         {
             label: t('schedules:stats.available'),
             value: stats?.available_schedules || 0,
             icon: CheckCircle,
-            color: 'text-green-600',
-            bg: 'bg-green-50',
-            border: 'border-green-100',
+            color: 'text-[#0f766e]',
+            bg: 'bg-[#dff7f4]',
+            border: 'border-[#ccfbf1]',
         },
         {
             label: t('schedules:stats.full'),
@@ -40,9 +39,9 @@ const StatsSummary: React.FC<StatsSummaryProps> = ({ stats, loading }) => {
             label: t('schedules:stats.cancelled'),
             value: stats?.cancelled_schedules || 0,
             icon: AlertTriangle,
-            color: 'text-gray-600',
-            bg: 'bg-gray-50',
-            border: 'border-gray-100',
+            color: 'text-slate-600',
+            bg: 'bg-slate-50',
+            border: 'border-slate-100',
         },
     ];
 
@@ -57,7 +56,7 @@ const StatsSummary: React.FC<StatsSummaryProps> = ({ stats, loading }) => {
                         <item.icon className="w-6 h-6" />
                     </div>
                     <div>
-                        <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-0.5">
+                        <p className="text-xs font-medium text-slate-500 uppercase tracking-wider mb-0.5">
                             {item.label}
                         </p>
                         <p className={`text-2xl font-bold ${item.color}`}>

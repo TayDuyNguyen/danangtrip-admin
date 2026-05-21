@@ -16,7 +16,9 @@
         "people": "people"
     },
     "notices": {
-        "important": "Important notice"
+        "important": "Important notice",
+        "unsaved_changes_title": "Unsaved Changes",
+        "unsaved_changes_body": "You have unsaved changes. Are you sure you want to leave this page?"
     },
     "helpers": {
         "date_range_tip": "The end date is usually when the tour actually finishes."
@@ -38,7 +40,15 @@
         "deleting": "Deleting...",
         "saving": "Saving...",
         "reset": "Reset",
-        "cancel": "Cancel"
+        "cancel": "Cancel",
+        "export_excel": "Export Excel",
+        "exporting": "Exporting...",
+        "processing": "Processing...",
+        "stay": "Stay",
+        "leave": "Leave"
+    },
+    "breadcrumb": {
+        "home": "Home"
     },
     "confirm_delete": "Are you sure you want to delete this item?",
     "error": {
@@ -69,11 +79,14 @@
         "tour_categories": "Tour Categories",
         "tour_schedules": "Tour Schedules",
         "hotels": "Hotels",
-        "orders": "Orders",
+        "orders": "Bookings",
+        "payments": "Payments",
         "posts": "Posts",
         "articles": "Article Approval",
         "users": "User Management",
         "locations": "Location Management",
+        "location_list": "Location List",
+        "location_categories": "Location Categories",
         "categories": "Category Management",
         "finance": "Finance & Points",
         "reports": "Reports & Analytics",
@@ -83,6 +96,7 @@
     },
     "header": {
         "search": "Quick search...",
+        "search_label": "Quick search in admin",
         "admin_role": "Administrator"
     },
     "right_sidebar": {
@@ -119,6 +133,7 @@
         "go_to": "Go to",
         "showing": "Showing",
         "showing_range": "Showing {{from}}–{{to}} of {{total}}",
+        "showing_summary": "Showing {{start}}–{{end}} of {{total}} items",
         "to": "to",
         "results": "results",
         "first_page": "First",
@@ -137,6 +152,7 @@
         "password_min": "Password must be at least 6 characters",
         "required": "This field is required",
         "number_too_small": "Value is too small",
+        "min_number": "{{field}} must be greater than or equal to {{min}}",
         "file_too_large": "File size is too large"
     }
 }

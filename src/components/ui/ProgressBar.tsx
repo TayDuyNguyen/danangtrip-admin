@@ -1,4 +1,3 @@
-import React from 'react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -14,17 +13,17 @@ interface ProgressBarProps {
     color?: 'blue' | 'green' | 'red' | 'yellow';
 }
 
-const ProgressBar: React.FC<ProgressBarProps> = ({ 
+const ProgressBar = ({ 
     value, 
     max, 
     className, 
     showText = false,
     color = 'blue'
-}) => {
+}: ProgressBarProps) => {
     const percentage = Math.min(Math.max((value / max) * 100, 0), 100);
     
     const colors = {
-        blue: 'bg-blue-500',
+        blue: 'bg-[#14b8a6]',
         green: 'bg-green-500',
         red: 'bg-red-500',
         yellow: 'bg-yellow-500',

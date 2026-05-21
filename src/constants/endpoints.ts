@@ -43,6 +43,9 @@ export const API_ENDPOINTS = {
         DELETE: (id: string | number) => `/admin/tours/${id}`,
         CATEGORIES: '/tour-categories',
         ADMIN_CATEGORIES: '/admin/tour-categories',
+        ADMIN_CATEGORY: (id: string | number) => `/admin/tour-categories/${id}`,
+        ADMIN_CATEGORY_STATUS: (id: string | number) => `/admin/tour-categories/${id}/status`,
+        ADMIN_CATEGORIES_REORDER: '/admin/tour-categories/reorder',
         PATCH_STATUS: (id: string | number) => `/admin/tours/${id}/status`,
         PATCH_FEATURED: (id: string | number) => `/admin/tours/${id}/featured`,
         PATCH_HOT: (id: string | number) => `/admin/tours/${id}/hot`,
@@ -53,6 +56,20 @@ export const API_ENDPOINTS = {
         IMAGES: '/upload/images',
         DELETE: '/upload/image',
     },
+    // Bookings management
+    BOOKINGS: {
+        LIST: '/admin/bookings',
+        STATUS_COUNTS: '/admin/bookings/status-counts',
+        UPDATE_STATUS: (id: string | number) => `/admin/bookings/${id}/status`,
+        DETAIL: (id: string | number) => `/admin/bookings/${id}`,
+        INVOICE: (id: string | number) => `/user/bookings/${id}/invoice`,
+    },
+    // Payments management
+    PAYMENTS: {
+        LIST: '/admin/payments',
+        DETAIL: (id: string | number) => `/admin/payments/${id}`,
+        REFUND: (id: string | number) => `/admin/payments/${id}/refund`,
+    },
     // Schedule management
     SCHEDULES: {
         LIST: '/admin/tour-schedules',
@@ -62,5 +79,26 @@ export const API_ENDPOINTS = {
         UPDATE: (id: string | number) => `/admin/tour-schedules/${id}`,
         DELETE: (id: string | number) => `/admin/tour-schedules/${id}`,
         PATCH_STATUS: (id: string | number) => `/admin/tour-schedules/${id}/status`,
+    },
+    // Locations management
+    LOCATIONS: {
+        LIST: '/admin/locations',
+        STATS: '/admin/locations/stats',
+        DETAIL: (id: string | number) => `/admin/locations/${id}`,
+        CREATE: '/admin/locations',
+        UPDATE: (id: string | number) => `/admin/locations/${id}`,
+        DELETE: (id: string | number) => `/admin/locations/${id}`,
+        PATCH_STATUS: (id: string | number) => `/admin/locations/${id}/status`,
+        PATCH_FEATURED: (id: string | number) => `/admin/locations/${id}/featured`,
+        CATEGORIES: '/categories',
+        ADMIN_CATEGORIES: '/admin/categories',
+        ADMIN_CATEGORY: (id: string | number) => `/admin/categories/${id}`,
+        ADMIN_CATEGORY_STATUS: (id: string | number) => `/admin/categories/${id}/status`,
+        ADMIN_CATEGORIES_REORDER: '/admin/categories/reorder',
+        DISTRICTS: '/admin/locations/districts',
+        TAGS: '/tags',
+        AMENITIES: '/amenities',
+        RATING_STATS: (id: string | number) => `/locations/${id}/rating-stats`,
+        RATINGS: (id: string | number) => `/locations/${id}/ratings`,
     }
 } as const;

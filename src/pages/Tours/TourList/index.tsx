@@ -29,6 +29,7 @@ const TourList = () => {
         q: '',
         tour_category_id: 'all',
         status: 'all',
+        booking_availability: 'all',
         type: 'all',
         sort: 'created_at',
         order: 'desc'
@@ -92,19 +93,17 @@ const TourList = () => {
             }
             setDeleteConfig(null);
             setRowSelection({}); // Clear selection after successful delete
-        } catch (error) {
-            console.error('Delete error:', error);
+        } catch {
             toast.error(t('messages.delete_error'));
         }
     };
 
-    const handleBulkStatusChange = async (ids: number[], status: 'active' | 'inactive' | 'sold_out') => {
+    const handleBulkStatusChange = async (ids: number[], status: 'active' | 'inactive') => {
         try {
             await Promise.all(ids.map(id => statusMutation.mutateAsync({ id, status })));
             toast.success(t('messages.status_update_success', { count: ids.length }));
             setRowSelection({});
-        } catch (error) {
-            console.error('Bulk status error:', error);
+        } catch {
             toast.error(t('messages.status_update_error'));
         }
     };
@@ -115,7 +114,7 @@ const TourList = () => {
     };
 
     return (
-        <div className="p-4 lg:p-10 max-w-[1600px] mx-auto min-h-screen bg-[#F8FAFC] font-inter">
+        <div className="p-4 lg:p-10 mx-auto min-h-screen bg-white font-sans">
             <TourHeader
                 onExport={() => exportMutation.mutate(filters)}
                 isExporting={exportMutation.isPending}

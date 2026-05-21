@@ -16,7 +16,9 @@
         "people": "người"
     },
     "notices": {
-        "important": "Lưu ý quan trọng"
+        "important": "Lưu ý quan trọng",
+        "unsaved_changes_title": "Thay đổi chưa được lưu",
+        "unsaved_changes_body": "Bạn có những thay đổi chưa được lưu. Bạn có chắc chắn muốn rời khỏi trang này không?"
     },
     "helpers": {
         "date_range_tip": "Ngày kết thúc thường là ngày tour kết thúc thực tế."
@@ -38,7 +40,15 @@
         "deleting": "Đang xóa...",
         "saving": "Đang lưu...",
         "reset": "Đặt lại",
-        "cancel": "Hủy"
+        "cancel": "Hủy",
+        "export_excel": "Xuất Excel",
+        "exporting": "Đang xuất...",
+        "processing": "Đang xử lý...",
+        "stay": "Ở lại",
+        "leave": "Rời đi"
+    },
+    "breadcrumb": {
+        "home": "Trang chủ"
     },
     "confirm_delete": "Bạn có chắc muốn xóa mục này?",
     "error": {
@@ -67,14 +77,16 @@
         "tours": "Quản lý Tour",
         "tour_list": "Danh sách tour",
         "tour_categories": "Danh mục tour",
-        "tour_schedules": "Quản lý lịch trình",
-        "hotels": "Quản lý khách sạn",
-        "orders": "Đặt hàng",
+        "tour_schedules": "Lịch khởi hành",
+        "locations": "Quản lý Địa điểm",
+        "location_list": "Danh sách Địa điểm",
+        "location_categories": "Danh mục địa điểm",
+        "hotels": "Khách sạn",
+        "orders": "Quản lý Đơn hàng",
+        "payments": "Quản lý Giao dịch",
         "posts": "Bài viết",
         "articles": "Duyệt bài viết",
         "users": "Người dùng",
-        "locations": "Quản lý địa điểm",
-        "categories": "Quản lý danh mục",
         "finance": "Tài chính & Điểm",
         "reports": "Báo cáo & Thống kê",
         "notifications": "Thông báo",
@@ -83,6 +95,7 @@
     },
     "header": {
         "search": "Tìm kiếm nhanh...",
+        "search_label": "Tìm kiếm nhanh trong admin",
         "admin_role": "Quản trị viên"
     },
     "right_sidebar": {
@@ -119,6 +132,7 @@
         "go_to": "Đến trang",
         "showing": "Hiển thị",
         "showing_range": "Hiển thị {{from}}–{{to}} / {{total}}",
+        "showing_summary": "Hiển thị {{start}}–{{end}} trong tổng số {{total}} mục",
         "to": "đến",
         "results": "kết quả",
         "first_page": "Trang đầu",
@@ -137,6 +151,7 @@
         "password_min": "Mật khẩu phải từ 6 ký tự trở lên",
         "required": "Trường này là bắt buộc",
         "number_too_small": "Giá trị quá nhỏ",
+        "min_number": "{{field}} phải lớn hơn hoặc bằng {{min}}",
         "file_too_large": "Kích thước tệp quá lớn"
     }
 }

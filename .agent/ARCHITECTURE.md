@@ -1,135 +1,143 @@
-# Antigravity Kit Local Inventory
+# DanangTrip Admin Agent Kit
 
-This file describes the local `.agent/` toolkit shipped in this repository.
-It is an inventory and routing aid, not the source of truth for the application's runtime architecture.
+Bộ `.agent/` này là **project-local operating kit** dành riêng cho `danangtrip-admin`.
+Mục tiêu của nó không phải là làm thật nhiều skill, mà là làm cho AI có thể:
 
-For project-specific implementation rules, prefer:
+1. Hiểu đúng repo hiện tại
+2. Sinh ra tài liệu chi tiết, nhất quán, dễ review
+3. Đi theo đúng pipeline triển khai màn hình Admin từ phân tích đến bàn giao
+
+Khi có xung đột, hãy ưu tiên:
 
 1. `.agent/rules/PROJECT_RULES.md`
-2. `AGENTS.md`
-3. The actual repository state (`package.json`, `src/`, configs)
+2. `.agent/rules/REPO_FACTS.md`
+3. Repo thực tế (`package.json`, `src/`, `vite.config.ts`, `tsconfig.app.json`)
+4. Các `SKILL.md` trong `.agent/skills/`
 
-## Overview
+`ARCHITECTURE.md` là file inventory và định hướng sử dụng, **không phải** source of truth cho runtime architecture của app.
 
-Current local inventory:
+Quick anchors:
 
-- 20 agent profiles in `.agent/agents/`
-- 37 top-level skill directories in `.agent/skills/`
-- 11 workflow files in `.agent/workflows/`
-- Validation/helper scripts in `.agent/scripts/`
+- Repo facts: `.agent/rules/REPO_FACTS.md`
+- Drift check: `.agent/scripts/verify_agent_drift.py`
+
+## Inventory thực tế
+
+Hiện bộ `.agent/` này có:
+
+- `10` pipeline skills trong `.agent/skills/`
+- `20` agent profiles trong `.agent/agents/`
+- `11` workflow files trong `.agent/workflows/`
+- Helper scripts trong `.agent/scripts/`
+- Shared reference assets trong `.agent/.shared/`
 
 ## Directory Map
 
 ```text
 .agent/
-├── agents/       # specialist personas
-├── rules/        # project and framework rules
-├── scripts/      # helper and validation scripts
-├── skills/       # reusable domain knowledge modules
-└── workflows/    # reusable task flows
+├── .shared/      # Shared datasets / prompts / utilities dùng chung
+├── agents/       # Persona documents
+├── artifacts/    # Output tài liệu sinh ra trong quá trình làm việc
+├── rules/        # Project rules và policy
+├── scripts/      # Helper scripts
+├── skills/       # 10 skill pipeline cho màn hình Admin
+└── workflows/    # Workflow orchestration ngắn gọn
 ```
 
-## Agents
+## Core Principle
 
-Available agent profiles under `.agent/agents/`:
+Bộ này được tối ưu cho **artifact-first delivery**.
 
-- `backend-specialist`
-- `code-archaeologist`
-- `database-architect`
-- `debugger`
-- `devops-engineer`
-- `documentation-writer`
-- `explorer-agent`
-- `frontend-specialist`
-- `game-developer`
-- `mobile-developer`
-- `orchestrator`
-- `penetration-tester`
-- `performance-optimizer`
-- `product-manager`
-- `product-owner`
-- `project-planner`
-- `qa-automation-engineer`
-- `security-auditor`
-- `seo-specialist`
-- `test-engineer`
+Điều đó có nghĩa là:
 
-## Skills
+- Trước khi code hoặc song song với code, AI phải sinh ra tài liệu đúng bước
+- Mỗi skill phải có input rõ, output rõ, nơi lưu rõ
+- Tài liệu sinh ra phải đủ chi tiết để người khác review lại sau này
+- Tài liệu phải bám repo thật, không bịa abstraction hoặc stack không tồn tại
 
-Top-level skills currently present under `.agent/skills/`:
+## Pipeline Skills
 
-- `api-patterns`
-- `app-builder`
-- `architecture`
-- `bash-linux`
-- `behavioral-modes`
-- `brainstorming`
-- `clean-code`
-- `code-review-checklist`
-- `database-design`
-- `deployment-procedures`
-- `documentation-templates`
-- `frontend-design`
-- `game-development`
-- `geo-fundamentals`
-- `i18n-localization`
-- `intelligent-routing`
-- `lint-and-validate`
-- `mcp-builder`
-- `mobile-design`
-- `nextjs-react-expert`
-- `nodejs-best-practices`
-- `parallel-agents`
-- `performance-profiling`
-- `plan-writing`
-- `powershell-windows`
-- `python-patterns`
-- `red-team-tactics`
-- `rust-pro`
-- `seo-fundamentals`
-- `server-management`
-- `systematic-debugging`
-- `tailwind-patterns`
-- `tdd-workflow`
-- `testing-patterns`
-- `vulnerability-scanner`
-- `web-design-guidelines`
-- `webapp-testing`
+Đây là bộ 10 skill chính đang tồn tại trong repo:
 
-Notes:
+| # | Skill | Mục tiêu | Artifact chính |
+|---|---|---|---|
+| 01 | `01-screen-analysis` | Phân tích mockup/SRS và bóc tách requirement | `artifacts/analysis/` |
+| 02 | `02-project-setup` | Audit project base trước khi triển khai | `artifacts/audits/` |
+| 03 | `03-types-api-contract` | Chuẩn hóa types, schema, API contract, mapper | `artifacts/api-contracts/` |
+| 04 | `04-layout-routing` | Lập kế hoạch route, layout, navigation | `artifacts/routing/` |
+| 05 | `05-ui-components` | Thiết kế chi tiết UI components cần build | `artifacts/ui-specs/` |
+| 06 | `06-data-integration` | Lập kế hoạch tích hợp data và hooks | `artifacts/integration/` |
+| 07 | `07-interactions` | Xác định flow CRUD, filter, search, export | `artifacts/interaction-specs/` |
+| 08 | `08-auth-permissions` | Rà soát auth guard và permission matrix | `artifacts/auth/` |
+| 09 | `09-testing` | Ghi nhận quality gates và test results | `artifacts/test-cases/` |
+| 10 | `10-optimization-deploy` | Tổng hợp deploy, smoke test, review bàn giao | `artifacts/deploy/`, `artifacts/review/` |
 
-- The `nextjs-react-expert/` directory currently exposes the canonical skill name `react-best-practices` in its `SKILL.md`.
-- Some skills contain nested reference or template folders that are resources, not additional top-level skills.
+Master index của pipeline nằm tại:
 
-## Workflows
+- `.agent/skills/STACK_SKILLS_INDEX.md`
 
-Workflow files under `.agent/workflows/`:
+## Artifact Layout
 
-- `brainstorm.md`
-- `create.md`
-- `debug.md`
-- `deploy.md`
-- `enhance.md`
-- `orchestrate.md`
-- `plan.md`
-- `preview.md`
-- `status.md`
-- `test.md`
-- `ui-ux-pro-max.md`
+Các artifact nên được lưu theo convention:
 
-## Usage Guidance
+```text
+.agent/artifacts/
+├── analysis/
+├── audits/
+├── api-contracts/
+├── routing/
+├── ui-specs/
+├── integration/
+├── interaction-specs/
+├── auth/
+├── test-cases/
+├── deploy/
+└── review/
+```
 
-- Read a selected skill's `SKILL.md` before using deeper references or scripts.
-- Do not assume every named capability in older docs still exists; verify against the actual directory contents.
-- If a skill and an agent doc disagree, prefer the project rules and the real repo state.
+Tên file chuẩn:
 
-## Validation Scripts
+```text
+YYYY-MM-DD__<feature-slug>__<artifact-name>.md
+```
 
-Project-level helper scripts:
+Ví dụ:
 
-- `.agent/scripts/checklist.py`
-- `.agent/scripts/verify_all.py`
-- `.agent/scripts/auto_preview.py`
-- `.agent/scripts/session_manager.py`
+```text
+2026-05-10__location-create__screen-analysis.md
+2026-05-10__location-create__project-audit.md
+2026-05-10__location-create__api-contract.md
+2026-05-10__location-create__review.md
+```
 
-Skill-level scripts also exist under some skill folders, for example i18n, frontend audit, testing, performance, and database validation.
+## Documentation Standard
+
+Mọi tài liệu sinh ra từ skill phải tuân thủ các rule sau:
+
+- Lưu file dưới dạng `UTF-8`
+- Dùng Markdown sạch, không ký tự lỗi kiểu `Ã`, `â†’`, `má»¥c`
+- Chỉ dùng `1` tiêu đề H1 cho mỗi tài liệu
+- Phải có metadata tối thiểu: `feature slug`, `date`, `inputs/source`
+- Nếu có assumption, ghi rõ `[ASSUMPTION]`
+- Nếu có thông tin chưa xác minh, ghi rõ `Open Questions`
+- Nếu skill tạo code, tài liệu vẫn phải chỉ ra file dự kiến thay đổi hoặc file đã thay đổi
+
+## Workflow Usage
+
+Khuyến nghị thứ tự làm việc cho một feature mới:
+
+1. `01-screen-analysis`
+2. `02-project-setup` nếu chưa audit gần đây hoặc có nghi ngờ về base
+3. `03-types-api-contract`
+4. `04-layout-routing`
+5. `05-ui-components`
+6. `06-data-integration`
+7. `07-interactions`
+8. `08-auth-permissions` nếu feature có route mới hoặc action nhạy cảm
+9. `09-testing`
+10. `10-optimization-deploy`
+
+## Important Note
+
+Không tham chiếu các skill legacy hoặc external pack nếu chúng **không nằm trong `.agent/skills/` của repo này**.
+Nếu cần dùng skill ngoài repo, phải nói rõ đó là external reference, không phải local project skill.

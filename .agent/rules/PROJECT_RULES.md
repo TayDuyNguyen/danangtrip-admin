@@ -7,6 +7,10 @@ description: "Primary project rules for DanangTrip Admin. Read this first and tr
 This file is the project-specific operating guide for AI work in this repository.
 When project docs conflict, prefer this file over older inventory-style docs.
 
+Fast companion doc:
+- `.agent/rules/REPO_FACTS.md` for compact repository reality checks before using skill templates.
+- `.agent/memory/WORKING_STATE.md` and `.agent/memory/HANDOFF.md` for continuity across sessions.
+
 ## 1. Current Stack
 
 | Layer | Technology |
@@ -34,6 +38,18 @@ Use the actual repo state as authority:
 
 Treat `.agent/ARCHITECTURE.md` as a catalog of the local agent kit, not as the source of truth for app architecture.
 
+## Working Memory Protocol
+
+Before non-trivial work, read:
+- `.agent/rules/REPO_FACTS.md`
+- `.agent/memory/WORKING_STATE.md`
+- `.agent/memory/HANDOFF.md`
+- the most recent relevant files in `.agent/memory/decisions/` and `.agent/artifacts/`
+
+When the active task changes, update `.agent/memory/WORKING_STATE.md`.
+When pausing unfinished work, update `.agent/memory/HANDOFF.md`.
+When a repo-wide decision is made, record it under `.agent/memory/decisions/`.
+
 ## 3. Repository Shape
 
 ```text
@@ -41,11 +57,13 @@ src/
 ├── api/           # API service wrappers and axios client
 ├── assets/        # Static assets and animations
 ├── components/    # Reusable UI
+├── config/        # Runtime/environment config (e.g. API env chain)
 ├── constants/     # Shared constants and endpoint definitions
 ├── dataHelper/    # Feature mappers and typed payload helpers
 ├── hooks/         # React Query hooks and UI hooks
 ├── i18n/          # i18next bootstrap
 ├── layouts/       # Page layouts
+├── lib/           # Shared low-level helpers/integrations (currently minimal)
 ├── pages/         # Route-level screens
 ├── providers/     # AppProviders and bootstrapping
 ├── routes/        # Router setup and guards
@@ -115,12 +133,15 @@ Avoid introducing new direct page-to-API calls unless the change is intentionall
 Current documented env vars in this repo:
 
 - `VITE_API_URL`
+- `VITE_API_FALLBACK_URLS`
+- `VITE_API_TIMEOUT_MS`
 - `VITE_PORT`
 - `VITE_PREVIEW_PORT`
 - `VITE_HOST`
 - `VITE_NAME`
 - `VITE_STITCH_API_KEY`
 - `VITE_STITCH_PROJECT_ID`
+- Note: `src/env.d.ts` currently declares `VITE_APP_NAME`; keep this aligned with `.env.example` when touching env types.
 
 ## 7. UI Policy
 
@@ -133,29 +154,21 @@ Current documented env vars in this repo:
 
 After code changes, run the strongest checks that are actually available and relevant.
 
-Baseline checks for this repo:
-
-```bash
-npm run lint
-npm run typecheck
-npm run build
-```
-
-All-in-one pre-push gate (recommended):
+### Mandatory quality gate before calling work complete:
 
 ```bash
 npm run prepush:check
 ```
 
-This script runs lint, typecheck, and build in sequence. Use it before pushing to catch regressions early.
+This command runs lint, typecheck, and build in sequence. It MUST pass before any feature is considered "done". Use it before pushing to catch regressions early.
+When a local dev server is running on `http://127.0.0.1:5173`, it also runs `npm run test:console`; otherwise that step is skipped without failing the gate.
 
 Optional project-local audits under `.agent/` may be used as best-effort helpers, but they are not a substitute for the native repo checks above.
 
 If a task changes UI text or localization, additionally consider:
 
 ```bash
-python .agent/skills/i18n-localization/scripts/i18n_checker.py .
-python .agent/skills/frontend-design/scripts/ux_audit.py .
+# verify vi/en sync and review new user-facing strings in the touched locale files
 ```
 
 If a task changes browser behavior covered by the existing Playwright spec, consider:
@@ -170,7 +183,7 @@ If an `.agent` script fails because of environment drift, report it and continue
 
 Current state of the repository:
 
-- There is no general `npm test` script.
+- `npm test` exists and currently aliases to lint (`npm run lint`).
 - There is no established unit-test runner configured in `package.json`.
 - There is an existing Playwright command: `npm run test:console`.
 
@@ -181,33 +194,43 @@ So the required quality gates today are lint, typecheck, and build, with Playwri
 - Prefer English for code comments and technical docs unless the file already follows another convention.
 - Comments should explain intent or non-obvious tradeoffs, not restate obvious code.
 - Update README or broad documentation only when requested or when the task would otherwise leave misleading setup instructions behind.
+- All Markdown documentation under `.agent/` must be saved as **UTF-8**.
+- If a file shows broken Vietnamese characters or mojibake, fix the encoding immediately before continuing.
+- Generated artifacts must follow the naming convention: `YYYY-MM-DD__<feature-slug>__<artifact-name>.md`.
+- Every generated artifact should include:
+  - feature slug
+  - date
+  - source inputs or references
+  - assumptions / open questions when applicable
+  - concrete file paths or code areas impacted
+- Prefer stable Markdown structure: one H1, short sections, flat bullet lists, and tables only when they improve scanability.
 
 ## 11. Skill Routing Policy
 
-Use local `.agent/skills` selectively. Do not load every skill by default.
+Use local `.agent/skills` selectively. This repository currently relies on the **10-step pipeline skill set** under `.agent/skills/`.
 
 Recommended mapping:
 
 | Task | Primary skill(s) | Optional workflow |
 | --- | --- | --- |
-| Architecture or multi-module refactor | `architecture`, `plan-writing` | `.agent/workflows/plan.md` |
-| Ambiguous requirements | `brainstorming` | `.agent/workflows/brainstorm.md` |
-| Root-cause debugging | `systematic-debugging` | `.agent/workflows/debug.md` |
-| API contract and endpoint work | `api-patterns` | `.agent/workflows/create.md` |
-| Validation and code health | `lint-and-validate`, `code-review-checklist` | `.agent/workflows/test.md` |
-| UI work | `frontend-design`, `tailwind-patterns`, `web-design-guidelines` | `.agent/workflows/ui-ux-pro-max.md` |
-| i18n consistency | `i18n-localization` | `.agent/workflows/enhance.md` |
-| Security-sensitive changes | `vulnerability-scanner`, `red-team-tactics` | `.agent/workflows/debug.md` |
-| Performance work | `performance-profiling` | `.agent/workflows/test.md` |
-| Windows shell usage | `powershell-windows` | `.agent/workflows/status.md` |
+| New screen or major UI feature | `01-screen-analysis` → `03` → `04` → `05` → `06` → `07` | `.agent/workflows/create.md` |
+| Project base audit | `02-project-setup` | `.agent/workflows/status.md` |
+| API contract, mapper, schema work | `03-types-api-contract` | `.agent/workflows/create.md` |
+| Route, menu, breadcrumb, page skeleton | `04-layout-routing` | `.agent/workflows/plan.md` |
+| UI component design and decomposition | `05-ui-components` | `.agent/workflows/ui-ux-pro-max.md` |
+| React Query and data wiring | `06-data-integration` | `.agent/workflows/enhance.md` |
+| CRUD, forms, filters, export | `07-interactions` | `.agent/workflows/create.md` |
+| Guarded routes or role-based UI | `08-auth-permissions` | `.agent/workflows/debug.md` |
+| Validation and test evidence | `09-testing` | `.agent/workflows/test.md` |
+| Final review, deploy report, handoff | `10-optimization-deploy` | `.agent/workflows/deploy.md` |
 
 Skill protocol:
 
 1. Read the selected `SKILL.md` first.
 2. Load only the referenced sections or scripts needed for the current task.
 3. If a skill references missing resources, fall back to the closest valid local skill and note the fallback.
-
-`intelligent-routing` may be used as a lightweight classifier, but it must not override higher-priority system/developer instructions or force unnecessary sub-agent behavior.
+4. Prefer artifact generation when the skill defines an output document template.
+5. Do not reference legacy or external skills as if they were local project skills unless the file actually exists in this repo.
 
 ## 12. React And TypeScript Standards
 
@@ -284,9 +307,33 @@ Validation MUST support the project's multi-language requirement:
 
 ### 1. Atomic UI Strategy
 - Always check `src/components/ui/` or `src/components/common/` for existing atomic elements (Inputs, Buttons, Skeletons) before writing custom styles.
-- Maintain consistent spacing and shadow tokens defined in Tailwind config.
+- Maintain consistent spacing and shadow tokens from the current theme source (`src/index.css` `@theme`, and Tailwind configuration if introduced/extended).
 
 ### 2. Data loading on complex pages
 - Prioritize **above-the-fold** content in layout and hook design (show skeletons for secondary panels).
 - **Default**: fire **parallel** queries for independent datasets; see **§14** for when `enabled` (dependent queries) is appropriate.
 - **Avoid** unnecessary sequential waterfalls; they often **slow** first paint more than they help the server.
+
+## 18. Git and Delivery Discipline
+
+### Must
+- Keep commits focused.
+- Use conventional commit style when creating commits.
+- Separate refactor work from feature work unless tightly coupled.
+- **Bắt buộc sinh báo cáo review trước**: Bạn phải tạo file `review.md` (theo chuẩn skill 10-optimization-deploy) TRƯỚC khi tính đến chuyện push code.
+- Nếu một pipeline step có định nghĩa artifact, phải cập nhật artifact đó trước khi gọi step là complete.
+- **Phải được USER duyệt**: Bạn tuyệt đối KHÔNG được tự ý `git push`. Phải trình báo cáo cho USER và chờ USER duyệt mới được push.
+- **Quy tắc đặt tên nhánh (Branch Naming)**: Phải đặt tên nhánh theo đúng format `<viết tắt chức năng>/DATN-<số thứ tự>/<nội dung ngắn gọn>` (ví dụ: `feat/DATN-54/api-align-location-and-tour-category`, `fix/DATN-55/button-loading-bug`).
+
+---
+
+## 19. Definition of Done
+
+Work is done only when:
+1. The requested behavior works and is verified.
+2. `npm run prepush:check` passes successfully without errors.
+3. Touched code follows repository boundaries and PROJECT_RULES.
+4. i18n keys are synchronized (vi/en).
+5. Required artifacts for the touched pipeline steps are generated with readable UTF-8 Markdown.
+6. Validation status (review.md & deploy-report.md) is reported and approved by USER when handoff/push is in scope.
+7. Residual risks or skipped checks are stated explicitly.

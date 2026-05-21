@@ -1,27 +1,23 @@
 import { Edit2, Trash2, GripVertical } from 'lucide-react';
 import * as Icons from 'lucide-react';
+import type { CSSProperties } from 'react';
 import { cn } from '@/utils/cn';
+import { resolveCategoryIconName } from '@/utils/categoryIcon';
 import type { TourCategory } from '@/dataHelper/tourCategory.dataHelper';
 import { useTranslation } from 'react-i18next';
 
 interface CategoryCardProps {
     category: TourCategory;
+    displayOrder?: number;
     onEdit: (category: TourCategory) => void;
     onDelete: (category: TourCategory) => void;
     onStatusChange: (id: number, status: string) => void;
     isReorderMode?: boolean;
 }
 
-const CategoryCard = ({ category, onEdit, onDelete, onStatusChange, isReorderMode }: CategoryCardProps) => {
+const CategoryCard = ({ category, displayOrder, onEdit, onDelete, onStatusChange, isReorderMode }: CategoryCardProps) => {
     const { t } = useTranslation('tour');
     
-    const formatIconName = (name: string) => {
-        if (!name) return 'Map';
-        // Capitalize first letter (e.g., 'mountain' -> 'Mountain')
-        const pascalName = name.charAt(0).toUpperCase() + name.slice(1);
-        return pascalName;
-    };
-
     // Predefined colors from Dialog
     const colorOptions = [
         '#E0F2FE', '#FFEDD5', '#DCFCE7', '#FEF9C3', '#FEE2E2', '#E0E7FF', '#CFFAFE', '#FCE7F3'
@@ -34,9 +30,11 @@ const CategoryCard = ({ category, onEdit, onDelete, onStatusChange, isReorderMod
         return colorOptions[index];
     };
 
-    const iconName = formatIconName(category.icon);
-    const IconComponent = (Icons as unknown as Record<string, React.ComponentType<{ size?: number; className?: string }>>)[iconName] || Icons.Map;
+    const iconName = resolveCategoryIconName(category.icon, 'Map');
+    const IconComponent = (Icons as unknown as Record<string, React.ComponentType<{ size?: number; className?: string; style?: CSSProperties }>>)[iconName] || Icons.Map;
     const backgroundColor = getDeterministicColor();
+    const visibleOrder = displayOrder ?? category.sort_order;
+    const iconForegroundColor = backgroundColor.toLowerCase() === '#000000' ? '#ffffff' : '#334155';
     
     // Calculate progress (just for visual representation, e.g., max 50 tours)
     const progress = Math.min((category.tour_count / 50) * 100, 100);
@@ -45,22 +43,23 @@ const CategoryCard = ({ category, onEdit, onDelete, onStatusChange, isReorderMod
         <div className={cn(
             "bg-white rounded-[32px] border transition-all group flex flex-col gap-5",
             isReorderMode 
-                ? "p-4 border-orange-200 shadow-lg shadow-orange-500/5 cursor-grab active:cursor-grabbing" 
+                ? "p-4 border-[#d9f99d] shadow-lg shadow-[#14b8a6]/10 cursor-grab active:cursor-grabbing" 
                 : "p-6 border-slate-200/60 shadow-sm hover:shadow-xl hover:shadow-slate-200/40"
         )}>
             <div className="flex items-start gap-4">
                 {/* Icon Column */}
                 <div 
                     className={cn(
-                        "rounded-3xl flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform",
+                        "relative rounded-3xl flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform",
                         isReorderMode ? "w-12 h-12" : "w-16 h-16"
                     )}
                     style={{ backgroundColor: backgroundColor }}
                 >
-                    {isReorderMode ? (
-                        <GripVertical size={20} className="text-orange-500" />
-                    ) : (
-                        <IconComponent size={28} className="text-slate-700" />
+                    <IconComponent size={isReorderMode ? 22 : 28} style={{ color: iconForegroundColor }} />
+                    {isReorderMode && (
+                        <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-white border border-[#d9f99d] shadow-sm flex items-center justify-center">
+                            <GripVertical size={14} className="text-[#14b8a6]" />
+                        </div>
                     )}
                 </div>
 
@@ -79,7 +78,7 @@ const CategoryCard = ({ category, onEdit, onDelete, onStatusChange, isReorderMod
                                 className={cn(
                                     "px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider shrink-0 transition-all active:scale-90",
                                     category.status === 'active' 
-                                        ? "bg-emerald-50 text-emerald-600 hover:bg-emerald-100" 
+                                        ? "bg-[#dff7f4] text-[#0f766e] hover:bg-[#ccfbf1]" 
                                         : "bg-slate-100 text-slate-500 hover:bg-slate-200"
                                 )}
                             >
@@ -87,8 +86,8 @@ const CategoryCard = ({ category, onEdit, onDelete, onStatusChange, isReorderMod
                             </button>
                         )}
                         {isReorderMode && (
-                            <div className="px-3 py-1 bg-orange-50 text-orange-600 text-[10px] font-black uppercase tracking-wider rounded-full">
-                                # {category.sort_order}
+                            <div className="px-3 py-1 bg-[#f4fce3] text-[#0f766e] text-[10px] font-black uppercase tracking-wider rounded-full">
+                                # {visibleOrder}
                             </div>
                         )}
                     </div>
@@ -108,7 +107,7 @@ const CategoryCard = ({ category, onEdit, onDelete, onStatusChange, isReorderMod
                 </div>
                 <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
                     <div 
-                        className="h-full bg-blue-600 rounded-full transition-all duration-1000"
+                        className="h-full bg-[#14b8a6] rounded-full transition-all duration-1000"
                         style={{ width: `${progress}%` }}
                     />
                 </div>
@@ -122,9 +121,9 @@ const CategoryCard = ({ category, onEdit, onDelete, onStatusChange, isReorderMod
                     </span>
                     <div className={cn(
                         "w-12 h-9 rounded-xl border flex items-center justify-center text-sm font-black transition-all",
-                        isReorderMode ? "bg-orange-600 border-orange-600 text-white shadow-lg shadow-orange-600/20" : "bg-slate-50 border-slate-100 text-slate-900"
+                        isReorderMode ? "bg-[#14b8a6] border-[#14b8a6] text-white shadow-lg shadow-[#14b8a6]/25" : "bg-slate-50 border-slate-100 text-slate-900"
                     )}>
-                        {category.sort_order}
+                        {visibleOrder}
                     </div>
                 </div>
                 
@@ -132,7 +131,7 @@ const CategoryCard = ({ category, onEdit, onDelete, onStatusChange, isReorderMod
                     <div className="flex items-center gap-2">
                         <button
                             onClick={() => onEdit(category)}
-                            className="w-9 h-9 flex items-center justify-center rounded-xl bg-white border border-slate-200 text-slate-600 hover:text-blue-600 hover:border-blue-200 hover:shadow-lg hover:shadow-blue-500/10 transition-all"
+                            className="w-9 h-9 flex items-center justify-center rounded-xl bg-white border border-slate-200 text-slate-600 hover:text-[#14b8a6] hover:border-[#ccfbf1] hover:shadow-lg hover:shadow-[#14b8a6]/10 transition-all"
                         >
                             <Edit2 size={16} />
                         </button>

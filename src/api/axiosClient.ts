@@ -4,6 +4,7 @@ import { ROUTES } from "@/routes/routes";
 import { useUserStore } from "@/store/useUserStore";
 import { type ApiResponse, type ErrorResponse, type User } from "@/types";
 import { clearTokens, getAccessToken, getLanguage, getTokenExpiryMs, setAccessToken } from "@/utils";
+import { getLocalizedApiErrorMessage } from "@/utils/apiError";
 import axios, { AxiosError, type InternalAxiosRequestConfig } from "axios";
 import { toast } from "sonner";
 import i18next from "i18next";
@@ -216,10 +217,11 @@ axiosClient.interceptors.response.use(
 
         // Handle 401 Unauthorized
         if (status === 401 || data?.code === 401) {
-            // Skip for login or refresh endpoints to avoid loops
+            // Skip for login, refresh, or logout endpoints to avoid loops
             if (
                 originalRequest?.url?.includes(API_ENDPOINTS.AUTH.LOGIN) ||
-                originalRequest?.url?.includes(API_ENDPOINTS.AUTH.REFRESH_TOKEN)
+                originalRequest?.url?.includes(API_ENDPOINTS.AUTH.REFRESH_TOKEN) ||
+                originalRequest?.url?.includes(API_ENDPOINTS.AUTH.LOGOUT)
             ) {
                 return Promise.reject(error);
             }
@@ -261,11 +263,11 @@ axiosClient.interceptors.response.use(
         }
 
         if (status === 403) {
-            toast.warning(i18next.t("translation:permission_denied"));
+            toast.warning(getLocalizedApiErrorMessage(i18next.t("translation:permission_denied"), error));
         }
 
         if (status >= 500) {
-            toast.error(i18next.t("translation:server_error"));
+            toast.error(getLocalizedApiErrorMessage(i18next.t("translation:server_error"), error));
         }
 
         return Promise.reject(error);

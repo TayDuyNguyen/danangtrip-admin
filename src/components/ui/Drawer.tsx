@@ -38,7 +38,7 @@ const Drawer = ({
             {/* Backdrop */}
             <div 
                 className={cn(
-                    "fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 transition-opacity duration-300",
+                    "fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 transition-opacity duration-150",
                     isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
                 )}
                 onClick={onClose}
@@ -46,7 +46,7 @@ const Drawer = ({
 
             {/* Panel */}
             <div className={cn(
-                "fixed inset-y-0 right-0 w-full z-50 bg-white shadow-2xl transition-transform duration-500 ease-in-out transform flex flex-col",
+                "fixed inset-y-0 right-0 w-full z-50 bg-white shadow-2xl transition-transform duration-700 ease-in-out transform flex flex-col",
                 width,
                 isOpen ? "translate-x-0" : "translate-x-full"
             )}>
@@ -56,7 +56,7 @@ const Drawer = ({
                         <div className="flex items-center gap-3">
                             <h2 className="text-xl font-black text-slate-900 tracking-tight">{title}</h2>
                             {badge && (
-                                <span className="px-2 py-0.5 bg-emerald-50 text-emerald-600 text-[10px] font-black rounded-md uppercase tracking-wider">
+                                <span className="px-2 py-0.5 bg-[#dff7f4] text-[#0f766e] text-[10px] font-black rounded-md uppercase tracking-wider">
                                     {badge}
                                 </span>
                             )}

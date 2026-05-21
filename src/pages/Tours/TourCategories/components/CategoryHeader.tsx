@@ -14,7 +14,7 @@ const CategoryHeader = ({ onAdd }: CategoryHeaderProps) => {
         <div className="mb-8">
             {/* Breadcrumbs */}
             <nav className="flex items-center gap-2 text-[13px] font-medium text-slate-500 mb-6 overflow-x-auto whitespace-nowrap pb-1 no-scrollbar">
-                <Link to={ROUTES.DASHBOARD} className="hover:text-blue-600 transition-colors flex items-center gap-1.5 shrink-0">
+                <Link to={ROUTES.DASHBOARD} className="hover:text-[#14b8a6] transition-colors flex items-center gap-1.5 shrink-0">
                     <Home size={14} />
                 </Link>
                 <ChevronRight size={14} className="text-slate-300 shrink-0" />
@@ -25,7 +25,7 @@ const CategoryHeader = ({ onAdd }: CategoryHeaderProps) => {
 
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 bg-linear-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-xl shadow-blue-500/20 shrink-0">
+                    <div className="w-14 h-14 bg-linear-to-br from-[#14b8a6] to-[#0f766e] rounded-2xl flex items-center justify-center shadow-xl shadow-[#14b8a6]/20 shrink-0">
                         <LayoutGrid size={28} className="text-white fill-white/10" />
                     </div>
                     <div>

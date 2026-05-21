@@ -23,7 +23,10 @@ export interface TourItem {
     images: string[] | null;
     video_url: string | null;
     location_ids: number[] | null;
-    status: 'active' | 'inactive' | 'sold_out';
+    /** Admin visibility: active | inactive only (API). */
+    status: 'active' | 'inactive';
+    /** Derived from schedules: open = còn chỗ, sold_out = hết chỗ. */
+    booking_availability: 'open' | 'sold_out';
     is_featured: boolean;
     is_hot: boolean;
     view_count: number;
@@ -53,6 +56,8 @@ export interface TourFilters {
     q: string;
     tour_category_id: string | number;
     status: string;
+    /** all | open | sold_out */
+    booking_availability: string;
     type: string;
     sort: string;
     order: 'asc' | 'desc';

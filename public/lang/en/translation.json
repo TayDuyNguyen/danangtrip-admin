@@ -2,5 +2,76 @@
   "network_error": "Network connection failed. Please check your connection.",
   "permission_denied": "You do not have permission to perform this action.",
   "server_error": "System server error. Please try again later.",
-  "general_error": "An error occurred. Please try again."
+  "general_error": "An error occurred. Please try again.",
+  "api_errors": {
+    "validation_failed": "Please check the information you entered and try again.",
+    "auth_invalid_credentials": "The email or password you entered is incorrect.",
+    "auth_session_expired": "Your session has expired. Please sign in again.",
+    "auth_unauthenticated": "Please sign in to continue.",
+    "auth_forbidden": "You do not have permission to perform this action.",
+    "resource_not_found": "The requested information could not be found.",
+    "request_method_not_allowed": "This action is not supported.",
+    "request_throttled": "You are doing this too quickly. Please wait a moment and try again.",
+    "request_already_processed": "This request has already been processed.",
+    "request_conflict": "This information already exists in the system.",
+    "request_invalid_state": "This action cannot be completed right now.",
+    "request_bad_request": "The request could not be completed. Please review your information and try again.",
+    "request_unknown": "The request could not be completed at this time.",
+    "server_error": "The system is temporarily busy. Please try again later.",
+
+    "category_not_found": "Category not found.",
+    "category_has_subcategories": "Cannot delete category because it has subcategories.",
+    "category_has_locations": "Cannot delete category because it has linked locations.",
+    "category_has_tours": "Cannot delete category because it has linked tours.",
+
+    "tour_not_found": "Tour not found.",
+    "schedule_not_found": "Tour schedule not found.",
+    "schedule_has_bookings": "Cannot delete schedule because it has existing bookings.",
+
+    "location_not_found": "Location not found.",
+
+    "user_not_found": "User not found.",
+    "user_cannot_change_own_status": "You cannot change your own status.",
+    "user_cannot_change_own_role": "You cannot change your own role.",
+    "user_cannot_change_own_role_or_status": "You cannot change your own role or status.",
+    "user_cannot_delete_own_account": "You cannot delete your own account.",
+
+    "booking_not_found": "Booking not found.",
+    "booking_already_paid": "This booking has already been paid.",
+    "booking_already_cancelled_or_completed": "This booking has already been cancelled or completed.",
+
+    "payment_not_found": "Payment not found.",
+    "payment_already_processed": "This payment has already been processed.",
+
+    "email_already_verified": "Email is already verified.",
+
+    "favorite_already_exists": "This item is already in your favorites.",
+    "favorite_not_found": "Favorite not found.",
+
+    "rating_not_found": "Rating not found.",
+    "rating_already_rated": "You have already rated this item.",
+
+    "contact_not_found": "Contact not found.",
+    "contact_already_replied": "This contact has already been replied to.",
+
+    "blog_not_found": "Blog post not found.",
+    "blog_category_not_found": "Blog category not found.",
+
+    "tag_not_found": "Tag not found.",
+    "tag_name_already_exists": "This tag name already exists.",
+    "tag_slug_already_exists": "This tag slug already exists.",
+
+    "amenity_not_found": "Amenity not found.",
+    "amenity_name_already_exists": "This amenity name already exists.",
+
+    "subcategory_not_found": "Subcategory not found.",
+    "notification_not_found": "Notification not found.",
+
+    "slug_already_taken": "This slug is already taken.",
+    "slug_already_in_use": "This slug is already in use.",
+    "username_already_taken": "This username is already taken.",
+    "email_already_registered": "This email address is already registered.",
+    "email_already_taken": "This email address is already taken.",
+    "categories_not_found": "One or more categories were not found."
+  }
 }

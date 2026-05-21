@@ -1,4 +1,4 @@
-import React from 'react';
+import type { ReactNode } from 'react';
 import Select from 'react-select';
 import type { Props as SelectProps, StylesConfig, GroupBase } from 'react-select';
 import { twMerge } from 'tailwind-merge';
@@ -8,16 +8,16 @@ import { useTranslation } from 'react-i18next';
 // Define the option type locally or import if available
 export interface Option {
     value: string | number;
-    label: string | React.ReactNode;
+    label: string | ReactNode;
 }
 
-interface CustomSelectProps extends Omit<SelectProps<Option, false, GroupBase<Option>>, 'styles' | 'theme'> {
+interface CustomSelectProps<IsMulti extends boolean = false> extends Omit<SelectProps<Option, IsMulti, GroupBase<Option>>, 'styles' | 'theme'> {
     containerClassName?: string;
-    leftIcon?: React.ReactNode;
+    leftIcon?: ReactNode;
     size?: 'sm' | 'md' | 'lg';
 }
 
-const CustomSelect: React.FC<CustomSelectProps> = ({ 
+const CustomSelect = <IsMulti extends boolean = false>({ 
     className, 
     containerClassName, 
     options,
@@ -28,21 +28,22 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
     leftIcon,
     size = 'md',
     ...props 
-}) => {
+}: CustomSelectProps<IsMulti>) => {
     const { t } = useTranslation('common');
     const finalPlaceholder = placeholder ?? t('placeholder_select');
     
 
-    const customStyles: StylesConfig<Option, false> = {
+    const customStyles: StylesConfig<Option, IsMulti> = {
         control: (provided, state) => ({
             ...provided,
             minHeight: size === 'sm' ? '36px' : size === 'lg' ? '60px' : '52px',
+            alignItems: 'center',
             backgroundColor: '#F8FAFC',
-            borderColor: state.isFocused ? '#0066CC' : '#E2E8F0',
+            borderColor: state.isFocused ? '#14B8A6' : '#E2E8F0',
             borderRadius: size === 'sm' ? '8px' : '16px',
-            boxShadow: state.isFocused ? '0 0 0 4px rgba(0, 102, 204, 0.08)' : 'none',
+            boxShadow: state.isFocused ? '0 0 0 4px rgba(20, 184, 166, 0.12)' : 'none',
             '&:hover': {
-                borderColor: state.isFocused ? '#0066CC' : '#CBD5E1',
+                borderColor: state.isFocused ? '#14B8A6' : '#CBD5E1',
                 backgroundColor: '#F1F5F9',
             },
             transition: 'all 0.2s ease',
@@ -50,9 +51,11 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
             borderWidth: '1px',
             paddingLeft: leftIcon ? (size === 'sm' ? '28px' : '32px') : '4px',
         }),
+        // Keep default display: grid for single-select so SingleValue gridArea lines up with Input + chevron.
         valueContainer: (provided) => ({
             ...provided,
-            padding: leftIcon ? '0 12px' : (size === 'sm' ? '0 8px' : '0 20px'),
+            alignItems: 'center',
+            padding: leftIcon ? '0 8px 0 12px' : (size === 'sm' ? '0 2px 0 8px' : '0 4px 0 12px'),
         }),
         input: (provided) => ({
             ...provided,
@@ -66,7 +69,14 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
             color: '#1E293B',
             fontSize: size === 'sm' ? '13px' : '14px',
             fontWeight: '700',
-            fontFamily: 'Inter, sans-serif',
+            fontFamily: 'system-ui, sans-serif',
+            lineHeight: 1,
+            marginLeft: 0,
+            marginRight: 0,
+        }),
+        indicatorsContainer: (provided) => ({
+            ...provided,
+            alignItems: 'center',
         }),
         placeholder: (provided) => ({
             ...provided,
@@ -79,8 +89,12 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
         }),
         dropdownIndicator: (provided, state) => ({
             ...provided,
-            color: state.isFocused ? '#0066CC' : '#94A3B8',
-            paddingRight: size === 'sm' ? '8px' : '12px',
+            color: state.isFocused ? '#14B8A6' : '#94A3B8',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            alignSelf: 'center',
+            padding: size === 'sm' ? '0 4px 0 2px' : '0 6px 0 4px',
             transition: 'transform 0.3s ease, color 0.2s ease',
             transform: state.selectProps.menuIsOpen ? 'rotate(180deg)' : 'none',
             '&:hover': {
@@ -117,7 +131,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
             return {
                 ...provided,
                 backgroundColor: state.isSelected 
-                    ? '#0066CC' 
+                    ? '#14B8A6' 
                     : state.isFocused 
                         ? '#F8FAFC' 
                         : 'transparent',
@@ -129,7 +143,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
                 marginBottom: '2px',
                 cursor: 'pointer',
                 '&:active': {
-                    backgroundColor: state.isSelected ? '#0066CC' : '#F1F5F9',
+                    backgroundColor: state.isSelected ? '#14B8A6' : '#F1F5F9',
                 },
                 transition: 'all 0.15s ease',
             };
@@ -143,7 +157,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
     };
 
     return (
-        <div className={twMerge("min-w-0 font-inter relative", containerClassName)}>
+        <div className={twMerge("min-w-0 font-sans relative", containerClassName)}>
             {leftIcon && (
                 <div className="absolute left-4 top-1/2 -translate-y-1/2 z-10 pointer-events-none text-slate-400">
                     {leftIcon}

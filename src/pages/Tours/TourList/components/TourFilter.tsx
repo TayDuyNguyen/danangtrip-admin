@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useId } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Search, RotateCcw, X } from 'lucide-react';
 import type { TourFilters, TourCategory } from '@/dataHelper/tour.dataHelper';
 import CustomSelect, { type Option } from '@/components/ui/CustomSelect';
+import { TextInput } from '@/components/ui/TextInput';
 
 interface Props {
     filters: TourFilters;
@@ -12,6 +13,7 @@ interface Props {
 
 const TourFilter = ({ filters, onFilterChange, categories }: Props) => {
     const { t } = useTranslation('tour');
+    const tourSearchId = useId();
     const [localSearch, setLocalSearch] = useState(filters.q);
 
     // Debounce search — 300ms as per spec
@@ -34,6 +36,7 @@ const TourFilter = ({ filters, onFilterChange, categories }: Props) => {
             q: '',
             tour_category_id: 'all',
             status: 'all',
+            booking_availability: 'all',
             type: 'all',
             sort: 'created_at',
             order: 'desc'
@@ -58,14 +61,19 @@ const TourFilter = ({ filters, onFilterChange, categories }: Props) => {
         <div className="bg-white border border-[#E2E8F0] rounded-[16px] p-[24px] mb-[24px]">
             <div className="flex flex-wrap gap-[12px] items-center">
                 {/* Search input — flex-1 min-280px */}
-                <div className="flex-1 min-w-[280px] relative group">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[#94A3B8] transition-all group-focus-within:text-[#0066CC]" size={18} />
-                    <input
-                        type="text"
-                        placeholder={t('filters.search_placeholder')}
+                <div className="flex-1 min-w-[280px]">
+                    <label htmlFor={tourSearchId} className="sr-only">
+                        {t('filters.search_placeholder')}
+                    </label>
+                    <TextInput
+                        id={tourSearchId}
+                        type="search"
                         value={localSearch}
                         onChange={(e) => setLocalSearch(e.target.value)}
-                        className="w-full pl-12 pr-4 h-[48px] bg-[#F8FAFC] border border-[#E2E8F0] rounded-[10px] focus:ring-0 focus:bg-white focus:border-[#0066CC] text-[14px] text-[#1E293B] font-medium outline-none transition-all placeholder:text-[#94A3B8]"
+                        placeholder={t('filters.search_placeholder')}
+                        leftIcon={<Search className="text-text-secondary transition-colors duration-150 group-focus-within:text-[#14b8a6]" size={18} />}
+                        containerClassName="group"
+                        className="h-12 rounded-2xl border-[#E2E8F0] bg-surface py-0 text-[14px] font-medium text-[#1E293B] placeholder:text-text-secondary focus:border-[#14b8a6] focus:bg-white"
                     />
                 </div>
 
@@ -86,22 +94,36 @@ const TourFilter = ({ filters, onFilterChange, categories }: Props) => {
                     isSearchable={true}
                 />
 
-                {/* Select Trạng thái — 160px */}
+                {/* Trạng thái hiển thị — 170px */}
                 <CustomSelect
                     options={[
                         { value: 'all', label: t('filters.all_status') },
                         { value: 'active', label: t('status.active') },
                         { value: 'inactive', label: t('status.inactive') },
-                        { value: 'sold_out', label: t('status.sold_out') }
                     ]}
                     value={[
                         { value: 'all', label: t('filters.all_status') },
                         { value: 'active', label: t('status.active') },
                         { value: 'inactive', label: t('status.inactive') },
-                        { value: 'sold_out', label: t('status.sold_out') }
                     ].find(opt => opt.value === filters.status)}
                     onChange={(opt) => handleChange('status', (opt as Option)?.value)}
-                    className="w-[160px]"
+                    className="w-[170px]"
+                />
+
+                {/* Còn chỗ / hết chỗ — 170px */}
+                <CustomSelect
+                    options={[
+                        { value: 'all', label: t('filters.all_booking_availability') },
+                        { value: 'open', label: t('booking_availability.open') },
+                        { value: 'sold_out', label: t('booking_availability.sold_out') },
+                    ]}
+                    value={[
+                        { value: 'all', label: t('filters.all_booking_availability') },
+                        { value: 'open', label: t('booking_availability.open') },
+                        { value: 'sold_out', label: t('booking_availability.sold_out') },
+                    ].find(opt => opt.value === filters.booking_availability)}
+                    onChange={(opt) => handleChange('booking_availability', (opt as Option)?.value)}
+                    className="w-[170px]"
                 />
 
                 {/* Select Loại — 160px */}
@@ -124,7 +146,7 @@ const TourFilter = ({ filters, onFilterChange, categories }: Props) => {
 
                 {/* Button Lọc */}
                 <button
-                    className="h-[48px] px-6 bg-[#0066CC] text-white rounded-[10px] text-[14px] font-bold hover:bg-[#0052A3] transition-all active:scale-95 shadow-sm"
+                    className="h-[48px] px-6 bg-[#14b8a6] text-white rounded-md text-[14px] font-bold hover:bg-[#0f766e] transition-all active:scale-95 shadow-sm"
                 >
                     {t('filters.button_apply')}
                 </button>
@@ -133,7 +155,7 @@ const TourFilter = ({ filters, onFilterChange, categories }: Props) => {
                 {hasActiveFilters && (
                     <button
                         onClick={handleReset}
-                        className="flex items-center gap-2 h-[48px] px-4 rounded-[10px] text-[14px] font-bold text-[#64748B] border border-[#E2E8F0] bg-white hover:text-[#EF4444] hover:border-[#EF4444] transition-all active:scale-95 shadow-sm"
+                        className="flex items-center gap-2 h-[48px] px-4 rounded-md text-[14px] font-bold text-[#64748B] border border-[#E2E8F0] bg-white hover:text-[#EF4444] hover:border-[#EF4444] transition-all active:scale-95 shadow-sm"
                     >
                         <RotateCcw size={16} />
                         {t('filters.button_reset')}
@@ -143,17 +165,17 @@ const TourFilter = ({ filters, onFilterChange, categories }: Props) => {
 
             {/* Row 2 — Active filter tags (chỉ hiện khi có filter) */}
             {activeFilters.length > 0 && (
-                <div className="flex flex-wrap items-center gap-2 mt-4 pt-4 border-t border-[#F1F5F9] animate-in slide-in-from-top-2 duration-300">
-                    <span className="text-[11px] font-bold text-[#94A3B8] uppercase tracking-wider mr-1">{t('filters.active_filtering')}</span>
+                <div className="flex flex-wrap items-center gap-2 mt-4 pt-4 border-t border-border animate-in slide-in-from-top-2 duration-150">
+                    <span className="text-[11px] font-bold text-text-secondary uppercase tracking-wider mr-1">{t('filters.active_filtering')}</span>
                     {activeFilters.map((tag) => (
                         <div
                             key={tag.key}
-                            className="inline-flex items-center gap-1.5 px-[10px] py-[4px] bg-[#EFF6FF] text-[#0066CC] border border-[#B3D9FF] rounded-full text-[12px] font-medium transition-all hover:bg-[#DEEBFF]"
+                            className="inline-flex items-center gap-1.5 px-[10px] py-[4px] bg-[#dff7f4] text-[#0f766e] border border-[#ccfbf1] rounded-full text-[12px] font-medium transition-all hover:bg-[#ccfbf1]"
                         >
                             {tag.label}
                             <button
                                 onClick={() => handleChange(tag.key, 'all')}
-                                className="hover:bg-[#0066CC]/10 rounded-full transition-colors p-0.5"
+                                className="hover:bg-[#14b8a6]/10 rounded-full transition-colors p-0.5"
                                 title={t('common:actions.remove')}
                             >
                                 <X size={13} strokeWidth={3} />

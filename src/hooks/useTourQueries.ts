@@ -5,6 +5,7 @@ import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 import { AxiosError } from 'axios';
 import type { ErrorResponse } from '@/types';
+import { getLocalizedApiErrorMessage } from '@/utils/apiError';
 
 /**
  * Key factory for tour queries
@@ -74,7 +75,7 @@ export const useTourMutations = () => {
     };
 
     const statusMutation = useMutation({
-        mutationFn: ({ id, status }: { id: string | number; status: 'active' | 'inactive' | 'sold_out' }) => tourApi.updateStatus(id, status),
+        mutationFn: ({ id, status }: { id: string | number; status: 'active' | 'inactive' }) => tourApi.updateStatus(id, status),
         onMutate: async (newData) => {
             await queryClient.cancelQueries({ queryKey: tourKeys.lists() });
             const previousQueries = queryClient.getQueriesData<TourListData>({ queryKey: tourKeys.lists() });
@@ -100,7 +101,7 @@ export const useTourMutations = () => {
                     queryClient.setQueryData(queryKey, data);
                 });
             }
-            toast.error(error.response?.data?.message || t('messages.status_update_error'));
+            toast.error(getLocalizedApiErrorMessage(t('messages.status_update_error'), error));
         },
         onSettled: () => {
             invalidate();
@@ -134,7 +135,7 @@ export const useTourMutations = () => {
                     queryClient.setQueryData(queryKey, data);
                 });
             }
-            toast.error(error.response?.data?.message || t('messages.featured_update_error'));
+            toast.error(getLocalizedApiErrorMessage(t('messages.featured_update_error'), error));
         },
         onSettled: () => {
             invalidate();
@@ -168,7 +169,7 @@ export const useTourMutations = () => {
                     queryClient.setQueryData(queryKey, data);
                 });
             }
-            toast.error(error.response?.data?.message || t('messages.hot_update_error'));
+            toast.error(getLocalizedApiErrorMessage(t('messages.hot_update_error'), error));
         },
         onSettled: () => {
             invalidate();
@@ -182,7 +183,7 @@ export const useTourMutations = () => {
             toast.success(t('messages.delete_success'));
         },
         onError: (error: AxiosError<ErrorResponse>) => {
-            toast.error(error.response?.data?.message || t('messages.delete_error'));
+            toast.error(getLocalizedApiErrorMessage(t('messages.delete_error'), error));
         }
     });
 
@@ -192,7 +193,7 @@ export const useTourMutations = () => {
             toast.success(t('messages.export_success'));
         },
         onError: (error: AxiosError<ErrorResponse>) => {
-            toast.error(error.response?.data?.message || t('messages.export_error'));
+            toast.error(getLocalizedApiErrorMessage(t('messages.export_error'), error));
         }
     });
 
@@ -204,7 +205,7 @@ export const useTourMutations = () => {
             toast.success(t('messages.update_success'));
         },
         onError: (error: AxiosError<ErrorResponse>) => {
-            toast.error(error.response?.data?.message || t('messages.update_error'));
+            toast.error(getLocalizedApiErrorMessage(t('messages.update_error'), error));
         }
     });
 
@@ -239,14 +240,14 @@ export const useTourUploadMutations = () => {
     const uploadThumbnailMutation = useMutation({
         mutationFn: (file: File) => tourApi.uploadImage(file),
         onError: (error: AxiosError<ErrorResponse>) => {
-            toast.error(error.response?.data?.message || t('messages.upload_error'));
+            toast.error(getLocalizedApiErrorMessage(t('messages.upload_error'), error));
         }
     });
 
     const uploadGalleryMutation = useMutation({
         mutationFn: (files: File[]) => tourApi.uploadImages(files),
         onError: (error: AxiosError<ErrorResponse>) => {
-            toast.error(error.response?.data?.message || t('messages.upload_error'));
+            toast.error(getLocalizedApiErrorMessage(t('messages.upload_error'), error));
         }
     });
 
@@ -257,7 +258,7 @@ export const useTourUploadMutations = () => {
             // but for explicit user action it can be helpful.
         },
         onError: (error: AxiosError<ErrorResponse>) => {
-            toast.error(error.response?.data?.message || t('messages.delete_error'));
+            toast.error(getLocalizedApiErrorMessage(t('messages.delete_error'), error));
         }
     });
 

@@ -4,6 +4,9 @@ import { X, Edit2, MapPin, Clock, Users, Info, Map, ImageOff } from 'lucide-reac
 import { useTranslation } from 'react-i18next';
 import type { TourItem } from '@/dataHelper/tour.dataHelper';
 import StatusBadge from './StatusBadge';
+import BookingAvailabilityBadge from './BookingAvailabilityBadge';
+import { useTourDetailModalSchedules } from '@/hooks/useScheduleQueries';
+import { ScheduleStatus } from '@/types/schedule';
 
 interface Props {
     isOpen: boolean;
@@ -13,12 +16,16 @@ interface Props {
 }
 
 const TourDetailModal = ({ isOpen, onClose, tour, onEdit }: Props) => {
-    const { t, i18n } = useTranslation('tour');
+    const { t, i18n } = useTranslation(['tour', 'schedules']);
 
     const formattedPrice = useMemo(() => {
         if (!tour) return '';
         return new Intl.NumberFormat(i18n.language === 'vi' ? 'vi-VN' : 'en-US').format(Number(tour.price_adult));
     }, [tour, i18n.language]);
+
+    const { data: scheduleData, isLoading: isScheduleLoading, isError: isScheduleError, refetch: refetchSchedules } =
+        useTourDetailModalSchedules(tour?.id, isOpen);
+    const recentSchedules = scheduleData?.data ?? [];
 
     if (!tour) return null;
 
@@ -26,10 +33,10 @@ const TourDetailModal = ({ isOpen, onClose, tour, onEdit }: Props) => {
         <Transition show={isOpen}>
             <Dialog onClose={onClose} className="relative z-50">
                 <TransitionChild
-                    enter="ease-out duration-300"
+                    enter="ease-out duration-150"
                     enterFrom="opacity-0"
                     enterTo="opacity-100"
-                    leave="ease-in duration-200"
+                    leave="ease-in duration-150"
                     leaveFrom="opacity-100"
                     leaveTo="opacity-0"
                 >
@@ -39,10 +46,10 @@ const TourDetailModal = ({ isOpen, onClose, tour, onEdit }: Props) => {
                 <div className="fixed inset-0 overflow-y-auto">
                     <div className="flex min-h-full items-center justify-center p-4 sm:p-6 lg:p-8">
                         <TransitionChild
-                            enter="ease-out duration-300"
+                            enter="ease-out duration-150"
                             enterFrom="opacity-0 scale-95 translate-y-4"
                             enterTo="opacity-100 scale-100 translate-y-0"
-                            leave="ease-in duration-200"
+                            leave="ease-in duration-150"
                             leaveFrom="opacity-100 scale-100 translate-y-0"
                             leaveTo="opacity-0 scale-95 translate-y-4"
                         >
@@ -50,7 +57,7 @@ const TourDetailModal = ({ isOpen, onClose, tour, onEdit }: Props) => {
                                 {/* Header */}
                                 <div className="sticky top-0 z-20 flex items-center justify-between border-b border-slate-100 bg-white/80 backdrop-blur-md px-6 py-4">
                                     <div className="flex items-center gap-4 flex-1 min-w-0">
-                                        <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 shrink-0">
+                                        <div className="w-10 h-10 rounded-xl bg-[#dff7f4] flex items-center justify-center text-[#14b8a6] shrink-0">
                                             <Info size={20} />
                                         </div>
                                         <div className="min-w-0">
@@ -58,27 +65,32 @@ const TourDetailModal = ({ isOpen, onClose, tour, onEdit }: Props) => {
                                                 {tour.name}
                                             </DialogTitle>
                                             <div className="flex items-center gap-2 mt-0.5">
-                                                <span className="text-xs font-medium text-slate-400 font-inter uppercase tracking-wider">
+                                                <span className="text-xs font-medium text-slate-400 font-sans uppercase tracking-wider">
                                                     {t('table.tour_code_prefix')}{tour.id.toString().padStart(3, '0')}
                                                 </span>
                                                 <div className="w-1 h-1 rounded-full bg-slate-300" />
                                                 <StatusBadge status={tour.status} />
+                                                <div className="w-1 h-1 rounded-full bg-slate-300" />
+                                                <BookingAvailabilityBadge availability={tour.booking_availability} />
                                             </div>
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-3">
                                         <button
+                                            type="button"
                                             onClick={() => onEdit(tour.id)}
-                                            className="inline-flex items-center gap-2 rounded-xl bg-amber-50 px-4 py-2 text-sm font-bold text-amber-600 hover:bg-amber-100 transition-all border border-amber-100 active:scale-95"
+                                            className="inline-flex items-center gap-2 rounded-xl bg-[#dff7f4] px-4 py-2 text-sm font-bold text-[#0f766e] hover:bg-[#ccfbf1] transition-all border border-[#ccfbf1] active:scale-95"
                                         >
-                                            <Edit2 size={16} />
+                                            <Edit2 size={16} className="shrink-0" aria-hidden />
                                             <span>{t('actions.edit', { ns: 'common' })}</span>
                                         </button>
                                         <button
+                                            type="button"
                                             onClick={onClose}
                                             className="p-2 rounded-xl text-slate-400 hover:bg-slate-50 hover:text-slate-600 transition-all active:scale-90"
+                                            aria-label={t('actions.close', { ns: 'common' })}
                                         >
-                                            <X size={20} />
+                                            <X size={20} className="shrink-0" aria-hidden />
                                         </button>
                                     </div>
                                 </div>
@@ -110,7 +122,11 @@ const TourDetailModal = ({ isOpen, onClose, tour, onEdit }: Props) => {
                                                     <div className="grid grid-cols-4 gap-4">
                                                         {tour.images.slice(0, 4).map((img, i) => (
                                                             <div key={i} className="aspect-square rounded-2xl overflow-hidden border border-slate-100 bg-slate-50">
-                                                                <img src={img} alt={`Gallery ${i}`} className="w-full h-full object-cover" />
+                                                                <img
+                                                                    src={img}
+                                                                    alt={t('form.media.gallery_item_alt', { index: i + 1 })}
+                                                                    className="w-full h-full object-cover"
+                                                                />
                                                             </div>
                                                         ))}
                                                     </div>
@@ -123,7 +139,7 @@ const TourDetailModal = ({ isOpen, onClose, tour, onEdit }: Props) => {
                                                     <div className="space-y-1">
                                                         <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">{t('table.header_price')}</p>
                                                         <div className="flex items-baseline gap-2">
-                                                            <span className="text-3xl font-black text-blue-600 font-inter">
+                                                            <span className="text-3xl font-black text-[#14b8a6] font-sans">
                                                                 {formattedPrice} {t('currency', { ns: 'common' })}
                                                             </span>
                                                             <span className="text-sm font-medium text-slate-400 italic">{t('table.per_person')}</span>
@@ -132,7 +148,7 @@ const TourDetailModal = ({ isOpen, onClose, tour, onEdit }: Props) => {
 
                                                     <div className="grid grid-cols-1 gap-4">
                                                         <div className="flex items-center gap-3 p-3 bg-white rounded-2xl border border-slate-100 shadow-xs">
-                                                            <div className="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center text-orange-600 shrink-0">
+                                                            <div className="w-10 h-10 rounded-xl bg-[#f4fce3] flex items-center justify-center text-[#0f766e] shrink-0">
                                                                 <Clock size={18} />
                                                             </div>
                                                             <div>
@@ -141,7 +157,7 @@ const TourDetailModal = ({ isOpen, onClose, tour, onEdit }: Props) => {
                                                             </div>
                                                         </div>
                                                         <div className="flex items-center gap-3 p-3 bg-white rounded-2xl border border-slate-100 shadow-xs">
-                                                            <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 shrink-0">
+                                                            <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center text-[#0f766e] shrink-0">
                                                                 <Users size={18} />
                                                             </div>
                                                             <div>
@@ -150,7 +166,7 @@ const TourDetailModal = ({ isOpen, onClose, tour, onEdit }: Props) => {
                                                             </div>
                                                         </div>
                                                         <div className="flex items-center gap-3 p-3 bg-white rounded-2xl border border-slate-100 shadow-xs">
-                                                            <div className="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center text-purple-600 shrink-0">
+                                                            <div className="w-10 h-10 rounded-xl bg-[#dff7f4] flex items-center justify-center text-[#14b8a6] shrink-0">
                                                                 <MapPin size={18} />
                                                             </div>
                                                             <div>
@@ -163,12 +179,12 @@ const TourDetailModal = ({ isOpen, onClose, tour, onEdit }: Props) => {
 
                                                 <div className="flex flex-wrap gap-2">
                                                     {tour.is_featured && (
-                                                        <span className="px-3 py-1 bg-blue-50 text-blue-600 border border-blue-100 rounded-lg text-xs font-black uppercase tracking-wider">
+                                                        <span className="px-3 py-1 bg-[#dff7f4] text-[#0f766e] border border-[#ccfbf1] rounded-lg text-xs font-black uppercase tracking-wider">
                                                             {t('filters.featured')}
                                                         </span>
                                                     )}
                                                     {tour.is_hot && (
-                                                        <span className="px-3 py-1 bg-orange-50 text-orange-600 border border-orange-100 rounded-lg text-xs font-black uppercase tracking-wider">
+                                                        <span className="px-3 py-1 bg-[#f4fce3] text-[#0f766e] border border-[#d9f99d] rounded-lg text-xs font-black uppercase tracking-wider">
                                                             {t('filters.hot')}
                                                         </span>
                                                     )}
@@ -179,10 +195,10 @@ const TourDetailModal = ({ isOpen, onClose, tour, onEdit }: Props) => {
                                         {/* Description Section */}
                                         <div className="space-y-4">
                                             <div className="flex items-center gap-2 text-slate-900">
-                                                <div className="w-1 h-6 bg-blue-600 rounded-full" />
+                                                <div className="w-1 h-6 bg-[#14b8a6] rounded-full" />
                                                 <h3 className="text-xl font-black uppercase tracking-tight italic">{t('form.basic.description')}</h3>
                                             </div>
-                                            <div className="prose prose-slate max-w-none text-slate-600 leading-relaxed font-inter">
+                                            <div className="prose prose-slate max-w-none text-slate-600 leading-relaxed font-sans">
                                                 {tour.description ? (
                                                     <div dangerouslySetInnerHTML={{ __html: tour.description }} />
                                                 ) : (
@@ -194,19 +210,19 @@ const TourDetailModal = ({ isOpen, onClose, tour, onEdit }: Props) => {
                                         {/* Itinerary Section */}
                                         <div className="space-y-6">
                                             <div className="flex items-center gap-2 text-slate-900">
-                                                <div className="w-1 h-6 bg-blue-600 rounded-full" />
-                                                <h3 className="text-xl font-black uppercase tracking-tight italic">{t('form.itinerary.title_placeholder').replace(': ', '')}</h3>
+                                                <div className="w-1 h-6 bg-[#14b8a6] rounded-full" />
+                                                <h3 className="text-xl font-black uppercase tracking-tight italic">{t('form.sections.itinerary')}</h3>
                                             </div>
                                             
                                             {tour.itinerary && Array.isArray(tour.itinerary) && tour.itinerary.length > 0 ? (
                                                 <div className="space-y-4 relative before:absolute before:left-[19px] before:top-4 before:bottom-4 before:w-0.5 before:bg-slate-100">
                                                     {(tour.itinerary as Array<{ day: number; title: string; content: string }>).map((item, idx) => (
                                                         <div key={idx} className="relative pl-12">
-                                                            <div className="absolute left-0 top-0 w-10 h-10 rounded-full bg-white border-2 border-blue-600 flex items-center justify-center text-blue-600 font-bold shadow-lg shadow-blue-100 z-10">
+                                                            <div className="absolute left-0 top-0 w-10 h-10 rounded-full bg-white border-2 border-[#14b8a6] flex items-center justify-center text-[#14b8a6] font-bold shadow-lg shadow-[#14b8a6]/20 z-10">
                                                                 {item.day || idx + 1}
                                                             </div>
                                                             <div className="bg-slate-50/50 border border-slate-100 rounded-2xl p-5 hover:bg-white transition-all hover:shadow-md group/it">
-                                                                <h4 className="text-md font-bold text-slate-800 mb-2 group-hover/it:text-blue-600 transition-colors">{item.title}</h4>
+                                                                <h4 className="text-md font-bold text-slate-800 mb-2 group-hover/it:text-[#14b8a6] transition-colors">{item.title}</h4>
                                                                 <p className="text-sm text-slate-600 leading-relaxed">{item.content}</p>
                                                             </div>
                                                         </div>
@@ -219,10 +235,76 @@ const TourDetailModal = ({ isOpen, onClose, tour, onEdit }: Props) => {
                                                 </div>
                                             )}
                                         </div>
+
+                                        {/* Departure schedules from tour_schedules */}
+                                        <div className="space-y-6">
+                                            <div className="flex items-center gap-2 text-slate-900">
+                                                <div className="w-1 h-6 bg-[#14b8a6] rounded-full" />
+                                                <h3 className="text-xl font-black uppercase tracking-tight italic">
+                                                    {t('schedules:title')}
+                                                </h3>
+                                            </div>
+
+                                            {isScheduleLoading ? (
+                                                <div className="flex items-center justify-center py-10 bg-slate-50/50 rounded-3xl border border-slate-100">
+                                                    <p className="text-sm text-slate-400">{t('loading', { ns: 'common' })}</p>
+                                                </div>
+                                            ) : isScheduleError ? (
+                                                <div
+                                                    className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 rounded-2xl border border-red-100 bg-red-50/50 px-4 py-3 text-sm text-red-700"
+                                                    role="alert"
+                                                >
+                                                    <span>{t('form.departures.load_error')}</span>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => void refetchSchedules()}
+                                                        className="shrink-0 inline-flex items-center justify-center rounded-lg border border-red-200 bg-white px-3 py-1.5 text-xs font-bold text-red-800 hover:bg-red-50"
+                                                    >
+                                                        {t('form.departures.retry')}
+                                                    </button>
+                                                </div>
+                                            ) : recentSchedules.length > 0 ? (
+                                                <ul
+                                                    className="space-y-3 list-none p-0 m-0"
+                                                    aria-label={t('schedules:title')}
+                                                >
+                                                    {recentSchedules.map((schedule) => (
+                                                        <li
+                                                            key={schedule.id}
+                                                            className="rounded-2xl border border-slate-100 bg-slate-50/60 px-4 py-3 flex flex-col md:flex-row md:items-center md:justify-between gap-2"
+                                                        >
+                                                            <div className="text-sm text-slate-700 font-semibold">
+                                                                {new Date(schedule.startDate).toLocaleDateString(i18n.language === 'vi' ? 'vi-VN' : 'en-US')}
+                                                                {' - '}
+                                                                {new Date(schedule.endDate).toLocaleDateString(i18n.language === 'vi' ? 'vi-VN' : 'en-US')}
+                                                            </div>
+                                                            <div className="flex items-center gap-3 text-xs">
+                                                                <span className="font-bold text-slate-500">
+                                                                    {schedule.bookedSlots}/{schedule.totalSlots}
+                                                                </span>
+                                                                <span className="px-2 py-1 rounded-lg bg-white border border-slate-200 font-bold text-slate-600">
+                                                                    {schedule.status === ScheduleStatus.AVAILABLE
+                                                                        ? t('schedules:status.available')
+                                                                        : schedule.status === ScheduleStatus.FULL
+                                                                            ? t('schedules:status.full')
+                                                                            : t('schedules:status.cancelled')}
+                                                                </span>
+                                                            </div>
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            ) : (
+                                                <div className="flex flex-col items-center justify-center py-12 bg-slate-50/50 rounded-3xl border border-dashed border-slate-200">
+                                                    <Clock size={48} className="text-slate-200 mb-2" />
+                                                    <p className="text-slate-400 font-medium italic">{t('schedules:no_data.title')}</p>
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
                                 <div className="bg-slate-50/80 backdrop-blur-sm px-8 py-4 flex justify-end border-t border-slate-100">
                                     <button
+                                        type="button"
                                         onClick={onClose}
                                         className="px-6 py-2 rounded-xl bg-white border border-slate-200 text-slate-600 font-bold hover:bg-slate-50 transition-all active:scale-95 shadow-sm"
                                     >

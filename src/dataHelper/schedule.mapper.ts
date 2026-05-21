@@ -1,4 +1,4 @@
-import type { Schedule, ScheduleStatus } from '@/types/schedule';
+import type { Schedule, ScheduleBookingAvailability, ScheduleStatus } from '@/types/schedule';
 import type { RawSchedule } from './schedule.dataHelper';
 import { toNumberSafe } from '@/utils/safeConverters';
 
@@ -11,13 +11,25 @@ function normalizeStatus(raw: string): ScheduleStatus {
     if (u === 'available') {
         return 'AVAILABLE';
     }
-    if (u === 'full') {
-        return 'FULL';
-    }
     if (u === 'cancelled') {
         return 'CANCELLED';
     }
     return 'AVAILABLE';
+}
+
+function normalizeBookingAvailability(raw: string | undefined, statusRaw: string): ScheduleBookingAvailability {
+    const u = (raw || '').toLowerCase();
+    if (u === 'sold_out') {
+        return 'SOLD_OUT';
+    }
+    if (u === 'open') {
+        return 'OPEN';
+    }
+    // Legacy fallback: old API used status=full.
+    if ((statusRaw || '').toLowerCase() === 'full') {
+        return 'SOLD_OUT';
+    }
+    return 'OPEN';
 }
 
 /**
@@ -48,6 +60,10 @@ export const scheduleMapper = {
                 ? toNumberSafe(raw.price_infant, 0)
                 : null,
             status: normalizeStatus(raw.status),
+            bookingAvailability: normalizeBookingAvailability(raw.booking_availability, raw.status),
+            departureCode: raw.departure_code ?? null,
+            departurePlace: raw.departure_place ?? null,
+            bookingDeadline: raw.booking_deadline ? toYmd(raw.booking_deadline) : null,
         };
     },
 
@@ -76,6 +92,15 @@ export const scheduleMapper = {
         }
         if (data.status !== undefined) {
             out.status = String(data.status).toLowerCase();
+        }
+        if (data.departureCode !== undefined) {
+            out.departure_code = data.departureCode;
+        }
+        if (data.departurePlace !== undefined) {
+            out.departure_place = data.departurePlace;
+        }
+        if (data.bookingDeadline !== undefined) {
+            out.booking_deadline = data.bookingDeadline;
         }
         return out;
     },

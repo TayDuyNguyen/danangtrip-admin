@@ -5,11 +5,12 @@ import type { TFunction } from 'i18next';
  * Validation schema for adding a new tour schedule.
  * (Schema xác thực khi thêm lịch khởi hành tour mới)
  */
-export const getScheduleSchema = (t: TFunction) => {
+export const getScheduleSchema = (t: TFunction, isEdit = false, bookedSlots = 0) => {
     return Yup.object().shape({
         startDate: Yup.string()
-            .required(t('validation:common.required', { field: t('schedule:fields.start_date') }))
-            .test('is-future', t('schedule:validation.start_date_future'), (value) => {
+            .required(t('common:validation.required', { field: t('schedules:fields.start_date') }))
+            .test('is-future', t('schedules:validation.start_date_future'), (value) => {
+                if (isEdit) return true;
                 if (!value) return false;
                 const today = new Date();
                 today.setHours(0, 0, 0, 0);
@@ -17,28 +18,46 @@ export const getScheduleSchema = (t: TFunction) => {
                 return start >= today;
             }),
         endDate: Yup.string()
-            .required(t('validation:common.required', { field: t('schedule:fields.end_date') }))
-            .test('is-after-start', t('schedule:validation.end_date_after'), function (value) {
+            .required(t('common:validation.required', { field: t('schedules:fields.end_date') }))
+            .test('is-after-start', t('schedules:validation.end_date_after'), function (value) {
                 const { startDate } = this.parent;
                 if (!value || !startDate) return true;
                 return new Date(value) >= new Date(startDate);
             }),
         totalSlots: Yup.number()
             .transform((value) => (isNaN(value) ? undefined : value))
-            .required(t('validation:common.required', { field: t('schedule:fields.max_people') }))
-            .min(1, t('validation:common.min_number', { field: t('schedule:fields.max_people'), min: 1 })),
+            .required(t('common:validation.required', { field: t('schedules:fields.max_people') }))
+            .min(1, t('common:validation.min_number', { field: t('schedules:fields.max_people'), min: 1 }))
+            .test('min-booked', t('schedules:validation.total_slots_min_booked', { count: bookedSlots }), (value) => {
+                if (!isEdit || bookedSlots <= 0) return true;
+                if (value === undefined || value === null || isNaN(value)) return true;
+                return value >= bookedSlots;
+            }),
         priceAdult: Yup.number()
             .transform((value) => (isNaN(value) ? undefined : value))
             .nullable()
-            .min(0, t('validation:common.min_number', { field: t('schedule:fields.price_adult'), min: 0 })),
+            .min(0, t('common:validation.min_number', { field: t('schedules:fields.price_adult'), min: 0 })),
         priceChild: Yup.number()
             .transform((value) => (isNaN(value) ? undefined : value))
             .nullable()
-            .min(0, t('validation:common.min_number', { field: t('schedule:fields.price_child'), min: 0 })),
+            .min(0, t('common:validation.min_number', { field: t('schedules:fields.price_child'), min: 0 })),
         priceInfant: Yup.number()
             .transform((value) => (isNaN(value) ? undefined : value))
             .nullable()
-            .min(0, t('validation:common.min_number', { field: t('schedule:fields.price_infant'), min: 0 })),
-        status: Yup.string().required(t('validation:common.required', { field: t('schedule:fields.status') })),
+            .min(0, t('common:validation.min_number', { field: t('schedules:fields.price_infant'), min: 0 })),
+        status: Yup.string().required(t('common:validation.required', { field: t('schedules:fields.status') })),
+        departureCode: Yup.string()
+            .nullable()
+            .max(50, t('common:validation.max_length', { field: t('schedules:fields.departure_code'), max: 50 })),
+        departurePlace: Yup.string()
+            .nullable()
+            .max(255, t('common:validation.max_length', { field: t('schedules:fields.departure_place'), max: 255 })),
+        bookingDeadline: Yup.string()
+            .nullable()
+            .test('is-before-start', t('schedules:validation.booking_deadline_before'), function (value) {
+                const { startDate } = this.parent;
+                if (!value || !startDate) return true;
+                return new Date(value) <= new Date(startDate);
+            }),
     });
 };

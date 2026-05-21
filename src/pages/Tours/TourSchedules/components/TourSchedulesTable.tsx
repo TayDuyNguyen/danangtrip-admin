@@ -2,10 +2,10 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { clsx } from 'clsx';
-import { ChevronLeft, ChevronRight, Edit3, Trash2, ImageOff, ArrowUpDown, RefreshCw } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Trash2, ImageOff, ArrowUpDown, RefreshCw, Plus, Pencil } from 'lucide-react';
 
 import type { Schedule } from '@/types/schedule';
-import { ScheduleStatus } from '@/types/schedule';
+import { ScheduleBookingAvailability, ScheduleStatus } from '@/types/schedule';
 import CustomSelect from '@/components/ui/CustomSelect';
 import type { Option } from '@/components/ui/CustomSelect';
 import ProgressBar from '@/components/ui/ProgressBar';
@@ -22,6 +22,7 @@ import { ROUTES } from '@/routes/routes';
 type Props = {
     data: Schedule[];
     isLoading: boolean;
+    isRefreshing?: boolean;
     total: number;
     page: number;
     limit: number;
@@ -40,6 +41,7 @@ type Props = {
 const TourSchedulesTable = ({
     data,
     isLoading,
+    isRefreshing,
     total,
     page,
     limit,
@@ -77,23 +79,29 @@ const TourSchedulesTable = ({
 
     const lastPage = Math.max(1, Math.ceil(total / limit));
 
+    const toScheduleCreate = (tourId: number | string) =>
+        ROUTES.TOURS_SCHEDULE_CREATE.replace(':id', String(tourId));
+
+    const toScheduleEdit = (id: number | string) =>
+        ROUTES.TOURS_SCHEDULE_EDIT.replace(':id', String(id));
+
     return (
         <div className="bg-white border border-[#E2E8F0] rounded-2xl overflow-hidden shadow-sm">
             <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 px-6 py-4 border-b border-[#E2E8F0]">
                 <div className="flex items-center gap-3">
                     {selectedIds.length > 0 && (
-                        <span className="text-[13px] font-semibold text-[#0066CC]">
-                            Đã chọn {selectedIds.length}
+                        <span className="text-[13px] font-semibold text-[#14b8a6]">
+                            {t('schedules:actions.selected_count', { count: selectedIds.length })}
                         </span>
                     )}
                 </div>
                 <div className="flex flex-wrap items-center gap-4 sm:ml-auto">
-                    {isLoading && (
+                    {(isRefreshing || isLoading) && (
                         <div className="animate-fade-in">
-                            <RefreshCw className="w-3.5 h-3.5 text-[#0066CC] animate-spin" />
+                            <RefreshCw className="w-3.5 h-3.5 text-[#14b8a6] animate-spin" />
                         </div>
                     )}
-                    <span className="text-[13px] font-medium text-[#94A3B8]">
+                    <span className="text-[13px] font-medium text-text-secondary">
                         {t('schedules:table.showing_summary', {
                             start: total > 0 ? (page - 1) * limit + 1 : 0,
                             end: Math.min(page * limit, total),
@@ -116,47 +124,51 @@ const TourSchedulesTable = ({
             <div className="overflow-x-auto">
                 <table className="w-full min-w-[960px]">
                     <thead>
-                        <tr className="bg-[#F8FAFC] border-b border-[#E2E8F0]">
+                        <tr className="bg-surface border-b border-[#E2E8F0]">
                             <th className="w-10 px-3 py-3">
                                 <div className="flex justify-center">
                                     <input
                                         type="checkbox"
-                                        className="w-4 h-4 rounded border-[#E2E8F0] text-[#0066CC] accent-[#0066CC] cursor-pointer"
+                                        className="w-4 h-4 rounded border-[#E2E8F0] text-[#14b8a6] accent-[#14b8a6] cursor-pointer"
                                         checked={allPageSelected}
                                         onChange={(e) => onToggleAllPage(e.target.checked)}
+                                        aria-label={t('schedules:table.select_all')}
                                     />
                                 </div>
                             </th>
-                            <th className="px-3 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-[#94A3B8] w-12">
+                            <th className="px-3 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-text-secondary w-12">
                                 {t('schedules:table.stt')}
                             </th>
-                            <th className="px-3 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-[#94A3B8]">
+                            <th className="px-3 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-text-secondary">
                                 {t('schedules:table.tour')}
                             </th>
-                            <th className="px-3 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-[#94A3B8] w-36">
+                            <th className="px-3 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-text-secondary w-36">
                                 <button
                                     type="button"
                                     onClick={() => onSortChange('start_date')}
-                                    className="inline-flex items-center gap-1 text-[#94A3B8] hover:text-[#0066CC]"
+                                    className="inline-flex items-center gap-1 text-text-secondary hover:text-[#14b8a6]"
                                 >
                                     {t('schedules:table.start')}
                                     <ArrowUpDown className="w-3.5 h-3.5" />
                                     {sort === 'start_date' ? ` (${order === 'desc' ? t('schedules:table.sort_desc', 'Giảm dần') : t('schedules:table.sort_asc', 'Tăng dần')})` : ''}
                                 </button>
                             </th>
-                            <th className="px-3 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-[#94A3B8] w-32">
+                            <th className="px-3 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-text-secondary w-32">
                                 {t('schedules:table.end')}
                             </th>
-                            <th className="px-3 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-[#94A3B8] w-28">
+                            <th className="px-3 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-text-secondary w-28">
                                 {t('schedules:table.price')}
                             </th>
-                            <th className="px-3 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-[#94A3B8] w-36">
+                            <th className="px-3 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-text-secondary w-36">
                                 {t('schedules:table.capacity')}
                             </th>
-                            <th className="px-3 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-[#94A3B8] w-36">
+                            <th className="px-3 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-text-secondary w-36">
                                 {t('schedules:table.status')}
                             </th>
-                            <th className="px-3 py-3 text-right text-[11px] font-bold uppercase tracking-wider text-[#94A3B8] w-32">
+                            <th className="px-3 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-text-secondary w-32">
+                                {t('schedules:table.booking_availability')}
+                            </th>
+                            <th className="px-3 py-3 text-right text-[11px] font-bold uppercase tracking-wider text-text-secondary w-32">
                                 {t('schedules:table.actions')}
                             </th>
                         </tr>
@@ -164,13 +176,13 @@ const TourSchedulesTable = ({
                     <tbody>
                         {(isLoading && data.length === 0) ? (
                             <tr>
-                                <td colSpan={9} className="py-20 text-center">
-                                    <LoadingReact type="spokes" height={48} width={48} color="#0066CC" />
+                                <td colSpan={10} className="py-20 text-center">
+                                    <LoadingReact type="spokes" height={48} width={48} color="#14B8A6" />
                                 </td>
                             </tr>
                         ) : data.length === 0 ? (
                             <tr>
-                                <td colSpan={9} className="py-16 text-center text-[#64748B] text-sm font-medium">
+                                <td colSpan={10} className="py-16 text-center text-[#64748B] text-sm font-medium">
                                     {t('schedules:no_data.title')}
                                 </td>
                             </tr>
@@ -186,17 +198,21 @@ const TourSchedulesTable = ({
                                     <tr
                                         key={row.id}
                                         className={clsx(
-                                            'border-b border-[#F1F5F9] hover:bg-[#F8FAFC] transition-colors',
-                                            selected && 'bg-[#EFF6FF] border-l-[3px] border-l-[#0066CC]',
+                                            'border-b border-border hover:bg-surface transition-colors',
+                                            selected && 'bg-[#dff7f4] border-l-[3px] border-l-[#14b8a6]',
+                                            isRefreshing && 'opacity-60',
                                         )}
                                     >
                                         <td className="px-3 py-3">
                                             <div className="flex justify-center">
                                                 <input
                                                     type="checkbox"
-                                                    className="w-4 h-4 rounded border-[#E2E8F0] text-[#0066CC] accent-[#0066CC] cursor-pointer"
+                                                    className="w-4 h-4 rounded border-[#E2E8F0] text-[#14b8a6] accent-[#14b8a6] cursor-pointer"
                                                     checked={selected}
                                                     onChange={() => onToggleRow(idNum)}
+                                                    aria-label={t('schedules:table.select_row', {
+                                                        name: row.tourName || t('schedules:card.untitled_tour'),
+                                                    })}
                                                 />
                                             </div>
                                         </td>
@@ -219,21 +235,14 @@ const TourSchedulesTable = ({
                                                 <div className="min-w-0">
                                                     <button
                                                         type="button"
-                                                        onClick={() =>
-                                                            navigate(
-                                                                ROUTES.TOURS_EDIT.replace(
-                                                                    ':id',
-                                                                    String(row.tourId),
-                                                                ),
-                                                            )
-                                                        }
-                                                        className="text-left text-[14px] font-semibold text-[#1E293B] hover:text-[#0066CC] line-clamp-2"
+                                                        onClick={() => navigate(toScheduleCreate(row.tourId))}
+                                                    className="text-left text-[14px] font-semibold text-[#1E293B] hover:text-[#14b8a6] line-clamp-2"
                                                     >
                                                         {row.tourName || '—'}
                                                     </button>
                                                     {row.categoryName && (
                                                         <span 
-                                                            className="inline-block max-w-[110px] truncate align-bottom text-[11px] font-bold uppercase tracking-wide px-2 py-0.5 mt-1 rounded-full bg-[#EFF6FF] text-[#0066CC] border border-[#B3D9FF]"
+                                                            className="inline-block max-w-[110px] truncate align-bottom text-[11px] font-bold uppercase tracking-wide px-2 py-0.5 mt-1 rounded-full bg-[#dff7f4] text-[#0f766e] border border-[#ccfbf1]"
                                                             title={row.categoryName}
                                                         >
                                                             {row.categoryName}
@@ -247,18 +256,18 @@ const TourSchedulesTable = ({
                                                 <span
                                                     className={clsx(
                                                         'text-[13px] font-semibold',
-                                                        past ? 'text-[#94A3B8]' : 'text-[#1E293B]',
+                                                        past ? 'text-text-secondary' : 'text-[#1E293B]',
                                                     )}
                                                 >
                                                     {formatAdminShortDate(row.startDate, i18n.language)}
                                                 </span>
                                                 {soon ? (
-                                                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#EFF6FF] text-[#0066CC]">
+                                                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#dff7f4] text-[#0f766e]">
                                                         {t('schedules:table.upcoming')}
                                                     </span>
                                                 ) : null}
                                             </div>
-                                            <div className="text-[11px] text-[#94A3B8]">
+                                            <div className="text-[11px] text-text-secondary">
                                                 {formatAdminWeekday(row.startDate, i18n.language)}
                                             </div>
                                         </td>
@@ -267,7 +276,7 @@ const TourSchedulesTable = ({
                                         </td>
                                         <td className="px-3 py-3">
                                             {row.priceAdult == null ? (
-                                                <span className="text-[13px] text-[#94A3B8] italic">
+                                                <span className="text-[13px] text-text-secondary italic">
                                                     {t('schedules:fields.price_follows_tour')}
                                                 </span>
                                             ) : (
@@ -295,14 +304,11 @@ const TourSchedulesTable = ({
                                                     label:
                                                         row.status === ScheduleStatus.AVAILABLE
                                                             ? t('schedules:status.available')
-                                                            : row.status === ScheduleStatus.FULL
-                                                              ? t('schedules:status.full')
-                                                              : t('schedules:status.cancelled'),
+                                                            : t('schedules:status.cancelled'),
                                                 }}
                                                 onChange={(opt: Option | null) => onStatusChange(idNum, String(opt?.value))}
                                                 options={[
                                                     { value: ScheduleStatus.AVAILABLE, label: t('schedules:status.available') },
-                                                    { value: ScheduleStatus.FULL, label: t('schedules:status.full') },
                                                     { value: ScheduleStatus.CANCELLED, label: t('schedules:status.cancelled') },
                                                 ]}
                                                 size="sm"
@@ -311,27 +317,42 @@ const TourSchedulesTable = ({
                                             />
                                         </td>
                                         <td className="px-3 py-3">
+                                            <span
+                                                className={clsx(
+                                                    'inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-wide',
+                                                    row.bookingAvailability === ScheduleBookingAvailability.SOLD_OUT
+                                                        ? 'bg-[#FEE2E2] text-[#B91C1C] border border-[#FECACA]'
+                                                        : 'bg-[#dff7f4] text-[#0f766e] border border-[#ccfbf1]',
+                                                )}
+                                            >
+                                                {row.bookingAvailability === ScheduleBookingAvailability.SOLD_OUT
+                                                    ? t('schedules:booking_availability.sold_out')
+                                                    : t('schedules:booking_availability.open')}
+                                            </span>
+                                        </td>
+                                        <td className="px-3 py-3">
                                             <div className="flex justify-end gap-1">
                                                 <button
                                                     type="button"
-                                                    title={t('schedules:actions.edit_tour')}
-                                                    onClick={() =>
-                                                        navigate(
-                                                            ROUTES.TOURS_EDIT.replace(
-                                                                ':id',
-                                                                String(row.tourId),
-                                                            ),
-                                                        )
-                                                    }
-                                                    className="w-7 h-7 flex items-center justify-center rounded-md bg-[#F8FAFC] border border-[#E2E8F0] text-[#64748B] hover:text-[#F59E0B]"
+                                                    title={t('schedules:actions.add_new')}
+                                                    onClick={() => navigate(toScheduleCreate(row.tourId))}
+                                                    className="w-7 h-7 flex items-center justify-center rounded-md bg-white border border-[#E2E8F0] text-[#64748B] hover:text-[#14b8a6] hover:border-[#14b8a6] transition-colors"
                                                 >
-                                                    <Edit3 className="w-4 h-4" />
+                                                    <Plus className="w-4 h-4" />
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    title={t('common:actions.edit')}
+                                                    onClick={() => navigate(toScheduleEdit(row.id))}
+                                                    className="w-7 h-7 flex items-center justify-center rounded-md bg-white border border-[#E2E8F0] text-[#64748B] hover:text-[#F59E0B] hover:border-[#F59E0B] transition-colors"
+                                                >
+                                                    <Pencil className="w-4 h-4" />
                                                 </button>
                                                 <button
                                                     type="button"
                                                     title={t('common:actions.remove')}
                                                     onClick={() => onDelete(row)}
-                                                    className="w-7 h-7 flex items-center justify-center rounded-md bg-[#F8FAFC] border border-[#E2E8F0] text-[#64748B] hover:text-[#EF4444]"
+                                                    className="w-7 h-7 flex items-center justify-center rounded-md bg-white border border-[#E2E8F0] text-[#64748B] hover:text-[#EF4444] hover:border-[#EF4444] transition-colors"
                                                 >
                                                     <Trash2 className="w-4 h-4" />
                                                 </button>
@@ -345,7 +366,7 @@ const TourSchedulesTable = ({
                 </table>
             </div>
 
-            <div className="px-6 py-4 border-t border-[#E2E8F0] bg-[#F8FAFC] flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="px-6 py-4 border-t border-[#E2E8F0] bg-surface flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div className="text-[13px] font-semibold text-[#64748B]">
                     {t('schedules:table.showing_summary', {
                         start: total > 0 ? (page - 1) * limit + 1 : 0,
@@ -358,44 +379,40 @@ const TourSchedulesTable = ({
                         type="button"
                         onClick={() => onPageChange(page - 1)}
                         disabled={page <= 1}
-                        className="w-8 h-8 flex items-center justify-center rounded-lg bg-white border border-[#E2E8F0] text-[#64748B] hover:border-[#0066CC] hover:text-[#0066CC] disabled:opacity-40"
+                        className="w-[32px] h-[32px] flex items-center justify-center rounded-md bg-white border border-[#E2E8F0] text-[#64748B] hover:border-[#14b8a6] hover:text-[#14b8a6] disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-150 shadow-sm active:scale-90"
                     >
                         <ChevronLeft size={16} />
                     </button>
                     
-                    {Array.from({ length: lastPage }, (_, i) => i + 1)
-                        .filter(p => p === 1 || p === lastPage || Math.abs(p - page) <= 1)
-                        .reduce((acc: (string | number)[], p, i, arr) => {
-                            if (i > 0 && p - arr[i - 1] > 1) {
-                                acc.push('...');
-                            }
-                            acc.push(p);
-                            return acc;
-                        }, [])
-                        .map((p, idx) => p === '...' ? (
-                            <span key={`dots-${idx}`} className="px-1 text-[#94A3B8]">...</span>
-                        ) : (
-                            <button
-                                key={p}
-                                type="button"
-                                onClick={() => onPageChange(Number(p))}
-                                className={clsx(
-                                    "w-8 h-8 flex items-center justify-center rounded-lg border text-[13px] font-semibold transition-colors",
-                                    p === page 
-                                        ? "bg-[#0066CC] text-white border-[#0066CC]" 
-                                        : "bg-white border-[#E2E8F0] text-[#64748B] hover:border-[#0066CC] hover:text-[#0066CC]"
-                                )}
-                            >
-                                {p}
-                            </button>
-                        ))
-                    }
+                    <div className="flex items-center gap-1.5">
+                        {Array.from({ length: lastPage }, (_, i) => i + 1)
+                            .filter(p => p === 1 || p === lastPage || Math.abs(p - page) <= 1)
+                            .map((p, i, arr) => (
+                                <div key={p} className="flex items-center gap-1.5">
+                                    {i > 0 && arr[i - 1] !== p - 1 && (
+                                        <span className="text-slate-300 font-bold px-1">...</span>
+                                    )}
+                                    <button
+                                        type="button"
+                                        onClick={() => onPageChange(Number(p))}
+                                        className={clsx(
+                                            'w-[32px] h-[32px] flex items-center justify-center rounded-md text-[13px] font-bold transition-all duration-150 shadow-sm',
+                                            p === page 
+                                                ? 'bg-[#14b8a6] text-white border-[#14b8a6]' 
+                                                : 'bg-white border border-[#E2E8F0] text-[#64748B] hover:border-[#14b8a6] hover:text-[#14b8a6] active:scale-95'
+                                        )}
+                                    >
+                                        {p}
+                                    </button>
+                                </div>
+                            ))}
+                    </div>
 
                     <button
                         type="button"
                         onClick={() => onPageChange(page + 1)}
                         disabled={page >= lastPage}
-                        className="w-8 h-8 flex items-center justify-center rounded-lg bg-white border border-[#E2E8F0] text-[#64748B] hover:border-[#0066CC] hover:text-[#0066CC] disabled:opacity-40"
+                        className="w-[32px] h-[32px] flex items-center justify-center rounded-md bg-white border border-[#E2E8F0] text-[#64748B] hover:border-[#14b8a6] hover:text-[#14b8a6] disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-150 shadow-sm active:scale-90"
                     >
                         <ChevronRight size={16} />
                     </button>

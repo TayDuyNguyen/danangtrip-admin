@@ -3,11 +3,19 @@
  */
 export const ScheduleStatus = {
     AVAILABLE: 'AVAILABLE',
-    FULL: 'FULL',
+    FULL: 'FULL', // legacy value kept for backward-compatibility in old components
     CANCELLED: 'CANCELLED',
 } as const;
 
 export type ScheduleStatus = (typeof ScheduleStatus)[keyof typeof ScheduleStatus];
+
+export const ScheduleBookingAvailability = {
+    OPEN: 'OPEN',
+    SOLD_OUT: 'SOLD_OUT',
+} as const;
+
+export type ScheduleBookingAvailability =
+    (typeof ScheduleBookingAvailability)[keyof typeof ScheduleBookingAvailability];
 
 /**
  * Schedule row for admin list.
@@ -27,6 +35,10 @@ export interface Schedule {
     priceChild: number | null;
     priceInfant: number | null;
     status: ScheduleStatus;
+    bookingAvailability: ScheduleBookingAvailability;
+    departureCode: string | null;
+    departurePlace: string | null;
+    bookingDeadline: string | null;
 }
 
 /**
@@ -55,4 +67,7 @@ export interface ScheduleFormValues {
     priceChild: number | null;
     priceInfant: number | null;
     status: string;
+    departureCode: string | null;
+    departurePlace: string | null;
+    bookingDeadline: string | null;
 }

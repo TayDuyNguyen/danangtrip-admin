@@ -1,0 +1,315 @@
+{
+    "title": "Location List",
+    "subtitle": "Manage all tourist locations in Da Nang",
+    "actions": {
+        "add": "Add Location",
+        "export": "Export Excel",
+        "filter": "Filter",
+        "reset": "Reset",
+        "activate": "Activate",
+        "deactivate": "Deactivate",
+        "delete": "Delete",
+        "selected": "{{count}} selected",
+        "confirm_delete": "Delete this location?",
+        "cancel": "Cancel"
+    },
+    "stats": {
+        "total": "TOTAL LOCATIONS",
+        "active": "ACTIVE",
+        "featured": "FEATURED",
+        "views": "VIEWS"
+    },
+    "filters": {
+        "placeholder": "Search by name, address...",
+        "category": "Category",
+        "district": "District",
+        "price_level": "Price Level",
+        "status": "Status"
+    },
+    "table": {
+        "headers": {
+            "name": "Location",
+            "district": "District",
+            "price": "Price",
+            "rating": "Rating",
+            "status": "Status",
+            "featured": "Featured",
+            "actions": "Actions"
+        },
+        "pagination": "Showing {{from}}–{{to}} of {{total}} locations",
+        "per_page": "{{count}} / page"
+    },
+    "status": {
+        "all": "ALL",
+        "active": "ACTIVE",
+        "inactive": "INACTIVE"
+    },
+    "priceLevels": {
+        "free": "Free",
+        "low": "$",
+        "medium": "$$",
+        "high": "$$$",
+        "unknown": "N/A"
+    },
+    "messages": {
+        "delete_confirm": "Location <strong>{{name}}</strong> will be permanently deleted.",
+        "delete_warning": "All reviews, favorites, and related data will also be deleted.",
+        "delete_success": "Location deleted successfully",
+        "delete_error": "Error deleting location",
+        "no_data": "No data available",
+        "load_error": "Unable to load location details.",
+        "update_success": "Updated successfully",
+        "update_error": "Update failed",
+        "bulk_update_success": "Bulk update successful",
+        "bulk_delete_success": "Selected locations deleted",
+        "bulk_partial_error": "Some items could not be updated",
+        "create_success": "Location created successfully",
+        "create_error": "Error creating location",
+        "upload_error": "Failed to upload image",
+        "create_error_title": "Creation Error",
+        "discard_confirm": "Are you sure you want to discard? Changes will not be saved.",
+        "no_data_subtitle": "Try adjusting filters or add a new category to get started."
+    },
+    "validation": {
+        "required": "{{field}} is required",
+        "min_length": "{{field}} must be at least {{min}} characters",
+        "max_length": "{{field}} must be at most {{max}} characters",
+        "number": "{{field}} must be a number",
+        "positive": "{{field}} must be a positive number",
+        "lowercase": "Only lowercase letters are allowed",
+        "slug_invalid": "Slug may only contain lowercase letters, numbers, and hyphens",
+        "color_invalid": "Color must be a valid hex value",
+        "url": "Invalid URL format",
+        "email": "Invalid email format",
+        "max_gte_min": "Max price must be greater than or equal to min price"
+    },
+    "form": {
+        "page_subtitle": "Fill in the information below to add a new tourist location to the system",
+        "sections": {
+            "basic": "Basic Information",
+            "contact": "Contact Information",
+            "pricing": "Pricing & Hours",
+            "media": "Media",
+            "map": "Map Location",
+            "settings": "Settings & Status"
+        },
+        "section_descriptions": {
+            "basic": "Name, category, and detailed description",
+            "contact": "Address, phone number, and other contact details",
+            "pricing": "Price range and daily operating hours",
+            "media": "Upload thumbnail and photo gallery",
+            "map": "Pin the exact coordinates on the map",
+            "settings": "Visibility and priority settings"
+        },
+        "basic": {
+            "name": "Location Name",
+            "name_placeholder": "e.g. Linh Ung Pagoda",
+            "slug": "Slug",
+            "slug_placeholder": "linh-ung-pagoda",
+            "slug_auto": "Auto-generate",
+            "slug_auto_helper": "Slug will follow the name automatically while creating a new item.",
+            "category": "Category",
+            "category_placeholder": "Select category",
+            "subcategory": "Subcategory",
+            "subcategory_placeholder": "Select subcategory",
+            "short_description": "Short Description",
+            "short_description_placeholder": "A brief summary of the location...",
+            "description": "Detailed Description",
+            "description_placeholder": "Detailed content (Markdown supported)...",
+            "description_helper": "Use Markdown for formatting (bold, italic, lists...)",
+            "short_desc_counter": "{{current}} / 300 characters"
+        },
+        "contact": {
+            "address": "Address",
+            "address_placeholder": "House number, street, ward...",
+            "district": "District",
+            "district_placeholder": "Select district",
+            "phone": "Phone Number",
+            "phone_placeholder": "e.g. 0236 3123 456",
+            "email": "Contact Email",
+            "email_placeholder": "e.g. contact@location.com",
+            "website": "Website",
+            "website_placeholder": "e.g. https://location.com"
+        },
+        "pricing": {
+            "price_min": "Min Price",
+            "price_max": "Max Price",
+            "price_level": "Price Level (1-4)",
+            "opening_hours": "Opening Hours",
+            "opening_hours_placeholder": "e.g. 07:30 - 21:00 daily",
+            "currency_suffix": "VND"
+        },
+        "media": {
+            "thumbnail": "Thumbnail",
+            "gallery": "Gallery",
+            "video_url": "Video URL (Youtube/Vimeo)",
+            "video_placeholder": "Paste video link here..."
+        },
+        "map": {
+            "latitude": "Latitude",
+            "longitude": "Longitude",
+            "helper": "Click on the map to select exact coordinates"
+        },
+        "settings": {
+            "status": "Visibility Status",
+            "is_featured": "Featured Location",
+            "featured_helper": "Featured locations will be prioritized on the home page",
+            "completion": "Completion Progress"
+        },
+        "actions": {
+            "create_location": "Save Location",
+            "update_location": "Update Location",
+            "creating": "Saving...",
+            "updating": "Updating...",
+            "cancel": "Cancel",
+            "save_changes": "Save changes",
+            "retry": "Retry"
+        },
+        "edit_subtitle": "Update the location category details and visibility state"
+    },
+    "edit_title": "Edit Location",
+    "edit_subtitle": "Update details for {{name}}",
+    "detail": {
+        "title": "Location Details",
+        "back_to_list": "Back to list",
+        "edit": "Edit",
+        "delete": "Delete location",
+        "tabs": {
+            "info": "Details",
+            "reviews": "Guest Reviews",
+            "map": "Location & Map"
+        },
+        "stats": {
+            "views": "Views",
+            "favorites": "Favorites",
+            "ratings": "Ratings",
+            "avg_score": "Average"
+        },
+        "hero": {
+            "no_images": "No images available"
+        },
+        "info": {
+            "description": "Description",
+            "short_desc": "Short description",
+            "amenities": "Amenities",
+            "contact": "Contact info",
+            "address": "Address",
+            "phone": "Phone",
+            "email": "Email",
+            "website": "Website",
+            "opening_hours": "Opening hours",
+            "price_range": "Price range",
+            "no_description": "No detailed description available yet.",
+            "price_estimate": "Estimated price",
+            "no_price": "Contact the operator for updated pricing.",
+            "no_amenities": "No amenities information available."
+        },
+        "map": {
+            "coordinates": "Coordinates",
+            "directions": "Open directions",
+            "no_coordinates": "This location does not have map coordinates yet."
+        },
+        "management": {
+            "title": "Management & Configuration",
+            "status": "Visibility status",
+            "featured": "Featured on homepage",
+            "featured_desc": "Push this location to priority spots",
+            "status_tip": "Status and featured changes are applied immediately after confirmation.",
+            "danger_zone": "Danger Zone",
+            "delete_desc": "Once deleted, you cannot undo this action."
+        },
+        "reviews": {
+            "empty": "No reviews yet for this location.",
+            "all_reviews": "All reviews",
+            "distribution": "Review distribution",
+            "total_count": "{{count}} reviews",
+            "approved": "Approved",
+            "pending": "Pending",
+            "rejected": "Rejected",
+            "no_comment": "This reviewer did not leave a written comment."
+        },
+        "days": {
+            "mon": "Monday",
+            "tue": "Tuesday",
+            "wed": "Wednesday",
+            "thu": "Thursday",
+            "fri": "Friday",
+            "sat": "Saturday",
+            "sun": "Sunday"
+        }
+    },
+    "categories": {
+        "breadcrumb_list": "Location Categories",
+        "add": "Add category",
+        "edit": "Edit category",
+        "badge_new": "New",
+        "title": "Location Categories",
+        "subtitle": "Manage place types (Dining, Accommodation, Sightseeing...)",
+        "search_placeholder": "Search by category name or slug...",
+        "actions": {
+            "add": "Add Category",
+            "edit": "Edit Category",
+            "delete": "Delete Category"
+        },
+        "stats": {
+            "total": "TOTAL CATEGORIES",
+            "active": "ACTIVE",
+            "inactive": "INACTIVE"
+        },
+        "reorder": {
+            "disabled_title": "Clear search and filters before reordering",
+            "button_sort": "Reorder",
+            "button_sorting": "Sorting",
+            "results_label": "TOTAL ITEMS",
+            "bar_title": "Reorder mode is active",
+            "bar_hint": "Drag cards to update display order",
+            "cancel": "Cancel",
+            "save": "Save order"
+        },
+        "icon_browser": {
+            "title": "Icon browser",
+            "search_placeholder": "Search icons...",
+            "more_prefix": "Need more icons?",
+            "more_link_label": "Browse Lucide Icons"
+        },
+        "table": {
+            "header_icon": "Icon",
+            "name": "Category Name",
+            "slug": "Slug",
+            "status": "Status",
+            "sort_order": "Order",
+            "actions": "Actions",
+            "items_count": "Places count"
+        },
+        "form": {
+            "name": "Category Name",
+            "name_placeholder": "e.g. Local cuisine",
+            "slug": "Slug / URL Path",
+            "slug_placeholder": "local-cuisine",
+            "description": "Description",
+            "description_placeholder": "Short description for this location category...",
+            "status": "Active Status",
+            "sort_order": "Sort Order",
+            "order": "Display order",
+            "order_placeholder_auto": "Automatic",
+            "order_drag_hint": "Change via drag and drop",
+            "image": "Thumbnail Image",
+            "image_placeholder": "https://... or leave blank",
+            "icon": "Icon (class or URL)",
+            "icon_placeholder": "e.g. MapPinned",
+            "icon_background": "Icon background"
+        },
+        "messages": {
+            "create_success": "Category created successfully",
+            "update_success": "Category updated successfully",
+            "delete_success": "Category deleted successfully",
+            "status_update_success": "Status updated successfully",
+            "load_error": "Unable to load location categories",
+            "load_error_subtitle": "Check the backend or retry to fetch the latest category list.",
+            "delete_error": "Failed to delete category",
+            "delete_blocked": "Cannot delete a category that still has subcategories or locations",
+            "delete_confirm_title": "Delete Category?",
+            "delete_confirm_desc": "Are you sure you want to delete category <strong>{{name}}</strong>? This action cannot be undone."
+        }
+    }
+}

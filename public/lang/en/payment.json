@@ -1,0 +1,98 @@
+{
+  "title": "Payment Transactions",
+  "subtitle": "Manage, search, and control customer payment transactions.",
+  "stats": {
+    "revenue": "Total Revenue",
+    "success_count": "Successful Payments",
+    "pending_count": "Pending Payments",
+    "refunded_amount": "Refunded Amount"
+  },
+  "filter": {
+    "search_placeholder": "Search transaction or booking code...",
+    "all_statuses": "All Statuses",
+    "all_gateways": "All Gateways",
+    "reset": "Reset",
+    "from": "From",
+    "to": "To",
+    "exporting": "Exporting...",
+    "export_excel": "Export Excel Report"
+  },
+  "status": {
+    "pending": "Pending",
+    "success": "Success",
+    "failed": "Failed",
+    "refunded": "Refunded"
+  },
+  "table": {
+    "transaction_code": "Transaction Code",
+    "booking_code": "Booking Code",
+    "customer": "Customer",
+    "amount": "Amount",
+    "gateway": "Gateway",
+    "status": "Status",
+    "date": "Date Time",
+    "actions": "Actions",
+    "empty_title": "No Transactions Found",
+    "empty_desc": "No payment transactions matched your current filters.",
+    "showing": "Showing page",
+    "records": "records",
+    "prev": "Prev",
+    "next": "Next"
+  },
+  "action": {
+    "refund": "Refund",
+    "refund_tooltip_staff": "Only administrators have permission to refund payments"
+  },
+  "refund": {
+    "dialog_title": "Confirm Refund",
+    "dialog_desc": "You are requesting a refund for this customer transaction. Please verify the details carefully.",
+    "warning_title": "IMPORTANT NOTE:",
+    "warning_desc": "This action is irreversible. The funds will be returned to the customer's e-wallet or bank account depending on the gateway used.",
+    "amount": "Refund Amount:",
+    "reason_label": "Refund Reason *",
+    "reason_placeholder": "Enter detailed refund reason (minimum 10 characters)...",
+    "btn_cancel": "Cancel",
+    "btn_confirm": "Confirm Refund",
+    "toast_success": "Refund request for transaction {{code}} has been successfully executed!",
+    "toast_error": "An error occurred while executing refund: {{message}}"
+  },
+  "validation": {
+    "reason_required": "Refund reason is required",
+    "reason_min": "Refund reason must be at least 10 characters",
+    "reason_max": "Refund reason cannot exceed 255 characters"
+  },
+  "export": {
+    "toast_success": "Transaction report exported successfully!",
+    "toast_error": "An error occurred while exporting transactions: {{message}}"
+  },
+  "detail": {
+    "breadcrumb_home": "Dashboard",
+    "breadcrumb_payments": "Payments",
+    "breadcrumb_detail": "Detail",
+    "title": "Payment Details",
+    "subtitle": "View payment transaction details and history",
+    "section_payment_info": "Payment Information",
+    "section_booking_customer": "Booking & Customer",
+    "section_timeline": "Status Timeline",
+    "label_transaction_code": "Transaction Code",
+    "label_booking_code": "Booking Code",
+    "label_amount": "Payment Amount",
+    "label_gateway": "Payment Gateway",
+    "label_status": "Status",
+    "label_created_at": "Created At",
+    "label_paid_at": "Paid At",
+    "label_refunded_at": "Refunded At",
+    "label_refund_reason": "Refund Reason",
+    "customer_title": "Customer Information",
+    "customer_name": "Customer Name",
+    "customer_email": "Email",
+    "tour_title": "Tour Information",
+    "tour_name": "Tour Name",
+    "timeline_created": "Payment request created",
+    "timeline_success": "Payment succeeded via {{gateway}}",
+    "timeline_failed": "Payment failed",
+    "timeline_refunded": "Refunded successfully: {{reason}}",
+    "back_to_list": "Back to list",
+    "not_found": "Payment transaction not found or does not exist."
+  }
+}

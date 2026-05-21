@@ -1,11 +1,18 @@
 {
+    "errors": {
+        "bulk_status_update_failed": "Bulk status update failed"
+    },
     "title": "Departure schedules",
     "subtitle": "Manage all departure schedules across tours",
     "breadcrumb": "Tours / Schedules",
     "status": {
-        "available": "Available",
+        "available": "Active",
         "full": "Full",
         "cancelled": "Cancelled"
+    },
+    "booking_availability": {
+        "open": "Open",
+        "sold_out": "Sold out"
     },
     "fields": {
         "capacity": "Capacity",
@@ -18,11 +25,19 @@
         "price_child": "Child price",
         "price_infant": "Infant price",
         "status": "Status",
-        "preview": "Preview"
+        "preview": "Preview",
+        "departure_code": "Departure code",
+        "departure_place": "Departure place",
+        "booking_deadline": "Booking deadline",
+        "operational_info": "Operational information"
     },
     "validation": {
         "start_date_future": "Start date must be today or in the future",
-        "end_date_after": "End date must be after or equal to start date"
+        "end_date_after": "End date must be after or equal to start date",
+        "total_slots_min_booked": "Maximum capacity cannot be less than booked slots ({{count}} seats)",
+        "booking_deadline_before": "Booking deadline must be before or equal to start date",
+        "past_event_title": "Past departure schedule",
+        "past_event_desc": "Warning: You are editing a schedule that has already occurred or is currently ongoing. Please proceed with caution to avoid affecting historical customer booking data."
     },
     "notices": {
         "price_override_help": "If you leave the price fields empty, the system will automatically use the default prices from the base tour for this schedule."
@@ -49,6 +64,7 @@
         "load_more": "Load more",
         "view_tour": "View tour",
         "edit_tour": "Edit tour",
+        "edit_schedule": "Update schedule",
         "bulk_activate": "Set available",
         "bulk_cancel": "Cancel schedules",
         "selected_count": "Selected {{count}}",
@@ -61,11 +77,14 @@
         "price": "Price",
         "capacity": "Booked / max",
         "status": "Status",
+        "booking_availability": "Seats",
         "actions": "Actions",
         "showing_summary": "Showing {{start}}–{{end}} of {{total}} schedules",
         "per_page": "Per page",
         "upcoming": "Soon",
-        "stt": "#"
+        "stt": "#",
+        "select_all": "Select all schedules on this page",
+        "select_row": "Select schedule: {{name}}"
     },
     "delete": {
         "title": "Delete this schedule?",
@@ -80,5 +99,12 @@
     "card": {
         "untitled_tour": "Untitled tour",
         "image_alt_fallback": "Tour image"
+    },
+    "calendar": {
+        "month_year": "Month {{month}}, {{year}}",
+        "available": "Available",
+        "full_or_cancelled": "Full/Cancelled",
+        "full_or_cancelled_title": "Full / Cancelled",
+        "weekdays": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
     }
 }

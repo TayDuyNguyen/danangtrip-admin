@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import type { Schedule } from '@/types/schedule';
@@ -10,7 +10,7 @@ interface CalendarViewProps {
     onSelectDate: (date: string | undefined) => void;
 }
 
-const CalendarView: React.FC<CalendarViewProps> = ({ schedules, selectedDate, onSelectDate }) => {
+const CalendarView = ({ schedules, selectedDate, onSelectDate }: CalendarViewProps) => {
     const { t } = useTranslation(['schedules', 'common']);
     const [currentMonth, setCurrentMonth] = useState(new Date());
 
@@ -79,7 +79,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({ schedules, selectedDate, on
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
             <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-2">
-                    <div className="p-2 bg-blue-50 text-blue-600 rounded-lg">
+                    <div className="p-2 bg-[#dff7f4] text-[#14b8a6] rounded-lg">
                         <CalendarIcon className="w-5 h-5" />
                     </div>
                     <h2 className="text-lg font-bold text-gray-800 capitalize">
@@ -131,15 +131,15 @@ const CalendarView: React.FC<CalendarViewProps> = ({ schedules, selectedDate, on
                             className={`
                                 relative h-24 rounded-xl border p-2 cursor-pointer transition-all duration-200 flex flex-col
                                 ${isSelected 
-                                    ? 'border-blue-500 bg-blue-50 ring-2 ring-blue-200' 
-                                    : 'border-gray-100 hover:border-blue-300 hover:bg-blue-50/50 bg-white'
+                                    ? 'border-[#14b8a6] bg-[#dff7f4] ring-2 ring-[#14b8a6]/25' 
+                                    : 'border-gray-100 hover:border-[#99f6e4] hover:bg-[#dff7f4]/50 bg-white'
                                 }
                             `}
                         >
                             <div className="flex justify-between items-start">
                                 <span className={`
                                     text-sm font-semibold flex items-center justify-center w-7 h-7 rounded-full
-                                    ${isCurrentDay ? 'bg-blue-600 text-white' : (isSelected ? 'text-blue-700' : 'text-gray-700')}
+                                    ${isCurrentDay ? 'bg-[#14b8a6] text-white' : (isSelected ? 'text-[#0f766e]' : 'text-gray-700')}
                                 `}>
                                     {day}
                                 </span>
@@ -149,7 +149,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({ schedules, selectedDate, on
                             {dayData && dayData.total > 0 && (
                                 <div className="mt-auto flex flex-col gap-1">
                                     {dayData.available > 0 && (
-                                        <div className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700 truncate">
+                                        <div className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-[#dff7f4] text-[#0f766e] truncate">
                                             {dayData.available} {t('schedules:status.available')}
                                         </div>
                                     )}

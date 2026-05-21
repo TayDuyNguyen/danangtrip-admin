@@ -1,0 +1,137 @@
+{
+    "page": {
+        "title": "Booking Management",
+        "subtitle": "Manage all customer tour bookings"
+    },
+    "breadcrumb": {
+        "group": "Bookings & Payments",
+        "current": "Booking List"
+    },
+    "stats": {
+        "total_label": "TOTAL BOOKINGS",
+        "pending_label": "PENDING CONFIRMATION",
+        "confirmed_label": "CONFIRMED",
+        "cancelled_label": "CANCELLED"
+    },
+    "filters": {
+        "search_placeholder": "Search by code, customer name, email...",
+        "status_label": "Booking Status",
+        "payment_label": "Payment Status",
+        "all_status": "All Statuses",
+        "all_payment": "All Payments",
+        "from_label": "From Date",
+        "to_label": "To Date",
+        "button_apply": "Filter",
+        "button_reset": "Reset",
+        "active_filtering": "ACTIVE FILTERS:"
+    },
+    "status": {
+        "pending": "Pending",
+        "confirmed": "Confirmed",
+        "completed": "Completed",
+        "cancelled": "Cancelled"
+    },
+    "payment_status": {
+        "pending": "Pending",
+        "paid": "Paid",
+        "success": "Success",
+        "failed": "Failed",
+        "refunded": "Refunded"
+    },
+    "labels": {
+        "total_amount": "TOTAL AMOUNT",
+        "booked_at": "Booked At",
+        "departure_date": "Departure Date",
+        "upcoming": "UPCOMING",
+        "reason": "REASON",
+        "no_category": "Uncategorized",
+        "customer": "Customer",
+        "email": "Email",
+        "tour_summary": "Tour Summary",
+        "category": "Category",
+        "payment_status": "Payment Status",
+        "booking_status": "Booking Status",
+        "schedule_window": "Schedule Window",
+        "booking_code": "Booking Code"
+    },
+    "actions": {
+        "confirm": "Confirm Booking",
+        "cancel": "Cancel Booking"
+    },
+    "dialog": {
+        "cancel_title": "Cancel this booking?",
+        "cancel_description": "Booking {{code}} for {{name}} will be cancelled.",
+        "reason_label": "Cancellation Reason",
+        "reason_placeholder": "Enter cancellation reason...",
+        "cancel_warning": "The customer will receive an automatic cancellation notification via email.",
+        "confirm_cancel": "Confirm Cancellation",
+        "detail_title": "Booking Details",
+        "detail_subtitle": "Review customer details, travel timing, payment state, and follow-up actions in one place."
+    },
+    "validation": {
+        "reason_required": "Cancellation reason is required.",
+        "reason_min_length": "Cancellation reason must be at least {{min}} characters.",
+        "reason_max_length": "Cancellation reason must be at most {{max}} characters."
+    },
+    "empty": {
+        "title": "No bookings found",
+        "subtitle": "Try changing the filters or date range"
+    },
+    "messages": {
+        "confirm_success": "Booking confirmed successfully",
+        "cancel_success": "Booking cancelled successfully",
+        "update_error": "An error occurred while updating the booking",
+        "export_success": "Excel file is downloading...",
+        "export_error": "An error occurred while exporting data"
+    },
+    "detail": {
+        "page_title": "Booking Details",
+        "page_subtitle": "Manage payment information, tour schedules, and booking status.",
+        "breadcrumb_current": "Booking Details",
+        "section_customer": "Customer Information",
+        "section_tour": "Booked Tour Details",
+        "section_payment": "Payment Info & Summary",
+        "section_timeline": "Status History",
+        "section_passengers": "Passenger Counts",
+        "operations_title": "Booking Operations",
+        "phone": "Phone Number",
+        "address": "Address",
+        "address_missing": "Not provided",
+        "note": "Customer Note",
+        "no_note": "No note provided.",
+        "duration": "Duration",
+        "duration_missing": "Unknown",
+        "departure_date": "Departure Date",
+        "departure_place": "Departure Place",
+        "departure_place_missing": "Unknown",
+        "travel_date": "Travel Date",
+        "schedule_code_label": "Schedule Code",
+        "schedule_code_missing": "Unavailable",
+        "adults": "Adults",
+        "children": "Children",
+        "infants": "Infants",
+        "subtotal": "Subtotal",
+        "total": "Total Amount",
+        "discount": "Discount",
+        "final_amount": "Final Amount",
+        "deposit": "Deposit",
+        "payment_method": "Payment Method",
+        "invoice_button": "Export Invoice (PDF)",
+        "back_button": "Back to List",
+        "retry_button": "Retry",
+        "error_description": "We could not find or load the booking detail information. Please try again later.",
+        "confirm_complete": "Complete Booking",
+        "dialog_complete_title": "Complete this booking?",
+        "dialog_complete_description": "Confirm that booking {{code}} has completed.",
+        "confirm_complete_success": "Booking completed successfully",
+        "terminal_completed_notice": "This booking has already been completed and archived.",
+        "terminal_cancelled_notice": "This booking has already been cancelled and closed.",
+        "timeline": {
+            "booked": "Booked",
+            "confirmed": "Confirmed",
+            "completed": "Completed",
+            "cancelled": "Cancelled"
+        },
+        "passengers_notice": "Note: Detailed passenger list is temporarily not supported by the API; passenger counts are displayed based on registered quantity in the booking."
+    }
+}

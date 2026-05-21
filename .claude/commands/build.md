@@ -1,0 +1,8 @@
+﻿---
+description: Implement the next approved slice using the local delivery pipeline.
+---
+
+Read AGENTS.md, .agent/rules/PROJECT_RULES.md, .agent/rules/REPO_FACTS.md, .agent/memory/WORKING_STATE.md, and .agent/memory/HANDOFF.md first.
+
+Use `05-ui-components`, `06-data-integration`, `07-interactions`, and `08-auth-permissions` as needed. Follow repo reality from `REPO_FACTS.md` before trusting any template assumption.
+Only work on the next approved slice. Keep artifacts and working memory current as the implementation moves.

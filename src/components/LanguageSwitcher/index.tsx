@@ -32,7 +32,7 @@ const LanguageSwitcher = () => {
             <button 
                 onClick={() => setIsOpen(!isOpen)}
                 onBlur={() => setTimeout(() => setIsOpen(false), 200)}
-                className={`flex items-center gap-2 px-3 py-1.5 rounded-xl transition-all duration-300 border border-slate-200/60 bg-slate-50/50 text-slate-700 hover:border-blue-500/30 hover:bg-blue-50/50 group`}
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-xl transition-all duration-300 border border-slate-200/60 bg-slate-50/50 text-slate-700 hover:border-[#14b8a6]/30 hover:bg-[#dff7f4]/60 group`}
             >
                 <img 
                     src={currentLanguage.flag} 
