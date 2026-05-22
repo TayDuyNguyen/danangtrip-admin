@@ -221,5 +221,20 @@
 - Completed `07-interactions` step for `admin-dashboard` feature. Defined atomic URLSearchParams syncing for dates, period, status, and paginated orders lists. Documented state transitions, manual query refresh hooks, and debounce behaviors. Created and saved Interaction Spec under `.agent/artifacts/interaction-specs/`.
 - Completed `08-auth-permissions` step for `admin-dashboard` feature. Verified that `/dashboard` is protected strictly by global `PrivateRoute` with absolute role gates restricting access to the `admin` role. Created and saved Auth & Permissions Review under `.agent/artifacts/auth/`.
 - Completed `09-testing` step for `admin-dashboard` feature. Certified that React 19 / TanStack Query v5 static compilation gates are clean. Verified `npm run lint`, `npm run typecheck`, `npm run build`, and `npm run prepush:check` all pass with **0 blocking errors**. Generated Test Report under `.agent/artifacts/test-cases/`.
-- Completed `10-optimization-deploy` step for `admin-dashboard` feature. Formulated multi-query caching policies, detailed Excel download stream mutations, evaluated bundle thresholds, and created comprehensive Deploy Report (`.agent/artifacts/deploy/`) and Feature Review (`.agent/artifacts/review/`) summaries.
 - Re-ran Step 10 validation for `admin-dashboard`. Verified `npm.cmd run prepush:check` passes with 0 blocking errors and documented non-blocking Vite warnings for `lottie-web` eval and large chunks. Updated deploy/review artifacts with branch `feat/DATN-79/admin-dashboard` and commit handoff recommendation.
+
+## 2026-05-22
+- Completed `01-screen-analysis` step for `admin_reports_ratings` feature. Created and saved screen analysis artifact.
+- Completed `02-project-setup` step for `admin_reports_ratings` feature.
+  - Audited React 19 + Vite + TypeScript dependencies, build scripts, tsconfig, env examples, axiosClient.ts and route definitions.
+  - Sửa lỗi import type `Page` từ `@playwright/test` trong file test `tests/admin-reports-bookings.spec.ts` để đáp ứng chế độ `verbatimModuleSyntax` khắt khe của TypeScript.
+  - Đã chạy thành công `npm run prepush:check` kiểm thử tĩnh (linting, typechecking và production build) đạt kết quả 100% vượt qua mà không gặp lỗi nào.
+  - Tạo và lưu tài liệu audit tại `.agent/artifacts/audits/2026-05-22__admin_reports_ratings__project-audit.md`.
+
+- Completed `04-layout-routing` step for `admin_reports_bookings` feature.
+  - Verified route `/admin/reports/bookings` registration under `PrivateRoute` with lazy splitting.
+  - Confirmed sidebar layout mapping and breadcrumb hierarchy.
+  - Validated i18n key structure in Vietnamese and English namespaces.
+  - Generated Route Plan artifacts in workspace and brain store.
+
+

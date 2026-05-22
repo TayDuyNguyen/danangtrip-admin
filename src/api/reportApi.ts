@@ -1,6 +1,6 @@
 import axiosClient from './axiosClient';
 import { API_ENDPOINTS } from '@/constants';
-import type { RawRatingsReport, RatingsReportFilters } from '@/dataHelper/report.dataHelper';
+import type { RawRatingsReport, RatingsReportFilters, RawBookingsReport, BookingsReportFilters } from '@/dataHelper/report.dataHelper';
 import type { ApiResponse } from '@/types';
 import type { AxiosResponse } from 'axios';
 
@@ -13,6 +13,22 @@ export const reportApi = {
             params,
             responseType: 'blob',
         }) as Promise<AxiosResponse<Blob>>,
+
+    getBookingsReport: (params: BookingsReportFilters): Promise<ApiResponse<RawBookingsReport>> =>
+        axiosClient.get(API_ENDPOINTS.REPORTS.BOOKINGS, { params }),
+
+    exportBookingsReport: (params: BookingsReportFilters): Promise<AxiosResponse<Blob>> => {
+        const { from, to, status, payment_status } = params;
+        return axiosClient.get(API_ENDPOINTS.EXPORT.BOOKINGS, {
+            params: {
+                date_from: from,
+                date_to: to,
+                status,
+                payment_status,
+            },
+            responseType: 'blob',
+        }) as Promise<AxiosResponse<Blob>>;
+    },
 
     approveRating: (id: string | number): Promise<ApiResponse<unknown>> =>
         axiosClient.patch(API_ENDPOINTS.RATINGS.APPROVE(id)),

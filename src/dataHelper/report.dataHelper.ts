@@ -159,3 +159,129 @@ export interface RatingsReportViewModel {
         };
     };
 }
+
+/**
+ * Filters for Báo cáo Đơn hàng (Bookings Report)
+ */
+export interface BookingsReportFilters {
+    from?: string;
+    to?: string;
+    status?: 'all' | 'pending' | 'confirmed' | 'completed' | 'cancelled';
+    payment_status?: 'all' | 'pending' | 'paid' | 'refunded';
+    page?: number;
+    per_page?: number;
+}
+
+/**
+ * Raw Booking Item from reports API
+ */
+export interface RawBookingsReportItem {
+    id: number;
+    booking_code: string;
+    customer_name: string;
+    tour_name: string;
+    total_amount: number | string;
+    booking_status: 'pending' | 'confirmed' | 'completed' | 'cancelled';
+    payment_status: 'pending' | 'paid' | 'refunded';
+    booked_at: string;
+}
+
+/**
+ * Raw summary metrics & charts data for Bookings
+ */
+export interface RawBookingsReportSummary {
+    total_count: number;
+    completed_count: number;
+    cancelled_count: number;
+    total_revenue: number | string;
+    trends?: {
+        total?: number;
+        completed?: number;
+        cancelled?: number;
+        revenue?: number;
+    };
+    status_distribution?: Record<string, number>;
+    trend_chart?: {
+        date: string; // "YYYY-MM-DD"
+        bookings: number;
+        revenue: number | string;
+    }[];
+}
+
+/**
+ * Combined raw response for Bookings Report
+ */
+export interface RawBookingsReport {
+    summary: RawBookingsReportSummary;
+    bookings_list: {
+        data: RawBookingsReportItem[];
+        current_page: number;
+        last_page: number;
+        per_page: number;
+        total: number;
+    };
+}
+
+/**
+ * UI View Model for individual booking report item
+ */
+export interface BookingsReportItemViewModel {
+    id: number;
+    bookingCode: string;
+    customerName: string;
+    tourName: string;
+    totalAmount: number;
+    status: 'pending' | 'confirmed' | 'completed' | 'cancelled';
+    paymentStatus: 'pending' | 'paid' | 'refunded';
+    bookedAt: string; // DD/MM/YYYY
+    bookedAtTime: string; // HH:mm
+}
+
+/**
+ * UI View Model for booking trend data point
+ */
+export interface BookingTrendChartDataPoint {
+    label: string; // DD/MM
+    bookings: number;
+    revenue: number;
+}
+
+/**
+ * UI View Model for booking status distribution
+ */
+export interface BookingStatusDistributionPoint {
+    status: 'pending' | 'confirmed' | 'completed' | 'cancelled';
+    labelKey: string;
+    count: number;
+    percentage: number;
+    color: string;
+}
+
+/**
+ * Complete UI View Model for Bookings Report
+ */
+export interface BookingsReportViewModel {
+    stats: {
+        total: number;
+        totalTrend: number;
+        completed: number;
+        completedTrend: number;
+        cancelled: number;
+        cancelledTrend: number;
+        revenue: number;
+        revenueTrend: number;
+    };
+    charts: {
+        trend: BookingTrendChartDataPoint[];
+        statuses: BookingStatusDistributionPoint[];
+    };
+    table: {
+        items: BookingsReportItemViewModel[];
+        pagination: {
+            currentPage: number;
+            lastPage: number;
+            perPage: number;
+            total: number;
+        };
+    };
+}

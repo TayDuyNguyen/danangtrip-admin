@@ -7,6 +7,12 @@ import type {
     StarDistributionPoint,
     StatusDistributionPoint,
     TypeDistributionPoint,
+    RawBookingsReport,
+    RawBookingsReportItem,
+    BookingsReportViewModel,
+    BookingsReportItemViewModel,
+    BookingTrendChartDataPoint,
+    BookingStatusDistributionPoint,
 } from './report.dataHelper';
 import { toNumberSafe } from '@/utils/safeConverters';
 
@@ -221,3 +227,117 @@ export const mapRatingsReport = (raw: RawRatingsReport | undefined | null): Rati
         },
     };
 };
+
+/**
+ * Maps single raw booking item to ViewModel
+ */
+export const mapReportBookingItem = (raw: RawBookingsReportItem): BookingsReportItemViewModel => {
+    return {
+        id: raw.id,
+        bookingCode: raw.booking_code || '',
+        customerName: raw.customer_name || 'Guest',
+        tourName: raw.tour_name || '',
+        totalAmount: toNumberSafe(raw.total_amount, 0),
+        status: raw.booking_status || 'pending',
+        paymentStatus: raw.payment_status || 'pending',
+        bookedAt: formatDate(raw.booked_at),
+        bookedAtTime: formatTime(raw.booked_at),
+    };
+};
+
+/**
+ * Main mapper transforming raw bookings API response into BookingsReportViewModel
+ */
+export const mapBookingsReport = (raw: RawBookingsReport | undefined | null): BookingsReportViewModel => {
+    if (!raw) {
+        return {
+            stats: {
+                total: 0,
+                totalTrend: 0,
+                completed: 0,
+                completedTrend: 0,
+                cancelled: 0,
+                cancelledTrend: 0,
+                revenue: 0,
+                revenueTrend: 0,
+            },
+            charts: {
+                trend: [],
+                statuses: [
+                    { status: 'pending', labelKey: 'booking.status.pending', count: 0, percentage: 0, color: '#F59E0B' },
+                    { status: 'confirmed', labelKey: 'booking.status.confirmed', count: 0, percentage: 0, color: '#3B82F6' },
+                    { status: 'completed', labelKey: 'booking.status.completed', count: 0, percentage: 0, color: '#10B981' },
+                    { status: 'cancelled', labelKey: 'booking.status.cancelled', count: 0, percentage: 0, color: '#EF4444' },
+                ],
+            },
+            table: {
+                items: [],
+                pagination: {
+                    currentPage: 1,
+                    lastPage: 1,
+                    perPage: 10,
+                    total: 0,
+                },
+            },
+        };
+    }
+
+    const summary = raw.summary;
+    const statsTotal = summary.total_count || 0;
+    const statsCompleted = summary.completed_count || 0;
+    const statsCancelled = summary.cancelled_count || 0;
+    const statsRevenue = toNumberSafe(summary.total_revenue, 0);
+
+    const stats = {
+        total: statsTotal,
+        totalTrend: summary.trends?.total || 0,
+        completed: statsCompleted,
+        completedTrend: summary.trends?.completed || 0,
+        cancelled: statsCancelled,
+        cancelledTrend: summary.trends?.cancelled || 0,
+        revenue: statsRevenue,
+        revenueTrend: summary.trends?.revenue || 0,
+    };
+
+    // Trend chart mapping
+    const trend: BookingTrendChartDataPoint[] = (summary.trend_chart || []).map(point => ({
+        label: formatDateLabel(point.date),
+        bookings: point.bookings || 0,
+        revenue: toNumberSafe(point.revenue, 0),
+    }));
+
+    // Status distribution donut chart mapping
+    const statusDist = summary.status_distribution || {};
+    const totalStatusCount = Object.values(statusDist).reduce((sum, count) => sum + count, 0);
+    const statuses: BookingStatusDistributionPoint[] = [
+        { status: 'pending' as const, labelKey: 'booking.status.pending', count: statusDist.pending || 0, percentage: 0, color: '#F59E0B' },
+        { status: 'confirmed' as const, labelKey: 'booking.status.confirmed', count: statusDist.confirmed || 0, percentage: 0, color: '#3B82F6' },
+        { status: 'completed' as const, labelKey: 'booking.status.completed', count: statusDist.completed || 0, percentage: 0, color: '#10B981' },
+        { status: 'cancelled' as const, labelKey: 'booking.status.cancelled', count: statusDist.cancelled || 0, percentage: 0, color: '#EF4444' },
+    ].map(item => ({
+        ...item,
+        percentage: totalStatusCount > 0 ? Math.round((item.count / totalStatusCount) * 100) : 0,
+    }));
+
+    // Table mapping
+    const bookingsList = raw.bookings_list || { data: [], current_page: 1, last_page: 1, per_page: 10, total: 0 };
+    const items = (bookingsList.data || []).map(mapReportBookingItem);
+
+    return {
+        stats,
+        charts: {
+            trend,
+            statuses,
+        },
+        table: {
+            items,
+            pagination: {
+                currentPage: bookingsList.current_page || 1,
+                lastPage: bookingsList.last_page || 1,
+                perPage: bookingsList.per_page || 10,
+                total: bookingsList.total || 0,
+            },
+        },
+    };
+};
+

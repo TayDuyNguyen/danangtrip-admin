@@ -1,24 +1,24 @@
 import React from 'react';
-import { MessageSquare, Clock, CheckCircle2, Star, TrendingUp, TrendingDown } from 'lucide-react';
+import { ShoppingBag, CheckCircle, XCircle, DollarSign, TrendingUp, TrendingDown } from 'lucide-react';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useTranslation } from 'react-i18next';
 
-interface RatingStatsCardsProps {
+interface BookingStatsCardsProps {
     stats?: {
         total: number;
         totalTrend: number;
-        pending: number;
-        pendingTrend: number;
-        approved: number;
-        approvedTrend: number;
-        average: number;
-        averageTrend: number;
+        completed: number;
+        completedTrend: number;
+        cancelled: number;
+        cancelledTrend: number;
+        revenue: number;
+        revenueTrend: number;
     };
     isLoading?: boolean;
 }
 
-const RatingStatsCards: React.FC<RatingStatsCardsProps> = ({ stats, isLoading = false }) => {
-    const { t } = useTranslation(['ratings', 'common']);
+const BookingStatsCards: React.FC<BookingStatsCardsProps> = ({ stats, isLoading = false }) => {
+    const { t } = useTranslation('bookings_report');
 
     const renderTrendBadge = (trend: number) => {
         const isPositive = trend > 0;
@@ -66,12 +66,12 @@ const RatingStatsCards: React.FC<RatingStatsCardsProps> = ({ stats, isLoading = 
 
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-            {/* Total Ratings */}
+            {/* Total Bookings */}
             <div className="bg-white/80 backdrop-blur-md border border-slate-100 rounded-2xl p-6 shadow-xs hover:shadow-md transition-all duration-300 relative overflow-hidden group">
                 <div className="absolute top-0 left-0 w-1 bg-[#14b8a6]"></div>
                 <div className="flex justify-between items-start mb-4">
                     <div className="w-10 h-10 rounded-xl bg-teal-50 flex items-center justify-center text-[#14b8a6] group-hover:scale-110 transition-transform">
-                        <MessageSquare size={20} />
+                        <ShoppingBag size={20} />
                     </div>
                     {renderTrendBadge(stats.totalTrend)}
                 </div>
@@ -79,63 +79,63 @@ const RatingStatsCards: React.FC<RatingStatsCardsProps> = ({ stats, isLoading = 
                     {stats.total.toLocaleString()}
                 </h3>
                 <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-                    {t('stats.total_ratings')}
+                    {t('stats.total')}
                 </p>
             </div>
 
-            {/* Pending Reviews */}
-            <div className="bg-white/80 backdrop-blur-md border border-slate-100 rounded-2xl p-6 shadow-xs hover:shadow-md transition-all duration-300 relative overflow-hidden group">
-                <div className="absolute top-0 left-0 w-1 bg-amber-500"></div>
-                <div className="flex justify-between items-start mb-4">
-                    <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center text-amber-500 group-hover:scale-110 transition-transform">
-                        <Clock size={20} />
-                    </div>
-                    {renderTrendBadge(stats.pendingTrend)}
-                </div>
-                <h3 className="text-2xl font-black text-amber-600 leading-tight mb-1 select-all">
-                    {stats.pending.toLocaleString()}
-                </h3>
-                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-                    {t('filter.status_pending')}
-                </p>
-            </div>
-
-            {/* Approved Reviews */}
+            {/* Completed Bookings */}
             <div className="bg-white/80 backdrop-blur-md border border-slate-100 rounded-2xl p-6 shadow-xs hover:shadow-md transition-all duration-300 relative overflow-hidden group">
                 <div className="absolute top-0 left-0 w-1 bg-emerald-500"></div>
                 <div className="flex justify-between items-start mb-4">
                     <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-500 group-hover:scale-110 transition-transform">
-                        <CheckCircle2 size={20} />
+                        <CheckCircle size={20} />
                     </div>
-                    {renderTrendBadge(stats.approvedTrend)}
+                    {renderTrendBadge(stats.completedTrend)}
                 </div>
                 <h3 className="text-2xl font-black text-emerald-600 leading-tight mb-1 select-all">
-                    {stats.approved.toLocaleString()}
+                    {stats.completed.toLocaleString()}
                 </h3>
                 <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-                    {t('filter.status_approved')}
+                    {t('stats.completed')}
                 </p>
             </div>
 
-            {/* Average Rating Score */}
+            {/* Cancelled Bookings */}
             <div className="bg-white/80 backdrop-blur-md border border-slate-100 rounded-2xl p-6 shadow-xs hover:shadow-md transition-all duration-300 relative overflow-hidden group">
-                <div className="absolute top-0 left-0 w-1 bg-amber-400"></div>
+                <div className="absolute top-0 left-0 w-1 bg-rose-500"></div>
                 <div className="flex justify-between items-start mb-4">
-                    <div className="w-10 h-10 rounded-xl bg-yellow-50 flex items-center justify-center text-yellow-500 group-hover:scale-110 transition-transform">
-                        <Star size={20} className="fill-yellow-500/20" />
+                    <div className="w-10 h-10 rounded-xl bg-rose-50 flex items-center justify-center text-rose-500 group-hover:scale-110 transition-transform">
+                        <XCircle size={20} />
                     </div>
-                    {renderTrendBadge(stats.averageTrend)}
+                    {renderTrendBadge(stats.cancelledTrend)}
                 </div>
-                <h3 className="text-2xl font-black text-slate-800 leading-tight mb-1 select-all flex items-baseline gap-1">
-                    {stats.average.toFixed(1)}
-                    <span className="text-sm font-black text-amber-500">★</span>
+                <h3 className="text-2xl font-black text-rose-600 leading-tight mb-1 select-all">
+                    {stats.cancelled.toLocaleString()}
                 </h3>
                 <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-                    {t('stats.average_score')}
+                    {t('stats.cancelled')}
+                </p>
+            </div>
+
+            {/* Revenue */}
+            <div className="bg-white/80 backdrop-blur-md border border-slate-100 rounded-2xl p-6 shadow-xs hover:shadow-md transition-all duration-300 relative overflow-hidden group">
+                <div className="absolute top-0 left-0 w-1 bg-amber-500"></div>
+                <div className="flex justify-between items-start mb-4">
+                    <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center text-amber-500 group-hover:scale-110 transition-transform">
+                        <DollarSign size={20} />
+                    </div>
+                    {renderTrendBadge(stats.revenueTrend)}
+                </div>
+                <h3 className="text-2xl font-black text-slate-800 leading-tight mb-1 select-all truncate">
+                    {stats.revenue.toLocaleString()} <span className="text-sm font-bold text-slate-400">đ</span>
+                </h3>
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+                    {t('stats.revenue')}
                 </p>
             </div>
         </div>
     );
 };
 
-export default RatingStatsCards;
+export default BookingStatsCards;
+

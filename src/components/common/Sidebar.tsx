@@ -49,6 +49,7 @@ const navItems = [
         icon: FileText, label: 'sidebar.reports', path: '/admin/reports',
         subItems: [
             { label: 'sidebar.reports_ratings', path: ROUTES.REPORTS_RATINGS },
+            { label: 'sidebar.reports_bookings', path: ROUTES.REPORTS_BOOKINGS },
         ]
     },
     { icon: FileText, label: 'sidebar.posts', path: '/admin/posts' },

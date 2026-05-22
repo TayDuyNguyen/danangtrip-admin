@@ -1,0 +1,94 @@
+{
+    "title": "Báo cáo Đánh giá",
+    "subtitle": "Thống kê, phân tích và kiểm duyệt phản hồi khách hàng",
+    "toast": {
+        "exporting_excel": "Đang chuẩn bị và xuất file Excel...",
+        "export_success": "Xuất báo cáo Excel thành công!",
+        "export_failed": "Xuất file Excel thất bại. Vui lòng thử lại.",
+        "exporting_mock": "Đang chuẩn bị file Excel giả lập...",
+        "export_mock_success": "Xuất báo cáo Excel giả lập thành công!"
+    },
+    "error": {
+        "load_failed": "Không thể tải dữ liệu báo cáo",
+        "laravel_connection": "Đã xảy ra sự cố kết nối với hệ thống API của Laravel.",
+        "api_failed": "Không thể tải dữ liệu từ API"
+    },
+    "filter": {
+        "validation": {
+            "date_range": "Ngày bắt đầu không thể lớn hơn ngày kết thúc."
+        },
+        "toast": {
+            "reset_success": "Đã lập lại bộ lọc về mặc định."
+        },
+        "from_date": "Từ ngày",
+        "to_date": "Đến ngày",
+        "moderation_status": "Trạng thái duyệt",
+        "status_all": "Tất cả trạng thái",
+        "status_pending": "Chờ duyệt",
+        "status_approved": "Đã duyệt",
+        "status_rejected": "Từ chối",
+        "category": "Phân loại",
+        "type_all": "Tất cả loại hình",
+        "type_location": "Địa điểm",
+        "type_tour": "Tour du lịch",
+        "quick_filters": "Bộ lọc nhanh",
+        "range_7days": "7 ngày",
+        "range_30days": "30 ngày",
+        "range_3months": "3 tháng",
+        "range_thisyear": "Năm nay"
+    },
+    "stats": {
+        "total_ratings": "Tổng đánh giá",
+        "average_score": "Điểm trung bình",
+        "ratings": "Đánh giá"
+    },
+    "charts": {
+        "trend_title": "Xu hướng đánh giá",
+        "trend_subtitle": "Theo ngày/Tuần/Tháng",
+        "no_trend_data": "Không có dữ liệu xu hướng trong khoảng thời gian này",
+        "stars_distribution": "Phân bố số sao",
+        "stars_subtitle": "Tần suất và tỷ lệ phần trăm",
+        "status_subtitle": "Tỷ lệ phê duyệt và chờ duyệt",
+        "type_title": "Theo loại hình dịch vụ",
+        "type_subtitle": "Số lượng và điểm trung bình",
+        "count_label": "Số lượng",
+        "avg_label": "Điểm trung bình (★)"
+    },
+    "table": {
+        "details_title": "Chi tiết đánh giá",
+        "details_subtitle": "Danh sách kiểm duyệt và quản lý phản hồi",
+        "total_ratings_count": "{{total}} đánh giá",
+        "header_user": "Người dùng",
+        "header_target": "Địa điểm / Tour",
+        "header_feedback": "Nội dung phản hồi",
+        "header_status": "Trạng thái",
+        "header_date": "Ngày tạo",
+        "header_actions": "Thao tác",
+        "no_comment": "Không có bình luận",
+        "attachment_alt": "ảnh đính kèm",
+        "tooltip_view": "Xem toàn bộ nhận xét",
+        "tooltip_approve": "Phê duyệt đánh giá",
+        "tooltip_reject": "Từ chối đánh giá",
+        "tooltip_delete": "Xóa vĩnh viễn",
+        "confirm_delete": "Bạn có chắc muốn xóa đánh giá này vĩnh viễn? Hành động này không thể hoàn tác.",
+        "pagination_showing": "Hiển thị {{from}}–{{to}} trong tổng số {{total}} đánh giá"
+    },
+    "modal": {
+        "title": "Chi tiết nhận xét",
+        "user_label": "Từ người dùng: {{name}}",
+        "target_label": "Đánh giá cho",
+        "stars_label": "Số sao",
+        "comment_label": "Nội dung nhận xét:",
+        "no_comment": "Không có nhận xét",
+        "images_label": "Hình ảnh đính kèm ({{count}})"
+    },
+    "mock": {
+        "toggle_title": "Nhấp để bật/tắt chế độ giả lập dữ liệu",
+        "mock_on": "Dữ liệu Giả lập (On)",
+        "mock_off": "Dữ liệu Thật (Off)",
+        "toast_to_mock": "Không kết nối được API Laravel. Đã tự động kích hoạt chế độ Giả lập (Mock Data).",
+        "toast_switched_mock": "Đã chuyển sang chế độ Giả lập (Mock Data)",
+        "toast_switched_real": "Đã chuyển sang chế độ Dữ liệu thật (API Laravel)",
+        "use_mock_btn": "Sử dụng Mock Data"
+    }
+}
