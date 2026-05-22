@@ -4,7 +4,7 @@ import * as path from 'path';
 
 test.describe('Admin Locations Report E2E & Visual QA Spec', () => {
     const screenshotsDir = path.join('D:', 'DATN', 'danangtrip-admin', 'test-results', 'screenshots');
-    const artifactScreenshotsDir = path.join('C:', 'Users', 'TUF', '.gemini', 'antigravity', 'brain', '7ce866cf-eff0-4251-917d-20ac28948bce', 'test-results-images');
+    const artifactScreenshotsDir = path.join('C:', 'Users', 'NGUYEN DUY TAY', '.gemini', 'antigravity', 'brain', '97dda9e8-6a70-4d20-868d-8b6966b14590', 'test-results-images');
 
     test.beforeAll(() => {
         if (!fs.existsSync(screenshotsDir)) {
