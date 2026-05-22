@@ -19,4 +19,5 @@ export const ROUTES = {
     PAYMENTS_DETAIL: '/admin/payments/:id',
     REPORTS_RATINGS: '/admin/reports/ratings',
     REPORTS_BOOKINGS: '/admin/reports/bookings',
+    REPORTS_REVENUE: '/admin/reports/revenue',
 } as const;

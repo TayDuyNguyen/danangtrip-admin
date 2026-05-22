@@ -1,0 +1,89 @@
+{
+    "title": "Báo cáo Doanh thu",
+    "subtitle": "Thống kê chi tiết doanh thu từ dòng tiền, cơ cấu cổng thanh toán và xếp hạng tour",
+    "breadcrumb": {
+        "home": "Trang chủ",
+        "reports": "Báo cáo",
+        "current": "Báo cáo Doanh thu"
+    },
+    "mock": {
+        "toggle_title": "Nhấp để bật/tắt chế độ giả lập dữ liệu",
+        "mock_on": "Dữ liệu Giả lập (On)",
+        "mock_off": "Dữ liệu Thật (Off)",
+        "toast_to_mock": "Không kết nối được API Laravel. Đã tự động kích hoạt chế độ Giả lập (Mock Data).",
+        "toast_switched_mock": "Đã chuyển sang chế độ Giả lập (Mock Data)",
+        "toast_switched_real": "Đã chuyển sang chế độ Dữ liệu thật (API Laravel)"
+    },
+    "export": {
+        "btn_label": "Xuất Excel",
+        "toast_loading": "Đang chuẩn bị và xuất file Excel từ API...",
+        "toast_success": "Xuất báo cáo Excel thành công!",
+        "toast_error": "Xuất file Excel thất bại. Vui lòng thử lại.",
+        "toast_mock_loading": "Đang chuẩn bị file Excel giả lập...",
+        "toast_mock_success": "Xuất báo cáo Excel giả lập thành công!"
+    },
+    "error": {
+        "load_failed": "Không thể tải dữ liệu từ API",
+        "connection": "Đã xảy ra sự cố kết nối với hệ thống API của Laravel.",
+        "retry_btn": "Thử lại",
+        "use_mock_btn": "Sử dụng Mock Data"
+    },
+    "filter": {
+        "from_date": "Từ ngày",
+        "to_date": "Đến ngày",
+        "payment_gateway": "Cổng thanh toán",
+        "gateway_all": "Tất cả cổng",
+        "quick_filters": "Lọc nhanh:",
+        "range_7days": "7 ngày",
+        "range_30days": "30 ngày",
+        "range_3months": "3 tháng",
+        "range_thisyear": "Năm nay",
+        "btn_reset": "Mặc định",
+        "btn_apply": "Áp dụng",
+        "validation": {
+            "date_range": "Ngày bắt đầu không thể lớn hơn ngày kết thúc."
+        },
+        "toast_reset": "Đã lập lại bộ lọc về mặc định."
+    },
+    "stats": {
+        "total_revenue": "Tổng doanh thu",
+        "daily_average": "TB / Ngày",
+        "total_transactions": "Tổng giao dịch",
+        "total_refunded": "Đã hoàn tiền"
+    },
+    "charts": {
+        "trend_title": "Xu hướng doanh thu",
+        "trend_subtitle": "Phát sinh dòng tiền & số lượng thanh toán",
+        "top_tours_title": "Top 5 Tour doanh thu cao",
+        "top_tours_subtitle": "Các sản phẩm tour dẫn đầu doanh số",
+        "gateway_bar_title": "Doanh thu theo cổng",
+        "gateway_bar_subtitle": "Chi tiết giá trị giao dịch mỗi kênh",
+        "gateway_donut_title": "Cơ cấu cổng thanh toán",
+        "gateway_donut_subtitle": "Tỷ trọng doanh số theo cổng",
+        "no_data": "Không có dữ liệu biểu đồ trong khoảng thời gian này",
+        "revenue_label": "Doanh thu (đ)",
+        "transactions_label": "Giao dịch"
+    },
+    "table": {
+        "title": "Chi tiết giao dịch",
+        "subtitle": "Danh sách giao dịch thanh toán trong kỳ báo cáo",
+        "total_count": "{{total}} giao dịch",
+        "header_tx_code": "Mã giao dịch",
+        "header_booking_code": "Mã đơn hàng",
+        "header_customer": "Khách hàng",
+        "header_tour": "Tour du lịch",
+        "header_amount": "Số tiền",
+        "header_gateway": "Cổng thanh toán",
+        "header_date": "Thời gian",
+        "header_status": "Trạng thái",
+        "status_paid": "Thành công",
+        "status_refunded": "Hoàn tiền",
+        "status_pending": "Đang xử lý",
+        "status_failed": "Thất bại",
+        "no_data_title": "Không có dữ liệu giao dịch",
+        "no_data_desc": "Không tìm thấy giao dịch nào khớp với bộ lọc hoặc điều kiện của bạn.",
+        "pagination_showing": "Hiển thị {{from}}–{{to}} trong tổng số {{total}} giao dịch",
+        "btn_prev": "Trước",
+        "btn_next": "Sau"
+    }
+}

@@ -1,0 +1,89 @@
+{
+    "title": "Revenue Report",
+    "subtitle": "Detailed statistics on cash flow, payment gateways, and tour ranking",
+    "breadcrumb": {
+        "home": "Home",
+        "reports": "Reports",
+        "current": "Revenue Report"
+    },
+    "mock": {
+        "toggle_title": "Click to toggle mock data mode",
+        "mock_on": "Mock Data (On)",
+        "mock_off": "Real Data (Off)",
+        "toast_to_mock": "Could not connect to Laravel API. Automatically fallback to Mock Data.",
+        "toast_switched_mock": "Switched to Mock Data mode",
+        "toast_switched_real": "Switched to Real Laravel API mode"
+    },
+    "export": {
+        "btn_label": "Export Excel",
+        "toast_loading": "Preparing and exporting Excel file from API...",
+        "toast_success": "Excel report exported successfully!",
+        "toast_error": "Failed to export Excel file. Please try again.",
+        "toast_mock_loading": "Preparing mock Excel file...",
+        "toast_mock_success": "Mock Excel report exported successfully!"
+    },
+    "error": {
+        "load_failed": "Failed to load data from API",
+        "connection": "A connection error occurred with the Laravel API system.",
+        "retry_btn": "Retry",
+        "use_mock_btn": "Use Mock Data"
+    },
+    "filter": {
+        "from_date": "From Date",
+        "to_date": "To Date",
+        "payment_gateway": "Payment Gateway",
+        "gateway_all": "All Gateways",
+        "quick_filters": "Quick Filter:",
+        "range_7days": "7 Days",
+        "range_30days": "30 Days",
+        "range_3months": "3 Months",
+        "range_thisyear": "This Year",
+        "btn_reset": "Reset",
+        "btn_apply": "Apply",
+        "validation": {
+            "date_range": "Start date cannot be after end date."
+        },
+        "toast_reset": "Filters reset to defaults."
+    },
+    "stats": {
+        "total_revenue": "Total Revenue",
+        "daily_average": "Daily Average",
+        "total_transactions": "Total Transactions",
+        "total_refunded": "Total Refunded"
+    },
+    "charts": {
+        "trend_title": "Revenue Trend",
+        "trend_subtitle": "Cash flow volume and payment count trends",
+        "top_tours_title": "Top 5 High-Revenue Tours",
+        "top_tours_subtitle": "Leading tour packages by sales volume",
+        "gateway_bar_title": "Revenue by Gateway",
+        "gateway_bar_subtitle": "Detailed transaction values per channel",
+        "gateway_donut_title": "Gateway Share Breakdown",
+        "gateway_donut_subtitle": "Sales percentage contribution by gateway",
+        "no_data": "No chart data in this period",
+        "revenue_label": "Revenue (VND)",
+        "transactions_label": "Transactions"
+    },
+    "table": {
+        "title": "Transaction Details",
+        "subtitle": "List of payment transactions in report period",
+        "total_count": "{{total}} transactions",
+        "header_tx_code": "Tx Code",
+        "header_booking_code": "Booking Code",
+        "header_customer": "Customer",
+        "header_tour": "Tour Package",
+        "header_amount": "Amount",
+        "header_gateway": "Gateway",
+        "header_date": "Paid Date",
+        "header_status": "Status",
+        "status_paid": "Success",
+        "status_refunded": "Refunded",
+        "status_pending": "Pending",
+        "status_failed": "Failed",
+        "no_data_title": "No transactions found",
+        "no_data_desc": "No transactions match your search filters or selected criteria.",
+        "pagination_showing": "Showing {{from}}–{{to}} of {{total}} transactions",
+        "btn_prev": "Prev",
+        "btn_next": "Next"
+    }
+}

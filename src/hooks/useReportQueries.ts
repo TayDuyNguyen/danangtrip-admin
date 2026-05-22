@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { reportApi } from '@/api/reportApi';
-import { mapRatingsReport, mapBookingsReport } from '@/dataHelper/report.mapper';
-import type { RatingsReportFilters, BookingsReportFilters } from '@/dataHelper/report.dataHelper';
+import { mapRatingsReport, mapBookingsReport, mapRevenueReport } from '@/dataHelper/report.mapper';
+import type { RatingsReportFilters, BookingsReportFilters, RevenueReportFilters } from '@/dataHelper/report.dataHelper';
 import { prepareSpreadsheetDownload, downloadBlobFile } from '@/utils';
 import { toast } from 'sonner';
 
@@ -9,6 +9,7 @@ export const reportKeys = {
     all: ['reports'] as const,
     ratingsReport: (params: RatingsReportFilters) => [...reportKeys.all, 'ratings', params] as const,
     bookingsReport: (params: BookingsReportFilters) => [...reportKeys.all, 'bookings', params] as const,
+    revenueReport: (params: RevenueReportFilters) => [...reportKeys.all, 'revenue', params] as const,
 };
 
 /**
@@ -40,6 +41,34 @@ export const useBookingsReportQuery = (params: BookingsReportFilters) => {
 };
 
 /**
+ * Query hook to fetch processed Revenue Report ViewModel.
+ * Fetches trend, details, and payments list in parallel.
+ */
+export const useRevenueReportQuery = (params: RevenueReportFilters) => {
+    const from = params.from || '';
+    const to = params.to || '';
+    
+    return useQuery({
+        queryKey: reportKeys.revenueReport(params),
+        queryFn: async () => {
+            const [trendRes, detailRes, paymentsRes] = await Promise.all([
+                reportApi.getRevenueTrend({ period: 'day', from, to }),
+                reportApi.getRevenueDetail({ from, to }),
+                reportApi.getPaymentsList(params),
+            ]);
+
+            return mapRevenueReport(
+                trendRes.data,
+                detailRes.data,
+                paymentsRes.data,
+                { from, to }
+            );
+        },
+        staleTime: 1000 * 30, // 30 seconds
+    });
+};
+
+/**
  * Mutation and action hooks for Reports & Ratings Moderation
  */
 export const useReportMutations = () => {
@@ -57,6 +86,15 @@ export const useReportMutations = () => {
     const exportBookingsMutation = useMutation({
         mutationFn: async ({ params, fallbackFilename }: { params: BookingsReportFilters; fallbackFilename: string }) => {
             const response = await reportApi.exportBookingsReport(params);
+            const prepared = await prepareSpreadsheetDownload(response, fallbackFilename);
+            if (!prepared.ok) throw new Error(prepared.error);
+            downloadBlobFile(prepared.blob, prepared.filename);
+        },
+    });
+
+    const exportRevenueMutation = useMutation({
+        mutationFn: async ({ params, fallbackFilename }: { params: RevenueReportFilters; fallbackFilename: string }) => {
+            const response = await reportApi.exportRevenueReport(params);
             const prepared = await prepareSpreadsheetDownload(response, fallbackFilename);
             if (!prepared.ok) throw new Error(prepared.error);
             downloadBlobFile(prepared.blob, prepared.filename);
@@ -102,6 +140,7 @@ export const useReportMutations = () => {
     return {
         exportMutation,
         exportBookingsMutation,
+        exportRevenueMutation,
         approveMutation,
         rejectMutation,
         deleteMutation,

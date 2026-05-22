@@ -285,3 +285,144 @@ export interface BookingsReportViewModel {
         };
     };
 }
+
+/**
+ * Filters for Báo cáo Doanh thu (Revenue Report)
+ */
+export interface RevenueReportFilters {
+    from?: string;
+    to?: string;
+    payment_gateway?: 'all' | 'momo' | 'vnpay' | 'zalopay' | string;
+    page?: number;
+    per_page?: number;
+}
+
+/**
+ * Raw Revenue Trend statistics point from /admin/dashboard/revenue
+ */
+export interface RawRevenueTrendPoint {
+    period: string; // date like "2026-05-22" or hour like "12:00"
+    total_revenue: number | string;
+    transaction_count: number;
+}
+
+/**
+ * Raw Revenue Trend response
+ */
+export interface RawRevenueTrendResponse {
+    period: string; // 'day' | 'week' | 'month' | 'year'
+    from: string;
+    to: string;
+    stats: RawRevenueTrendPoint[];
+}
+
+/**
+ * Raw tour revenue detail from /admin/reports/revenue-detail
+ */
+export interface RawTourRevenueDetail {
+    tour_id: number;
+    tour_name: string;
+    booking_count: number;
+    total_revenue: number | string;
+}
+
+/**
+ * Raw individual payment item from /admin/payments
+ */
+export interface RawRevenueReportItem {
+    id: number;
+    transaction_code: string | null;
+    amount: number | string;
+    payment_gateway: string;
+    payment_status: string;
+    paid_at: string | null;
+    created_at: string;
+    booking?: {
+        id: number;
+        booking_code: string;
+        user?: {
+            id: number;
+            full_name: string;
+            avatar: string | null;
+        };
+    };
+}
+
+/**
+ * UI View Model for trend chart points in Revenue report
+ */
+export interface RevenueTrendChartPoint {
+    label: string; // "DD/MM" or "HH:mm"
+    revenue: number;
+    transactions: number;
+}
+
+/**
+ * UI View Model for top tour revenue point
+ */
+export interface TopTourRevenuePoint {
+    tourId: number;
+    tourName: string;
+    bookings: number;
+    revenue: number;
+}
+
+/**
+ * UI View Model for payment gateway revenue breakdown
+ */
+export interface RevenueGatewayBreakdownPoint {
+    gateway: string; // "momo" | "vnpay" | "zalopay"
+    labelKey: string; // "revenue.gateway.momo" etc.
+    revenue: number;
+    count: number;
+    percentage: number;
+    color: string;
+}
+
+/**
+ * UI View Model for individual revenue table item
+ */
+export interface RevenueReportItemViewModel {
+    id: number;
+    transactionCode: string;
+    bookingId: number;
+    bookingCode: string;
+    customerName: string;
+    customerAvatar: string;
+    tourName: string;
+    amount: number;
+    gateway: string;
+    status: string;
+    date: string; // DD/MM/YYYY
+    time: string; // HH:mm
+}
+
+/**
+ * Complete UI View Model for Revenue Report
+ */
+export interface RevenueReportViewModel {
+    stats: {
+        totalRevenue: number;
+        totalRevenueTrend: number;
+        dailyAverage: number;
+        dailyAverageTrend: number;
+        totalTransactions: number;
+        totalTransactionsTrend: number;
+        totalRefunded: number;
+        totalRefundedTrend: number;
+    };
+    charts: {
+        trend: RevenueTrendChartPoint[];
+        topTours: TopTourRevenuePoint[];
+        gateways: RevenueGatewayBreakdownPoint[];
+    };
+    table: {
+        items: RevenueReportItemViewModel[];
+        pagination: {
+            currentPage: number;
+            lastPage: number;
+            perPage: number;
+            total: number;
+        };
+    };
+}
