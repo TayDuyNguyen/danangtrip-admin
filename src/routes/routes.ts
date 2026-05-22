@@ -20,4 +20,5 @@ export const ROUTES = {
     REPORTS_RATINGS: '/admin/reports/ratings',
     REPORTS_BOOKINGS: '/admin/reports/bookings',
     REPORTS_REVENUE: '/admin/reports/revenue',
+    REPORTS_LOCATIONS: '/admin/reports/locations',
 } as const;

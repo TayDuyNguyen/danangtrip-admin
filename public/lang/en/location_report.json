@@ -1,0 +1,93 @@
+{
+    "title": "Locations Report",
+    "subtitle": "Distribution statistics, views, favorites and ratings of tourist locations in Da Nang",
+    "breadcrumb": {
+        "home": "Home",
+        "reports": "Reports",
+        "current": "Locations Report"
+    },
+    "mock": {
+        "toggle_title": "Click to toggle mock data mode",
+        "mock_on": "Mock Data (On)",
+        "mock_off": "Real Data (Off)",
+        "toast_to_mock": "Could not connect to API. Mock mode has been activated automatically.",
+        "toast_switched_mock": "Switched to Mock Data mode",
+        "toast_switched_real": "Switched to Real API Data mode"
+    },
+    "export": {
+        "btn_label": "Export CSV",
+        "toast_loading": "Preparing CSV export from API...",
+        "toast_success": "CSV report exported successfully!",
+        "toast_error": "CSV export failed. Please try again.",
+        "toast_mock_loading": "Preparing mock CSV file...",
+        "toast_mock_success": "Mock CSV report exported successfully!"
+    },
+    "error": {
+        "load_failed": "Could not load data from API",
+        "connection": "A connection error occurred with the Laravel API.",
+        "retry_btn": "Retry",
+        "use_mock_btn": "Use Mock Data"
+    },
+    "filter": {
+        "from_date": "From date",
+        "to_date": "To date",
+        "category": "Category",
+        "category_all": "All categories",
+        "district": "District",
+        "district_all": "All districts",
+        "status": "Status",
+        "status_all": "All statuses",
+        "status_active": "Active",
+        "status_inactive": "Inactive",
+        "quick_filters": "Quick filters:",
+        "range_7days": "7 days",
+        "range_30days": "30 days",
+        "range_3months": "3 months",
+        "range_thisyear": "This year",
+        "btn_reset": "Reset",
+        "btn_apply": "Apply",
+        "validation": {
+            "date_range": "Start date cannot be after end date."
+        },
+        "toast_reset": "Filters reset to default."
+    },
+    "stats": {
+        "total": "Total Locations",
+        "active": "Active",
+        "featured": "Featured",
+        "total_views": "Total Views"
+    },
+    "charts": {
+        "category_title": "Distribution by Category",
+        "category_subtitle": "Location ratio by tourism category",
+        "district_title": "Distribution by District",
+        "district_subtitle": "Number of locations per district in Da Nang",
+        "no_data": "No chart data in the selected time range",
+        "count_label": "Count",
+        "others_label": "Others"
+    },
+    "table": {
+        "title": "Location Rankings",
+        "subtitle": "Locations sorted by performance",
+        "tab_views": "Top Views",
+        "tab_favorites": "Top Favorites",
+        "tab_ratings": "Top Ratings",
+        "header_rank": "#",
+        "header_name": "Location Name",
+        "header_category": "Category",
+        "header_district": "District",
+        "header_views": "Views",
+        "header_favorites": "Favorites",
+        "header_rating": "Rating",
+        "header_status": "Status",
+        "header_actions": "Detail",
+        "status_active": "Active",
+        "status_inactive": "Inactive",
+        "no_data_title": "No location data",
+        "no_data_desc": "No locations found matching your filters or conditions.",
+        "btn_view_detail": "View detail",
+        "pagination_showing": "Showing {{from}}–{{to}} of {{total}} locations",
+        "btn_prev": "Previous",
+        "btn_next": "Next"
+    }
+}
