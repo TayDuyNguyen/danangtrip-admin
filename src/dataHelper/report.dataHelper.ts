@@ -426,3 +426,69 @@ export interface RevenueReportViewModel {
         };
     };
 }
+
+/**
+ * Filters for Báo cáo Địa điểm (Locations Report)
+ */
+export interface LocationReportFilters {
+    from?: string;
+    to?: string;
+    category_id?: string | number;
+    district?: string;
+    status?: 'all' | 'active' | 'inactive';
+    page?: number;
+    per_page?: number;
+}
+
+/**
+ * Raw Location Report item from /admin/reports/locations
+ */
+export interface RawLocationReportItem {
+    category_id: number | null;
+    district: string | null;
+    count: number;
+    category: {
+        id: number;
+        name: string;
+    } | null;
+}
+
+/**
+ * UI View Model for individual location report list item
+ */
+export interface LocationReportItemViewModel {
+    id: number;
+    name: string;
+    categoryName: string;
+    district: string;
+    views: number;
+    favorites: number;
+    rating: number;
+    status: 'active' | 'inactive';
+}
+
+/**
+ * Complete UI View Model for Locations Report
+ */
+export interface LocationReportViewModel {
+    stats: {
+        total: number;
+        active: number;
+        featured: number;
+        totalViews: number;
+    };
+    charts: {
+        categories: { name: string; value: number }[];
+        districts: { name: string; value: number }[];
+    };
+    table: {
+        items: LocationReportItemViewModel[];
+        pagination: {
+            currentPage: number;
+            lastPage: number;
+            perPage: number;
+            total: number;
+        };
+    };
+}
+

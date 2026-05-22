@@ -18,6 +18,8 @@ export const API_ENDPOINTS = {
         USER_GROWTH: '/admin/dashboard/user-growth',
         // Top 5 tours table
         TOP_TOURS: '/admin/dashboard/top-tours',
+        // Top locations table/report
+        TOP_LOCATIONS: '/admin/dashboard/top-locations',
         // Recent orders table
         BOOKINGS: '/admin/bookings',
     },
@@ -32,6 +34,7 @@ export const API_ENDPOINTS = {
         RATINGS: '/admin/reports/ratings',
         BOOKINGS: '/admin/reports/bookings',
         REVENUE_DETAIL: '/admin/reports/revenue-detail',
+        LOCATIONS: '/admin/reports/locations',
     },
     CONTACTS: {
         LIST: '/admin/contacts',
@@ -42,6 +45,7 @@ export const API_ENDPOINTS = {
         PAYMENTS: '/admin/payments/export',
         TOURS: '/admin/tours/export',
         RATINGS: '/admin/ratings/export',
+        LOCATIONS: '/admin/locations/export',
     },
     // Tours management
     TOURS: {

@@ -21,8 +21,13 @@ import type {
     RevenueTrendChartPoint,
     RevenueGatewayBreakdownPoint,
     TopTourRevenuePoint,
+    RawLocationReportItem,
+    LocationReportViewModel,
+    LocationReportItemViewModel,
 } from './report.dataHelper';
+import type { RawLocation } from '@/types/location';
 import { toNumberSafe } from '@/utils/safeConverters';
+
 
 /**
  * Format ISO Date string to "DD/MM/YYYY"
@@ -489,4 +494,90 @@ export const mapRevenueReport = (
         },
     };
 };
+
+/**
+ * Main mapper transforming raw locations report API responses into LocationReportViewModel.
+ * Integrates stats (KPI), distribution stats (charts), and paginated locations (table).
+ */
+export const mapLocationsReport = (
+    rawStats: {
+        total: number;
+        active: number;
+        featured: number;
+        total_views: number;
+    } | undefined | null,
+    rawDistribution: RawLocationReportItem[] | undefined | null,
+    rawLocations: {
+        data: RawLocation[];
+        current_page: number;
+        last_page: number;
+        per_page: number;
+        total: number;
+    } | undefined | null
+): LocationReportViewModel => {
+    // 1. Stats KPI Mapping
+    const stats = {
+        total: toNumberSafe(rawStats?.total, 0),
+        active: toNumberSafe(rawStats?.active, 0),
+        featured: toNumberSafe(rawStats?.featured, 0),
+        totalViews: toNumberSafe(rawStats?.total_views, 0),
+    };
+
+    // 2. Charts -> Category Distribution
+    // Aggregate by Category Name from rawDistribution.category?.name
+    const categoryMap: Record<string, number> = {};
+    const districtMap: Record<string, number> = {};
+
+    if (Array.isArray(rawDistribution)) {
+        rawDistribution.forEach(item => {
+            const catName = item.category?.name || 'Uncategorized';
+            const district = item.district || 'Unknown';
+            const count = toNumberSafe(item.count, 0);
+
+            categoryMap[catName] = (categoryMap[catName] || 0) + count;
+            districtMap[district] = (districtMap[district] || 0) + count;
+        });
+    }
+
+    const categories = Object.entries(categoryMap).map(([name, value]) => ({
+        name,
+        value,
+    })).sort((a, b) => b.value - a.value);
+
+    const districts = Object.entries(districtMap).map(([name, value]) => ({
+        name,
+        value,
+    })).sort((a, b) => b.value - a.value);
+
+    // 3. Table lists
+    const locList = rawLocations || { data: [], current_page: 1, last_page: 1, per_page: 10, total: 0 };
+    const items: LocationReportItemViewModel[] = (locList.data || []).map(loc => ({
+        id: loc.id,
+        name: loc.name,
+        categoryName: loc.category?.name || 'Uncategorized',
+        district: loc.district || 'Unknown',
+        views: toNumberSafe(loc.view_count, 0),
+        favorites: toNumberSafe(loc.favorite_count, 0),
+        rating: toNumberSafe(loc.avg_rating ?? loc.rating, 0),
+        status: loc.status === 'active' ? 'active' : 'inactive',
+    }));
+
+    return {
+        stats,
+        charts: {
+            categories,
+            districts,
+        },
+        table: {
+            items,
+            pagination: {
+                currentPage: locList.current_page || 1,
+                lastPage: locList.last_page || 1,
+                perPage: locList.per_page || 10,
+                total: locList.total || 0,
+            },
+        },
+    };
+};
+
 

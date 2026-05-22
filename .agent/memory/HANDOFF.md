@@ -31,6 +31,9 @@ The revenue report feature is completely finished and has successfully progresse
 
 ## 3. Next Steps
 
+- **Repo Audit Completed**: `repo-screen-alignment-audit` đã hoàn tất Step 10 ở mức repository; xem artifact review/deploy mới để biết trạng thái route chết/menu ảo và fix TypeScript blocker.
+- **Resume Paused Work**: Continue `admin_reports_locations` from Step 06/07 when requested.
+
 - **PR Review & Merge**: Open a Pull Request for `feat/DATN-81/admin-reports-revenue` at:
   https://github.com/TayDuyNguyen/danangtrip-admin/pull/new/feat/DATN-81/admin-reports-revenue
 - **Staging Deploy**: Merge and deploy to staging environments.

@@ -27,6 +27,7 @@ const PaymentDetail = React.lazy(() => import('@/pages/Payments/PaymentDetail'))
 const RatingsReport = React.lazy(() => import('@/pages/Reports/RatingsReport'));
 const BookingsReport = React.lazy(() => import('@/pages/Reports/BookingsReport'));
 const RevenueReport = React.lazy(() => import('@/pages/Reports/RevenueReport'));
+const LocationReport = React.lazy(() => import('@/pages/Reports/LocationReport'));
 import ErrorPage from '@/pages/ErrorPage';
 
 /**
@@ -90,6 +91,7 @@ const router = createBrowserRouter([
                     { path: ROUTES.REPORTS_RATINGS, element: withSuspense(RatingsReport) },
                     { path: ROUTES.REPORTS_BOOKINGS, element: withSuspense(BookingsReport) },
                     { path: ROUTES.REPORTS_REVENUE, element: withSuspense(RevenueReport) },
+                    { path: ROUTES.REPORTS_LOCATIONS, element: withSuspense(LocationReport) },
                 ]
             }
         ],

@@ -1,7 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { reportApi } from '@/api/reportApi';
-import { mapRatingsReport, mapBookingsReport, mapRevenueReport } from '@/dataHelper/report.mapper';
-import type { RatingsReportFilters, BookingsReportFilters, RevenueReportFilters } from '@/dataHelper/report.dataHelper';
+import locationApi from '@/api/locationApi';
+import axiosClient from '@/api/axiosClient';
+import { API_ENDPOINTS } from '@/constants/endpoints';
+import { mapRatingsReport, mapBookingsReport, mapRevenueReport, mapLocationsReport } from '@/dataHelper/report.mapper';
+import type { RatingsReportFilters, BookingsReportFilters, RevenueReportFilters, LocationReportFilters } from '@/dataHelper/report.dataHelper';
 import { prepareSpreadsheetDownload, downloadBlobFile } from '@/utils';
 import { toast } from 'sonner';
 
@@ -10,6 +13,7 @@ export const reportKeys = {
     ratingsReport: (params: RatingsReportFilters) => [...reportKeys.all, 'ratings', params] as const,
     bookingsReport: (params: BookingsReportFilters) => [...reportKeys.all, 'bookings', params] as const,
     revenueReport: (params: RevenueReportFilters) => [...reportKeys.all, 'revenue', params] as const,
+    locationsReport: (params: { from?: string; to?: string }) => [...reportKeys.all, 'locations', params] as const,
 };
 
 /**
@@ -69,6 +73,60 @@ export const useRevenueReportQuery = (params: RevenueReportFilters) => {
 };
 
 /**
+ * Query hook to fetch processed Locations Report ViewModel.
+ * Fetches stats, distribution, and paginated locations (table) in parallel.
+ */
+export const useLocationsReportQuery = (
+    reportParams: { from?: string; to?: string },
+    tableParams: LocationReportFilters & { sort_by?: string; sort_order?: string }
+) => {
+    const from = reportParams.from || '';
+    const to = reportParams.to || '';
+
+    return useQuery({
+        queryKey: [...reportKeys.locationsReport(reportParams), tableParams],
+        queryFn: async () => {
+            let locationsResData;
+            if (tableParams.sort_by === 'favorite_count') {
+                const topRes = await reportApi.getTopLocations({ limit: tableParams.per_page });
+                locationsResData = {
+                    data: topRes.data ?? [],
+                    current_page: 1,
+                    last_page: 1,
+                    per_page: tableParams.per_page || 10,
+                    total: (topRes.data ?? []).length,
+                };
+            } else {
+                const locRes = await axiosClient.get(API_ENDPOINTS.LOCATIONS.LIST, {
+                    params: {
+                        page: tableParams.page,
+                        per_page: tableParams.per_page,
+                        category_id: tableParams.category_id !== 'all' ? tableParams.category_id : undefined,
+                        district: tableParams.district !== 'all' ? tableParams.district : undefined,
+                        status: tableParams.status !== 'all' ? tableParams.status : undefined,
+                        sort_by: tableParams.sort_by,
+                        sort_order: tableParams.sort_order,
+                    }
+                });
+                locationsResData = locRes.data;
+            }
+
+            const [statsRes, distRes] = await Promise.all([
+                locationApi.getStats(),
+                reportApi.getLocationsReport({ from, to }),
+            ]);
+
+            return mapLocationsReport(
+                statsRes.data,
+                distRes.data,
+                locationsResData,
+            );
+        },
+        staleTime: 1000 * 30, // 30 seconds
+    });
+};
+
+/**
  * Mutation and action hooks for Reports & Ratings Moderation
  */
 export const useReportMutations = () => {
@@ -95,6 +153,15 @@ export const useReportMutations = () => {
     const exportRevenueMutation = useMutation({
         mutationFn: async ({ params, fallbackFilename }: { params: RevenueReportFilters; fallbackFilename: string }) => {
             const response = await reportApi.exportRevenueReport(params);
+            const prepared = await prepareSpreadsheetDownload(response, fallbackFilename);
+            if (!prepared.ok) throw new Error(prepared.error);
+            downloadBlobFile(prepared.blob, prepared.filename);
+        },
+    });
+
+    const exportLocationsMutation = useMutation({
+        mutationFn: async ({ params, fallbackFilename }: { params: LocationReportFilters; fallbackFilename: string }) => {
+            const response = await reportApi.exportLocationsReport(params);
             const prepared = await prepareSpreadsheetDownload(response, fallbackFilename);
             if (!prepared.ok) throw new Error(prepared.error);
             downloadBlobFile(prepared.blob, prepared.filename);
@@ -141,8 +208,10 @@ export const useReportMutations = () => {
         exportMutation,
         exportBookingsMutation,
         exportRevenueMutation,
+        exportLocationsMutation,
         approveMutation,
         rejectMutation,
         deleteMutation,
     };
 };
+

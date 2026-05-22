@@ -8,9 +8,11 @@ import type {
     RevenueReportFilters,
     RawRevenueTrendResponse,
     RawTourRevenueDetail,
-    RawRevenueReportItem
+    RawRevenueReportItem,
+    RawLocationReportItem,
+    LocationReportFilters
 } from '@/dataHelper/report.dataHelper';
-import type { ApiResponse } from '@/types';
+import type { ApiResponse, RawLocation } from '@/types';
 import type { AxiosResponse } from 'axios';
 
 export const reportApi = {
@@ -84,4 +86,22 @@ export const reportApi = {
 
     deleteRating: (id: string | number): Promise<ApiResponse<unknown>> =>
         axiosClient.delete(API_ENDPOINTS.RATINGS.DELETE(id)),
+
+    getLocationsReport: (params: { from?: string; to?: string }): Promise<ApiResponse<RawLocationReportItem[]>> =>
+        axiosClient.get(API_ENDPOINTS.REPORTS.LOCATIONS, { params }),
+
+    exportLocationsReport: (params: LocationReportFilters): Promise<AxiosResponse<Blob>> => {
+        const { category_id, district, status } = params;
+        return axiosClient.get(API_ENDPOINTS.EXPORT.LOCATIONS, {
+            params: {
+                category_id,
+                district,
+                status,
+            },
+            responseType: 'blob',
+        }) as Promise<AxiosResponse<Blob>>;
+    },
+
+    getTopLocations: (params?: { limit?: number }): Promise<ApiResponse<RawLocation[]>> =>
+        axiosClient.get(API_ENDPOINTS.DASHBOARD.TOP_LOCATIONS, { params }),
 };
