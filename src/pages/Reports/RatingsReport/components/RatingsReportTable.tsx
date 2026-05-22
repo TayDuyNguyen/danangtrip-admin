@@ -3,6 +3,7 @@ import { Check, X, Trash2, Eye, ExternalLink } from 'lucide-react';
 import { useAuth } from '@/store';
 import { Skeleton } from '@/components/ui/Skeleton';
 import EmptyState from '@/components/common/EmptyState';
+import { useTranslation } from 'react-i18next';
 import type { RatingsReportItemViewModel } from '@/dataHelper/report.dataHelper';
 
 interface RatingsReportTableProps {
@@ -33,6 +34,7 @@ const RatingsReportTable: React.FC<RatingsReportTableProps> = ({
     isModerating = false,
 }) => {
     const { user } = useAuth();
+    const { t } = useTranslation(['ratings', 'common']);
     const isAdmin = user?.role === 'admin';
 
     // State for viewing comment detail modal
@@ -46,7 +48,7 @@ const RatingsReportTable: React.FC<RatingsReportTableProps> = ({
 
     const renderStars = (score: number) => {
         return (
-            <div className="flex items-center gap-0.5" title={`${score} sao`}>
+            <div className="flex items-center gap-0.5" title={t('modal.stars_label')}>
                 {[...Array(5)].map((_, i) => (
                     <span
                         key={i}
@@ -66,20 +68,20 @@ const RatingsReportTable: React.FC<RatingsReportTableProps> = ({
             case 'approved':
                 return (
                     <span className="inline-flex items-center bg-emerald-50 text-emerald-600 font-extrabold text-[11px] px-2.5 py-1 rounded-full">
-                        Đã duyệt
+                        {t('filter.status_approved')}
                     </span>
                 );
             case 'rejected':
                 return (
                     <span className="inline-flex items-center bg-rose-50 text-rose-600 font-extrabold text-[11px] px-2.5 py-1 rounded-full">
-                        Từ chối
+                        {t('filter.status_rejected')}
                     </span>
                 );
             case 'pending':
             default:
                 return (
                     <span className="inline-flex items-center bg-amber-50 text-amber-600 font-extrabold text-[11px] px-2.5 py-1 rounded-full animate-pulse">
-                        Chờ duyệt
+                        {t('filter.status_pending')}
                     </span>
                 );
         }
@@ -107,8 +109,8 @@ const RatingsReportTable: React.FC<RatingsReportTableProps> = ({
         return (
             <div className="bg-white/80 backdrop-blur-md border border-slate-100 rounded-2xl p-8 shadow-xs mb-6">
                 <EmptyState
-                    title="Không tìm thấy đánh giá nào"
-                    description="Không tìm thấy đánh giá nào khớp với bộ lọc thời gian hoặc điều kiện của bạn."
+                    title={t('table.no_comment_found', { defaultValue: 'Không tìm thấy đánh giá nào' })}
+                    description={t('table.no_comment_found_desc', { defaultValue: 'Không tìm thấy đánh giá nào khớp với bộ lọc thời gian hoặc điều kiện của bạn.' })}
                 />
             </div>
         );
@@ -123,12 +125,12 @@ const RatingsReportTable: React.FC<RatingsReportTableProps> = ({
             {/* Table Header */}
             <div className="px-6 py-5 border-b border-slate-50 flex flex-col sm:flex-row gap-3 justify-between sm:items-center bg-white/40">
                 <div>
-                    <h3 className="text-[15px] font-black text-slate-800 leading-tight">Chi tiết đánh giá</h3>
-                    <p className="text-[11px] font-bold text-slate-400 mt-1">Danh sách kiểm duyệt và quản lý phản hồi</p>
+                    <h3 className="text-[15px] font-black text-slate-800 leading-tight">{t('table.details_title')}</h3>
+                    <p className="text-[11px] font-bold text-slate-400 mt-1">{t('table.details_subtitle')}</p>
                 </div>
                 <div className="text-right">
                     <span className="text-xs font-black text-slate-600 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100">
-                        {pagination.total.toLocaleString()} đánh giá
+                        {t('table.total_ratings_count', { total: pagination.total.toLocaleString() })}
                     </span>
                 </div>
             </div>
@@ -138,14 +140,14 @@ const RatingsReportTable: React.FC<RatingsReportTableProps> = ({
                 <table className="w-full border-collapse text-left">
                     <thead>
                         <tr className="bg-slate-50/50 border-b border-slate-100">
-                            <th className="px-6 py-3.5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Người dùng</th>
-                            <th className="px-6 py-3.5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Địa điểm / Tour</th>
-                            <th className="px-6 py-3.5 text-[10px] font-black text-slate-400 uppercase tracking-widest w-[100px]">Phân loại</th>
-                            <th className="px-6 py-3.5 text-[10px] font-black text-slate-400 uppercase tracking-widest w-[110px]">Đánh giá</th>
-                            <th className="px-6 py-3.5 text-[10px] font-black text-slate-400 uppercase tracking-widest w-[280px]">Nội dung phản hồi</th>
-                            <th className="px-6 py-3.5 text-[10px] font-black text-slate-400 uppercase tracking-widest w-[110px]">Trạng thái</th>
-                            <th className="px-6 py-3.5 text-[10px] font-black text-slate-400 uppercase tracking-widest w-[110px]">Ngày tạo</th>
-                            <th className="px-6 py-3.5 text-[10px] font-black text-slate-400 uppercase tracking-widest w-[130px] text-right">Thao tác</th>
+                            <th className="px-6 py-3.5 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('table.header_user')}</th>
+                            <th className="px-6 py-3.5 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('table.header_target')}</th>
+                            <th className="px-6 py-3.5 text-[10px] font-black text-slate-400 uppercase tracking-widest w-[100px]">{t('filter.category')}</th>
+                            <th className="px-6 py-3.5 text-[10px] font-black text-slate-400 uppercase tracking-widest w-[110px]">{t('stats.ratings')}</th>
+                            <th className="px-6 py-3.5 text-[10px] font-black text-slate-400 uppercase tracking-widest w-[280px]">{t('table.header_feedback')}</th>
+                            <th className="px-6 py-3.5 text-[10px] font-black text-slate-400 uppercase tracking-widest w-[110px]">{t('table.header_status')}</th>
+                            <th className="px-6 py-3.5 text-[10px] font-black text-slate-400 uppercase tracking-widest w-[110px]">{t('table.header_date')}</th>
+                            <th className="px-6 py-3.5 text-[10px] font-black text-slate-400 uppercase tracking-widest w-[130px] text-right">{t('table.header_actions')}</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
@@ -182,7 +184,7 @@ const RatingsReportTable: React.FC<RatingsReportTableProps> = ({
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             className="text-slate-400 hover:text-[#14b8a6] transition-colors shrink-0"
-                                            title="Xem chi tiết trang quản lý"
+                                            title={t('table.tooltip_view')}
                                         >
                                             <ExternalLink size={13} />
                                         </a>
@@ -193,11 +195,11 @@ const RatingsReportTable: React.FC<RatingsReportTableProps> = ({
                                 <td className="px-6 py-4">
                                     {item.reviewableType === 'tour' ? (
                                         <span className="inline-flex bg-teal-50 text-[#14b8a6] font-extrabold text-[9px] px-2 py-0.5 rounded-md uppercase tracking-wider">
-                                            Tour
+                                            {t('filter.type_tour')}
                                         </span>
                                     ) : (
                                         <span className="inline-flex bg-indigo-50 text-indigo-600 font-extrabold text-[9px] px-2 py-0.5 rounded-md uppercase tracking-wider">
-                                            Địa điểm
+                                            {t('filter.type_location')}
                                         </span>
                                     )}
                                 </td>
@@ -211,7 +213,7 @@ const RatingsReportTable: React.FC<RatingsReportTableProps> = ({
                                 <td className="px-6 py-4">
                                     <div className="flex flex-col gap-1.5 max-w-[260px]">
                                         <p className="text-[12px] font-bold text-slate-600 line-clamp-2 leading-relaxed" title={item.comment}>
-                                            {item.comment || <em className="text-slate-300 font-normal">Không có bình luận</em>}
+                                            {item.comment || <em className="text-slate-300 font-normal">{t('table.no_comment')}</em>}
                                         </p>
                                         
                                         {/* Image attachments previews */}
@@ -229,7 +231,7 @@ const RatingsReportTable: React.FC<RatingsReportTableProps> = ({
                                                         })}
                                                         className="w-8 h-8 rounded-md border border-slate-100 shrink-0 overflow-hidden cursor-pointer hover:opacity-85 transition-opacity"
                                                     >
-                                                        <img src={img} alt="attachment" className="w-full h-full object-cover" />
+                                                        <img src={img} alt={t('table.attachment_alt')} className="w-full h-full object-cover" />
                                                     </div>
                                                 ))}
                                                 {item.images.length > 3 && (
@@ -269,7 +271,7 @@ const RatingsReportTable: React.FC<RatingsReportTableProps> = ({
                                                 images: item.images
                                             })}
                                             className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-all cursor-pointer"
-                                            title="Xem toàn bộ nhận xét"
+                                            title={t('table.tooltip_view')}
                                         >
                                             <Eye size={15} />
                                         </button>
@@ -281,7 +283,7 @@ const RatingsReportTable: React.FC<RatingsReportTableProps> = ({
                                                 onClick={() => onApprove(item.id)}
                                                 disabled={isModerating}
                                                 className="p-1.5 rounded-lg text-emerald-500 hover:bg-emerald-50 active:scale-90 transition-all cursor-pointer disabled:opacity-50"
-                                                title="Phê duyệt đánh giá"
+                                                title={t('table.tooltip_approve')}
                                             >
                                                 <Check size={15} />
                                             </button>
@@ -294,7 +296,7 @@ const RatingsReportTable: React.FC<RatingsReportTableProps> = ({
                                                 onClick={() => onReject(item.id)}
                                                 disabled={isModerating}
                                                 className="p-1.5 rounded-lg text-amber-500 hover:bg-amber-50 active:scale-90 transition-all cursor-pointer disabled:opacity-50"
-                                                title="Từ chối đánh giá"
+                                                title={t('table.tooltip_reject')}
                                             >
                                                 <X size={15} />
                                             </button>
@@ -305,13 +307,13 @@ const RatingsReportTable: React.FC<RatingsReportTableProps> = ({
                                             <button
                                                 type="button"
                                                 onClick={() => {
-                                                    if (window.confirm('Bạn có chắc muốn xóa đánh giá này vĩnh viễn? Hành động này không thể hoàn tác.')) {
+                                                    if (window.confirm(t('table.confirm_delete'))) {
                                                         onDelete(item.id);
                                                     }
                                                 }}
                                                 disabled={isModerating}
                                                 className="p-1.5 rounded-lg text-rose-500 hover:bg-rose-50 active:scale-90 transition-all cursor-pointer disabled:opacity-50"
-                                                title="Xóa vĩnh viễn"
+                                                title={t('table.tooltip_delete')}
                                             >
                                                 <Trash2 size={15} />
                                             </button>
@@ -327,7 +329,7 @@ const RatingsReportTable: React.FC<RatingsReportTableProps> = ({
             {/* Pagination Controls */}
             <div className="px-6 py-4 border-t border-slate-100 flex flex-col sm:flex-row gap-4 justify-between items-center bg-slate-50/50">
                 <span className="text-[12px] font-bold text-slate-500">
-                    Hiển thị <span className="text-slate-800 font-extrabold">{startIndex}–{endIndex}</span> trong tổng số <span className="text-slate-800 font-extrabold">{pagination.total.toLocaleString()}</span> đánh giá
+                    {t('table.pagination_showing', { from: startIndex, to: endIndex, total: pagination.total.toLocaleString() })}
                 </span>
 
                 <div className="flex gap-1.5 items-center">
@@ -337,7 +339,7 @@ const RatingsReportTable: React.FC<RatingsReportTableProps> = ({
                         disabled={pagination.currentPage <= 1 || isModerating}
                         className="px-3.5 py-1.5 rounded-lg text-xs font-bold border border-slate-100 bg-white text-slate-600 hover:bg-slate-50 active:scale-95 disabled:opacity-50 disabled:active:scale-100 transition-all cursor-pointer select-none"
                     >
-                        Trước
+                        {t('common:pagination.previous')}
                     </button>
 
                     {/* Numeric buttons */}
@@ -378,7 +380,7 @@ const RatingsReportTable: React.FC<RatingsReportTableProps> = ({
                         disabled={pagination.currentPage >= pagination.lastPage || isModerating}
                         className="px-3.5 py-1.5 rounded-lg text-xs font-bold border border-slate-100 bg-white text-slate-600 hover:bg-slate-50 active:scale-95 disabled:opacity-50 disabled:active:scale-100 transition-all cursor-pointer select-none"
                     >
-                        Sau
+                        {t('common:pagination.next')}
                     </button>
                 </div>
             </div>
@@ -390,8 +392,8 @@ const RatingsReportTable: React.FC<RatingsReportTableProps> = ({
                         {/* Header */}
                         <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
                             <div>
-                                <h4 className="text-sm font-black text-slate-800">Chi tiết nhận xét</h4>
-                                <p className="text-[10px] font-bold text-slate-400 mt-0.5">Từ người dùng: {selectedComment.userName}</p>
+                                <h4 className="text-sm font-black text-slate-800">{t('modal.title')}</h4>
+                                <p className="text-[10px] font-bold text-slate-400 mt-0.5">{t('modal.user_label', { name: selectedComment.userName })}</p>
                             </div>
                             <button 
                                 onClick={() => setSelectedComment(null)}
@@ -404,26 +406,26 @@ const RatingsReportTable: React.FC<RatingsReportTableProps> = ({
                         <div className="p-6 flex flex-col gap-4">
                             <div className="flex justify-between items-center">
                                 <div className="flex flex-col">
-                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Đánh giá cho</span>
+                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('modal.target_label')}</span>
                                     <span className="text-sm font-bold text-slate-800 mt-0.5">{selectedComment.reviewableName}</span>
                                 </div>
                                 <div className="text-right">
-                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Số sao</span>
+                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('modal.stars_label')}</span>
                                     <div className="mt-0.5 flex justify-end">{renderStars(selectedComment.score)}</div>
                                 </div>
                             </div>
                             
                             <div className="flex flex-col gap-1 bg-slate-50/50 border border-slate-100/50 p-4 rounded-xl">
-                                <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Nội dung nhận xét:</span>
+                                <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('modal.comment_label')}</span>
                                 <p className="text-xs font-bold text-slate-600 leading-relaxed whitespace-pre-wrap mt-1">
-                                    {selectedComment.comment || <em className="text-slate-300 font-normal">Không có nhận xét</em>}
+                                    {selectedComment.comment || <em className="text-slate-300 font-normal">{t('modal.no_comment')}</em>}
                                 </p>
                             </div>
 
                             {/* Images Carousel */}
                             {selectedComment.images.length > 0 && (
                                 <div className="flex flex-col gap-2">
-                                    <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Hình ảnh đính kèm ({selectedComment.images.length})</span>
+                                    <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('modal.images_label', { count: selectedComment.images.length })}</span>
                                     <div className="flex gap-2 overflow-x-auto pb-1 max-h-36">
                                         {selectedComment.images.map((img, idx) => (
                                             <a 
@@ -447,7 +449,7 @@ const RatingsReportTable: React.FC<RatingsReportTableProps> = ({
                                 onClick={() => setSelectedComment(null)}
                                 className="px-5 py-2 rounded-xl text-xs font-bold bg-slate-800 text-white hover:bg-slate-900 transition-all active:scale-95 cursor-pointer"
                             >
-                                Đóng
+                                {t('common:actions.close')}
                             </button>
                         </div>
                     </div>

@@ -1,13 +1,14 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { reportApi } from '@/api/reportApi';
-import { mapRatingsReport } from '@/dataHelper/report.mapper';
-import type { RatingsReportFilters } from '@/dataHelper/report.dataHelper';
+import { mapRatingsReport, mapBookingsReport } from '@/dataHelper/report.mapper';
+import type { RatingsReportFilters, BookingsReportFilters } from '@/dataHelper/report.dataHelper';
 import { prepareSpreadsheetDownload, downloadBlobFile } from '@/utils';
 import { toast } from 'sonner';
 
 export const reportKeys = {
     all: ['reports'] as const,
     ratingsReport: (params: RatingsReportFilters) => [...reportKeys.all, 'ratings', params] as const,
+    bookingsReport: (params: BookingsReportFilters) => [...reportKeys.all, 'bookings', params] as const,
 };
 
 /**
@@ -25,6 +26,20 @@ export const useRatingsReportQuery = (params: RatingsReportFilters) => {
 };
 
 /**
+ * Query hook to fetch processed Bookings Report ViewModel
+ */
+export const useBookingsReportQuery = (params: BookingsReportFilters) => {
+    return useQuery({
+        queryKey: reportKeys.bookingsReport(params),
+        queryFn: async () => {
+            const response = await reportApi.getBookingsReport(params);
+            return mapBookingsReport(response.data);
+        },
+        staleTime: 1000 * 30, // 30 seconds
+    });
+};
+
+/**
  * Mutation and action hooks for Reports & Ratings Moderation
  */
 export const useReportMutations = () => {
@@ -33,6 +48,15 @@ export const useReportMutations = () => {
     const exportMutation = useMutation({
         mutationFn: async ({ params, fallbackFilename }: { params: RatingsReportFilters; fallbackFilename: string }) => {
             const response = await reportApi.exportRatingsReport(params);
+            const prepared = await prepareSpreadsheetDownload(response, fallbackFilename);
+            if (!prepared.ok) throw new Error(prepared.error);
+            downloadBlobFile(prepared.blob, prepared.filename);
+        },
+    });
+
+    const exportBookingsMutation = useMutation({
+        mutationFn: async ({ params, fallbackFilename }: { params: BookingsReportFilters; fallbackFilename: string }) => {
+            const response = await reportApi.exportBookingsReport(params);
             const prepared = await prepareSpreadsheetDownload(response, fallbackFilename);
             if (!prepared.ok) throw new Error(prepared.error);
             downloadBlobFile(prepared.blob, prepared.filename);
@@ -77,6 +101,7 @@ export const useReportMutations = () => {
 
     return {
         exportMutation,
+        exportBookingsMutation,
         approveMutation,
         rejectMutation,
         deleteMutation,

@@ -30,6 +30,7 @@ export const API_ENDPOINTS = {
     },
     REPORTS: {
         RATINGS: '/admin/reports/ratings',
+        BOOKINGS: '/admin/reports/bookings',
     },
     CONTACTS: {
         LIST: '/admin/contacts',

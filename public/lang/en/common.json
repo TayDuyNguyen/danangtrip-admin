@@ -91,6 +91,7 @@
         "finance": "Finance & Points",
         "reports": "Reports & Analytics",
         "reports_ratings": "Ratings Report",
+        "reports_bookings": "Bookings Report",
         "notifications": "Notifications",
         "settings": "Settings",
         "logout": "Logout"

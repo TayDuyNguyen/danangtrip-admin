@@ -6,8 +6,8 @@ interface ReportFilterBarProps {
     filters: {
         from: string;
         to: string;
-        status: 'all' | 'pending' | 'approved' | 'rejected';
-        type: 'all' | 'location' | 'tour';
+        status: 'all' | 'pending' | 'confirmed' | 'completed' | 'cancelled';
+        payment_status: 'all' | 'pending' | 'paid' | 'refunded';
     };
     onFilterChange: (updated: Partial<ReportFilterBarProps['filters']>) => void;
     onApply: () => void;
@@ -22,7 +22,7 @@ const ReportFilterBar: React.FC<ReportFilterBarProps> = ({
     onReset,
     isSubmitting = false,
 }) => {
-    const { t } = useTranslation(['ratings', 'common']);
+    const { t } = useTranslation('bookings_report');
 
     // Quick Range handlers
     const applyQuickRange = (range: '7days' | '30days' | '3months' | 'thisyear') => {
@@ -48,7 +48,7 @@ const ReportFilterBar: React.FC<ReportFilterBarProps> = ({
     };
 
     return (
-        <div className="bg-white/80 backdrop-blur-md border border-slate-100 rounded-2xl p-6 shadow-xs mb-6 transition-all duration-300">
+        <div className="bg-white/85 backdrop-blur-md border border-slate-100 rounded-2xl p-6 shadow-xs mb-6 transition-all duration-300">
             <div className="flex flex-col gap-6">
                 {/* Inputs grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
@@ -80,38 +80,40 @@ const ReportFilterBar: React.FC<ReportFilterBarProps> = ({
                         />
                     </div>
 
-                    {/* Status Select */}
+                    {/* Booking Status Select */}
                     <div className="flex flex-col gap-1.5">
                         <label className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
                             <Filter size={13} className="text-[#14b8a6]" />
-                            {t('filter.moderation_status')}
+                            {t('filter.booking_status')}
                         </label>
                         <select
                             value={filters.status}
-                            onChange={(e) => onFilterChange({ status: e.target.value as 'all' | 'pending' | 'approved' | 'rejected' })}
+                            onChange={(e) => onFilterChange({ status: e.target.value as 'all' | 'pending' | 'confirmed' | 'completed' | 'cancelled' })}
                             className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-2.5 text-sm font-bold text-slate-800 focus:outline-hidden focus:ring-2 focus:ring-[#14b8a6]/20 focus:border-[#14b8a6] transition-all appearance-none cursor-pointer"
                         >
                             <option value="all">{t('filter.status_all')}</option>
                             <option value="pending">{t('filter.status_pending')}</option>
-                            <option value="approved">{t('filter.status_approved')}</option>
-                            <option value="rejected">{t('filter.status_rejected')}</option>
+                            <option value="confirmed">{t('filter.status_confirmed')}</option>
+                            <option value="completed">{t('filter.status_completed')}</option>
+                            <option value="cancelled">{t('filter.status_cancelled')}</option>
                         </select>
                     </div>
 
-                    {/* Type Select */}
+                    {/* Payment Status Select */}
                     <div className="flex flex-col gap-1.5">
                         <label className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
                             <Filter size={13} className="text-[#14b8a6]" />
-                            {t('filter.category')}
+                            {t('filter.payment_status')}
                         </label>
                         <select
-                            value={filters.type}
-                            onChange={(e) => onFilterChange({ type: e.target.value as 'all' | 'location' | 'tour' })}
+                            value={filters.payment_status}
+                            onChange={(e) => onFilterChange({ payment_status: e.target.value as 'all' | 'pending' | 'paid' | 'refunded' })}
                             className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-2.5 text-sm font-bold text-slate-800 focus:outline-hidden focus:ring-2 focus:ring-[#14b8a6]/20 focus:border-[#14b8a6] transition-all appearance-none cursor-pointer"
                         >
-                            <option value="all">{t('filter.type_all')}</option>
-                            <option value="location">{t('filter.type_location')}</option>
-                            <option value="tour">{t('filter.type_tour')}</option>
+                            <option value="all">{t('filter.payment_all')}</option>
+                            <option value="pending">{t('filter.payment_pending')}</option>
+                            <option value="paid">{t('filter.payment_paid')}</option>
+                            <option value="refunded">{t('filter.payment_refunded')}</option>
                         </select>
                     </div>
                 </div>
@@ -120,9 +122,7 @@ const ReportFilterBar: React.FC<ReportFilterBarProps> = ({
                 <div className="flex flex-col sm:flex-row gap-4 justify-between items-center border-t border-slate-50 pt-4">
                     {/* Quick ranges pills */}
                     <div className="flex flex-wrap gap-2 items-center w-full sm:w-auto">
-                        <span className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mr-1">
-                            {t('filter.quick_filters')}:
-                        </span>
+                        <span className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mr-1">{t('filter.quick_filters')}</span>
                         <button
                             type="button"
                             onClick={() => applyQuickRange('7days')}
@@ -162,7 +162,7 @@ const ReportFilterBar: React.FC<ReportFilterBarProps> = ({
                             className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold border border-slate-100 text-slate-500 hover:bg-slate-50 active:scale-95 transition-all disabled:opacity-50 cursor-pointer"
                         >
                             <RefreshCw size={15} />
-                            {t('common:actions.reset')}
+                            {t('filter.btn_reset')}
                         </button>
                         <button
                             type="button"
@@ -173,7 +173,7 @@ const ReportFilterBar: React.FC<ReportFilterBarProps> = ({
                             {isSubmitting ? (
                                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                             ) : null}
-                            {t('common:actions.filter')}
+                            {t('filter.btn_apply')}
                         </button>
                     </div>
                 </div>
@@ -183,3 +183,4 @@ const ReportFilterBar: React.FC<ReportFilterBarProps> = ({
 };
 
 export default ReportFilterBar;
+

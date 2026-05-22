@@ -309,63 +309,63 @@ Date locked for this index: `2026-05-22`
 ### Single Chosen Screen Only
 
 - Repo: `danangtrip-admin`
-- Only screen to implement now: `Báo cáo Đánh giá`
-- Feature slug: `admin_reports_ratings`
-- Main route: `/admin/reports/ratings`
-- Main file target: `src/pages/Reports/RatingsReport/index.tsx` or nearest repo-reality reports path if a reports module already exists
-- Rule: do not switch to reports revenue, reports bookings, reports locations, reports users, users CRUD, contacts, notifications, CMS, or settings until this screen is finished through `10-optimization-deploy`.
+- Only screen to implement now: `Báo cáo Đơn hàng`
+- Feature slug: `admin_reports_bookings`
+- Main route: `/admin/reports/bookings`
+- Main file target: `src/pages/Reports/BookingsReport/index.tsx` or nearest repo-reality reports path if a reports module already exists
+- Rule: do not switch to reports revenue, reports locations, reports users, users CRUD, contacts, notifications, CMS, or settings until this screen is finished through `10-optimization-deploy`.
 
 ### Candidate Screens Reviewed
 
 | Candidate | Priority | Why it is relevant now | Why it is not the current first pick |
 | --- | --- | --- | --- |
-| `admin_reports_ratings` | High | Dashboard is complete and already surfaces pending ratings. The ratings report doc has clear stats, charts, table, filters, and Excel export contract. | Selected as the current first pick. |
-| `admin_reports_revenue` | High | Revenue reporting is important after dashboard. | Ratings is selected first because dashboard pending-rating widgets now need a dedicated drill-down/report screen. |
-| `admin_reports_bookings` | High | Booking report supports operations. | Booking/payment operations already have list/detail screens; ratings is the next uncovered moderation/reporting gap. |
+| `admin_reports_bookings` | High | Booking list/detail, payment list/detail, and dashboard are done. The next operational report should summarize order volume, statuses, and filters across the booking lifecycle. | Selected as the current first pick. |
+| `admin_reports_revenue` | High | Revenue reporting is important after dashboard and payments detail. | Better after the bookings report pattern is established. |
+| `admin_reports_ratings` | High | Ratings reporting is useful and already completed in the progress report. | No longer the next target because it is already done. |
 | `admin_reports_locations` | High | Location analytics is useful. | Should follow after the first reports pattern is established. |
 | `admin-users-list` | High | Core account management screen. | Larger CRUD surface; report pattern is more bounded after dashboard completion. |
 
 ### Selected Next Screen
 
-- Screen: `Báo cáo Đánh giá`
-- Feature slug: `admin_reports_ratings`
-- Main route: `/admin/reports/ratings`
-- Main file target: `src/pages/Reports/RatingsReport/index.tsx` unless repo route conventions require another path
+- Screen: `Báo cáo Đơn hàng`
+- Feature slug: `admin_reports_bookings`
+- Main route: `/admin/reports/bookings`
+- Main file target: `src/pages/Reports/BookingsReport/index.tsx` unless repo route conventions require another path
 - Decision basis:
-  - `project_delivery_progress_report.md` marks `admin_reports_ratings` as the next admin work after `admin-dashboard` merge.
-  - `admin_reports_ratings.md` defines a complete admin report screen: date/status/type filters, stats, trend chart, star distribution, status/type charts, detailed table, and Excel export.
-  - Repo already has rating-related endpoints in `src/constants/endpoints.ts`, location/tour rating data models, and dashboard pending-ratings context.
-  - This screen can establish the reports module conventions before revenue/bookings/locations/users reports.
+  - `project_delivery_progress_report.md` now marks `admin_reports_bookings` as the next admin prompt after `admin_reports_ratings` completion.
+  - `admin_reports_bookings.md` is the most natural next operational report after bookings detail, payments detail, and dashboard because it summarizes the entity already stabilized in multiple admin flows.
+  - This screen can establish or extend the reports module conventions before revenue, locations, and users reports.
+  - Booking report delivery keeps the admin rollout on the post-booking operations axis that the project has followed so far.
 
 ### Cross-Project Rollout Order
 
 1. `danangtrip-web` implements `user-booking-invoice`
-2. `danangtrip-admin` implements `admin_reports_ratings`
+2. `danangtrip-admin` implements `admin_reports_bookings`
 3. Continue with report group (`revenue`, `bookings`, `locations`, `users`) or user utilities based on the next progress report update
 
 Dependency rule:
-- Keep ratings count/status semantics aligned with `admin-dashboard` pending ratings and any real `/admin/ratings` or `/admin/reports/ratings` endpoint shape.
+- Keep booking counts, booking status semantics, and filter names aligned with the existing booking list/detail contract already used in admin.
 - If report endpoints differ between docs and repo/API, follow repo/API reality and record mismatch in the API-contract artifact.
 
 ## Recommended Current Screen Prompt
 
-Use this ready prompt for the next recommended `danangtrip-admin` screen: ratings report delivery.
+Use this ready prompt for the next recommended `danangtrip-admin` screen: bookings report delivery.
 
 ```text
 SYSTEM EXECUTION CONTRACT
 
 Act as the execution agent for repository: `D:\DATN\danangtrip-admin`
 
-Your job is to implement or harden the recommended admin screen: `Báo cáo Đánh giá`
-Feature slug: `admin_reports_ratings`
-Primary target route: `/admin/reports/ratings`
-Primary React Router file target: `src/pages/Reports/RatingsReport/index.tsx` or the nearest repo-reality reports path
-Feature type: authenticated admin report screen for rating trend, star distribution, approval status, rating type, detailed table, and Excel export.
+Your job is to implement or harden the recommended admin screen: `Báo cáo Đơn hàng`
+Feature slug: `admin_reports_bookings`
+Primary target route: `/admin/reports/bookings`
+Primary React Router file target: `src/pages/Reports/BookingsReport/index.tsx` or the nearest repo-reality reports path
+Feature type: authenticated admin report screen for booking volume, status distribution, trend, detailed table, and export.
 
 SINGLE-SCREEN LOCK
-- You are working on exactly one screen only: `Báo cáo Đánh giá`.
-- You MUST NOT switch to revenue reports, bookings reports, locations reports, users CRUD, contacts, notifications, CMS, or settings in this run.
-- If a shared reports layout is needed, create only the minimal shared pieces required by ratings report and document the reusable decision.
+- You are working on exactly one screen only: `Báo cáo Đơn hàng`.
+- You MUST NOT switch to revenue reports, locations reports, users CRUD, contacts, notifications, CMS, or settings in this run.
+- If a shared reports layout is needed, create only the minimal shared pieces required by bookings report and document the reusable decision.
 
 MANDATORY READ ORDER BEFORE ANY WORK
 1. `D:\DATN\danangtrip-admin\AGENTS.md`
@@ -378,13 +378,14 @@ MANDATORY READ ORDER BEFORE ANY WORK
 8. Screen/API references listed below
 
 SCREEN REFERENCES
-- Progress report: `D:\DATN\DATN_Document\docs\project_delivery_progress_report.md`
-- Primary doc: `D:\DATN\DATN_Document\docs\page\admin_reports_ratings.md`
-- Related dashboard doc: `D:\DATN\DATN_Document\docs\page\admin_dashboard.md`
-- Admin page list: `D:\DATN\DATN_Document\docs\reference\list_page.md`
-- Flow priority note: `D:\DATN\DATN_Document\docs\reference\travel_com_benchmark_flow.md`
-- Gap analysis: `D:\DATN\DATN_Document\docs\reference\screen_gap_analysis.md`
-- API list: `D:\DATN\DATN_Document\docs\api\api_list.md`
+- Progress report: `D:\DATN\DATN_Tài liệu\docs\project_delivery_progress_report.md`
+- Primary doc: `D:\DATN\DATN_Tài liệu\docs\page\admin_reports_bookings.md`
+- Related dashboard doc: `D:\DATN\DATN_Tài liệu\docs\page\admin_dashboard.md`
+- Related booking docs: `D:\DATN\DATN_Tài liệu\docs\page\admin_bookings_list.md; D:\DATN\DATN_Tài liệu\docs\page\admin_bookings_detail.md`
+- Admin page list: `D:\DATN\DATN_Tài liệu\docs\reference\list_page.md`
+- Flow priority note: `D:\DATN\DATN_Tài liệu\docs\reference\travel_com_benchmark_flow.md`
+- Gap analysis: `D:\DATN\DATN_Tài liệu\docs\reference\screen_gap_analysis.md`
+- API list: `D:\DATN\DATN_Tài liệu\docs\api\api_list.md`
 - Endpoint matrix: `D:\DATN\danangtrip-admin\API_ENDPOINT_MATRIX.md`
 - Backend API repo: `D:\DATN\danangtrip-api`
 - Backend routes: `D:\DATN\danangtrip-api\routes\api.php`
@@ -400,21 +401,23 @@ REPO CONTEXT TO READ
 - `D:\DATN\danangtrip-admin\src\api\dashboardApi.ts`
 - `D:\DATN\danangtrip-admin\src\hooks\useDashboardQueries.ts`
 - `D:\DATN\danangtrip-admin\src\pages\Dashboard\index.tsx`
-- `D:\DATN\danangtrip-admin\src\hooks\useLocationQueries.ts`
-- `D:\DATN\danangtrip-admin\src\dataHelper\location.dataHelper.ts`
-- `D:\DATN\danangtrip-admin\src\pages\Locations\LocationDetail\components\LocationReviewsTab.tsx`
+- `D:\DATN\danangtrip-admin\src\api\bookingApi.ts`
+- `D:\DATN\danangtrip-admin\src\hooks\useBookingQueries.ts`
+- `D:\DATN\danangtrip-admin\src\dataHelper\booking.dataHelper.ts`
+- `D:\DATN\danangtrip-admin\src\pages\Bookings\BookingList\index.tsx`
+- `D:\DATN\danangtrip-admin\src\pages\Bookings\BookingDetail\index.tsx`
 
 REQUIRED API FLOW
-- Load rating report data through the real available report/rating endpoint. Candidate docs endpoint: `GET /admin/reports/ratings?from=&to=&status=`.
-- Export Excel through the real available export endpoint. Candidate docs endpoint: `GET /admin/ratings/export?status=&date_from=&date_to=`.
-- If only `/admin/ratings` exists in repo/API, derive chart/report view models from paginated ratings plus available stats endpoints and record the mismatch.
-- Filter dimensions: date range, quick range, approval status (`pending`, `approved`, `rejected`), rating type (`location`, `tour`).
+- Load booking report data through the real available report/booking endpoint. Candidate docs endpoint: `GET /admin/reports/bookings`.
+- Export report data through the real available export endpoint if docs/API provide one.
+- If only `/admin/bookings` plus dashboard stats exist in repo/API, derive report aggregates from available filters and record the mismatch.
+- Filter dimensions should prioritize date range, booking status, payment status, search, and any export-ready params already used in admin booking flows.
 - Keep query params URL-synced if this matches existing dashboard/report conventions.
 
 EXPECTED UX
-- Admin can view total ratings, pending ratings, approved ratings, average score.
-- Admin can inspect trend chart, star distribution, approval status distribution, rating type distribution, and paginated rating table.
-- Admin can export Excel using current filters.
+- Admin can view total bookings and the key booking/payment status breakdown needed for operations.
+- Admin can inspect booking trends and a paginated booking report table with meaningful drill-down links.
+- Admin can export report data using current filters if the backend supports it.
 - Loading, empty, partial-data, API-error, and export-error states are explicit.
 - Route is protected by the existing `PrivateRoute` and current admin-only reality.
 - Add or update i18n keys if touched UI text is translated in this repo.
@@ -432,16 +435,16 @@ Execute in this exact order, stopping after each step for approval:
 9. `10-optimization-deploy`
 
 ARTIFACT TARGETS
-- Analysis: `.agent/artifacts/analysis/YYYY-MM-DD__admin_reports_ratings__screen-analysis.md`
-- API contract: `.agent/artifacts/api-contracts/YYYY-MM-DD__admin_reports_ratings__api-contract.md`
-- Routing: `.agent/artifacts/routing/YYYY-MM-DD__admin_reports_ratings__route-plan.md`
-- UI spec: `.agent/artifacts/ui-specs/YYYY-MM-DD__admin_reports_ratings__ui-spec.md`
-- Data integration: `.agent/artifacts/integration/YYYY-MM-DD__admin_reports_ratings__data-integration.md`
-- Interaction spec: `.agent/artifacts/interaction-specs/YYYY-MM-DD__admin_reports_ratings__interaction-spec.md`
-- Auth review: `.agent/artifacts/auth/YYYY-MM-DD__admin_reports_ratings__auth-permissions-review.md`
-- Test report: `.agent/artifacts/test-cases/YYYY-MM-DD__admin_reports_ratings__test-report.md`
-- Deploy report: `.agent/artifacts/deploy/YYYY-MM-DD__admin_reports_ratings__deploy-report.md`
-- Final review: `.agent/artifacts/review/YYYY-MM-DD__admin_reports_ratings__review.md`
+- Analysis: `.agent/artifacts/analysis/YYYY-MM-DD__admin_reports_bookings__screen-analysis.md`
+- API contract: `.agent/artifacts/api-contracts/YYYY-MM-DD__admin_reports_bookings__api-contract.md`
+- Routing: `.agent/artifacts/routing/YYYY-MM-DD__admin_reports_bookings__route-plan.md`
+- UI spec: `.agent/artifacts/ui-specs/YYYY-MM-DD__admin_reports_bookings__ui-spec.md`
+- Data integration: `.agent/artifacts/integration/YYYY-MM-DD__admin_reports_bookings__data-integration.md`
+- Interaction spec: `.agent/artifacts/interaction-specs/YYYY-MM-DD__admin_reports_bookings__interaction-spec.md`
+- Auth review: `.agent/artifacts/auth/YYYY-MM-DD__admin_reports_bookings__auth-permissions-review.md`
+- Test report: `.agent/artifacts/test-cases/YYYY-MM-DD__admin_reports_bookings__test-report.md`
+- Deploy report: `.agent/artifacts/deploy/YYYY-MM-DD__admin_reports_bookings__deploy-report.md`
+- Final review: `.agent/artifacts/review/YYYY-MM-DD__admin_reports_bookings__review.md`
 
 BEGIN NOW
 Start with step `01-screen-analysis`.
@@ -449,34 +452,34 @@ Start with step `01-screen-analysis`.
 
 ## Manual Activation Templates - Current Recommended Screen
 
-### Current Recommended Screen - Admin Reports Ratings
+### Current Recommended Screen - Admin Reports Bookings
 
 ```text
 Activate full pipeline for current recommended screen
 
 Context:
 - Repo: [D:\DATN\danangtrip-admin]
-- Feature slug: [admin_reports_ratings]
-- Screen name: [Báo cáo Đánh giá]
-- Primary target route: [/admin/reports/ratings]
-- Primary target page file: [D:\DATN\danangtrip-admin\src\pages\Reports\RatingsReport\index.tsx]
+- Feature slug: [admin_reports_bookings]
+- Screen name: [Báo cáo Đơn hàng]
+- Primary target route: [/admin/reports/bookings]
+- Primary target page file: [D:\DATN\danangtrip-admin\src\pages\Reports\BookingsReport\index.tsx]
 - Auth requirement: [Admin-only protected route]
 - DESIGN.md: [D:\DATN\danangtrip-admin\DESIGN.md]
-- Primary docs: [D:\DATN\DATN_Document\docs\page\admin_reports_ratings.md]
-- Related docs: [D:\DATN\DATN_Document\docs\page\admin_dashboard.md; D:\DATN\DATN_Document\docs\reference\list_page.md]
-- API docs: [D:\DATN\DATN_Document\docs\api\api_list.md]
+- Primary docs: [D:\DATN\DATN_Tài liệu\docs\page\admin_reports_bookings.md]
+- Related docs: [D:\DATN\DATN_Tài liệu\docs\page\admin_dashboard.md; D:\DATN\DATN_Tài liệu\docs\page\admin_bookings_list.md; D:\DATN\DATN_Tài liệu\docs\page\admin_bookings_detail.md; D:\DATN\DATN_Tài liệu\docs\reference\list_page.md]
+- API docs: [D:\DATN\DATN_Tài liệu\docs\api\api_list.md]
 - Endpoint matrix: [D:\DATN\danangtrip-admin\API_ENDPOINT_MATRIX.md]
 - Backend API repo: [D:\DATN\danangtrip-api]
-- Existing UI references: [D:\DATN\danangtrip-admin\src\pages\Dashboard\index.tsx; D:\DATN\danangtrip-admin\src\pages\Dashboard\components]
-- Services/types to inspect: [D:\DATN\danangtrip-admin\src\constants\endpoints.ts; D:\DATN\danangtrip-admin\src\api\axiosClient.ts; D:\DATN\danangtrip-admin\src\hooks\useLocationQueries.ts]
-- Main endpoints: [GET /admin/reports/ratings; GET /admin/ratings/export; fallback GET /admin/ratings]
-- Contract note: [docs and repo/API may differ between report endpoint and generic ratings endpoint; resolve in API-contract step]
-- Output prefix: [.agent/artifacts/<group>/YYYY-MM-DD__admin_reports_ratings__...md]
+- Existing UI references: [D:\DATN\danangtrip-admin\src\pages\Dashboard\index.tsx; D:\DATN\danangtrip-admin\src\pages\Bookings\BookingList\index.tsx; D:\DATN\danangtrip-admin\src\pages\Bookings\BookingDetail\index.tsx]
+- Services/types to inspect: [D:\DATN\danangtrip-admin\src\constants\endpoints.ts; D:\DATN\danangtrip-admin\src\api\axiosClient.ts; D:\DATN\danangtrip-admin\src\api\bookingApi.ts; D:\DATN\danangtrip-admin\src\hooks\useBookingQueries.ts]
+- Main endpoints: [GET /admin/reports/bookings; export endpoint if available; fallback GET /admin/bookings]
+- Contract note: [docs and repo/API may differ between report endpoint and generic bookings endpoint; resolve in API-contract step]
+- Output prefix: [.agent/artifacts/<group>/YYYY-MM-DD__admin_reports_bookings__...md]
 
 Execution:
 - Start with `01-screen-analysis`.
 - Before each step, read the matching `SKILL.md`.
-- Use the ratings report doc as the main UX reference and dashboard as report visual baseline.
+- Use the bookings report doc as the main UX reference and booking dashboard/list as visual baseline.
 - During API-contract step, separate real API fields from derived chart/report view models.
 - Stop after each pipeline step for approval.
 ```
@@ -488,15 +491,15 @@ Activate 01-screen-analysis
 
 Context:
 - Repo: [D:\DATN\danangtrip-admin]
-- Feature slug: [admin_reports_ratings]
-- Screen name: [Báo cáo Đánh giá]
+- Feature slug: [admin_reports_bookings]
+- Screen name: [Báo cáo Đơn hàng]
 - Figma/Stitch: [NONE]
-- Input source: [D:\DATN\DATN_Document\docs\page\admin_reports_ratings.md]
-- Related sources: [D:\DATN\DATN_Document\docs\page\admin_dashboard.md; D:\DATN\DATN_Document\docs\reference\list_page.md]
-- Prototype note: [Use report doc and current Dashboard implementation as main references]
+- Input source: [D:\DATN\DATN_Tài liệu\docs\page\admin_reports_bookings.md]
+- Related sources: [D:\DATN\DATN_Tài liệu\docs\page\admin_dashboard.md; D:\DATN\DATN_Tài liệu\docs\page\admin_bookings_list.md; D:\DATN\DATN_Tài liệu\docs\reference\list_page.md]
+- Prototype note: [Use report doc and current Dashboard + BookingList implementation as main references]
 - DESIGN.md: [D:\DATN\danangtrip-admin\DESIGN.md]
-- API docs: [D:\DATN\DATN_Document\docs\api\api_list.md]
-- Output: [.agent/artifacts/analysis/YYYY-MM-DD__admin_reports_ratings__screen-analysis.md]
+- API docs: [D:\DATN\DATN_Tài liệu\docs\api\api_list.md]
+- Output: [.agent/artifacts/analysis/YYYY-MM-DD__admin_reports_bookings__screen-analysis.md]
 ```
 
 ### Skill 02 - Project Setup Audit
@@ -506,9 +509,9 @@ Activate 02-project-setup
 
 Context:
 - Repo: [D:\DATN\danangtrip-admin]
-- Feature slug: [admin_reports_ratings]
-- Audit reason: [first dedicated reports screen after admin dashboard]
-- Output: [.agent/artifacts/audits/YYYY-MM-DD__admin_reports_ratings__project-audit.md]
+- Feature slug: [admin_reports_bookings]
+- Audit reason: [booking operations report after dashboard and booking/payment detail completion]
+- Output: [.agent/artifacts/audits/YYYY-MM-DD__admin_reports_bookings__project-audit.md]
 ```
 
 ### Skill 03 - Types And API Contract
@@ -518,15 +521,15 @@ Activate 03-types-api-contract
 
 Context:
 - Repo: [D:\DATN\danangtrip-admin]
-- Feature slug: [admin_reports_ratings]
-- Analysis file: [.agent/artifacts/analysis/YYYY-MM-DD__admin_reports_ratings__screen-analysis.md]
-- API docs: [D:\DATN\DATN_Document\docs\api\api_list.md]
+- Feature slug: [admin_reports_bookings]
+- Analysis file: [.agent/artifacts/analysis/YYYY-MM-DD__admin_reports_bookings__screen-analysis.md]
+- API docs: [D:\DATN\DATN_Tài liệu\docs\api\api_list.md]
 - Endpoint matrix: [D:\DATN\danangtrip-admin\API_ENDPOINT_MATRIX.md]
-- Relevant endpoints: [GET /admin/reports/ratings, GET /admin/ratings/export, fallback GET /admin/ratings]
-- Existing API foundation: [D:\DATN\danangtrip-admin\src\constants\endpoints.ts; D:\DATN\danangtrip-admin\src\api\axiosClient.ts]
-- Existing types/mappers: [rating-related location/tour data helpers, dashboard pending ratings fallback]
-- Contract check: [date params, status params, type params, export params, report aggregate shape, paginated table shape]
-- Output: [.agent/artifacts/api-contracts/YYYY-MM-DD__admin_reports_ratings__api-contract.md]
+- Relevant endpoints: [GET /admin/reports/bookings, export endpoint if available, fallback GET /admin/bookings]
+- Existing API foundation: [D:\DATN\danangtrip-admin\src\constants\endpoints.ts; D:\DATN\danangtrip-admin\src\api\axiosClient.ts; D:\DATN\danangtrip-admin\src\api\bookingApi.ts]
+- Existing types/mappers: [booking-related data helpers, dashboard order stats fallback]
+- Contract check: [date params, booking status params, payment status params, export params, report aggregate shape, paginated table shape]
+- Output: [.agent/artifacts/api-contracts/YYYY-MM-DD__admin_reports_bookings__api-contract.md]
 ```
 
 ### Skill 04 - Layout And Routing
@@ -536,14 +539,14 @@ Activate 04-layout-routing
 
 Context:
 - Repo: [D:\DATN\danangtrip-admin]
-- Feature slug: [admin_reports_ratings]
-- Analysis file: [.agent/artifacts/analysis/YYYY-MM-DD__admin_reports_ratings__screen-analysis.md]
-- Target route path: [/admin/reports/ratings]
-- Target page file: [D:\DATN\danangtrip-admin\src\pages\Reports\RatingsReport\index.tsx]
+- Feature slug: [admin_reports_bookings]
+- Analysis file: [.agent/artifacts/analysis/YYYY-MM-DD__admin_reports_bookings__screen-analysis.md]
+- Target route path: [/admin/reports/bookings]
+- Target page file: [D:\DATN\danangtrip-admin\src\pages\Reports\BookingsReport\index.tsx]
 - Route files: [D:\DATN\danangtrip-admin\src\routes\routes.ts; D:\DATN\danangtrip-admin\src\routes\index.tsx]
 - New routes: [yes]
 - Menu impact: [add or preserve reports navigation according to repo sidebar reality]
-- Output: [.agent/artifacts/routing/YYYY-MM-DD__admin_reports_ratings__route-plan.md]
+- Output: [.agent/artifacts/routing/YYYY-MM-DD__admin_reports_bookings__route-plan.md]
 ```
 
 ### Skill 05 - UI Components
@@ -553,11 +556,11 @@ Activate 05-ui-components
 
 Context:
 - Repo: [D:\DATN\danangtrip-admin]
-- Feature slug: [admin_reports_ratings]
-- Analysis file: [.agent/artifacts/analysis/YYYY-MM-DD__admin_reports_ratings__screen-analysis.md]
-- Components to focus on: [RatingsReportPage, ReportFilterBar, RatingStatsCards, RatingTrendChart, StarDistributionChart, RatingStatusChart, RatingTypeChart, RatingsReportTable, ExportButton]
-- Existing UI references: [D:\DATN\danangtrip-admin\src\pages\Dashboard\components\; existing table/filter/card primitives]
-- Output: [.agent/artifacts/ui-specs/YYYY-MM-DD__admin_reports_ratings__ui-spec.md]
+- Feature slug: [admin_reports_bookings]
+- Analysis file: [.agent/artifacts/analysis/YYYY-MM-DD__admin_reports_bookings__screen-analysis.md]
+- Components to focus on: [BookingsReportPage, ReportFilterBar, BookingStatsCards, BookingTrendChart, BookingStatusChart, PaymentStatusChart, BookingsReportTable, ExportButton]
+- Existing UI references: [D:\DATN\danangtrip-admin\src\pages\Dashboard\components\; D:\DATN\danangtrip-admin\src\pages\Bookings\BookingList\components]
+- Output: [.agent/artifacts/ui-specs/YYYY-MM-DD__admin_reports_bookings__ui-spec.md]
 ```
 
 ### Skill 06 - Data Integration
@@ -567,13 +570,13 @@ Activate 06-data-integration
 
 Context:
 - Repo: [D:\DATN\danangtrip-admin]
-- Feature slug: [admin_reports_ratings]
-- API contract: [.agent/artifacts/api-contracts/YYYY-MM-DD__admin_reports_ratings__api-contract.md]
-- UI spec: [.agent/artifacts/ui-specs/YYYY-MM-DD__admin_reports_ratings__ui-spec.md]
-- Queries: [ratings report aggregate, ratings report table]
+- Feature slug: [admin_reports_bookings]
+- API contract: [.agent/artifacts/api-contracts/YYYY-MM-DD__admin_reports_bookings__api-contract.md]
+- UI spec: [.agent/artifacts/ui-specs/YYYY-MM-DD__admin_reports_bookings__ui-spec.md]
+- Queries: [bookings report aggregate, bookings report table]
 - Mutations/actions: [Excel export]
-- Invalidations: [ratings report query keys after moderation changes if present]
-- Output: [.agent/artifacts/integration/YYYY-MM-DD__admin_reports_ratings__data-integration.md]
+- Invalidations: [bookings report query keys after booking-status changes if linked actions exist]
+- Output: [.agent/artifacts/integration/YYYY-MM-DD__admin_reports_bookings__data-integration.md]
 ```
 
 ### Skill 07 - Interactions
@@ -583,12 +586,12 @@ Activate 07-interactions
 
 Context:
 - Repo: [D:\DATN\danangtrip-admin]
-- Feature slug: [admin_reports_ratings]
-- Analysis file: [.agent/artifacts/analysis/YYYY-MM-DD__admin_reports_ratings__screen-analysis.md]
-- Data integration: [.agent/artifacts/integration/YYYY-MM-DD__admin_reports_ratings__data-integration.md]
-- Main actions: [change date range, quick range, status filter, type filter, paginate table, export Excel, open linked rating target]
+- Feature slug: [admin_reports_bookings]
+- Analysis file: [.agent/artifacts/analysis/YYYY-MM-DD__admin_reports_bookings__screen-analysis.md]
+- Data integration: [.agent/artifacts/integration/YYYY-MM-DD__admin_reports_bookings__data-integration.md]
+- Main actions: [change date range, booking status filter, payment status filter, search, paginate table, export Excel, open linked booking target]
 - Forms present: [filters only]
-- Output: [.agent/artifacts/interaction-specs/YYYY-MM-DD__admin_reports_ratings__interaction-spec.md]
+- Output: [.agent/artifacts/interaction-specs/YYYY-MM-DD__admin_reports_bookings__interaction-spec.md]
 ```
 
 ### Skill 08 - Auth And Permissions
@@ -598,12 +601,12 @@ Activate 08-auth-permissions
 
 Context:
 - Repo: [D:\DATN\danangtrip-admin]
-- Feature slug: [admin_reports_ratings]
-- Route plan: [.agent/artifacts/routing/YYYY-MM-DD__admin_reports_ratings__route-plan.md]
-- Interaction spec: [.agent/artifacts/interaction-specs/YYYY-MM-DD__admin_reports_ratings__interaction-spec.md]
+- Feature slug: [admin_reports_bookings]
+- Route plan: [.agent/artifacts/routing/YYYY-MM-DD__admin_reports_bookings__route-plan.md]
+- Interaction spec: [.agent/artifacts/interaction-specs/YYYY-MM-DD__admin_reports_bookings__interaction-spec.md]
 - Feature type: [authenticated-only | role-based]
 - Relevant roles: [admin]
-- Output: [.agent/artifacts/auth/YYYY-MM-DD__admin_reports_ratings__auth-permissions-review.md]
+- Output: [.agent/artifacts/auth/YYYY-MM-DD__admin_reports_bookings__auth-permissions-review.md]
 ```
 
 ### Skill 09 - Testing
@@ -613,11 +616,11 @@ Activate 09-testing
 
 Context:
 - Repo: [D:\DATN\danangtrip-admin]
-- Feature slug: [admin_reports_ratings]
-- Analysis file: [.agent/artifacts/analysis/YYYY-MM-DD__admin_reports_ratings__screen-analysis.md]
-- Interaction spec: [.agent/artifacts/interaction-specs/YYYY-MM-DD__admin_reports_ratings__interaction-spec.md]
-- Auth review: [.agent/artifacts/auth/YYYY-MM-DD__admin_reports_ratings__auth-permissions-review.md]
-- Output: [.agent/artifacts/test-cases/YYYY-MM-DD__admin_reports_ratings__test-report.md]
+- Feature slug: [admin_reports_bookings]
+- Analysis file: [.agent/artifacts/analysis/YYYY-MM-DD__admin_reports_bookings__screen-analysis.md]
+- Interaction spec: [.agent/artifacts/interaction-specs/YYYY-MM-DD__admin_reports_bookings__interaction-spec.md]
+- Auth review: [.agent/artifacts/auth/YYYY-MM-DD__admin_reports_bookings__auth-permissions-review.md]
+- Output: [.agent/artifacts/test-cases/YYYY-MM-DD__admin_reports_bookings__test-report.md]
 ```
 
 ### Skill 10 - Optimization And Deploy
@@ -627,12 +630,12 @@ Activate 10-optimization-deploy
 
 Context:
 - Repo: [D:\DATN\danangtrip-admin]
-- Feature slug: [admin_reports_ratings]
-- Test report: [.agent/artifacts/test-cases/YYYY-MM-DD__admin_reports_ratings__test-report.md]
+- Feature slug: [admin_reports_bookings]
+- Test report: [.agent/artifacts/test-cases/YYYY-MM-DD__admin_reports_bookings__test-report.md]
 - Test verdict: [READY | READY WITH RISKS | NOT READY]
 - Existing artifacts: [analysis, api-contract, route-plan, ui-spec, data-integration, interaction-spec, auth-review, test-report]
-- Output deploy: [.agent/artifacts/deploy/YYYY-MM-DD__admin_reports_ratings__deploy-report.md]
-- Output review: [.agent/artifacts/review/YYYY-MM-DD__admin_reports_ratings__review.md]
+- Output deploy: [.agent/artifacts/deploy/YYYY-MM-DD__admin_reports_bookings__deploy-report.md]
+- Output review: [.agent/artifacts/review/YYYY-MM-DD__admin_reports_bookings__review.md]
 ```
 
 ## Files Commonly Read Before Most Tasks

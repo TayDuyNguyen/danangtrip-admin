@@ -15,6 +15,7 @@ import {
 } from 'recharts';
 import { Star } from 'lucide-react';
 import { Skeleton } from '@/components/ui/Skeleton';
+import { useTranslation } from 'react-i18next';
 import type {
     TrendChartDataPoint,
     StarDistributionPoint,
@@ -38,6 +39,8 @@ const RatingsReportCharts: React.FC<RatingsReportChartsProps> = ({
     averageScore = 0,
     isLoading = false
 }) => {
+    const { t } = useTranslation(['ratings', 'common']);
+
     if (isLoading || !data) {
         return (
             <div className="flex flex-col gap-6 mb-6">
@@ -83,15 +86,15 @@ const RatingsReportCharts: React.FC<RatingsReportChartsProps> = ({
                 <div className="bg-white/80 backdrop-blur-md border border-slate-100 rounded-2xl p-6 shadow-xs flex flex-col justify-between h-[360px]">
                     <div className="flex justify-between items-center mb-4">
                         <div>
-                            <h3 className="text-[15px] font-black text-slate-800 leading-tight">Xu hướng đánh giá</h3>
-                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-0.5">Theo ngày/Tuần/Tháng</p>
+                            <h3 className="text-[15px] font-black text-slate-800 leading-tight">{t('charts.trend_title')}</h3>
+                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-0.5">{t('charts.trend_subtitle')}</p>
                         </div>
                     </div>
 
                     <div className="flex-1 min-h-0 w-full">
                         {data.trend.length === 0 ? (
                             <div className="h-full flex items-center justify-center text-xs font-bold text-slate-400">
-                                Không có dữ liệu xu hướng trong khoảng thời gian này
+                                {t('charts.no_trend_data')}
                             </div>
                         ) : (
                             <ResponsiveContainer width="100%" height="100%">
@@ -131,7 +134,7 @@ const RatingsReportCharts: React.FC<RatingsReportChartsProps> = ({
                                         itemStyle={{ fontSize: 11, fontWeight: 700, padding: '2px 0' }}
                                     />
                                     <Area
-                                        name="Tổng đánh giá"
+                                        name={t('stats.total_ratings')}
                                         type="monotone"
                                         dataKey="total"
                                         stroke="#14b8a6"
@@ -140,7 +143,7 @@ const RatingsReportCharts: React.FC<RatingsReportChartsProps> = ({
                                         fill="url(#colorTotal)"
                                     />
                                     <Area
-                                        name="Đã duyệt"
+                                        name={t('filter.status_approved')}
                                         type="monotone"
                                         dataKey="approved"
                                         stroke="#10b981"
@@ -157,11 +160,11 @@ const RatingsReportCharts: React.FC<RatingsReportChartsProps> = ({
                     <div className="flex gap-4 mt-3 justify-center select-none">
                         <div className="flex items-center gap-1.5 text-[11px] font-bold text-slate-500">
                             <span className="w-2.5 h-2.5 rounded-full bg-[#14b8a6]"></span>
-                            Tổng đánh giá
+                            {t('stats.total_ratings')}
                         </div>
                         <div className="flex items-center gap-1.5 text-[11px] font-bold text-slate-500">
                             <span className="w-2.5 h-2.5 rounded-full bg-[#10b981] border-2 border-dashed border-white"></span>
-                            Đã duyệt
+                            {t('filter.status_approved')}
                         </div>
                     </div>
                 </div>
@@ -170,12 +173,12 @@ const RatingsReportCharts: React.FC<RatingsReportChartsProps> = ({
                 <div className="bg-white/80 backdrop-blur-md border border-slate-100 rounded-2xl p-6 shadow-xs flex flex-col justify-between h-[360px]">
                     <div className="flex justify-between items-center mb-4">
                         <div>
-                            <h3 className="text-[15px] font-black text-slate-800 leading-tight">Phân bố số sao</h3>
-                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-0.5">Tần suất và tỷ lệ phần trăm</p>
+                            <h3 className="text-[15px] font-black text-slate-800 leading-tight">{t('charts.stars_distribution')}</h3>
+                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-0.5">{t('charts.stars_subtitle')}</p>
                         </div>
                         <div className="flex items-center gap-1 bg-yellow-50 text-yellow-600 font-extrabold text-[12px] px-3 py-1 rounded-xl">
                             <Star size={14} className="fill-yellow-500/20" />
-                            TB {averageScore.toFixed(1)} ★
+                            {t('common:labels.average_score', { defaultValue: 'TB' })} {averageScore.toFixed(1)} ★
                         </div>
                     </div>
 
@@ -209,8 +212,8 @@ const RatingsReportCharts: React.FC<RatingsReportChartsProps> = ({
                 <div className="bg-white/80 backdrop-blur-md border border-slate-100 rounded-2xl p-6 shadow-xs flex flex-col lg:flex-row gap-6 items-center h-[300px]">
                     <div className="flex-1 flex flex-col self-stretch justify-between">
                         <div>
-                            <h3 className="text-[15px] font-black text-slate-800 leading-tight">Trạng thái duyệt</h3>
-                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-0.5">Tỷ lệ phê duyệt và chờ duyệt</p>
+                            <h3 className="text-[15px] font-black text-slate-800 leading-tight">{t('filter.moderation_status')}</h3>
+                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-0.5">{t('charts.status_subtitle')}</p>
                         </div>
 
                         <div className="flex flex-col gap-2 mt-4">
@@ -219,7 +222,11 @@ const RatingsReportCharts: React.FC<RatingsReportChartsProps> = ({
                                     <div className="flex items-center gap-2">
                                         <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: item.color }}></span>
                                         <span>
-                                            {item.status === 'approved' ? 'Đã duyệt' : item.status === 'pending' ? 'Chờ duyệt' : 'Từ chối'}
+                                            {item.status === 'approved' 
+                                                ? t('filter.status_approved') 
+                                                : item.status === 'pending' 
+                                                    ? t('filter.status_pending') 
+                                                    : t('filter.status_rejected')}
                                         </span>
                                     </div>
                                     <div className="text-right">
@@ -253,7 +260,7 @@ const RatingsReportCharts: React.FC<RatingsReportChartsProps> = ({
                         {/* Absolute Overlay inside the donut center */}
                         <div className="absolute flex flex-col items-center justify-center select-none text-center">
                             <span className="text-2xl font-black text-slate-800 leading-none">{totalRatings.toLocaleString()}</span>
-                            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-1">Đánh giá</span>
+                            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-1">{t('stats.ratings')}</span>
                         </div>
                     </div>
                 </div>
@@ -262,8 +269,8 @@ const RatingsReportCharts: React.FC<RatingsReportChartsProps> = ({
                 <div className="bg-white/80 backdrop-blur-md border border-slate-100 rounded-2xl p-6 shadow-xs flex flex-col justify-between h-[300px]">
                     <div className="flex justify-between items-center mb-2">
                         <div>
-                            <h3 className="text-[15px] font-black text-slate-800 leading-tight">Theo loại hình dịch vụ</h3>
-                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-0.5">Số lượng và điểm trung bình</p>
+                            <h3 className="text-[15px] font-black text-slate-800 leading-tight">{t('charts.type_title')}</h3>
+                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-0.5">{t('charts.type_subtitle')}</p>
                         </div>
                     </div>
 
@@ -272,7 +279,7 @@ const RatingsReportCharts: React.FC<RatingsReportChartsProps> = ({
                             <BarChart
                                 data={data.types.map(item => ({
                                     ...item,
-                                    displayName: item.type === 'location' ? 'Địa điểm' : 'Tour du lịch'
+                                    displayName: item.type === 'location' ? t('filter.type_location') : t('filter.type_tour')
                                 }))}
                                 margin={{ top: 20, right: 10, left: -25, bottom: 5 }}
                             >
@@ -309,7 +316,7 @@ const RatingsReportCharts: React.FC<RatingsReportChartsProps> = ({
                                 />
                                 <Bar
                                     yAxisId="left"
-                                    name="Số lượng ĐG"
+                                    name={t('charts.count_label')}
                                     dataKey="count"
                                     fill="#14b8a6"
                                     radius={[6, 6, 0, 0]}
@@ -317,7 +324,7 @@ const RatingsReportCharts: React.FC<RatingsReportChartsProps> = ({
                                 />
                                 <Bar
                                     yAxisId="right"
-                                    name="Điểm TB (★)"
+                                    name={t('charts.avg_label')}
                                     dataKey="average"
                                     fill="#F59E0B"
                                     radius={[6, 6, 0, 0]}
@@ -330,11 +337,11 @@ const RatingsReportCharts: React.FC<RatingsReportChartsProps> = ({
                     <div className="flex gap-4 justify-center select-none">
                         <div className="flex items-center gap-1.5 text-[11px] font-bold text-slate-500">
                             <span className="w-2.5 h-2.5 rounded-full bg-[#14b8a6]"></span>
-                            Số lượng
+                            {t('charts.count_label')}
                         </div>
                         <div className="flex items-center gap-1.5 text-[11px] font-bold text-slate-500">
                             <span className="w-2.5 h-2.5 rounded-full bg-[#F59E0B]"></span>
-                            Điểm trung bình (★)
+                            {t('charts.avg_label')}
                         </div>
                     </div>
                 </div>

@@ -1,0 +1,94 @@
+{
+    "title": "Ratings Report",
+    "subtitle": "Statistics, analysis and moderation of customer reviews",
+    "toast": {
+        "exporting_excel": "Preparing and exporting Excel file...",
+        "export_success": "Excel report exported successfully!",
+        "export_failed": "Exporting Excel file failed. Please try again.",
+        "exporting_mock": "Preparing mock Excel file...",
+        "export_mock_success": "Mock Excel report exported successfully!"
+    },
+    "error": {
+        "load_failed": "Failed to load report data",
+        "laravel_connection": "A connection error occurred with the Laravel API system.",
+        "api_failed": "Failed to load data from API"
+    },
+    "filter": {
+        "validation": {
+            "date_range": "Start date cannot be after end date."
+        },
+        "toast": {
+            "reset_success": "Filters have been reset to default."
+        },
+        "from_date": "From date",
+        "to_date": "To date",
+        "moderation_status": "Moderation status",
+        "status_all": "All statuses",
+        "status_pending": "Pending",
+        "status_approved": "Approved",
+        "status_rejected": "Rejected",
+        "category": "Category",
+        "type_all": "All types",
+        "type_location": "Location",
+        "type_tour": "Tour",
+        "quick_filters": "Quick filters",
+        "range_7days": "7 days",
+        "range_30days": "30 days",
+        "range_3months": "3 months",
+        "range_thisyear": "This year"
+    },
+    "stats": {
+        "total_ratings": "Total Ratings",
+        "average_score": "Average Rating",
+        "ratings": "Ratings"
+    },
+    "charts": {
+        "trend_title": "Ratings Trend",
+        "trend_subtitle": "By Day/Week/Month",
+        "no_trend_data": "No trend data available for this range",
+        "stars_distribution": "Stars Distribution",
+        "stars_subtitle": "Frequency and percentage",
+        "status_subtitle": "Approved vs pending distribution",
+        "type_title": "By Service Type",
+        "type_subtitle": "Count and average score",
+        "count_label": "Quantity",
+        "avg_label": "Average Score (★)"
+    },
+    "table": {
+        "details_title": "Review Details",
+        "details_subtitle": "List for review moderation and feedback management",
+        "total_ratings_count": "{{total}} reviews",
+        "header_user": "User",
+        "header_target": "Location / Tour",
+        "header_feedback": "Feedback Content",
+        "header_status": "Status",
+        "header_date": "Created Date",
+        "header_actions": "Actions",
+        "no_comment": "No comment",
+        "attachment_alt": "attachment",
+        "tooltip_view": "View full review",
+        "tooltip_approve": "Approve review",
+        "tooltip_reject": "Reject review",
+        "tooltip_delete": "Delete permanently",
+        "confirm_delete": "Are you sure you want to delete this rating permanently? This action cannot be undone.",
+        "pagination_showing": "Showing {{from}}–{{to}} of {{total}} reviews"
+    },
+    "modal": {
+        "title": "Review Detail",
+        "user_label": "From user: {{name}}",
+        "target_label": "Review for",
+        "stars_label": "Stars",
+        "comment_label": "Comment text:",
+        "no_comment": "No comments",
+        "images_label": "Attached images ({{count}})"
+    },
+    "mock": {
+        "toggle_title": "Click to toggle mock data mode",
+        "mock_on": "Mock Data (On)",
+        "mock_off": "Real Data (Off)",
+        "toast_to_mock": "Failed to connect to Laravel API. Automatically activated Mock Data mode.",
+        "toast_switched_mock": "Switched to Mock Data mode",
+        "toast_switched_real": "Switched to Real Data mode (Laravel API)",
+        "use_mock_btn": "Use Mock Data"
+    }
+}

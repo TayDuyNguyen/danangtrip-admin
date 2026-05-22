@@ -1,21 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { FileDown, FileText, ChevronRight, LayoutDashboard, AlertTriangle, RefreshCw, Sparkles } from 'lucide-react';
-import { useRatingsReportQuery, useReportMutations } from '@/hooks/useReportQueries';
+import { useBookingsReportQuery, useReportMutations } from '@/hooks/useReportQueries';
 import ReportFilterBar from './components/ReportFilterBar';
-import RatingStatsCards from './components/RatingStatsCards';
-import RatingsReportCharts from './components/RatingsReportCharts';
-import RatingsReportTable from './components/RatingsReportTable';
+import BookingStatsCards from './components/BookingStatsCards';
+import BookingsReportCharts from './components/BookingsReportCharts';
+import BookingsReportTable from './components/BookingsReportTable';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
-import type { 
-    RatingsReportViewModel, 
-    TrendChartDataPoint, 
-    StarDistributionPoint, 
-    StatusDistributionPoint, 
-    TypeDistributionPoint,
-    RatingsReportItemViewModel
-} from '@/dataHelper/report.dataHelper';
+import type { BookingsReportItemViewModel, BookingsReportFilters } from '@/dataHelper/report.dataHelper';
 
 // Date utility helpers
 const getFirstDayOfMonth = () => {
@@ -30,180 +23,128 @@ const getToday = () => {
 /**
  * Generate premium mock data fallback when API endpoints are not ready
  */
-const getMockRatingsReportData = (filters: {
+const getMockBookingsReportData = (filters: {
     from: string;
     to: string;
-    status: 'all' | 'pending' | 'approved' | 'rejected';
-    type: 'all' | 'location' | 'tour';
+    status: string;
+    payment_status: string;
     page: number;
     per_page: number;
-}): RatingsReportViewModel => {
+}) => {
     const start = new Date(filters.from);
     const end = new Date(filters.to);
-    const trend: TrendChartDataPoint[] = [];
+    const trend: { date: string; bookings: number; revenue: number }[] = [];
     const daysDiff = Math.max(1, Math.min(60, Math.round((end.getTime() - start.getTime()) / (1000 * 3600 * 24))));
-
-    const baseRatings = 3;
-
+    
+    const baseBookings = 4;
+    
     for (let i = 0; i <= daysDiff; i++) {
         const d = new Date(start);
         d.setDate(start.getDate() + i);
         const dateString = d.toISOString().split('T')[0];
-
-        const factor = 0.4 + Math.random() * 1.2;
-        const dailyTotal = Math.round(baseRatings * factor);
-        const dailyApproved = Math.round(dailyTotal * 0.8);
-
+        
+        const factor = 0.5 + Math.random() * 1.1;
+        const dailyBookings = Math.round(baseBookings * factor);
+        const dailyRevenue = Math.round(dailyBookings * 1250000 * factor);
+        
         trend.push({
-            label: dateString.split('-').slice(1).reverse().join('/'),
-            total: dailyTotal,
-            approved: dailyApproved,
+            date: dateString,
+            bookings: dailyBookings,
+            revenue: dailyRevenue,
         });
     }
 
-    const stars: StarDistributionPoint[] = [
-        { stars: 5, count: 120, percentage: 60 },
-        { stars: 4, count: 50, percentage: 25 },
-        { stars: 3, count: 20, percentage: 10 },
-        { stars: 2, count: 7, percentage: 3.5 },
-        { stars: 1, count: 3, percentage: 1.5 },
-    ];
-
-    const statuses: StatusDistributionPoint[] = [
-        { status: 'approved', labelKey: 'filter.status_approved', count: 170, percentage: 85, color: '#10B981' },
-        { status: 'pending', labelKey: 'filter.status_pending', count: 20, percentage: 10, color: '#F59E0B' },
-        { status: 'rejected', labelKey: 'filter.status_rejected', count: 10, percentage: 5, color: '#EF4444' },
-    ];
-
-    const types: TypeDistributionPoint[] = [
-        { type: 'location', labelKey: 'filter.type_location', count: 85, average: 4.6 },
-        { type: 'tour', labelKey: 'filter.type_tour', count: 115, average: 4.3 },
+    const statuses = [
+        { status: 'pending' as const, labelKey: 'booking.status.pending', count: 18, percentage: 12, color: '#F59E0B' },
+        { status: 'confirmed' as const, labelKey: 'booking.status.confirmed', count: 32, percentage: 22, color: '#3B82F6' },
+        { status: 'completed' as const, labelKey: 'booking.status.completed', count: 85, percentage: 58, color: '#10B981' },
+        { status: 'cancelled' as const, labelKey: 'booking.status.cancelled', count: 11, percentage: 8, color: '#EF4444' },
     ];
 
     const stats = {
-        total: 200,
-        totalTrend: 12.5,
-        pending: 20,
-        pendingTrend: -15.2,
-        approved: 170,
-        approvedTrend: 18.4,
-        average: 4.4,
-        averageTrend: 2.1,
+        total: 146,
+        totalTrend: 14.8,
+        completed: 85,
+        completedTrend: 18.3,
+        cancelled: 11,
+        cancelledTrend: -5.4,
+        revenue: 182500000,
+        revenueTrend: 24.6,
     };
 
-    const reviewableNames = {
-        tour: [
-            "Tour Ngũ Hành Sơn - Hội An 1 ngày",
-            "Tour du ngoạn Bà Nà Hills - Cáp treo đạt kỷ lục",
-            "Tour Cù Lao Chàm lặn ngắm san hô & hải sản du thuyền",
-            "Tour tham quan Cố đô Huế 1 ngày từ Đà Nẵng",
-            "Tour Công viên suối khoáng nóng Núi Thần Tài",
-            "Tour Đô Thị Cổ Hội An & Trải nghiệm thả đèn hoa đăng"
-        ],
-        location: [
-            "Chùa Linh Ứng Bán Đảo Sơn Trà",
-            "Cầu Rồng Đà Nẵng",
-            "Bãi biển Mỹ Khê",
-            "Ngũ Hành Sơn",
-            "Rừng Dừa Bảy Mẫu",
-            "Chợ Cồn Đà Nẵng"
-        ]
-    };
+    const tourNames = [
+        "Tour Ngũ Hành Sơn - Hội An 1 ngày",
+        "Tour du ngoạn Bà Nà Hills - Cáp treo đạt kỷ lục",
+        "Tour Cù Lao Chàm lặn ngắm san hô & hải sản du thuyền",
+        "Tour tham quan Cố đô Huế 1 ngày từ Đà Nẵng",
+        "Tour Công viên suối khoáng nóng Núi Thần Tài",
+        "Tour Đô Thị Cổ Hội An & Trải nghiệm thả đèn hoa đăng"
+    ];
 
-    const userNames = [
-        "Nguyễn Hoàng Anh", "Trần Minh Tâm", "Lê Khánh Chi", "Phạm Văn Dũng",
+    const customerNames = [
+        "Nguyễn Hoàng Anh", "Trần Minh Tâm", "Lê Khánh Chi", "Phạm Văn Dũng", 
         "Vũ Hoàng Yến", "Đặng Hữu Quốc", "Hoàng Kim Liên", "Phan Gia Huy",
         "Đỗ Phương Nam", "Bùi Kiều Trang"
     ];
 
-    const comments = [
-        "Dịch vụ tuyệt vời, hướng dẫn viên nhiệt tình vui tính. Gia đình tôi rất hài lòng!",
-        "Chuyến đi rất vui, cảnh đẹp xuất sắc, đồ ăn ngon và phong phú.",
-        "Độ hoàn thiện dịch vụ tốt, giá cả hợp lý, đáng tiền trải nghiệm.",
-        "Cần cải thiện thời gian đón khách, hơi trễ một chút nhưng nhìn chung ổn.",
-        "Mọi thứ hoàn hảo từ khâu chuẩn bị đến khâu đưa đón, 5 sao!",
-        "Địa điểm đẹp, nhân viên hỗ trợ chu đáo nhiệt tình.",
-        "Trải nghiệm tuyệt vời, nhất định sẽ giới thiệu cho bạn bè đồng nghiệp.",
-        "Phong cảnh tuyệt đẹp nhưng hơi đông khách du lịch vào dịp cuối tuần.",
-        "Đồ ăn tạm ổn, xe đưa đón sạch sẽ, lái xe cẩn thận an toàn.",
-        "Hài lòng với chuyến đi này, cám ơn đội ngũ hỗ trợ."
-    ];
+    const statusOptions = ['pending', 'confirmed', 'completed', 'cancelled'] as const;
+    const paymentStatusOptions = ['pending', 'paid', 'refunded'] as const;
 
-    const imagesList = [
-        "https://images.unsplash.com/photo-1555215695-3004980ad54e?w=150",
-        "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=150",
-        "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=150"
-    ];
-
-    const statusOptions = ['pending', 'approved', 'rejected'] as const;
-    const typeOptions = ['location', 'tour'] as const;
-
-    const items: RatingsReportItemViewModel[] = [];
+    const items: BookingsReportItemViewModel[] = [];
     const perPage = filters.per_page;
     const offset = (filters.page - 1) * perPage;
-
-    // Filter simulation based on filters
-    const selectedStatus = filters.status;
-    const selectedType = filters.type;
-
-    let targetCount = 50;
-    if (selectedStatus !== 'all') {
-        targetCount = selectedStatus === 'approved' ? 35 : selectedStatus === 'pending' ? 10 : 5;
-    }
-
+    
+    // Simulate filtered items
     for (let i = 0; i < perPage; i++) {
         const itemIdx = offset + i;
-        if (itemIdx >= targetCount) break;
-
-        const id = 30200 + itemIdx;
-        const type = selectedType !== 'all' ? selectedType : typeOptions[itemIdx % typeOptions.length];
-        const status = selectedStatus !== 'all' ? selectedStatus : statusOptions[itemIdx % statusOptions.length];
-        const score = status === 'rejected' ? 2 : (itemIdx % 5) + 1 === 1 ? 3 : (itemIdx % 5) + 1 === 2 ? 4 : 5;
-        const targetList = reviewableNames[type];
-        const targetName = targetList[itemIdx % targetList.length];
-
-        const dateObj = new Date(Date.now() - (itemIdx * 8 * 3600 * 1000));
-        const datePart = dateObj.toISOString().split('T')[0].split('-').reverse().join('/');
-        const timePart = dateObj.toTimeString().split(' ')[0].substring(0, 5);
+        const id = 10452 + itemIdx;
+        const status = statusOptions[itemIdx % statusOptions.length];
+        const paymentStatus = status === 'completed' ? 'paid' : 
+                              status === 'cancelled' ? 'refunded' : 
+                              paymentStatusOptions[itemIdx % paymentStatusOptions.length];
+        
+        // Mock booked date
+        const bookedDateObj = new Date(Date.now() - (itemIdx * 12 * 3600 * 1000));
+        const datePart = bookedDateObj.toISOString().split('T')[0].split('-').reverse().join('/');
+        const timePart = bookedDateObj.toTimeString().split(' ')[0].substring(0, 5);
 
         items.push({
             id,
-            score,
-            comment: comments[itemIdx % comments.length],
-            images: itemIdx % 3 === 0 ? imagesList.slice(0, (itemIdx % 2) + 1) : [],
+            bookingCode: `DNT${id}`,
+            customerName: customerNames[itemIdx % customerNames.length],
+            tourName: tourNames[itemIdx % tourNames.length],
+            totalAmount: Math.round((itemIdx + 2) * 680000 / 1000) * 1000,
             status,
-            reviewableType: type,
-            reviewableId: 100 + itemIdx,
-            reviewableName: targetName,
-            userName: userNames[itemIdx % userNames.length],
-            userAvatar: '',
-            createdAt: datePart,
-            createdAtTime: timePart
+            paymentStatus,
+            bookedAt: datePart,
+            bookedAtTime: timePart,
         });
     }
 
     return {
         stats,
         charts: {
-            trend,
-            stars,
+            trend: trend.map(p => ({
+                label: p.date.split('-').slice(1).reverse().join('/'),
+                bookings: p.bookings,
+                revenue: p.revenue
+            })),
             statuses,
-            types,
         },
         table: {
             items,
             pagination: {
                 currentPage: filters.page,
-                lastPage: Math.ceil(targetCount / perPage),
+                lastPage: 5,
                 perPage,
-                total: targetCount,
+                total: 50,
             },
         },
     };
 };
 
-const RatingsReport: React.FC = () => {
-    const { t } = useTranslation(['ratings', 'common']);
+const BookingsReport: React.FC = () => {
+    const { t } = useTranslation('bookings_report');
     const [searchParams, setSearchParams] = useSearchParams();
     const [isMockMode, setIsMockMode] = useState<boolean>(false);
     const [hasAttemptedRealApi, setHasAttemptedRealApi] = useState<boolean>(false);
@@ -211,22 +152,22 @@ const RatingsReport: React.FC = () => {
     // 1. Initial filters state synced with URL SearchParams
     const initialFrom = searchParams.get('from') || getFirstDayOfMonth();
     const initialTo = searchParams.get('to') || getToday();
-    const initialStatus = (searchParams.get('status') as 'all' | 'pending' | 'approved' | 'rejected') || 'all';
-    const initialType = (searchParams.get('type') as 'all' | 'location' | 'tour') || 'all';
+    const initialStatus = (searchParams.get('status') as BookingsReportFilters['status']) || 'all';
+    const initialPaymentStatus = (searchParams.get('payment_status') as BookingsReportFilters['payment_status']) || 'all';
     const initialPage = Number(searchParams.get('page')) || 1;
 
     const [localFilters, setLocalFilters] = useState({
         from: initialFrom,
         to: initialTo,
         status: initialStatus,
-        type: initialType,
+        payment_status: initialPaymentStatus,
     });
 
     const [activeFilters, setActiveFilters] = useState({
         from: initialFrom,
         to: initialTo,
         status: initialStatus,
-        type: initialType,
+        payment_status: initialPaymentStatus,
         page: initialPage,
         per_page: 10,
     });
@@ -237,22 +178,22 @@ const RatingsReport: React.FC = () => {
             from: activeFilters.from,
             to: activeFilters.to,
             status: activeFilters.status,
-            type: activeFilters.type,
+            payment_status: activeFilters.payment_status,
             page: String(activeFilters.page),
         };
         setSearchParams(newParams);
     }, [activeFilters, setSearchParams]);
 
-    // 3. React Query to load reports data (disabled when Mock Mode is active)
+    // 3. React Query to load reports data (disabled when Mock Mode is explicitly active)
     const {
         data: realData,
         isLoading: isRealLoading,
         isError: isRealError,
         refetch,
         isFetching: isRealFetching,
-    } = useRatingsReportQuery(activeFilters);
+    } = useBookingsReportQuery(activeFilters);
 
-    // Auto-fallback to mock mode on error
+    // Keep track of errors to automatically enable mock mode
     useEffect(() => {
         if (isRealError && !isMockMode && !hasAttemptedRealApi) {
             const timer = setTimeout(() => {
@@ -264,26 +205,17 @@ const RatingsReport: React.FC = () => {
         }
     }, [isRealError, isMockMode, hasAttemptedRealApi, t]);
 
-    // Determine final loading and data states
+    // 4. Report mutations hooks
+    const { exportBookingsMutation } = useReportMutations();
+
+    // Determine final loading and data representation states
     const isLoading = !isMockMode && isRealLoading;
     const isFetching = !isMockMode && isRealFetching;
-
-    const data = isMockMode
-        ? getMockRatingsReportData(activeFilters)
+    
+    // Choose data source based on mode
+    const data = isMockMode 
+        ? getMockBookingsReportData(activeFilters) 
         : realData;
-
-    // 4. Report mutations hooks
-    const {
-        exportMutation,
-        approveMutation,
-        rejectMutation,
-        deleteMutation,
-    } = useReportMutations();
-
-    const isModerating =
-        approveMutation.isPending ||
-        rejectMutation.isPending ||
-        deleteMutation.isPending;
 
     // 5. Handlers
     const handleLocalFilterChange = (updated: Partial<typeof localFilters>) => {
@@ -291,7 +223,6 @@ const RatingsReport: React.FC = () => {
     };
 
     const handleApplyFilters = () => {
-        // Validation: End date must be greater than start date
         if (new Date(localFilters.from) > new Date(localFilters.to)) {
             toast.error(t('filter.validation.date_range'));
             return;
@@ -300,7 +231,7 @@ const RatingsReport: React.FC = () => {
         setActiveFilters(prev => ({
             ...prev,
             ...localFilters,
-            page: 1, // Reset to first page on filter apply
+            page: 1,
         }));
     };
 
@@ -309,7 +240,7 @@ const RatingsReport: React.FC = () => {
             from: getFirstDayOfMonth(),
             to: getToday(),
             status: 'all' as const,
-            type: 'all' as const,
+            payment_status: 'all' as const,
         };
         setLocalFilters(defaultFilters);
         setActiveFilters({
@@ -317,7 +248,7 @@ const RatingsReport: React.FC = () => {
             page: 1,
             per_page: 10,
         });
-        toast.info(t('filter.toast.reset_success'));
+        toast.info(t('filter.toast_reset'));
     };
 
     const handlePageChange = (newPage: number) => {
@@ -330,18 +261,19 @@ const RatingsReport: React.FC = () => {
     const handleExportExcel = async () => {
         try {
             const dateStr = new Date().toISOString().split('T')[0];
-            const fallbackFilename = `bao-cao-danh-gia_${activeFilters.from}_to_${activeFilters.to}_${dateStr}.xlsx`;
+            const fallbackFilename = `bao-cao-don-hang_${activeFilters.from}_to_${activeFilters.to}_${dateStr}.xlsx`;
 
             if (isMockMode) {
-                toast.loading(t('toast.exporting_mock'));
+                // If in mock mode, trigger a local mock download download to impress user
+                toast.loading(t('export.toast_mock_loading'));
                 setTimeout(() => {
                     toast.dismiss();
-                    toast.success(t('toast.export_mock_success'));
-
-                    // Trigger local csv/blob download
-                    const headers = 'ID,Score,Comment,Status,Target Type,Target Name,User,Created At\n';
-                    const rows = data?.table.items.map(i =>
-                        `"${i.id}","${i.score}","${(i.comment || '').replace(/"/g, '""')}","${i.status}","${i.reviewableType}","${i.reviewableName}","${i.userName}","${i.createdAt} ${i.createdAtTime}"`
+                    toast.success(t('export.toast_mock_success'));
+                    
+                    // Trigger a basic csv/blob download
+                    const headers = 'ID,Mã đơn hàng,Khách hàng,Tour,Tổng tiền,Trạng thái đơn,Thanh toán,Ngày đặt\n';
+                    const rows = data?.table.items.map(i => 
+                        `"${i.id}","${i.bookingCode}","${i.customerName}","${i.tourName}","${i.totalAmount}","${i.status}","${i.paymentStatus}","${i.bookedAt}"`
                     ).join('\n');
                     const blob = new Blob([headers + rows], { type: 'text/csv;charset=utf-8;' });
                     const url = URL.createObjectURL(blob);
@@ -356,14 +288,14 @@ const RatingsReport: React.FC = () => {
             }
 
             toast.promise(
-                exportMutation.mutateAsync({
+                exportBookingsMutation.mutateAsync({
                     params: activeFilters,
                     fallbackFilename,
                 }),
                 {
-                    loading: t('toast.exporting_excel'),
-                    success: t('toast.export_success'),
-                    error: t('toast.export_failed'),
+                    loading: t('export.toast_loading'),
+                    success: t('export.toast_success'),
+                    error: t('export.toast_error'),
                 }
             );
         } catch {
@@ -375,49 +307,10 @@ const RatingsReport: React.FC = () => {
         const nextMode = !isMockMode;
         setIsMockMode(nextMode);
         toast.success(
-            nextMode
-                ? t('mock.toast_switched_mock')
+            nextMode 
+                ? t('mock.toast_switched_mock') 
                 : t('mock.toast_switched_real')
         );
-    };
-
-    const handleApprove = (id: number) => {
-        if (isMockMode) {
-            toast.success(t('common:success.update'));
-            // Simulate status update locally
-            if (data) {
-                const item = data.table.items.find(i => i.id === id);
-                if (item) item.status = 'approved';
-            }
-            return;
-        }
-        approveMutation.mutate(id);
-    };
-
-    const handleReject = (id: number) => {
-        if (isMockMode) {
-            toast.success(t('common:success.update'));
-            // Simulate status update locally
-            if (data) {
-                const item = data.table.items.find(i => i.id === id);
-                if (item) item.status = 'rejected';
-            }
-            return;
-        }
-        rejectMutation.mutate(id);
-    };
-
-    const handleDelete = (id: number) => {
-        if (isMockMode) {
-            toast.success(t('common:success.delete'));
-            // Simulate deletion locally
-            if (data) {
-                data.table.items = data.table.items.filter(i => i.id !== id);
-                data.table.pagination.total -= 1;
-            }
-            return;
-        }
-        deleteMutation.mutate(id);
     };
 
     return (
@@ -429,12 +322,12 @@ const RatingsReport: React.FC = () => {
                     <div className="flex items-center gap-1.5 text-[11px] font-bold text-slate-400 select-none">
                         <span className="hover:text-slate-600 cursor-pointer flex items-center gap-1">
                             <LayoutDashboard size={11} />
-                            {t('common:breadcrumb.home')}
+                            {t('breadcrumb.home')}
                         </span>
                         <ChevronRight size={11} />
-                        <span className="hover:text-slate-600 cursor-pointer">{t('common:sidebar.reports')}</span>
+                        <span className="hover:text-slate-600 cursor-pointer">{t('breadcrumb.reports')}</span>
                         <ChevronRight size={11} />
-                        <span className="text-[#14b8a6]">{t('common:sidebar.reports_ratings')}</span>
+                        <span className="text-[#14b8a6]">{t('breadcrumb.current')}</span>
                     </div>
 
                     <div className="flex items-center gap-2.5">
@@ -450,12 +343,13 @@ const RatingsReport: React.FC = () => {
 
                 {/* Header Actions: Toggle Mock & Export Excel */}
                 <div className="flex items-center gap-2">
+                    {/* Mock Mode toggle switch */}
                     <button
                         type="button"
                         onClick={toggleMockMode}
                         className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-black border transition-all cursor-pointer ${
-                            isMockMode
-                                ? 'bg-amber-50 border-amber-200 text-amber-600'
+                            isMockMode 
+                                ? 'bg-amber-50 border-amber-200 text-amber-600' 
                                 : 'bg-slate-50 border-slate-200 text-slate-500 hover:bg-slate-100'
                         }`}
                         title={t('mock.toggle_title')}
@@ -467,28 +361,28 @@ const RatingsReport: React.FC = () => {
                     <button
                         type="button"
                         onClick={handleExportExcel}
-                        disabled={isLoading || isFetching || exportMutation.isPending || (data && data.table.items.length === 0)}
+                        disabled={isLoading || isFetching || exportBookingsMutation.isPending || (data && data.table.items.length === 0)}
                         className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold bg-white border border-slate-100 hover:bg-slate-50 text-slate-600 shadow-sm active:scale-95 transition-all disabled:opacity-50 disabled:active:scale-100 cursor-pointer"
                     >
-                        {exportMutation.isPending ? (
+                        {exportBookingsMutation.isPending ? (
                             <div className="w-4 h-4 border-2 border-slate-600 border-t-transparent rounded-full animate-spin"></div>
                         ) : (
                             <FileDown size={16} />
                         )}
-                        {t('common:actions.export_excel')}
+                        {t('export.btn_label')}
                     </button>
                 </div>
             </div>
 
-            {/* 2. Error Display shell */}
+            {/* 2. Error Display shell (Only shown if NOT in mock mode and API fails) */}
             {isRealError && !isMockMode ? (
                 <div className="bg-red-50/60 backdrop-blur-xs border border-red-100/50 rounded-2xl p-8 text-center space-y-4 max-w-lg mx-auto">
                     <div className="w-12 h-12 bg-red-100/50 rounded-full flex items-center justify-center text-red-500 mx-auto">
                         <AlertTriangle size={24} />
                     </div>
                     <div>
-                        <h3 className="text-base font-black text-red-800">{t('error.api_failed')}</h3>
-                        <p className="text-xs font-bold text-red-400 mt-1.5">{t('error.laravel_connection')}</p>
+                        <h3 className="text-base font-black text-red-800">{t('error.load_failed')}</h3>
+                        <p className="text-xs font-bold text-red-400 mt-1.5">{t('error.connection')}</p>
                     </div>
                     <div className="flex gap-2 justify-center">
                         <button
@@ -496,14 +390,14 @@ const RatingsReport: React.FC = () => {
                             className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white font-bold text-sm px-6 py-2.5 rounded-xl active:scale-95 transition-all shadow-md shadow-red-600/10 cursor-pointer"
                         >
                             <RefreshCw size={15} />
-                            {t('common:error.try_again')}
+                            {t('error.retry_btn')}
                         </button>
                         <button
                             onClick={toggleMockMode}
                             className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white font-bold text-sm px-6 py-2.5 rounded-xl active:scale-95 transition-all shadow-md shadow-amber-500/10 cursor-pointer"
                         >
                             <Sparkles size={15} />
-                            {t('mock.use_mock_btn')}
+                            {t('error.use_mock_btn')}
                         </button>
                     </div>
                 </div>
@@ -519,27 +413,22 @@ const RatingsReport: React.FC = () => {
                     />
 
                     {/* 4. Stats Summary Cards */}
-                    <RatingStatsCards
+                    <BookingStatsCards
                         stats={data?.stats}
                         isLoading={isLoading}
                     />
 
                     {/* 5. Visualization Charts */}
-                    <RatingsReportCharts
+                    <BookingsReportCharts
                         data={data?.charts}
-                        averageScore={data?.stats?.average}
                         isLoading={isLoading}
                     />
 
-                    {/* 6. Moderation Details Table */}
-                    <RatingsReportTable
+                    {/* 6. Table */}
+                    <BookingsReportTable
                         data={data?.table}
                         isLoading={isLoading}
                         onPageChange={handlePageChange}
-                        onApprove={handleApprove}
-                        onReject={handleReject}
-                        onDelete={handleDelete}
-                        isModerating={isModerating}
                     />
                 </>
             )}
@@ -547,4 +436,4 @@ const RatingsReport: React.FC = () => {
     );
 };
 
-export default RatingsReport;
+export default BookingsReport;
