@@ -31,6 +31,8 @@ The revenue report feature is completely finished and has successfully progresse
 
 ## 3. Next Steps
 
-- **Branch Push**: Push the local branch `feat/DATN-81/admin-reports-revenue` to the origin repository.
+- **PR Review & Merge**: Open a Pull Request for `feat/DATN-81/admin-reports-revenue` at:
+  https://github.com/TayDuyNguyen/danangtrip-admin/pull/new/feat/DATN-81/admin-reports-revenue
 - **Staging Deploy**: Merge and deploy to staging environments.
 - **User Review**: Demo the premium glassmorphic UI layout, quick date range filter pills, and live Excel/CSV download features.
+
