@@ -1,6 +1,15 @@
 import axiosClient from './axiosClient';
 import { API_ENDPOINTS } from '@/constants';
-import type { RawRatingsReport, RatingsReportFilters, RawBookingsReport, BookingsReportFilters } from '@/dataHelper/report.dataHelper';
+import type { 
+    RawRatingsReport, 
+    RatingsReportFilters, 
+    RawBookingsReport, 
+    BookingsReportFilters,
+    RevenueReportFilters,
+    RawRevenueTrendResponse,
+    RawTourRevenueDetail,
+    RawRevenueReportItem
+} from '@/dataHelper/report.dataHelper';
 import type { ApiResponse } from '@/types';
 import type { AxiosResponse } from 'axios';
 
@@ -25,6 +34,43 @@ export const reportApi = {
                 date_to: to,
                 status,
                 payment_status,
+            },
+            responseType: 'blob',
+        }) as Promise<AxiosResponse<Blob>>;
+    },
+
+    getRevenueTrend: (params: { period?: string; from?: string; to?: string }): Promise<ApiResponse<RawRevenueTrendResponse>> =>
+        axiosClient.get(API_ENDPOINTS.DASHBOARD.REVENUE, { params }),
+
+    getRevenueDetail: (params: { from?: string; to?: string }): Promise<ApiResponse<RawTourRevenueDetail[]>> =>
+        axiosClient.get(API_ENDPOINTS.REPORTS.REVENUE_DETAIL, { params }),
+
+    getPaymentsList: (params: RevenueReportFilters): Promise<ApiResponse<{
+        data: RawRevenueReportItem[];
+        current_page: number;
+        last_page: number;
+        per_page: number;
+        total: number;
+    }>> => {
+        const { from, to, payment_gateway, page, per_page } = params;
+        return axiosClient.get(API_ENDPOINTS.PAYMENTS.LIST, {
+            params: {
+                date_from: from,
+                date_to: to,
+                payment_gateway,
+                page,
+                per_page,
+            }
+        });
+    },
+
+    exportRevenueReport: (params: RevenueReportFilters): Promise<AxiosResponse<Blob>> => {
+        const { from, to, payment_gateway } = params;
+        return axiosClient.get(API_ENDPOINTS.EXPORT.PAYMENTS, {
+            params: {
+                date_from: from,
+                date_to: to,
+                payment_gateway,
             },
             responseType: 'blob',
         }) as Promise<AxiosResponse<Blob>>;
