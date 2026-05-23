@@ -56,8 +56,9 @@ const navItems = [
         ]
     },
     { icon: FileText, label: 'sidebar.posts', path: '/admin/posts' },
-    { icon: Users, label: 'sidebar.users', path: '/admin/users' },
+    { icon: Users, label: 'sidebar.users', path: ROUTES.USERS_LIST },
     { icon: Bell, label: 'sidebar.notifications', path: '/admin/notifications' },
+
     { icon: Settings, label: 'sidebar.settings', path: '/admin/settings' },
 ];
 
