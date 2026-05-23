@@ -10,7 +10,10 @@ import type {
     RawTourRevenueDetail,
     RawRevenueReportItem,
     RawLocationReportItem,
-    LocationReportFilters
+    LocationReportFilters,
+    RawUsersReport,
+    UsersReportFilters,
+    UsersExportFilters
 } from '@/dataHelper/report.dataHelper';
 import type { ApiResponse, RawLocation } from '@/types';
 import type { AxiosResponse } from 'axios';
@@ -104,4 +107,18 @@ export const reportApi = {
 
     getTopLocations: (params?: { limit?: number }): Promise<ApiResponse<RawLocation[]>> =>
         axiosClient.get(API_ENDPOINTS.DASHBOARD.TOP_LOCATIONS, { params }),
+
+    getUsersReport: (params: UsersReportFilters): Promise<ApiResponse<RawUsersReport>> =>
+        axiosClient.get(API_ENDPOINTS.REPORTS.USERS, { params }),
+
+    exportUsersReport: (params: UsersExportFilters): Promise<AxiosResponse<Blob>> => {
+        const { role, status } = params;
+        return axiosClient.get(API_ENDPOINTS.EXPORT.USERS, {
+            params: {
+                role: role !== 'all' ? role : undefined,
+                status: status !== 'all' ? status : undefined,
+            },
+            responseType: 'blob',
+        }) as Promise<AxiosResponse<Blob>>;
+    },
 };

@@ -35,6 +35,7 @@ export const API_ENDPOINTS = {
         BOOKINGS: '/admin/reports/bookings',
         REVENUE_DETAIL: '/admin/reports/revenue-detail',
         LOCATIONS: '/admin/reports/locations',
+        USERS: '/admin/reports/users',
     },
     CONTACTS: {
         LIST: '/admin/contacts',
@@ -46,6 +47,7 @@ export const API_ENDPOINTS = {
         TOURS: '/admin/tours/export',
         RATINGS: '/admin/ratings/export',
         LOCATIONS: '/admin/locations/export',
+        USERS: '/admin/users/export',
     },
     // Tours management
     TOURS: {
