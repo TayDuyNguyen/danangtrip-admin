@@ -1,5 +1,33 @@
 # Session Log
 
+## 2026-05-23 Step 10 Revalidation Update
+- Revalidated Step 10 for `admin_reports_users` after code review.
+- Fixed mock mode behavior so `useUsersReportQuery` disables the real API query while mock mode is active.
+- Reran `npm.cmd run prepush:check`.
+- Final validation passed: lint, typecheck, Vite production build, and Playwright console tests.
+- Updated deploy/review/test artifacts plus working state and handoff.
+
+## 2026-05-23 — Step 09: 09-testing (admin_reports_users)
+
+### Actions Taken
+- Ran `npm run lint` → PASS (0 errors, 0 warnings)
+- Ran `npm run typecheck` → PASS (0 TypeScript errors)
+- Ran `npm run build` → PASS (Vite v7.3.2, 3608 modules, built in ~14s)
+- Fixed `scripts/prepush-check.mjs`: changed server probe from `http://127.0.0.1:5173` to `http://localhost:5173` to fix Windows IPv6 detection
+- Added `/admin/reports/users` route to `tests/console-errors.spec.ts` Playwright coverage
+- Ran `npm run prepush:check` → PASS (5/5 Playwright tests including new `/admin/reports/users` route)
+- Updated test report artifact: `.agent/artifacts/test-cases/2026-05-23__admin_reports_users__test-report.md`
+
+### Outcome
+- All static gates: PASS
+- All Playwright runtime tests: PASS (5/5)
+- Feature verdict: READY
+- Browser visual inspection: dev server confirmed active at localhost:5173
+
+---
+
+
+
 ## 2026-05-12
 - Added `REPO_FACTS.md` to anchor real repository stack and working conventions.
 - Added `verify_agent_drift.py` and wired it into `.agent` checklist / verification scripts.

@@ -492,3 +492,53 @@ export interface LocationReportViewModel {
     };
 }
 
+/**
+ * Filters for Báo cáo Người dùng (Users Report)
+ */
+export interface UsersReportFilters {
+    year?: number;
+}
+
+/**
+ * Filters for Xuất Người dùng (Users Export)
+ */
+export interface UsersExportFilters {
+    role?: 'all' | 'admin' | 'user';
+    status?: 'all' | 'active' | 'banned';
+}
+
+/**
+ * Raw monthly user count returned from API GET /admin/reports/users
+ */
+export interface RawUsersReportMonthStat {
+    month: number;
+    count: number;
+}
+
+/**
+ * Raw Users Report payload from backend
+ */
+export interface RawUsersReport {
+    year: number;
+    stats: RawUsersReportMonthStat[];
+}
+
+/**
+ * UI View Model for a month's stats in Users Report
+ */
+export interface UsersReportMonthViewModel {
+    month: number;          // 1-12
+    labelKey: string;       // e.g. "users_report.month.1"
+    count: number;          // monthly new user signup count
+    cumulativeCount: number;// running total of new users
+}
+
+/**
+ * Complete UI View Model for Users Report
+ */
+export interface UsersReportViewModel {
+    year: number;
+    stats: UsersReportMonthViewModel[];
+    totalNewUsers: number;
+}
+

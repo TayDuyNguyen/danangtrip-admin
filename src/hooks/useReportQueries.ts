@@ -3,8 +3,8 @@ import { reportApi } from '@/api/reportApi';
 import locationApi from '@/api/locationApi';
 import axiosClient from '@/api/axiosClient';
 import { API_ENDPOINTS } from '@/constants/endpoints';
-import { mapRatingsReport, mapBookingsReport, mapRevenueReport, mapLocationsReport } from '@/dataHelper/report.mapper';
-import type { RatingsReportFilters, BookingsReportFilters, RevenueReportFilters, LocationReportFilters } from '@/dataHelper/report.dataHelper';
+import { mapRatingsReport, mapBookingsReport, mapRevenueReport, mapLocationsReport, mapUsersReport } from '@/dataHelper/report.mapper';
+import type { RatingsReportFilters, BookingsReportFilters, RevenueReportFilters, LocationReportFilters, UsersReportFilters, UsersExportFilters } from '@/dataHelper/report.dataHelper';
 import { prepareSpreadsheetDownload, downloadBlobFile } from '@/utils';
 import { toast } from 'sonner';
 
@@ -14,6 +14,7 @@ export const reportKeys = {
     bookingsReport: (params: BookingsReportFilters) => [...reportKeys.all, 'bookings', params] as const,
     revenueReport: (params: RevenueReportFilters) => [...reportKeys.all, 'revenue', params] as const,
     locationsReport: (params: { from?: string; to?: string }) => [...reportKeys.all, 'locations', params] as const,
+    usersReport: (params: UsersReportFilters) => [...reportKeys.all, 'users', params] as const,
 };
 
 /**
@@ -127,6 +128,21 @@ export const useLocationsReportQuery = (
 };
 
 /**
+ * Query hook to fetch processed Users Report ViewModel
+ */
+export const useUsersReportQuery = (params: UsersReportFilters, options?: { enabled?: boolean }) => {
+    return useQuery({
+        queryKey: reportKeys.usersReport(params),
+        queryFn: async () => {
+            const response = await reportApi.getUsersReport(params);
+            return mapUsersReport(response.data);
+        },
+        staleTime: 1000 * 30, // 30 seconds
+        enabled: options?.enabled ?? true,
+    });
+};
+
+/**
  * Mutation and action hooks for Reports & Ratings Moderation
  */
 export const useReportMutations = () => {
@@ -162,6 +178,15 @@ export const useReportMutations = () => {
     const exportLocationsMutation = useMutation({
         mutationFn: async ({ params, fallbackFilename }: { params: LocationReportFilters; fallbackFilename: string }) => {
             const response = await reportApi.exportLocationsReport(params);
+            const prepared = await prepareSpreadsheetDownload(response, fallbackFilename);
+            if (!prepared.ok) throw new Error(prepared.error);
+            downloadBlobFile(prepared.blob, prepared.filename);
+        },
+    });
+
+    const exportUsersMutation = useMutation({
+        mutationFn: async ({ params, fallbackFilename }: { params: UsersExportFilters; fallbackFilename: string }) => {
+            const response = await reportApi.exportUsersReport(params);
             const prepared = await prepareSpreadsheetDownload(response, fallbackFilename);
             if (!prepared.ok) throw new Error(prepared.error);
             downloadBlobFile(prepared.blob, prepared.filename);
@@ -209,6 +234,7 @@ export const useReportMutations = () => {
         exportBookingsMutation,
         exportRevenueMutation,
         exportLocationsMutation,
+        exportUsersMutation,
         approveMutation,
         rejectMutation,
         deleteMutation,

@@ -94,6 +94,7 @@
         "reports_bookings": "Bookings Report",
         "reports_revenue": "Revenue Report",
         "reports_locations": "Locations Report",
+        "reports_users": "Users Report",
         "notifications": "Notifications",
         "settings": "Settings",
         "logout": "Logout"

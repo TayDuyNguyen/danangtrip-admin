@@ -2,15 +2,12 @@
 
 ## Current Status
 
-- Date: 2026-05-22
-- Active feature/task: `admin_reports_locations`
+- Date: 2026-05-23
+- Active feature/task: `admin_reports_users`
 - Status: Completed
-- Current step: Step 10 completed
-- Next step: User review / push approval
-- Objective: Completed Locations Report Step 10 deploy/review handoff.
-- Expected artifacts:
-  - `.agent/artifacts/deploy/2026-05-22__admin_reports_locations__deploy-report.md`
-  - `.agent/artifacts/review/2026-05-22__admin_reports_locations__review.md`
+- Current step: Step 10 completed and revalidated
+- Next step: User review / push approval / next screen selection
+- Objective: Completed the admin users report screen, fixed final mock-mode query behavior, and verified quality gates.
 - Mode: Handoff
 - Owner: AI collaborator
 
@@ -29,25 +26,32 @@
 
 ## Current Reality
 
-- Route exists at `/admin/reports/locations`.
-- Page exists at `src/pages/Reports/LocationReport/index.tsx`.
-- Components exist under `src/pages/Reports/LocationReport/components`.
-- Data hooks, mapper, report API, mock fallback, export flow, URL filters, tabs, pagination, and i18n are documented and validated.
+- Route exists: `/admin/reports/users`.
+- Page exists: `src/pages/Reports/UsersReport/index.tsx`.
+- Components exist under `src/pages/Reports/UsersReport/components`.
+- Route constant and lazy route are registered.
+- API, query hook, mapper, data contracts, export flow, i18n, and console test coverage are implemented.
+- Step 10 fix: mock mode now disables the real users report API query.
 
 ## Validation
 
-- `npm.cmd run lint`: PASS
-- `npm.cmd run typecheck`: PASS
-- `npm.cmd run build`: PASS
-- `npm.cmd run prepush:check`: PASS
+- `npm.cmd run prepush:check`: PASS.
+- Gate details: lint PASS, typecheck PASS, Vite production build PASS, Playwright console tests PASS.
+- Console test evidence: 5/5 routes passed, including `/admin/reports/users`.
 
 ## Known Issues / Risks
 
-- `prepush:check` skipped console testing because no dev server was running; Step 09 contains focused Playwright evidence.
-- Large shared Vite chunks and `lottie-web` eval warning remain project-wide warnings.
-- Some unrelated sidebar destinations still point to future screens.
+- `lottie-web` eval warning remains a project-wide non-blocking build warning.
+- Large vendor chunks remain a project-wide non-blocking build warning.
+- Backend report endpoint supports `year`; role/status are export-only filters.
+
+## Artifacts
+
+- Deploy artifact: `.agent/artifacts/deploy/2026-05-23__admin_reports_users__deploy-report.md`
+- Review artifact: `.agent/artifacts/review/2026-05-23__admin_reports_users__review.md`
+- Test artifact: `.agent/artifacts/test-cases/2026-05-23__admin_reports_users__test-report.md`
 
 ## Suggested Git Handoff
 
-- Branch: `feat/DATN-83/admin-reports-locations`
-- Commit: `feat(reports): add locations report screen`
+- Branch: `feat/DATN-84/admin-reports-users`
+- Commit: `feat(reports): add users report screen`

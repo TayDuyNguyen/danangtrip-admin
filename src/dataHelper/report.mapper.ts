@@ -24,6 +24,9 @@ import type {
     RawLocationReportItem,
     LocationReportViewModel,
     LocationReportItemViewModel,
+    RawUsersReport,
+    UsersReportViewModel,
+    UsersReportMonthViewModel,
 } from './report.dataHelper';
 import type { RawLocation } from '@/types/location';
 import { toNumberSafe } from '@/utils/safeConverters';
@@ -577,6 +580,45 @@ export const mapLocationsReport = (
                 total: locList.total || 0,
             },
         },
+    };
+};
+
+/**
+ * Main mapper transforming raw users report API response into UsersReportViewModel.
+ * Ensures all 12 months are populated and computes cumulative signup totals.
+ */
+export const mapUsersReport = (raw: RawUsersReport | undefined | null): UsersReportViewModel => {
+    const selectedYear = raw?.year ?? new Date().getFullYear();
+    
+    // 1. Initialize stats for 12 months (1 to 12)
+    const statsMap: Record<number, number> = {};
+    if (raw?.stats && Array.isArray(raw.stats)) {
+        raw.stats.forEach(item => {
+            const m = Number(item.month);
+            const count = Number(item.count);
+            if (!isNaN(m) && m >= 1 && m <= 12) {
+                statsMap[m] = count;
+            }
+        });
+    }
+
+    let runningSum = 0;
+    const stats: UsersReportMonthViewModel[] = Array.from({ length: 12 }, (_, i) => {
+        const monthNum = i + 1;
+        const count = statsMap[monthNum] || 0;
+        runningSum += count;
+        return {
+            month: monthNum,
+            labelKey: `users_report.month.${monthNum}`,
+            count,
+            cumulativeCount: runningSum
+        };
+    });
+
+    return {
+        year: selectedYear,
+        stats,
+        totalNewUsers: runningSum
     };
 };
 
