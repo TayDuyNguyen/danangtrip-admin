@@ -3,39 +3,47 @@
 ## Last Updated
 
 - Date: 2026-05-23
-- Status: Completed (`admin_users_create` & `web_recommendations_relocation`)
+- Status: Completed (`admin_users_create`, `web_recommendations_relocation`, & `admin_users_edit`)
 
 ## Current Features
 
 - **Feature 1: `admin_users_create`**
   - Route: `/admin/users/create` (DanangTrip Admin)
-  - Status: Completed. The screen to create a new user account has been successfully built and verified.
+  - Status: Completed. Screen to create a new user account built and verified.
 - **Feature 2: `web_recommendations_relocation`**
   - Route: `/profile/recommendations` (DanangTrip Client Web)
-  - Status: Completed. The "Gợi ý cho bạn" page has been successfully moved inside the profile section under Next.js App Router and verified.
+  - Status: Completed. Relocated recommendations page inside Next.js Profile section.
+- **Feature 3: `admin_users_edit`**
+  - Route: `/admin/users/:id/edit` (DanangTrip Admin)
+  - Status: Completed. Screen to edit existing user accounts built, integrated, and verified.
 
-## Technical Summary
+## Technical Summary - `admin_users_edit`
 
-### Admin
-- **Backend**: Modified `StoreUserRequest.php` on `danangtrip-api` to accept a custom `status` validation rule (`active | banned | pending`).
-- **Frontend API**: Added `create` endpoint to `userApi.ts` and `createUserMutation` to `useUserQueries.ts` hooks.
-- **Frontend Pages & Components**:
-  - Registered `/admin/users/create` and lazy loaded the page as a private child route.
-  - Built premium-styled, fully localized `UserCreate` page wrapper and `UserCreateForm` form.
-  - Implemented client-side Yup schema validation supporting full i18n messages (`vi` and `en`).
-  - Added eye view passwords, smooth scrolling focus on errors, custom card-based selection for Admin/User roles, and browser autocomplete prevention.
-
-### Client Web
-- **Next.js Relocation**: Moved recommendations page to `src/app/[locale]/(main)/(protected)/profile/recommendations/page.tsx`.
-- **Integrated Profile Layout**: Wrapped recommendation grid inside `ProfileLayoutWrapper` layout, cleanly integrating sidebar navigation, mobile navigations, and breadcrumbs.
-- **Cleaned Old Route**: Deleted old page and directory from `(protected)/recommendations` completely.
-- **Route Constants & Guard Configs**: Updated `PROTECTED_ROUTES.RECOMMENDATIONS = "/profile/recommendations"` in `config/routes.ts` and updated `middleware.ts`.
-- **i18n Sync**: Added breadcrumb localized keys in both `vi/settings.json` and `en/settings.json`.
+- **Backend API Alignment (`danangtrip-api`):** Modified `UpdateUserRequest.php` to accept a custom `status` validation rule, enabling single-request updates for basic details, roles, and status through the PUT payload.
+- **Routing & Client Setup:**
+  - Route Constant `USERS_EDIT` registered in `src/routes/routes.ts`.
+  - Lazy routes import and child route registered in `src/routes/index.tsx`.
+  - Main update endpoint defined in `src/constants/endpoints.ts`.
+  - `update` method added to `userApi.ts`.
+  - `updateUserMutation` hook registered in `useUserMutations`.
+- **UI Components:**
+  - Built premium-styled, fully localized `UserEdit` and `UserEditForm` form pages under `src/pages/Users/UserEdit/`.
+  - Prefilled form values, username readonly label, and warning/information boxes.
+  - Form validation via Yup schema `editUserSchema` supporting full i18n messages (`vi` and `en`).
+  - Added email modification warning and self-protection logic (disables toggle/roles when editing own profile).
+  - Integrated `UnsavedChangesGuard` dialog to prevent accidental navigation when form fields are dirty.
+- **Integration Links:**
+  - Enabled Edit buttons on User List table (`UserTable.tsx`).
+  - Enabled Edit buttons on User Detail header (`UserDetailHeader.tsx`).
+  - Enabled Edit buttons on User Detail sidebar actions card (`UserActionsCard.tsx`).
 
 ## Final Verification
 
-- **Admin**: `npm run prepush:check` passed successfully (0 compilation errors, linter passed, production build passed, 6/6 console error Playwright tests passed).
-- **Client Web**: `npm run typecheck` and `npm run lint` both passed with 100% SUCCESS and 0 errors!
+- **Admin (`prepush:check`):** Passed successfully!
+  - 0 ESLint errors (Linter passed)
+  - 0 TypeScript compilation errors (Typecheck passed)
+  - Production build compiled successfully
+  - Playwright Console checks passed (6/6 console tests passed)
 
 ## Read First Next Session
 

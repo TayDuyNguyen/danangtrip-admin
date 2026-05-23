@@ -51,22 +51,22 @@ const PassengerListPlaceholder = ({ adults, children, infants }: PassengerListPl
     
     return (
         <div className="bg-white rounded-3xl p-6 lg:p-8 border border-slate-100 shadow-xs hover:shadow-md transition-all duration-300">
-            <h3 className="text-[16px] font-black text-slate-900 mb-6 flex items-center gap-2">
+            <h3 className="text-[16px] font-bold text-slate-900 mb-6 flex items-center gap-2">
                 <Users className="text-[#14b8a6]" size={20} />
                 {t('detail.section_passengers')}
             </h3>
 
             <div className="grid grid-cols-3 gap-4 mb-6">
                 <div className="bg-slate-50/50 rounded-2xl p-4 text-center border border-slate-100/50 hover:bg-slate-50 transition-colors">
-                    <span className="block text-[24px] font-black text-slate-800">{adults}</span>
+                    <span className="block text-[24px] font-bold text-slate-800">{adults}</span>
                     <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">{t('detail.adults')}</span>
                 </div>
                 <div className="bg-slate-50/50 rounded-2xl p-4 text-center border border-slate-100/50 hover:bg-slate-50 transition-colors">
-                    <span className="block text-[24px] font-black text-slate-800">{children}</span>
+                    <span className="block text-[24px] font-bold text-slate-800">{children}</span>
                     <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">{t('detail.children')}</span>
                 </div>
                 <div className="bg-slate-50/50 rounded-2xl p-4 text-center border border-slate-100/50 hover:bg-slate-50 transition-colors">
-                    <span className="block text-[24px] font-black text-slate-800">{infants}</span>
+                    <span className="block text-[24px] font-bold text-slate-800">{infants}</span>
                     <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">{t('detail.infants')}</span>
                 </div>
             </div>
@@ -145,7 +145,7 @@ const VirtualTimeline = ({
 
     return (
         <div className="bg-white rounded-3xl p-6 lg:p-8 border border-slate-100 shadow-xs hover:shadow-md transition-all duration-300">
-            <h3 className="text-[16px] font-black text-slate-900 mb-6 flex items-center gap-2">
+            <h3 className="text-[16px] font-bold text-slate-900 mb-6 flex items-center gap-2">
                 <Clock className="text-[#14b8a6]" size={20} />
                 {t('detail.section_timeline')}
             </h3>
@@ -161,7 +161,7 @@ const VirtualTimeline = ({
                             </span>
 
                             <div className="transition-all duration-300 hover:translate-x-1">
-                                <h4 className={`text-[14px] font-black ${m.isCompleted ? 'text-slate-800' : 'text-slate-400'}`}>
+                                <h4 className={`text-[14px] font-bold ${m.isCompleted ? 'text-slate-800' : 'text-slate-400'}`}>
                                     {m.label}
                                 </h4>
                                 {m.date && m.isCompleted ? (
@@ -176,7 +176,7 @@ const VirtualTimeline = ({
 
                                 {m.key === 'cancelled' && cancellationReason && (
                                     <div className="mt-2 bg-rose-50/50 border border-rose-100 rounded-xl p-3 text-[13px] font-bold text-rose-800">
-                                        <span className="block text-[10px] uppercase tracking-wider text-rose-400 font-black mb-1">
+                                        <span className="block text-[10px] uppercase tracking-wider text-rose-400 font-semibold mb-1">
                                             {t('labels.reason')}
                                         </span>
                                         {cancellationReason}
@@ -333,7 +333,7 @@ const BookingDetail = () => {
                     <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-rose-50 text-rose-500 mb-6">
                         <AlertCircle size={32} />
                     </div>
-                    <h3 className="text-[20px] font-black text-slate-900 mb-2">
+                    <h3 className="text-[20px] font-bold text-slate-900 mb-2">
                         {t('messages.update_error')}
                     </h3>
                     <p className="text-[14px] text-slate-500 font-bold mb-8 leading-relaxed">
@@ -375,13 +375,13 @@ const BookingDetail = () => {
                             {t('breadcrumb.current')}
                         </NavLink>
                         <ChevronRight size={12} className="text-slate-300" />
-                        <span className="text-[#14b8a6] font-black">
-                            {t('detail.breadcrumb_current')} #{booking.code}
+                        <span className="text-[#14b8a6] font-semibold">
+                            #{booking.code}
                         </span>
                     </nav>
                     
                     <div className="flex flex-wrap items-center gap-3">
-                        <h2 className="text-[26px] font-black text-slate-900 leading-tight tracking-tight">
+                        <h2 className="text-[26px] font-bold text-slate-900 leading-tight tracking-tight">
                             {t('detail.page_title')} <span className="text-slate-300 font-light">#</span>{booking.code}
                         </h2>
                         <div className="flex gap-2">
@@ -398,7 +398,7 @@ const BookingDetail = () => {
                 <div className="flex items-center gap-3">
                     <button
                         onClick={handleBack}
-                        className="flex items-center gap-2 px-5 py-2.5 bg-white border border-slate-200 rounded-2xl text-slate-600 font-black text-[13px] hover:border-[#14b8a6] hover:text-[#14b8a6] transition-all shadow-xs active:scale-95 cursor-pointer duration-200"
+                        className="flex items-center gap-2 px-5 py-2.5 bg-white border border-slate-200 rounded-2xl text-slate-600 font-semibold text-[13px] hover:border-[#14b8a6] hover:text-[#14b8a6] transition-all shadow-xs active:scale-95 cursor-pointer duration-200"
                     >
                         <ArrowLeft size={16} />
                         {t('detail.back_button')}
@@ -406,7 +406,7 @@ const BookingDetail = () => {
                     <button
                         onClick={handleDownloadInvoice}
                         disabled={getInvoiceMutation.isPending}
-                        className={`flex items-center gap-2 px-5 py-2.5 bg-white border border-slate-200 rounded-2xl text-slate-700 font-black text-[13px] hover:border-[#14b8a6] hover:text-[#14b8a6] hover:bg-teal-50/10 transition-all shadow-xs active:scale-95 cursor-pointer duration-200 ${getInvoiceMutation.isPending ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        className={`flex items-center gap-2 px-5 py-2.5 bg-white border border-slate-200 rounded-2xl text-slate-700 font-semibold text-[13px] hover:border-[#14b8a6] hover:text-[#14b8a6] hover:bg-teal-50/10 transition-all shadow-xs active:scale-95 cursor-pointer duration-200 ${getInvoiceMutation.isPending ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
                         {getInvoiceMutation.isPending ? (
                             <Loader2 size={16} className="animate-spin text-[#14b8a6]" />
@@ -426,7 +426,7 @@ const BookingDetail = () => {
                     
                     {/* Customer Info Card */}
                     <div className="bg-white rounded-3xl p-6 lg:p-8 border border-slate-100 shadow-xs hover:shadow-md transition-all duration-300">
-                        <h3 className="text-[16px] font-black text-slate-900 mb-6 flex items-center gap-2">
+                        <h3 className="text-[16px] font-bold text-slate-900 mb-6 flex items-center gap-2">
                             <User className="text-[#14b8a6]" size={20} />
                             {t('detail.section_customer')}
                         </h3>
@@ -435,14 +435,14 @@ const BookingDetail = () => {
                             {/* Personal Details */}
                             <div className="space-y-4">
                                 <div className="flex items-center gap-4">
-                                    <div className="h-14 w-14 rounded-2xl bg-teal-50/50 border border-teal-100 flex items-center justify-center text-teal-600 font-black text-[18px]">
+                                    <div className="h-14 w-14 rounded-2xl bg-teal-50/50 border border-teal-100 flex items-center justify-center text-teal-600 font-bold text-[18px]">
                                         {booking.customer.name.charAt(0).toUpperCase()}
                                     </div>
                                     <div>
-                                        <span className="block text-[10px] font-black uppercase tracking-widest text-slate-400">
+                                        <span className="block text-[10px] font-semibold uppercase tracking-widest text-slate-400">
                                             {t('labels.customer')}
                                         </span>
-                                        <span className="text-[15px] font-black text-slate-800 mt-0.5 block">
+                                        <span className="text-[15px] font-bold text-slate-800 mt-0.5 block">
                                             {booking.customer.name}
                                         </span>
                                     </div>
@@ -504,7 +504,7 @@ const BookingDetail = () => {
 
                     {/* Booked Tour details */}
                     <div className="space-y-6 bg-white rounded-3xl p-6 lg:p-8 border border-slate-100 shadow-xs hover:shadow-md transition-all duration-300">
-                        <h3 className="text-[16px] font-black text-slate-900 mb-2 flex items-center gap-2">
+                        <h3 className="text-[16px] font-bold text-slate-900 mb-2 flex items-center gap-2">
                             <ShoppingBag className="text-[#14b8a6]" size={20} />
                             {t('detail.section_tour')}
                         </h3>
@@ -530,7 +530,7 @@ const BookingDetail = () => {
                                         <span className="inline-flex px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#F4FCE3] text-teal-700 uppercase tracking-wide">
                                             {item.tour.category || t('labels.no_category')}
                                         </span>
-                                        <h4 className="text-[16px] font-black text-slate-800 leading-tight">
+                                        <h4 className="text-[16px] font-bold text-slate-800 leading-tight">
                                             {item.tour.name}
                                         </h4>
                                         <p className="text-[12px] text-slate-400 font-bold">
@@ -544,7 +544,7 @@ const BookingDetail = () => {
                                     <div className="flex items-center gap-2.5 text-[13px] font-bold text-slate-700">
                                         <Calendar size={16} className="text-slate-400" />
                                         <div>
-                                            <span className="block text-[9px] uppercase tracking-wider text-slate-400 font-black leading-none mb-0.5">
+                                            <span className="block text-[9px] uppercase tracking-wider text-slate-400 font-semibold leading-none mb-0.5">
                                                 {t('detail.travel_date')}
                                             </span>
                                             {formatAdminShortDate(item.travelDate, i18n.language)}
@@ -553,7 +553,7 @@ const BookingDetail = () => {
                                     <div className="flex items-center gap-2.5 text-[13px] font-bold text-slate-700">
                                         <MapPin size={16} className="text-slate-400" />
                                         <div>
-                                            <span className="block text-[9px] uppercase tracking-wider text-slate-400 font-black leading-none mb-0.5">
+                                            <span className="block text-[9px] uppercase tracking-wider text-slate-400 font-semibold leading-none mb-0.5">
                                                 {t('detail.departure_place')}
                                             </span>
                                             {item.tourSchedule?.departurePlace || t('detail.departure_place_missing')}
@@ -562,7 +562,7 @@ const BookingDetail = () => {
                                     <div className="flex items-center gap-2.5 text-[13px] font-bold text-slate-700">
                                         <FileText size={16} className="text-slate-400" />
                                         <div>
-                                            <span className="block text-[9px] uppercase tracking-wider text-slate-400 font-black leading-none mb-0.5">
+                                            <span className="block text-[9px] uppercase tracking-wider text-slate-400 font-semibold leading-none mb-0.5">
                                                 {t('detail.schedule_code_label')}
                                             </span>
                                             {item.tourScheduleId ? `#${item.tourScheduleId}` : t('detail.schedule_code_missing')}
@@ -586,7 +586,7 @@ const BookingDetail = () => {
                     
                     {/* Payment summary card */}
                     <div className="bg-white rounded-3xl p-6 lg:p-8 border border-slate-100 shadow-xs hover:shadow-md transition-all duration-300 space-y-6">
-                        <h3 className="text-[16px] font-black text-slate-900 flex items-center gap-2 border-b border-slate-50 pb-4">
+                        <h3 className="text-[16px] font-bold text-slate-900 flex items-center gap-2 border-b border-slate-50 pb-4">
                             <DollarSign className="text-[#14b8a6]" size={20} />
                             {t('detail.section_payment')}
                         </h3>
@@ -607,22 +607,22 @@ const BookingDetail = () => {
 
                             <hr className="border-slate-100" />
 
-                            <div className="flex justify-between items-center text-[14px] font-black text-slate-800 pt-1">
+                            <div className="flex justify-between items-center text-[14px] font-bold text-slate-800 pt-1">
                                 <span className="text-[#14b8a6]">{t('detail.final_amount')}</span>
-                                <span className="text-[18px] text-[#14b8a6] font-black">{formatCurrency(booking.finalAmount)} ₫</span>
+                                <span className="text-[18px] text-[#14b8a6] font-bold">{formatCurrency(booking.finalAmount)} ₫</span>
                             </div>
 
                             <div className="mt-4 pt-4 border-t border-slate-50 flex items-center gap-2 text-[12px] font-bold text-slate-400">
                                 <CreditCard size={15} />
                                 <span className="uppercase tracking-wider">{t('detail.payment_method')}:</span>
-                                <span className="text-slate-700 uppercase font-black">{booking.paymentMethod}</span>
+                                <span className="text-slate-700 uppercase font-semibold">{booking.paymentMethod}</span>
                             </div>
                         </div>
                     </div>
 
                     {/* Action Operations Sidebar Panel */}
                     <div className="bg-white rounded-3xl p-6 lg:p-8 border border-slate-100 shadow-xs hover:shadow-md transition-all duration-300 space-y-6">
-                        <h3 className="text-[16px] font-black text-slate-900 border-b border-slate-50 pb-4">
+                        <h3 className="text-[16px] font-bold text-slate-900 border-b border-slate-50 pb-4">
                             {t('detail.operations_title')}
                         </h3>
 

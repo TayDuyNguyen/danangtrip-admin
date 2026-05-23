@@ -64,3 +64,54 @@ export const createUserSchema = (t: TFunction) => yup.object({
 });
 
 export type CreateUserInput = yup.InferType<ReturnType<typeof createUserSchema>>;
+
+/**
+ * User Editing Validation Schema
+ */
+export const editUserSchema = (t: TFunction) => yup.object({
+    full_name: yup.string()
+        .required(t("user:validation.required", { field: t("user:detail.label_full_name") }))
+        .max(100, t("user:validation.max_length", { field: t("user:detail.label_full_name"), max: 100 })),
+
+    email: yup.string()
+        .required(t("user:validation.required", { field: t("user:detail.label_email") }))
+        .email(t("user:validation.email"))
+        .max(100, t("user:validation.max_length", { field: t("user:detail.label_email"), max: 100 })),
+
+    phone: yup.string()
+        .optional()
+        .nullable()
+        .transform((v) => (v === "" || v === undefined ? null : v))
+        .test("phone-format", t("user:validation.phone_format"), (v) => {
+            if (!v) return true;
+            return /^\+?[0-9\s\-.(]{9,20}\)?$/.test(v);
+        }),
+
+    birthdate: yup.string()
+        .optional()
+        .nullable()
+        .transform((v) => (v === "" || v === undefined ? null : v)),
+
+    gender: yup.string()
+        .optional()
+        .nullable()
+        .transform((v) => (v === "" || v === undefined ? null : v)),
+
+    city: yup.string()
+        .optional()
+        .nullable()
+        .transform((v) => (v === "" || v === undefined ? null : v))
+        .max(100, t("user:validation.max_length", { field: t("user:detail.label_city"), max: 100 })),
+
+    role: yup.string()
+        .required()
+        .oneOf(["admin", "user"])
+        .default("user"),
+
+    status: yup.string()
+        .required()
+        .oneOf(["active", "banned"])
+        .default("active"),
+});
+
+export type EditUserInput = yup.InferType<ReturnType<typeof editUserSchema>>;

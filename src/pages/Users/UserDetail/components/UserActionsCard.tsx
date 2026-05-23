@@ -37,16 +37,13 @@ export const UserActionsCard = ({
                 </h3>
 
                 <div className="space-y-3 font-sans">
-                    {/* Edit is intentionally disabled until the edit screen is implemented. */}
-                    <button
-                        type="button"
-                        disabled
-                        title={t('actions.edit_unavailable', 'Chức năng chỉnh sửa sẽ được bổ sung ở màn sau')}
-                        className="w-full inline-flex items-center justify-center gap-2.5 px-4 py-2.5 bg-slate-50 border border-slate-100 text-[#94A3B8] rounded-xl text-xs font-bold transition-all text-center select-none cursor-not-allowed"
+                    <Link
+                        to={ROUTES.USERS_EDIT.replace(':id', String(user.id))}
+                        className="w-full inline-flex items-center justify-center gap-2.5 px-4 py-2.5 border border-[#E2E8F0] bg-white text-[#0F172A]/80 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer select-none hover:border-[#14b8a6] hover:text-[#14b8a6] hover:bg-[#14b8a6]/5 active:scale-97 text-center"
                     >
                         <Edit2 size={13} />
                         <span>{t('actions.edit_info', 'Chỉnh sửa thông tin')}</span>
-                    </button>
+                    </Link>
 
                     {/* Change Role Button (Ghost style) */}
                     <button

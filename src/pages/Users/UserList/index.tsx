@@ -235,9 +235,7 @@ export const UserList = () => {
     const bannedUsersCount = data ? data.data.filter((u) => u.status === "banned").length : 0;
     const adminCount = data ? data.data.filter((u) => u.role === "admin").length : 0;
 
-    const handleUnavailableAction = () => {
-        toast.info(t("toast.feature_not_ready"));
-    };
+
 
     const perPageOptions: Option[] = [
         { value: 10, label: "10" },
@@ -377,7 +375,6 @@ export const UserList = () => {
                 onRoleChange={handleRoleChange}
                 onStatusToggle={handleStatusToggle}
                 onDelete={handleDeleteClick}
-                onUnavailableAction={handleUnavailableAction}
                 currentUserId={currentUser?.id}
                 sorting={{ sortBy, sortOrder }}
                 onSort={handleSort}

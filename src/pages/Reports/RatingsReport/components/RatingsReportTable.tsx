@@ -180,19 +180,21 @@ const RatingsReportTable: React.FC<RatingsReportTableProps> = ({
                                             <span className="text-[13px] font-bold text-[#0F172A]/90 truncate" title={item.reviewableName}>
                                                 {item.reviewableName}
                                             </span>
-                                            <a
-                                                href={
-                                                    item.reviewableType === 'tour'
-                                                        ? `/admin/tours/edit/${item.reviewableId}`
-                                                        : `/admin/locations/edit/${item.reviewableId}`
-                                                }
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="text-[#94A3B8] hover:text-[#14b8a6] transition-colors shrink-0"
-                                                title={t('table.tooltip_view')}
-                                            >
-                                                <ExternalLink size={13} />
-                                            </a>
+                                            {item.reviewableId > 0 && (
+                                                <a
+                                                    href={
+                                                        item.reviewableType === 'tour'
+                                                            ? `/admin/tours/edit/${item.reviewableId}`
+                                                            : `/admin/locations/edit/${item.reviewableId}`
+                                                    }
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="text-[#94A3B8] hover:text-[#14b8a6] transition-colors shrink-0"
+                                                    title={t('table.tooltip_view')}
+                                                >
+                                                    <ExternalLink size={13} />
+                                                </a>
+                                            )}
                                         </div>
                                     </td>
 
@@ -282,7 +284,7 @@ const RatingsReportTable: React.FC<RatingsReportTableProps> = ({
                                             </button>
 
                                             {/* Approve action */}
-                                            {item.status !== 'approved' && (
+                                            {item.id > 0 && item.status !== 'approved' && (
                                                 <button
                                                     type="button"
                                                     onClick={() => onApprove(item.id)}
@@ -295,7 +297,7 @@ const RatingsReportTable: React.FC<RatingsReportTableProps> = ({
                                             )}
 
                                             {/* Reject action */}
-                                            {item.status !== 'rejected' && (
+                                            {item.id > 0 && item.status !== 'rejected' && (
                                                 <button
                                                     type="button"
                                                     onClick={() => onReject(item.id)}
@@ -308,7 +310,7 @@ const RatingsReportTable: React.FC<RatingsReportTableProps> = ({
                                             )}
 
                                             {/* Delete action (Admin only) */}
-                                            {isAdmin && (
+                                            {isAdmin && item.id > 0 && (
                                                 <button
                                                     type="button"
                                                     onClick={() => {

@@ -12,6 +12,7 @@ interface Props {
 }
 
 const createLocalFilters = (filters: BookingListFilters): BookingListFilters => ({
+    user_id: filters.user_id,
     search: filters.search || '',
     status: filters.status || 'all',
     payment_status: filters.payment_status || 'all',
@@ -36,6 +37,7 @@ const BookingFilter = ({ filters, onFilterChange }: Props) => {
     const applyFilters = (nextFilters = localFilters) => {
         onFilterChange({
             ...nextFilters,
+            user_id: nextFilters.user_id || filters.user_id,
             search: nextFilters.search?.trim() || '',
             status: nextFilters.status || 'all',
             payment_status: nextFilters.payment_status || 'all',
@@ -54,6 +56,7 @@ const BookingFilter = ({ filters, onFilterChange }: Props) => {
     const handleReset = () => {
         const resetFilters = createLocalFilters({
             search: '',
+            user_id: filters.user_id,
             status: 'all',
             payment_status: 'all',
             date_from: '',

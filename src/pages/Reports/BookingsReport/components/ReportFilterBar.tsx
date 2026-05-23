@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Calendar, Filter, RefreshCw } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import CustomSelect, { type Option } from '@/components/ui/CustomSelect';
 
 interface ReportFilterBarProps {
     filters: {
@@ -23,9 +24,29 @@ const ReportFilterBar: React.FC<ReportFilterBarProps> = ({
     isSubmitting = false,
 }) => {
     const { t } = useTranslation('bookings_report');
+    const statusOptions: Option[] = useMemo(
+        () => [
+            { value: 'all', label: t('filter.status_all') },
+            { value: 'pending', label: t('filter.status_pending') },
+            { value: 'confirmed', label: t('filter.status_confirmed') },
+            { value: 'completed', label: t('filter.status_completed') },
+            { value: 'cancelled', label: t('filter.status_cancelled') },
+        ],
+        [t]
+    );
+    const paymentStatusOptions: Option[] = useMemo(
+        () => [
+            { value: 'all', label: t('filter.payment_all') },
+            { value: 'pending', label: t('filter.payment_pending') },
+            { value: 'paid', label: t('filter.payment_paid') },
+            { value: 'refunded', label: t('filter.payment_refunded') },
+        ],
+        [t]
+    );
+    const selectedStatus = statusOptions.find((option) => option.value === filters.status) ?? statusOptions[0];
+    const selectedPaymentStatus = paymentStatusOptions.find((option) => option.value === filters.payment_status) ?? paymentStatusOptions[0];
 
-    // Quick Range handlers
-    const applyQuickRange = (range: '7days' | '30days' | '3months' | 'thisyear') => {
+    const getQuickRangeDates = (range: '7days' | '30days' | '3months' | 'thisyear') => {
         const today = new Date();
         let fromDate = new Date();
 
@@ -41,11 +62,28 @@ const ReportFilterBar: React.FC<ReportFilterBarProps> = ({
 
         const formatDateStr = (date: Date) => date.toISOString().split('T')[0];
 
-        onFilterChange({
+        return {
             from: formatDateStr(fromDate),
             to: formatDateStr(today),
-        });
+        };
     };
+
+    // Quick Range handlers
+    const applyQuickRange = (range: '7days' | '30days' | '3months' | 'thisyear') => {
+        onFilterChange(getQuickRangeDates(range));
+    };
+
+    const isQuickRangeActive = (range: '7days' | '30days' | '3months' | 'thisyear') => {
+        const rangeDates = getQuickRangeDates(range);
+        return filters.from === rangeDates.from && filters.to === rangeDates.to;
+    };
+
+    const quickRangeButtonClass = (range: '7days' | '30days' | '3months' | 'thisyear') =>
+        `px-3.5 py-1.5 rounded-lg text-xs font-bold border transition-all cursor-pointer ${
+            isQuickRangeActive(range)
+                ? 'bg-[#14b8a6] border-[#14b8a6] text-white shadow-xs'
+                : 'bg-[#F8FAFC] border-[#F1F5F9] hover:bg-[#14b8a6]/5 hover:border-[#14b8a6]/30 text-[#0F172A]/70 hover:text-[#14b8a6]'
+        }`;
 
     return (
         // ─── Gradient border shell ───
@@ -88,17 +126,14 @@ const ReportFilterBar: React.FC<ReportFilterBarProps> = ({
                                 <Filter size={13} className="text-[#14b8a6]" />
                                 {t('filter.booking_status')}
                             </label>
-                            <select
-                                value={filters.status}
-                                onChange={(e) => onFilterChange({ status: e.target.value as 'all' | 'pending' | 'confirmed' | 'completed' | 'cancelled' })}
-                                className="w-full bg-[#F8FAFC] border border-[#F1F5F9] rounded-xl px-4 py-2.5 text-sm font-bold text-[#0F172A] focus:outline-hidden focus:ring-2 focus:ring-[#14b8a6]/20 focus:border-[#14b8a6] transition-all appearance-none cursor-pointer"
-                            >
-                                <option value="all">{t('filter.status_all')}</option>
-                                <option value="pending">{t('filter.status_pending')}</option>
-                                <option value="confirmed">{t('filter.status_confirmed')}</option>
-                                <option value="completed">{t('filter.status_completed')}</option>
-                                <option value="cancelled">{t('filter.status_cancelled')}</option>
-                            </select>
+                            <CustomSelect
+                                inputId="bookings-filter-status"
+                                options={statusOptions}
+                                value={selectedStatus}
+                                onChange={(option) => onFilterChange({ status: (option as Option).value as ReportFilterBarProps['filters']['status'] })}
+                                isDisabled={isSubmitting}
+                                size="sm"
+                            />
                         </div>
 
                         {/* Payment Status Select */}
@@ -107,16 +142,14 @@ const ReportFilterBar: React.FC<ReportFilterBarProps> = ({
                                 <Filter size={13} className="text-[#14b8a6]" />
                                 {t('filter.payment_status')}
                             </label>
-                            <select
-                                value={filters.payment_status}
-                                onChange={(e) => onFilterChange({ payment_status: e.target.value as 'all' | 'pending' | 'paid' | 'refunded' })}
-                                className="w-full bg-[#F8FAFC] border border-[#F1F5F9] rounded-xl px-4 py-2.5 text-sm font-bold text-[#0F172A] focus:outline-hidden focus:ring-2 focus:ring-[#14b8a6]/20 focus:border-[#14b8a6] transition-all appearance-none cursor-pointer"
-                            >
-                                <option value="all">{t('filter.payment_all')}</option>
-                                <option value="pending">{t('filter.payment_pending')}</option>
-                                <option value="paid">{t('filter.payment_paid')}</option>
-                                <option value="refunded">{t('filter.payment_refunded')}</option>
-                            </select>
+                            <CustomSelect
+                                inputId="bookings-filter-payment-status"
+                                options={paymentStatusOptions}
+                                value={selectedPaymentStatus}
+                                onChange={(option) => onFilterChange({ payment_status: (option as Option).value as ReportFilterBarProps['filters']['payment_status'] })}
+                                isDisabled={isSubmitting}
+                                size="sm"
+                            />
                         </div>
                     </div>
 
@@ -128,28 +161,28 @@ const ReportFilterBar: React.FC<ReportFilterBarProps> = ({
                             <button
                                 type="button"
                                 onClick={() => applyQuickRange('7days')}
-                                className="px-3.5 py-1.5 rounded-lg text-xs font-bold bg-[#F8FAFC] border border-[#F1F5F9] hover:bg-[#14b8a6]/5 hover:border-[#14b8a6]/30 text-[#0F172A]/70 hover:text-[#14b8a6] transition-all cursor-pointer"
+                                className={quickRangeButtonClass('7days')}
                             >
                                 {t('filter.range_7days')}
                             </button>
                             <button
                                 type="button"
                                 onClick={() => applyQuickRange('30days')}
-                                className="px-3.5 py-1.5 rounded-lg text-xs font-bold bg-[#F8FAFC] border border-[#F1F5F9] hover:bg-[#14b8a6]/5 hover:border-[#14b8a6]/30 text-[#0F172A]/70 hover:text-[#14b8a6] transition-all cursor-pointer"
+                                className={quickRangeButtonClass('30days')}
                             >
                                 {t('filter.range_30days')}
                             </button>
                             <button
                                 type="button"
                                 onClick={() => applyQuickRange('3months')}
-                                className="px-3.5 py-1.5 rounded-lg text-xs font-bold bg-[#F8FAFC] border border-[#F1F5F9] hover:bg-[#14b8a6]/5 hover:border-[#14b8a6]/30 text-[#0F172A]/70 hover:text-[#14b8a6] transition-all cursor-pointer"
+                                className={quickRangeButtonClass('3months')}
                             >
                                 {t('filter.range_3months')}
                             </button>
                             <button
                                 type="button"
                                 onClick={() => applyQuickRange('thisyear')}
-                                className="px-3.5 py-1.5 rounded-lg text-xs font-bold bg-[#F8FAFC] border border-[#F1F5F9] hover:bg-[#14b8a6]/5 hover:border-[#14b8a6]/30 text-[#0F172A]/70 hover:text-[#14b8a6] transition-all cursor-pointer"
+                                className={quickRangeButtonClass('thisyear')}
                             >
                                 {t('filter.range_thisyear')}
                             </button>
