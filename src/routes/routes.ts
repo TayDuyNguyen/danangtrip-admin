@@ -22,4 +22,6 @@ export const ROUTES = {
     REPORTS_REVENUE: '/admin/reports/revenue',
     REPORTS_LOCATIONS: '/admin/reports/locations',
     REPORTS_USERS: '/admin/reports/users',
+    USERS_LIST: '/admin/users',
 } as const;
+

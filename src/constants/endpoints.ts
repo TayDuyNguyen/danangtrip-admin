@@ -115,5 +115,13 @@ export const API_ENDPOINTS = {
         AMENITIES: '/amenities',
         RATING_STATS: (id: string | number) => `/locations/${id}/rating-stats`,
         RATINGS: (id: string | number) => `/locations/${id}/ratings`,
+    },
+    // Users management
+    USERS: {
+        LIST: '/admin/users',
+        UPDATE_ROLE: (id: string | number) => `/admin/users/${id}/role`,
+        UPDATE_STATUS: (id: string | number) => `/admin/users/${id}/status`,
+        DELETE: (id: string | number) => `/admin/users/${id}`,
     }
 } as const;
+

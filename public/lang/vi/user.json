@@ -1,0 +1,79 @@
+{
+  "title": "Danh sách Người dùng",
+  "subtitle": "Quản lý tài khoản người dùng hệ thống",
+  "breadcrumb": "Người dùng / Danh sách Người dùng",
+  "stats": {
+    "total": "TỔNG NGƯỜI DÙNG",
+    "active": "ĐANG HOẠT ĐỘNG",
+    "banned": "BỊ KHÓA",
+    "admin": "ADMIN"
+  },
+  "filter": {
+    "search_placeholder": "Tìm theo tên, email, username...",
+    "role_all": "Tất cả vai trò",
+    "status_all": "Tất cả trạng thái",
+    "btn_filter": "Lọc",
+    "btn_reset": "Đặt lại",
+    "active_filters": "Bộ lọc đang chọn:",
+    "role": "Vai trò",
+    "status": "Trạng thái"
+  },
+  "table": {
+    "selected": "Đã chọn {{count}}",
+    "displaying": "Hiển thị {{start}}–{{end}} / {{total}} người dùng",
+    "per_page": "Dòng mỗi trang",
+    "col_user": "Người dùng",
+    "col_role": "Vai trò",
+    "col_orders": "Đơn hàng",
+    "col_reviews": "Đánh giá",
+    "col_joined": "Ngày tham gia",
+    "col_status": "Trạng thái",
+    "col_actions": "Thao tác",
+    "orders_suffix": "đơn",
+    "reviews_suffix": "đánh giá",
+    "no_data": "Không tìm thấy người dùng nào",
+    "no_data_sub": "Thử thay đổi bộ lọc hoặc thêm người dùng mới",
+    "you_badge": "BẠN"
+  },
+  "roles": {
+    "admin": "ADMIN",
+    "user": "USER"
+  },
+  "status": {
+    "active": "HOẠT ĐỘNG",
+    "banned": "BỊ KHÓA"
+  },
+  "actions": {
+    "view": "Xem chi tiết",
+    "edit": "Chỉnh sửa",
+    "block": "Khóa tài khoản",
+    "unblock": "Mở khóa",
+    "delete": "Xóa",
+    "export": "Xuất Excel",
+    "create": "Thêm người dùng",
+    "bulk_activate": "Kích hoạt hàng loạt",
+    "bulk_block": "Khóa hàng loạt",
+    "bulk_delete": "Xóa hàng loạt",
+    "bulk_delete_confirm": "Bạn có chắc chắn muốn xóa hàng loạt {{count}} người dùng?"
+  },
+  "dialog": {
+    "delete_title": "Xóa tài khoản này?",
+    "delete_confirm": "Tài khoản của {{name}} sẽ bị xóa vĩnh viễn.",
+    "delete_warning": "⚠ Tất cả đơn hàng, đánh giá, yêu thích và thông báo của người dùng này sẽ bị xóa theo.",
+    "role_title": "Thay đổi quyền hạn?",
+    "role_confirm": "Bạn có chắc muốn cấp quyền Admin cho {{name}}? Tài khoản này sẽ có toàn quyền quản trị hệ thống.",
+    "btn_cancel": "Hủy",
+    "btn_confirm_delete": "Xóa tài khoản",
+    "btn_confirm_role": "Xác nhận nâng quyền"
+  },
+  "toast": {
+    "update_role_success": "Cập nhật vai trò thành công!",
+    "update_status_success": "Cập nhật trạng thái thành công!",
+    "delete_success": "Xóa người dùng thành công!",
+    "export_success": "Xuất báo cáo Excel thành công!",
+    "network_error": "Lỗi kết nối mạng, vui lòng thử lại sau.",
+    "action_forbidden": "Bạn không có quyền thực hiện hành động này.",
+    "self_action_error": "Bạn không thể tự thực hiện hành động này trên tài khoản của chính mình.",
+    "feature_not_ready": "Màn chi tiết/chỉnh sửa người dùng chưa được triển khai."
+  }
+}

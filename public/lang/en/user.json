@@ -1,0 +1,79 @@
+{
+  "title": "Users List",
+  "subtitle": "Manage system user accounts",
+  "breadcrumb": "Users / Users List",
+  "stats": {
+    "total": "TOTAL USERS",
+    "active": "ACTIVE USERS",
+    "banned": "BANNED",
+    "admin": "ADMIN"
+  },
+  "filter": {
+    "search_placeholder": "Search by name, email, username...",
+    "role_all": "All Roles",
+    "status_all": "All Statuses",
+    "btn_filter": "Filter",
+    "btn_reset": "Reset",
+    "active_filters": "Active Filters:",
+    "role": "Role",
+    "status": "Status"
+  },
+  "table": {
+    "selected": "{{count}} selected",
+    "displaying": "Showing {{start}}–{{end}} / {{total}} users",
+    "per_page": "Rows per page",
+    "col_user": "User",
+    "col_role": "Role",
+    "col_orders": "Orders",
+    "col_reviews": "Reviews",
+    "col_joined": "Joined Date",
+    "col_status": "Status",
+    "col_actions": "Actions",
+    "orders_suffix": "orders",
+    "reviews_suffix": "reviews",
+    "no_data": "No users found",
+    "no_data_sub": "Try changing filters or add a new user",
+    "you_badge": "YOU"
+  },
+  "roles": {
+    "admin": "ADMIN",
+    "user": "USER"
+  },
+  "status": {
+    "active": "ACTIVE",
+    "banned": "BANNED"
+  },
+  "actions": {
+    "view": "View Details",
+    "edit": "Edit",
+    "block": "Block",
+    "unblock": "Unblock",
+    "delete": "Delete",
+    "export": "Export Excel",
+    "create": "Add User",
+    "bulk_activate": "Bulk Activate",
+    "bulk_block": "Bulk Block",
+    "bulk_delete": "Bulk Delete",
+    "bulk_delete_confirm": "Are you sure you want to bulk delete {{count}} users?"
+  },
+  "dialog": {
+    "delete_title": "Delete this account?",
+    "delete_confirm": "The account of {{name}} will be permanently deleted.",
+    "delete_warning": "⚠ All orders, reviews, favorites, and notifications of this user will also be deleted.",
+    "role_title": "Change Role?",
+    "role_confirm": "Are you sure you want to grant Admin role to {{name}}? This account will have full administrative rights.",
+    "btn_cancel": "Cancel",
+    "btn_confirm_delete": "Delete Account",
+    "btn_confirm_role": "Confirm Promotion"
+  },
+  "toast": {
+    "update_role_success": "Role updated successfully!",
+    "update_status_success": "Status updated successfully!",
+    "delete_success": "User deleted successfully!",
+    "export_success": "Excel report exported successfully!",
+    "network_error": "Network connection error, please try again later.",
+    "action_forbidden": "You do not have permission to perform this action.",
+    "self_action_error": "You cannot perform this action on your own account.",
+    "feature_not_ready": "User detail/edit screens are not implemented yet."
+  }
+}

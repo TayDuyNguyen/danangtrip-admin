@@ -291,3 +291,93 @@
 - Xác minh tài liệu screen analysis đã có sẵn tại `.agent/artifacts/analysis/2026-05-22__admin_reports_locations__screen-analysis.md`.
 - Lập kế hoạch triển khai chi tiết (Implementation Plan) và cập nhật trạng thái làm việc tại `WORKING_STATE.md`.
 - Xác nhận và hoàn thành Bước 01 (01-screen-analysis) cho tính năng Báo cáo Địa điểm (`admin_reports_locations`). Tài liệu phân tích màn hình đạt chuẩn và sẵn sàng cho các bước tiếp theo.
+
+## 2026-05-23 — Step 01: 01-screen-analysis (admin_users_list)
+
+### Actions Taken
+- Read and analyzed the primary business specification for user management list screen from `D:\DATN\DATN_Document\docs\page\admin_users_list.md`.
+- Read project rules and design tokens from `DESIGN.md`, confirming Outfit/System font scales, teal colors (`#14B8A6`), rounded corners (6px, 16px, 24px), and glass elevation depth rules.
+- Performed a comprehensive component audit:
+  - Identified reusable components in `src/components/common` (`StatCard`, `EmptyState`, `ErrorWidget`, `Pagination`) and `src/components/ui` (`Badge`, `Button`, `Skeleton`, `TextInput`, `CustomSelect`).
+  - Mapped 5 new page-specific components to build: `UserStatsRow`, `UserFilterBar`, `UserTable`, `DeleteUserDialog`, and `UpdateRoleDialog`.
+  - Identified 3 core routes/layout modules to modify: `src/routes/routes.ts`, `src/routes/index.tsx`, and `src/components/common/Sidebar.tsx`.
+- Audited responsive column scaling layouts (Desktop, Tablet, Mobile) and mapped loading/empty/error states across all sections.
+- Verified backend user endpoints and mapped them to `endpoints.ts`.
+- Outlined 4 strict business rules (BR-01 to BR-04) and 3 edge cases (EC-01 to EC-03).
+- Documented analysis findings directly in the repository at `.agent/artifacts/analysis/2026-05-23__admin_users_list__screen-analysis.md`.
+- Updated `WORKING_STATE.md` status to active with Step 1 completed.
+
+### Outcome
+- Step 01 (01-screen-analysis) completed.
+- High-fidelity analysis document successfully saved, preparing a solid foundation for types, schemas, and API contracts in Step 03.
+
+## 2026-05-23 — Step 02: 02-project-setup (admin_users_list)
+
+### Actions Taken
+- Read and audited core workspace dependencies in `package.json` (React 19.2.4, Vite 7.3.1, TypeScript 5.9.3, Query 5.95.2, Zustand 5.0.8).
+- Audited repository file structure and validated alignment with folder naming rules in `PROJECT_RULES.md` (verified folders `src/api`, `src/components/ui/`, `src/components/common/`, `src/hooks/`, `src/dataHelper/`, `src/routes/`).
+- Verified paths and resolve alias configuration alignment between `tsconfig.app.json` (`paths: {"@/*": ["./src/*"]}`) and `vite.config.ts` (`resolve.alias: {"@": "./src"}`).
+- Audited `src/api/axiosClient.ts` confirming proactive queue-based token silent refresh on 401.
+- Audited `src/providers/index.tsx` confirming that `QueryClientProvider` and `AuthBootstrapGate` are set up at root level.
+- Audited `src/routes/PrivateRoute.tsx` confirming that all admin routes are strictly guarded by `isAuthenticated && hasRole(user, 'admin')`.
+- Ran background task `npm run lint` -> **PASS** (completed successfully with 0 errors/warnings).
+- Documented audit outcomes in the repository at `.agent/artifacts/audits/2026-05-23__admin_users_list__project-audit.md`.
+- Updated `WORKING_STATE.md` with Step 2 completed.
+
+### Outcome
+- Step 02 (02-project-setup) completed.
+- The project environment is fully audited, clean, and ready for feature implementation.
+
+## 2026-05-23 — Steps 03 to 09: Implementation & Validation (admin_users_list)
+
+### Actions Taken
+- **Step 03: Types & API Contract**:
+  - Registered users management endpoints (`LIST`, `UPDATE_ROLE`, `UPDATE_STATUS`, `DELETE`) in `endpoints.ts`.
+  - Created `user.dataHelper.ts` containing interface definitions for raw API response and ViewModel models.
+  - Created `user.mapper.ts` including safe converters `mapUserItem` and `mapUserList`.
+  - Created `userApi.ts` for axios-based API calls.
+  - Created `useUserQueries.ts` defining React Query cache structures, list query hook, and status/role/delete/export mutation hooks.
+  - Registered all exports in `src/api/index.ts`, `src/dataHelper/index.ts`, and `src/hooks/index.ts`.
+- **Step 04: Layout & Routing**:
+  - Added `ROUTES.USERS_LIST` constant to `routes.ts`.
+  - Registered `ROUTES.USERS_LIST` route using lazy import and Suspense in `src/routes/index.tsx`.
+  - Replaced hardcoded path with `ROUTES.USERS_LIST` in `Sidebar.tsx`.
+  - Registered `'user'` namespace in `src/i18n/index.ts` and created bilingual translation files `public/lang/vi/user.json` and `public/lang/en/user.json` with 100% key parity.
+- **Step 05 & 06 & 07 & 08: UI Components & Integrations**:
+  - Created page-specific components under `src/pages/Users/UserList/components/`:
+    - `UserStatsRow`: Renders 4 statistics cards with loading skeletons.
+    - `UserFilterBar`: Debounced search query and custom selects for role and status.
+    - `UserTable`: Multi-select checkboxes, interactive column sorting, inline role dropdown, status toggle, actions (View, Edit, Ban, Delete).
+    - `DeleteUserDialog`: Warnings about reviews/bookings loss upon deletion.
+    - `UpdateRoleDialog`: Confirmation alerts before elevating user role to Admin.
+    - `index.tsx`: Wires all state and mutations together.
+  - Integrated dual-direction URL search parameters synchronization.
+  - Implemented client-side self-protection guards preventing the active Admin from self-deleting, blocking, or changing their own role.
+- **Step 09: Testing & Quality Gate**:
+  - Fixed initial compilation errors (default imports, event typings, unused imports, pagination component props).
+  - Transitioned props synchronization state from `useEffect` to render-phase adjustment to satisfy `react-hooks/set-state-in-effect` ESLint rule.
+  - Ran `npm run prepush:check` quality gate: **PASSED** (ESLint OK, TS Compile OK, Vite build OK, Playwright E2E console tests OK).
+  - Saved test case evidence at `.agent/artifacts/test-cases/2026-05-23__admin_users_list__test-report.md`.
+
+### Outcome
+- Steps 03 to 09 completed.
+- Feature is fully implemented, error-free, and validated against the quality gates.
+
+
+
+## 2026-05-23 — Localization Polish (admin_users_list)
+
+### Actions Taken
+- **Localization Alignment & Polish**:
+  - Synchronized `public/lang/vi/user.json` and `public/lang/en/user.json` by adding keys for active filters (`filter.role`, `filter.status`), individual current user badge (`table.you_badge`), and bulk action dialogs (`actions.bulk_delete_confirm`).
+  - Modified `UserFilterBar.tsx` to dynamically translate `"Role:"` and `"Status:"` tags instead of using hardcoded English strings.
+  - Modified `UserTable.tsx` to dynamically display the localized `"BẠN" / "YOU"` badge and dynamically format the joined date via `toLocaleDateString` using `i18n.language`.
+  - Modified `UserStatsRow.tsx` to format numeric stats values dynamically using `toLocaleString` with active locale (`vi-VN` / `en-US`).
+  - Modified `UserList/index.tsx` to use the localized bulk delete confirmation message.
+- **Verification**:
+  - Ran quality check `npm run prepush:check` : **PASSED** (ESLint OK, TS Compile OK, Vite build OK, Playwright E2E console tests OK).
+  - Created walkthrough and updated deploy report / review report to reflect the localization adjustments.
+
+### Outcome
+- All remaining English strings on the `/admin/users` screen have been successfully extracted and translated.
+- Localized date/number formatting is fully synchronized with active browser/user language settings.
