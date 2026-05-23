@@ -23,6 +23,9 @@ export const userApi = {
         });
     },
 
+    create: (data: unknown): Promise<ApiResponse<RawUserItem>> =>
+        axiosClient.post(API_ENDPOINTS.USERS.LIST, data),
+
     updateRole: (id: number | string, data: { role: string }): Promise<ApiResponse<RawUserItem>> =>
         axiosClient.patch(API_ENDPOINTS.USERS.UPDATE_ROLE(id), data),
 

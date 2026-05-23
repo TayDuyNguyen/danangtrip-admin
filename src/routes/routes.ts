@@ -23,6 +23,7 @@ export const ROUTES = {
     REPORTS_LOCATIONS: '/admin/reports/locations',
     REPORTS_USERS: '/admin/reports/users',
     USERS_LIST: '/admin/users',
+    USERS_CREATE: '/admin/users/create',
     USERS_DETAIL: '/admin/users/:id',
 } as const;
 

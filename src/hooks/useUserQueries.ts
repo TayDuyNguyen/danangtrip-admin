@@ -151,10 +151,19 @@ export const useUserMutations = () => {
         },
     });
 
+    const createUserMutation = useMutation({
+        mutationFn: (data: unknown) => userApi.create(data),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: userKeys.all });
+            queryClient.invalidateQueries({ queryKey: ["dashboard"] });
+        },
+    });
+
     return {
         updateRoleMutation,
         updateStatusMutation,
         deleteMutation,
         exportMutation,
+        createUserMutation,
     };
 };
