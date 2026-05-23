@@ -30,6 +30,7 @@ const RevenueReport = React.lazy(() => import('@/pages/Reports/RevenueReport'));
 const LocationReport = React.lazy(() => import('@/pages/Reports/LocationReport'));
 const UsersReport = React.lazy(() => import('@/pages/Reports/UsersReport'));
 const UserList = React.lazy(() => import('@/pages/Users/UserList'));
+const UserDetail = React.lazy(() => import('@/pages/Users/UserDetail'));
 import ErrorPage from '@/pages/ErrorPage';
 
 
@@ -97,6 +98,7 @@ const router = createBrowserRouter([
                     { path: ROUTES.REPORTS_LOCATIONS, element: withSuspense(LocationReport) },
                     { path: ROUTES.REPORTS_USERS, element: withSuspense(UsersReport) },
                     { path: ROUTES.USERS_LIST, element: withSuspense(UserList) },
+                    { path: ROUTES.USERS_DETAIL, element: withSuspense(UserDetail) },
                 ]
             }
 

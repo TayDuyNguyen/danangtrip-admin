@@ -55,8 +55,8 @@ const UsersReportFilterBar: React.FC<UsersReportFilterBarProps> = ({
     const selectedStatus = statusOptions.find((o) => o.value === filters.status) ?? statusOptions[0];
 
     return (
-        <div className="bg-white/85 backdrop-blur-md border border-slate-100 rounded-2xl p-6 shadow-xs mb-6 transition-all duration-300">
-            <div className="flex flex-col gap-6">
+        <div className="p-[1px] rounded-3xl bg-gradient-to-br from-[#14b8a6]/20 via-slate-200/25 to-slate-100/10 shadow-xs hover:shadow-md hover:from-[#14b8a6]/30 transition-all duration-300 mb-6">
+            <div className="bg-white/95 backdrop-blur-md rounded-[23px] p-6 flex flex-col gap-6">
                 {/* Inputs grid */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
                     {/* Year Select (Controls Visualizations) */}
@@ -115,7 +115,7 @@ const UsersReportFilterBar: React.FC<UsersReportFilterBarProps> = ({
                 </div>
 
                 {/* Info Text & Control buttons */}
-                <div className="flex flex-col sm:flex-row gap-4 justify-between items-center border-t border-slate-50 pt-4">
+                <div className="flex flex-col sm:flex-row gap-4 justify-between items-center border-t border-slate-100 pt-4">
                     {/* Tooltip explaining filter behavior */}
                     <div className="text-xs font-medium text-slate-400">
                         {t('filter.tip_text')}
@@ -128,7 +128,7 @@ const UsersReportFilterBar: React.FC<UsersReportFilterBarProps> = ({
                             id="users-filter-reset"
                             onClick={onReset}
                             disabled={isSubmitting}
-                            className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold border border-slate-100 text-slate-500 hover:bg-slate-50 active:scale-95 transition-all disabled:opacity-50 cursor-pointer"
+                            className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold border border-slate-100 text-slate-500 hover:bg-[#14b8a6]/5 hover:text-[#14b8a6] hover:border-[#14b8a6]/20 active:scale-95 transition-all disabled:opacity-50 cursor-pointer"
                         >
                             <RefreshCw size={15} />
                             {t('filter.btn_reset')}

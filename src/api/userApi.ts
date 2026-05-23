@@ -4,8 +4,10 @@ import type {
     RawUserItem,
     RawUserListResponse,
     UserListFilters,
+    UserBookingItem,
+    UserRatingItem,
 } from "@/dataHelper";
-import type { ApiResponse } from "@/types";
+import type { ApiResponse, Paginator } from "@/types";
 import type { AxiosResponse } from "axios";
 
 export const userApi = {
@@ -29,6 +31,15 @@ export const userApi = {
 
     delete: (id: number | string): Promise<ApiResponse<null>> =>
         axiosClient.delete(API_ENDPOINTS.USERS.DELETE(id)),
+
+    getDetail: (id: number | string): Promise<ApiResponse<RawUserItem>> =>
+        axiosClient.get(API_ENDPOINTS.USERS.DETAIL(id)),
+
+    getBookings: (id: number | string, params: { page?: number; per_page?: number }): Promise<ApiResponse<Paginator<UserBookingItem>>> =>
+        axiosClient.get(API_ENDPOINTS.USERS.BOOKINGS(id), { params }),
+
+    getRatings: (id: number | string, params: { page?: number; per_page?: number }): Promise<ApiResponse<Paginator<UserRatingItem>>> =>
+        axiosClient.get(API_ENDPOINTS.USERS.RATINGS(id), { params }),
 
     export: (params: UserListFilters): Promise<AxiosResponse<Blob>> => {
         const { q, role, status, ...rest } = params;

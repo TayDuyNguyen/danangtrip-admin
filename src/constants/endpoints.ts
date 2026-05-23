@@ -119,6 +119,9 @@ export const API_ENDPOINTS = {
     // Users management
     USERS: {
         LIST: '/admin/users',
+        DETAIL: (id: string | number) => `/admin/users/${id}`,
+        BOOKINGS: (id: string | number) => `/admin/users/${id}/bookings`,
+        RATINGS: (id: string | number) => `/admin/users/${id}/ratings`,
         UPDATE_ROLE: (id: string | number) => `/admin/users/${id}/role`,
         UPDATE_STATUS: (id: string | number) => `/admin/users/${id}/status`,
         DELETE: (id: string | number) => `/admin/users/${id}`,

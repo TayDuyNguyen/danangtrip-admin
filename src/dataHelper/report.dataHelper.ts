@@ -6,6 +6,7 @@ export interface RatingsReportFilters {
     to?: string;
     status?: 'all' | 'pending' | 'approved' | 'rejected';
     type?: 'all' | 'location' | 'tour';
+    user_id?: string | number;
     page?: number;
     per_page?: number;
 }

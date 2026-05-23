@@ -6,7 +6,11 @@
     "total": "TOTAL USERS",
     "active": "ACTIVE USERS",
     "banned": "BANNED",
-    "admin": "ADMIN"
+    "admin": "ADMIN",
+    "bookings": "BOOKINGS",
+    "ratings": "REVIEWS",
+    "favorites": "FAVORITES",
+    "total_spend": "TOTAL SPEND"
   },
   "filter": {
     "search_placeholder": "Search by name, email, username...",
@@ -41,7 +45,8 @@
   },
   "status": {
     "active": "ACTIVE",
-    "banned": "BANNED"
+    "banned": "BANNED",
+    "pending": "PENDING ACTIVATION"
   },
   "actions": {
     "view": "View Details",
@@ -54,7 +59,13 @@
     "bulk_activate": "Bulk Activate",
     "bulk_block": "Bulk Block",
     "bulk_delete": "Bulk Delete",
-    "bulk_delete_confirm": "Are you sure you want to bulk delete {{count}} users?"
+    "bulk_delete_confirm": "Are you sure you want to bulk delete {{count}} users?",
+    "edit_info": "Edit Information",
+    "edit_unavailable": "Edit screen will be implemented in the next step",
+    "change_role_label": "Change Role",
+    "view_bookings_label": "View Bookings",
+    "view_ratings_label": "View Reviews",
+    "change_role": "Change Role"
   },
   "dialog": {
     "delete_title": "Delete this account?",
@@ -75,5 +86,78 @@
     "action_forbidden": "You do not have permission to perform this action.",
     "self_action_error": "You cannot perform this action on your own account.",
     "feature_not_ready": "User detail/edit screens are not implemented yet."
+  },
+  "booking_status": {
+    "pending": "PENDING",
+    "confirmed": "CONFIRMED",
+    "completed": "COMPLETED",
+    "cancelled": "CANCELLED"
+  },
+  "rating_status": {
+    "pending": "PENDING",
+    "approved": "APPROVED",
+    "rejected": "REJECTED"
+  },
+  "detail": {
+    "breadcrumb_home": "Dashboard",
+    "breadcrumb_users": "Users",
+    "breadcrumb_detail": "Detail",
+    "back_to_list": "Back to List",
+    "joined": "Joined",
+    "section_personal_info": "Personal Information",
+    "label_full_name": "FULL NAME",
+    "label_username": "USERNAME",
+    "label_email": "EMAIL",
+    "label_phone": "PHONE NUMBER",
+    "label_birthdate": "BIRTHDATE",
+    "label_gender": "GENDER",
+    "label_city": "CITY",
+    "label_email_verification": "EMAIL VERIFICATION",
+    "verification_verified": "Verified",
+    "verification_unverified": "Unverified",
+    "label_created_at": "JOIN DATE",
+    "label_updated_at": "UPDATED AT",
+    "section_bookings": "Booking History",
+    "orders_count": "orders",
+    "view_all_bookings": "View All →",
+    "no_bookings": "No bookings found",
+    "no_bookings_desc": "This user has not placed any booking orders yet.",
+    "booking_col_code": "Order Code",
+    "booking_col_tour": "Tour",
+    "booking_col_date": "Booked Date",
+    "booking_col_amount": "Total",
+    "booking_col_status": "Status",
+    "section_ratings": "Reviews Written",
+    "ratings_count": "reviews",
+    "view_all_ratings": "View All →",
+    "no_ratings": "No reviews found",
+    "no_ratings_desc": "This user has not written any review comments yet.",
+    "section_account": "Account",
+    "label_role": "Role",
+    "label_status": "Status",
+    "label_email_verification_status": "Email Verified",
+    "label_join_date": "Join Date",
+    "label_last_login": "Last Login",
+    "section_actions": "Actions",
+    "delete_title": "Delete this account?",
+    "delete_desc": "The account of {{name}} will be permanently deleted from the system.",
+    "delete_warning_label": "⚠ Critical Warning",
+    "delete_warning_desc": "All booking orders, payment transactions, written reviews, comments, and favorite listings associated with this user account will be permanently deleted.",
+    "role_user_desc": "Regular tourist account, allowed to view locations, book tours, and write reviews.",
+    "role_admin_desc": "Highest authority. Able to manage the entire system, add/edit/delete locations, manage user accounts, and view reports.",
+    "role_dialog_subtitle": "Select account role for the user",
+    "role_elevate_warning": "Caution: Elevating a user to Admin grants them full privileges to modify system records. Exercise utmost care before confirming.",
+    "toast_blocked_success": "Account blocked successfully.",
+    "toast_unblocked_success": "Account unblocked successfully.",
+    "toast_status_error": "Failed to update account status.",
+    "toast_role_success": "Role updated successfully.",
+    "toast_role_error": "Failed to update role.",
+    "toast_delete_success": "Account permanently deleted from the system.",
+    "toast_delete_error": "Failed to delete account.",
+    "not_found": "Account not found",
+    "not_found_desc": "This user account does not exist or has been deleted.",
+    "gender_male": "Male",
+    "gender_female": "Female",
+    "gender_other": "Other"
   }
 }
