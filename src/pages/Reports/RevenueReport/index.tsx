@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { FileDown, FileText, ChevronRight, LayoutDashboard, AlertTriangle, RefreshCw, Sparkles } from 'lucide-react';
+import { FileDown, FileText, LayoutDashboard, AlertTriangle, RefreshCw, Sparkles } from 'lucide-react';
 import { useRevenueReportQuery, useReportMutations } from '@/hooks/useReportQueries';
 import ReportFilterBar from './components/ReportFilterBar';
 import RevenueStatsCards from './components/RevenueStatsCards';
@@ -343,120 +343,132 @@ const RevenueReport: React.FC = () => {
     return (
         <div className="p-6 md:p-8 max-w-7xl mx-auto space-y-6 animate-in fade-in duration-300">
             {/* 1. Header & Breadcrumbs block */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-50 pb-5">
-                <div className="space-y-1.5">
-                    {/* Breadcrumbs */}
-                    <div className="flex items-center gap-1.5 text-[11px] font-bold text-slate-400 select-none">
-                        <span className="hover:text-slate-600 cursor-pointer flex items-center gap-1">
-                            <LayoutDashboard size={11} />
-                            {t('breadcrumb.home')}
-                        </span>
-                        <ChevronRight size={11} />
-                        <span className="hover:text-slate-600 cursor-pointer">{t('breadcrumb.reports')}</span>
-                        <ChevronRight size={11} />
-                        <span className="text-emerald-500">{t('breadcrumb.current')}</span>
-                    </div>
-
-                    <div className="flex items-center gap-2.5">
-                        <div className="w-9 h-9 bg-linear-to-br from-emerald-500/20 to-emerald-500/5 rounded-xl flex items-center justify-center text-emerald-500 border border-emerald-500/10 shadow-2xs">
-                            <FileText size={18} />
-                        </div>
-                        <div>
-                            <h1 className="text-2xl font-black text-slate-800 leading-tight">{t('title')}</h1>
-                            <p className="text-xs font-bold text-slate-400 mt-1">{t('subtitle')}</p>
-                        </div>
-                    </div>
+            <div className="flex flex-col gap-3">
+                {/* Breadcrumbs */}
+                <div className="flex items-center gap-2 text-xs font-black text-slate-400 uppercase tracking-wider select-none px-1">
+                    <span className="hover:text-[#14b8a6] cursor-pointer flex items-center gap-1 transition-colors duration-150">
+                        <LayoutDashboard size={13} />
+                        {t('breadcrumb.home')}
+                    </span>
+                    <span className="text-slate-300">/</span>
+                    <span className="hover:text-[#14b8a6] cursor-pointer transition-colors duration-150">{t('breadcrumb.reports')}</span>
+                    <span className="text-slate-300">/</span>
+                    <span className="text-[#14b8a6]">{t('breadcrumb.current')}</span>
                 </div>
 
-                {/* Header Actions: Toggle Mock & Export Excel */}
-                <div className="flex items-center gap-2">
-                    {/* Mock Mode toggle switch */}
-                    <button
-                        type="button"
-                        onClick={toggleMockMode}
-                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-black border transition-all cursor-pointer ${
-                            isMockMode
-                                ? 'bg-amber-50 border-amber-200 text-amber-600 font-extrabold shadow-2xs'
-                                : 'bg-slate-50 border-slate-200 text-slate-500 hover:bg-slate-100 font-extrabold shadow-2xs'
-                        }`}
-                        title={t('mock.toggle_title')}
-                    >
-                        <Sparkles size={13} className={isMockMode ? "animate-bounce text-amber-500" : ""} />
-                        {isMockMode ? t('mock.mock_on') : t('mock.mock_off')}
-                    </button>
+                {/* ─── Gradient border shell header card ─── */}
+                <div className="p-[1px] rounded-3xl bg-gradient-to-br from-[#14b8a6]/25 via-slate-200/20 to-transparent shadow-sm hover:shadow-md transition-all duration-300">
+                    <div className="bg-white/98 backdrop-blur-sm rounded-[23px] px-6 py-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-[#14b8a6]/10 text-[#14b8a6] border border-[#14b8a6]/20 rounded-2xl flex items-center justify-center shadow-xs shrink-0">
+                                <FileText size={20} />
+                            </div>
+                            <div>
+                                <h1 className="text-[22px] font-black text-[#0F172A] tracking-tight leading-tight">{t('title')}</h1>
+                                <p className="text-xs font-bold text-[#94A3B8] mt-1">{t('subtitle')}</p>
+                            </div>
+                        </div>
 
-                    <button
-                        type="button"
-                        onClick={handleExportExcel}
-                        disabled={isLoading || isFetching || exportRevenueMutation.isPending || (data && data.table.items.length === 0)}
-                        className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold bg-white border border-slate-100 hover:bg-slate-50 text-slate-600 shadow-xs active:scale-95 transition-all disabled:opacity-50 disabled:active:scale-100 cursor-pointer select-none"
-                    >
-                        {exportRevenueMutation.isPending ? (
-                            <div className="w-4 h-4 border-2 border-slate-600 border-t-transparent rounded-full animate-spin"></div>
-                        ) : (
-                            <FileDown size={16} />
-                        )}
-                        {t('export.btn_label')}
-                    </button>
+                        {/* Header Actions: Toggle Mock & Export Excel */}
+                        <div className="flex items-center gap-2">
+                            <button
+                                type="button"
+                                onClick={toggleMockMode}
+                                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-black border transition-all cursor-pointer ${
+                                    isMockMode
+                                        ? 'bg-amber-50 border-amber-200 text-amber-600'
+                                        : 'bg-slate-50 border-slate-200 text-slate-500 hover:bg-slate-100'
+                                }`}
+                                title={t('mock.toggle_title')}
+                            >
+                                <Sparkles size={13} className={isMockMode ? "animate-bounce" : ""} />
+                                {isMockMode ? t('mock.mock_on') : t('mock.mock_off')}
+                            </button>
+
+                            <button
+                                type="button"
+                                onClick={handleExportExcel}
+                                disabled={isLoading || isFetching || exportRevenueMutation.isPending || (data && data.table.items.length === 0)}
+                                className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold bg-white border border-[#E2E8F0] hover:border-[#14b8a6] hover:bg-[#14b8a6]/5 hover:text-[#14b8a6] shadow-xs active:scale-95 transition-all duration-200 disabled:opacity-50 disabled:active:scale-100 cursor-pointer text-[#0F172A]/80"
+                            >
+                                {exportRevenueMutation.isPending ? (
+                                    <div className="w-4 h-4 border-2 border-[#14b8a6] border-t-transparent rounded-full animate-spin"></div>
+                                ) : (
+                                    <FileDown size={16} />
+                                )}
+                                {t('export.btn_label')}
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
             {/* 2. Error Display shell (Only shown if NOT in mock mode and API fails) */}
             {isRealError && !isMockMode ? (
-                <div className="bg-red-50/60 backdrop-blur-xs border border-red-100/50 rounded-2xl p-8 text-center space-y-4 max-w-lg mx-auto">
-                    <div className="w-12 h-12 bg-red-100/50 rounded-full flex items-center justify-center text-red-500 mx-auto">
-                        <AlertTriangle size={24} />
-                    </div>
-                    <div>
-                        <h3 className="text-base font-black text-red-800">{t('error.load_failed')}</h3>
-                        <p className="text-xs font-bold text-red-400 mt-1.5">{t('error.connection')}</p>
-                    </div>
-                    <div className="flex gap-2 justify-center">
-                        <button
-                            onClick={() => refetch()}
-                            className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white font-bold text-sm px-6 py-2.5 rounded-xl active:scale-95 transition-all shadow-md shadow-red-600/10 cursor-pointer"
-                        >
-                            <RefreshCw size={15} />
-                            {t('error.retry_btn')}
-                        </button>
-                        <button
-                            onClick={toggleMockMode}
-                            className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white font-bold text-sm px-6 py-2.5 rounded-xl active:scale-95 transition-all shadow-md shadow-amber-500/10 cursor-pointer"
-                        >
-                            <Sparkles size={15} />
-                            {t('error.use_mock_btn')}
-                        </button>
+                <div className="p-[1px] rounded-3xl bg-gradient-to-br from-red-500/20 via-slate-200/25 to-slate-100/10 shadow-xs max-w-lg mx-auto mt-12 animate-in fade-in duration-300">
+                    <div className="bg-white rounded-[23px] p-8 text-center flex flex-col items-center justify-center font-sans">
+                        <div className="w-12 h-12 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4 border border-red-100/50">
+                            <AlertTriangle size={24} />
+                        </div>
+                        <div>
+                            <h3 className="text-base font-black text-[#0F172A]">{t('error.load_failed')}</h3>
+                            <p className="text-xs font-bold text-[#94A3B8] mt-1.5">{t('error.connection')}</p>
+                        </div>
+                        <div className="flex gap-2 justify-center mt-6">
+                            <button
+                                onClick={() => refetch()}
+                                className="inline-flex items-center gap-2 bg-[#14b8a6] hover:bg-[#0f766e] text-white font-bold text-xs px-6 py-2.5 rounded-xl active:scale-95 transition-all shadow-md cursor-pointer"
+                            >
+                                <RefreshCw size={15} />
+                                {t('error.retry_btn')}
+                            </button>
+                            <button
+                                onClick={toggleMockMode}
+                                className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs px-6 py-2.5 rounded-xl active:scale-95 transition-all shadow-md cursor-pointer"
+                            >
+                                <Sparkles size={15} />
+                                {t('error.use_mock_btn')}
+                            </button>
+                        </div>
                     </div>
                 </div>
             ) : (
                 <>
                     {/* 3. Interactive Filter Bar */}
-                    <ReportFilterBar
-                        filters={localFilters}
-                        onFilterChange={handleLocalFilterChange}
-                        onApply={handleApplyFilters}
-                        onReset={handleResetFilters}
-                        isSubmitting={isLoading || isFetching}
-                    />
+                    <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-both delay-75">
+                        <ReportFilterBar
+                            filters={localFilters}
+                            onFilterChange={handleLocalFilterChange}
+                            onApply={handleApplyFilters}
+                            onReset={handleResetFilters}
+                            isSubmitting={isLoading || isFetching}
+                        />
+                    </div>
 
                     {/* 4. Stats Summary Cards */}
-                    <RevenueStatsCards
-                        stats={data?.stats}
-                        isLoading={isLoading}
-                    />
+                    <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-both delay-150">
+                        <RevenueStatsCards
+                            stats={data?.stats}
+                            isLoading={isLoading}
+                        />
+                    </div>
 
                     {/* 5. Visualization Charts */}
-                    <RevenueReportCharts
-                        data={data?.charts}
-                        isLoading={isLoading}
-                    />
+                    <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-both delay-200">
+                        <RevenueReportCharts
+                            data={data?.charts}
+                            isLoading={isLoading}
+                        />
+                    </div>
 
                     {/* 6. Table */}
-                    <RevenueReportTable
-                        data={data?.table}
-                        isLoading={isLoading}
-                        onPageChange={handlePageChange}
-                    />
+                    <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-both delay-300">
+                        <RevenueReportTable
+                            data={data?.table}
+                            isLoading={isLoading}
+                            onPageChange={handlePageChange}
+                        />
+                    </div>
                 </>
             )}
         </div>

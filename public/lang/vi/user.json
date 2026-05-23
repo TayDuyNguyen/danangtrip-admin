@@ -6,7 +6,11 @@
     "total": "TỔNG NGƯỜI DÙNG",
     "active": "ĐANG HOẠT ĐỘNG",
     "banned": "BỊ KHÓA",
-    "admin": "ADMIN"
+    "admin": "ADMIN",
+    "bookings": "ĐƠN HÀNG",
+    "ratings": "ĐÁNH GIÁ",
+    "favorites": "YÊU THÍCH",
+    "total_spend": "TỔNG CHI"
   },
   "filter": {
     "search_placeholder": "Tìm theo tên, email, username...",
@@ -41,7 +45,8 @@
   },
   "status": {
     "active": "HOẠT ĐỘNG",
-    "banned": "BỊ KHÓA"
+    "banned": "BỊ KHÓA",
+    "pending": "CHỜ KÍCH HOẠT"
   },
   "actions": {
     "view": "Xem chi tiết",
@@ -54,7 +59,13 @@
     "bulk_activate": "Kích hoạt hàng loạt",
     "bulk_block": "Khóa hàng loạt",
     "bulk_delete": "Xóa hàng loạt",
-    "bulk_delete_confirm": "Bạn có chắc chắn muốn xóa hàng loạt {{count}} người dùng?"
+    "bulk_delete_confirm": "Bạn có chắc chắn muốn xóa hàng loạt {{count}} người dùng?",
+    "edit_info": "Chỉnh sửa thông tin",
+    "edit_unavailable": "Màn chỉnh sửa sẽ được bổ sung ở bước tiếp theo",
+    "change_role_label": "Đổi vai trò",
+    "view_bookings_label": "Xem đơn đặt tour",
+    "view_ratings_label": "Xem đánh giá",
+    "change_role": "Đổi vai trò"
   },
   "dialog": {
     "delete_title": "Xóa tài khoản này?",
@@ -75,5 +86,78 @@
     "action_forbidden": "Bạn không có quyền thực hiện hành động này.",
     "self_action_error": "Bạn không thể tự thực hiện hành động này trên tài khoản của chính mình.",
     "feature_not_ready": "Màn chi tiết/chỉnh sửa người dùng chưa được triển khai."
+  },
+  "booking_status": {
+    "pending": "CHỜ XÁC NHẬN",
+    "confirmed": "ĐÃ XÁC NHẬN",
+    "completed": "HOÀN TẤT",
+    "cancelled": "ĐÃ HỦY"
+  },
+  "rating_status": {
+    "pending": "CHỜ DUYỆT",
+    "approved": "ĐÃ DUYỆT",
+    "rejected": "TỪ CHỐI"
+  },
+  "detail": {
+    "breadcrumb_home": "Bảng điều khiển",
+    "breadcrumb_users": "Người dùng",
+    "breadcrumb_detail": "Chi tiết",
+    "back_to_list": "Quay lại danh sách",
+    "joined": "Tham gia",
+    "section_personal_info": "Thông tin cá nhân",
+    "label_full_name": "HỌ VÀ TÊN",
+    "label_username": "USERNAME",
+    "label_email": "EMAIL",
+    "label_phone": "SỐ ĐIỆN THOẠI",
+    "label_birthdate": "NGÀY SINH",
+    "label_gender": "GIỚI TÍNH",
+    "label_city": "THÀNH PHỐ",
+    "label_email_verification": "XÁC THỰC EMAIL",
+    "verification_verified": "Đã xác thực",
+    "verification_unverified": "Chưa xác thực",
+    "label_created_at": "NGÀY THAM GIA",
+    "label_updated_at": "CẬP NHẬT TRANG",
+    "section_bookings": "Lịch sử đặt tour",
+    "orders_count": "đơn",
+    "view_all_bookings": "Xem tất cả →",
+    "no_bookings": "Chưa có đơn đặt tour nào",
+    "no_bookings_desc": "Người dùng này chưa thực hiện bất kỳ giao dịch đặt tour nào.",
+    "booking_col_code": "Mã đơn",
+    "booking_col_tour": "Tour",
+    "booking_col_date": "Ngày đặt",
+    "booking_col_amount": "Tổng tiền",
+    "booking_col_status": "Trạng thái",
+    "section_ratings": "Đánh giá đã viết",
+    "ratings_count": "đánh giá",
+    "view_all_ratings": "Xem tất cả →",
+    "no_ratings": "Chưa có đánh giá nào",
+    "no_ratings_desc": "Người dùng này chưa viết bất kỳ bình luận hay đánh giá nào.",
+    "section_account": "Tài khoản",
+    "label_role": "Vai trò",
+    "label_status": "Trạng thái",
+    "label_email_verification_status": "Xác thực email",
+    "label_join_date": "Ngày tham gia",
+    "label_last_login": "Đăng nhập cuối",
+    "section_actions": "Thao tác",
+    "delete_title": "Xóa tài khoản này?",
+    "delete_desc": "Tài khoản của {{name}} sẽ bị xóa vĩnh viễn khỏi hệ thống.",
+    "delete_warning_label": "⚠ Cảnh báo quan trọng",
+    "delete_warning_desc": "Tất cả đơn đặt tour, lịch sử giao dịch, đánh giá, lượt bình luận và danh sách yêu thích của người dùng này cũng sẽ bị xóa vĩnh viễn khỏi hệ thống.",
+    "role_user_desc": "Tài khoản người dùng thông thường, chỉ có thể xem địa điểm, đặt tour, gửi bình luận đánh giá.",
+    "role_admin_desc": "Quyền hạn tối cao. Có khả năng quản lý toàn bộ hệ thống, thêm/sửa/xóa địa điểm, quản lý người dùng, xem báo cáo doanh thu.",
+    "role_dialog_subtitle": "Chọn vai trò tài khoản cho người dùng",
+    "role_elevate_warning": "Chú ý: Việc nâng cấp người dùng lên làm Quản trị viên (Admin) sẽ trao cho họ đầy đủ mọi quyền hạn sửa đổi dữ liệu hệ thống. Hãy cân nhắc kỹ trước khi xác nhận.",
+    "toast_blocked_success": "Đã khóa tài khoản thành công.",
+    "toast_unblocked_success": "Đã mở khóa tài khoản thành công.",
+    "toast_status_error": "Cập nhật trạng thái thất bại.",
+    "toast_role_success": "Cập nhật vai trò thành công.",
+    "toast_role_error": "Cập nhật vai trò thất bại.",
+    "toast_delete_success": "Đã xóa tài khoản vĩnh viễn khỏi hệ thống.",
+    "toast_delete_error": "Xóa tài khoản thất bại.",
+    "not_found": "Không tìm thấy tài khoản",
+    "not_found_desc": "Tài khoản người dùng này không tồn tại hoặc đã bị xóa.",
+    "gender_male": "Nam",
+    "gender_female": "Nữ",
+    "gender_other": "Khác"
   }
 }

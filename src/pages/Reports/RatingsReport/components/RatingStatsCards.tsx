@@ -51,13 +51,15 @@ const RatingStatsCards: React.FC<RatingStatsCardsProps> = ({ stats, isLoading = 
         return (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
                 {[...Array(4)].map((_, idx) => (
-                    <div key={idx} className="bg-white/80 backdrop-blur-md border border-slate-100 rounded-2xl p-6 shadow-xs">
-                        <div className="flex justify-between items-start mb-4">
-                            <Skeleton className="w-10 h-10 rounded-xl" />
-                            <Skeleton className="w-16 h-5 rounded-full" />
+                    <div key={idx} className="p-[1px] rounded-3xl bg-gradient-to-br from-slate-200/20 via-slate-100/10 to-transparent">
+                        <div className="bg-white rounded-[23px] p-6 h-full">
+                            <div className="flex justify-between items-start mb-4">
+                                <Skeleton className="w-10 h-10 rounded-xl" />
+                                <Skeleton className="w-16 h-5 rounded-full" />
+                            </div>
+                            <Skeleton className="w-24 h-8 mb-2" />
+                            <Skeleton className="w-32 h-4" />
                         </div>
-                        <Skeleton className="w-24 h-8 mb-2" />
-                        <Skeleton className="w-32 h-4" />
                     </div>
                 ))}
             </div>
@@ -67,72 +69,88 @@ const RatingStatsCards: React.FC<RatingStatsCardsProps> = ({ stats, isLoading = 
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
             {/* Total Ratings */}
-            <div className="bg-white/80 backdrop-blur-md border border-slate-100 rounded-2xl p-6 shadow-xs hover:shadow-md transition-all duration-300 relative overflow-hidden group">
-                <div className="absolute top-0 left-0 w-1 bg-[#14b8a6]"></div>
-                <div className="flex justify-between items-start mb-4">
-                    <div className="w-10 h-10 rounded-xl bg-teal-50 flex items-center justify-center text-[#14b8a6] group-hover:scale-110 transition-transform">
-                        <MessageSquare size={20} />
+            <div className="p-[1px] rounded-3xl bg-gradient-to-br from-[#14b8a6]/20 via-slate-200/25 to-slate-100/10 shadow-xs hover:shadow-md hover:from-[#14b8a6]/30 transition-all duration-300 group h-full">
+                <div className="bg-white rounded-[23px] p-6 relative overflow-hidden h-full">
+                    <div className="absolute top-0 left-0 w-1 h-full bg-[#14b8a6]"></div>
+                    <div className="flex justify-between items-start mb-4 pl-1">
+                        <div className="w-10 h-10 rounded-xl bg-teal-50 flex items-center justify-center text-[#14b8a6] border border-teal-100/50 group-hover:scale-110 transition-transform duration-200">
+                            <MessageSquare size={20} />
+                        </div>
+                        {renderTrendBadge(stats.totalTrend)}
                     </div>
-                    {renderTrendBadge(stats.totalTrend)}
+                    <div className="pl-1">
+                        <h3 className="text-2xl font-black text-[#0F172A] leading-tight mb-1 select-all">
+                            {stats.total.toLocaleString()}
+                        </h3>
+                        <p className="text-xs font-black text-[#94A3B8] uppercase tracking-widest">
+                            {t('stats.total_ratings')}
+                        </p>
+                    </div>
                 </div>
-                <h3 className="text-2xl font-black text-slate-800 leading-tight mb-1 select-all">
-                    {stats.total.toLocaleString()}
-                </h3>
-                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-                    {t('stats.total_ratings')}
-                </p>
             </div>
 
             {/* Pending Reviews */}
-            <div className="bg-white/80 backdrop-blur-md border border-slate-100 rounded-2xl p-6 shadow-xs hover:shadow-md transition-all duration-300 relative overflow-hidden group">
-                <div className="absolute top-0 left-0 w-1 bg-amber-500"></div>
-                <div className="flex justify-between items-start mb-4">
-                    <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center text-amber-500 group-hover:scale-110 transition-transform">
-                        <Clock size={20} />
+            <div className="p-[1px] rounded-3xl bg-gradient-to-br from-amber-500/20 via-slate-200/25 to-slate-100/10 shadow-xs hover:shadow-md hover:from-amber-500/30 transition-all duration-300 group h-full">
+                <div className="bg-white rounded-[23px] p-6 relative overflow-hidden h-full">
+                    <div className="absolute top-0 left-0 w-1 h-full bg-amber-500"></div>
+                    <div className="flex justify-between items-start mb-4 pl-1">
+                        <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center text-amber-500 border border-amber-100/50 group-hover:scale-110 transition-transform duration-200">
+                            <Clock size={20} />
+                        </div>
+                        {renderTrendBadge(stats.pendingTrend)}
                     </div>
-                    {renderTrendBadge(stats.pendingTrend)}
+                    <div className="pl-1">
+                        <h3 className="text-2xl font-black text-amber-600 leading-tight mb-1 select-all">
+                            {stats.pending.toLocaleString()}
+                        </h3>
+                        <p className="text-xs font-black text-[#94A3B8] uppercase tracking-widest">
+                            {t('filter.status_pending')}
+                        </p>
+                    </div>
                 </div>
-                <h3 className="text-2xl font-black text-amber-600 leading-tight mb-1 select-all">
-                    {stats.pending.toLocaleString()}
-                </h3>
-                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-                    {t('filter.status_pending')}
-                </p>
             </div>
 
             {/* Approved Reviews */}
-            <div className="bg-white/80 backdrop-blur-md border border-slate-100 rounded-2xl p-6 shadow-xs hover:shadow-md transition-all duration-300 relative overflow-hidden group">
-                <div className="absolute top-0 left-0 w-1 bg-emerald-500"></div>
-                <div className="flex justify-between items-start mb-4">
-                    <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-500 group-hover:scale-110 transition-transform">
-                        <CheckCircle2 size={20} />
+            <div className="p-[1px] rounded-3xl bg-gradient-to-br from-emerald-500/20 via-slate-200/25 to-slate-100/10 shadow-xs hover:shadow-md hover:from-emerald-500/30 transition-all duration-300 group h-full">
+                <div className="bg-white rounded-[23px] p-6 relative overflow-hidden h-full">
+                    <div className="absolute top-0 left-0 w-1 h-full bg-emerald-500"></div>
+                    <div className="flex justify-between items-start mb-4 pl-1">
+                        <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-500 border border-emerald-100/50 group-hover:scale-110 transition-transform duration-200">
+                            <CheckCircle2 size={20} />
+                        </div>
+                        {renderTrendBadge(stats.approvedTrend)}
                     </div>
-                    {renderTrendBadge(stats.approvedTrend)}
+                    <div className="pl-1">
+                        <h3 className="text-2xl font-black text-emerald-600 leading-tight mb-1 select-all">
+                            {stats.approved.toLocaleString()}
+                        </h3>
+                        <p className="text-xs font-black text-[#94A3B8] uppercase tracking-widest">
+                            {t('filter.status_approved')}
+                        </p>
+                    </div>
                 </div>
-                <h3 className="text-2xl font-black text-emerald-600 leading-tight mb-1 select-all">
-                    {stats.approved.toLocaleString()}
-                </h3>
-                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-                    {t('filter.status_approved')}
-                </p>
             </div>
 
             {/* Average Rating Score */}
-            <div className="bg-white/80 backdrop-blur-md border border-slate-100 rounded-2xl p-6 shadow-xs hover:shadow-md transition-all duration-300 relative overflow-hidden group">
-                <div className="absolute top-0 left-0 w-1 bg-amber-400"></div>
-                <div className="flex justify-between items-start mb-4">
-                    <div className="w-10 h-10 rounded-xl bg-yellow-50 flex items-center justify-center text-yellow-500 group-hover:scale-110 transition-transform">
-                        <Star size={20} className="fill-yellow-500/20" />
+            <div className="p-[1px] rounded-3xl bg-gradient-to-br from-amber-400/20 via-slate-200/25 to-slate-100/10 shadow-xs hover:shadow-md hover:from-amber-400/30 transition-all duration-300 group h-full">
+                <div className="bg-white rounded-[23px] p-6 relative overflow-hidden h-full">
+                    <div className="absolute top-0 left-0 w-1 h-full bg-amber-400"></div>
+                    <div className="flex justify-between items-start mb-4 pl-1">
+                        <div className="w-10 h-10 rounded-xl bg-yellow-50 flex items-center justify-center text-yellow-500 border border-yellow-100/50 group-hover:scale-110 transition-transform duration-200">
+                            <Star size={20} className="fill-yellow-500/20" />
+                        </div>
+                        {renderTrendBadge(stats.averageTrend)}
                     </div>
-                    {renderTrendBadge(stats.averageTrend)}
+                    <div className="pl-1">
+                        <h3 className="text-2xl font-black text-[#0F172A] leading-tight mb-1 select-all flex items-baseline gap-1">
+                            {stats.average.toFixed(1)}
+                            <span className="text-sm font-black text-amber-500">★</span>
+                        </h3>
+                        <p className="text-xs font-black text-[#94A3B8] uppercase tracking-widest">
+                            {t('stats.average_score')}
+                        </p>
+                    </div>
                 </div>
-                <h3 className="text-2xl font-black text-slate-800 leading-tight mb-1 select-all flex items-baseline gap-1">
-                    {stats.average.toFixed(1)}
-                    <span className="text-sm font-black text-amber-500">★</span>
-                </h3>
-                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-                    {t('stats.average_score')}
-                </p>
             </div>
         </div>
     );

@@ -89,16 +89,18 @@ const RatingsReportTable: React.FC<RatingsReportTableProps> = ({
 
     if (isLoading) {
         return (
-            <div className="bg-white/80 backdrop-blur-md border border-slate-100 rounded-2xl overflow-hidden shadow-xs mb-6">
-                <div className="px-6 py-5 border-b border-slate-50 flex justify-between items-center">
-                    <Skeleton className="w-40 h-6" />
-                    <Skeleton className="w-24 h-5" />
-                </div>
-                <div className="p-6">
-                    <div className="space-y-4">
-                        {[...Array(5)].map((_, idx) => (
-                            <Skeleton key={idx} className="w-full h-12 rounded-xl" />
-                        ))}
+            <div className="p-[1px] rounded-3xl bg-gradient-to-br from-slate-200/20 via-slate-100/10 to-transparent mb-6">
+                <div className="bg-white rounded-[23px] overflow-hidden">
+                    <div className="px-6 py-5 border-b border-[#F1F5F9] flex justify-between items-center">
+                        <Skeleton className="w-40 h-6" />
+                        <Skeleton className="w-24 h-5" />
+                    </div>
+                    <div className="p-6">
+                        <div className="space-y-4">
+                            {[...Array(5)].map((_, idx) => (
+                                <Skeleton key={idx} className="w-full h-12 rounded-xl" />
+                            ))}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -107,11 +109,13 @@ const RatingsReportTable: React.FC<RatingsReportTableProps> = ({
 
     if (!data || data.items.length === 0) {
         return (
-            <div className="bg-white/80 backdrop-blur-md border border-slate-100 rounded-2xl p-8 shadow-xs mb-6">
-                <EmptyState
-                    title={t('table.no_comment_found', { defaultValue: 'Không tìm thấy đánh giá nào' })}
-                    description={t('table.no_comment_found_desc', { defaultValue: 'Không tìm thấy đánh giá nào khớp với bộ lọc thời gian hoặc điều kiện của bạn.' })}
-                />
+            <div className="p-[1px] rounded-3xl bg-gradient-to-br from-slate-200/20 via-slate-100/10 to-transparent mb-6">
+                <div className="bg-white rounded-[23px] p-8 text-center">
+                    <EmptyState
+                        title={t('table.no_comment_found', { defaultValue: 'Không tìm thấy đánh giá nào' })}
+                        description={t('table.no_comment_found_desc', { defaultValue: 'Không tìm thấy đánh giá nào khớp với bộ lọc thời gian hoặc điều kiện của bạn.' })}
+                    />
+                </div>
             </div>
         );
     }
@@ -121,269 +125,271 @@ const RatingsReportTable: React.FC<RatingsReportTableProps> = ({
     const endIndex = Math.min(pagination.currentPage * pagination.perPage, pagination.total);
 
     return (
-        <div className="bg-white/80 backdrop-blur-md border border-slate-100 rounded-2xl overflow-hidden shadow-xs mb-6">
-            {/* Table Header */}
-            <div className="px-6 py-5 border-b border-slate-50 flex flex-col sm:flex-row gap-3 justify-between sm:items-center bg-white/40">
-                <div>
-                    <h3 className="text-[15px] font-black text-slate-800 leading-tight">{t('table.details_title')}</h3>
-                    <p className="text-[11px] font-bold text-slate-400 mt-1">{t('table.details_subtitle')}</p>
+        <div className="p-[1px] rounded-3xl bg-gradient-to-br from-[#14b8a6]/20 via-slate-200/25 to-slate-100/10 shadow-xs hover:shadow-md hover:from-[#14b8a6]/30 transition-all duration-300 mb-6">
+            <div className="bg-white rounded-[23px] overflow-hidden">
+                {/* Table Header */}
+                <div className="px-6 py-5 border-b border-[#F1F5F9] flex flex-col sm:flex-row gap-3 justify-between sm:items-center bg-[#F8FAFC]/50">
+                    <div>
+                        <h3 className="text-[15px] font-black text-[#0F172A] leading-tight">{t('table.details_title')}</h3>
+                        <p className="text-[11px] font-bold text-[#94A3B8] mt-1">{t('table.details_subtitle')}</p>
+                    </div>
+                    <div className="text-right">
+                        <span className="text-xs font-black text-[#0F172A]/85 bg-[#F8FAFC] px-3 py-1.5 rounded-lg border border-[#F1F5F9]">
+                            {t('table.total_ratings_count', { total: pagination.total.toLocaleString() })}
+                        </span>
+                    </div>
                 </div>
-                <div className="text-right">
-                    <span className="text-xs font-black text-slate-600 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100">
-                        {t('table.total_ratings_count', { total: pagination.total.toLocaleString() })}
-                    </span>
-                </div>
-            </div>
 
-            {/* Table wrapper */}
-            <div className="overflow-x-auto">
-                <table className="w-full border-collapse text-left">
-                    <thead>
-                        <tr className="bg-slate-50/50 border-b border-slate-100">
-                            <th className="px-6 py-3.5 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('table.header_user')}</th>
-                            <th className="px-6 py-3.5 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('table.header_target')}</th>
-                            <th className="px-6 py-3.5 text-[10px] font-black text-slate-400 uppercase tracking-widest w-[100px]">{t('filter.category')}</th>
-                            <th className="px-6 py-3.5 text-[10px] font-black text-slate-400 uppercase tracking-widest w-[110px]">{t('stats.ratings')}</th>
-                            <th className="px-6 py-3.5 text-[10px] font-black text-slate-400 uppercase tracking-widest w-[280px]">{t('table.header_feedback')}</th>
-                            <th className="px-6 py-3.5 text-[10px] font-black text-slate-400 uppercase tracking-widest w-[110px]">{t('table.header_status')}</th>
-                            <th className="px-6 py-3.5 text-[10px] font-black text-slate-400 uppercase tracking-widest w-[110px]">{t('table.header_date')}</th>
-                            <th className="px-6 py-3.5 text-[10px] font-black text-slate-400 uppercase tracking-widest w-[130px] text-right">{t('table.header_actions')}</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100">
-                        {items.map((item) => (
-                            <tr key={item.id} className="hover:bg-slate-50/40 transition-colors group/row">
-                                {/* 1. User */}
-                                <td className="px-6 py-4">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-8 h-8 rounded-full bg-slate-200 border border-slate-100 flex items-center justify-center font-bold text-slate-700 text-xs shrink-0 overflow-hidden shadow-xs">
-                                            {item.userAvatar ? (
-                                                <img src={item.userAvatar} alt={item.userName} className="w-full h-full object-cover" />
-                                            ) : (
-                                                item.userName.charAt(0).toUpperCase()
-                                            )}
-                                        </div>
-                                        <span className="text-[13px] font-black text-slate-800 truncate max-w-[130px]" title={item.userName}>
-                                            {item.userName}
-                                        </span>
-                                    </div>
-                                </td>
-
-                                {/* 2. Reviewable target */}
-                                <td className="px-6 py-4">
-                                    <div className="flex items-center gap-1 max-w-[200px]">
-                                        <span className="text-[13px] font-bold text-slate-700 truncate" title={item.reviewableName}>
-                                            {item.reviewableName}
-                                        </span>
-                                        <a
-                                            href={
-                                                item.reviewableType === 'tour'
-                                                    ? `/admin/tours/edit/${item.reviewableId}`
-                                                    : `/admin/locations/edit/${item.reviewableId}`
-                                            }
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="text-slate-400 hover:text-[#14b8a6] transition-colors shrink-0"
-                                            title={t('table.tooltip_view')}
-                                        >
-                                            <ExternalLink size={13} />
-                                        </a>
-                                    </div>
-                                </td>
-
-                                {/* 3. Class Type Badge */}
-                                <td className="px-6 py-4">
-                                    {item.reviewableType === 'tour' ? (
-                                        <span className="inline-flex bg-teal-50 text-[#14b8a6] font-extrabold text-[9px] px-2 py-0.5 rounded-md uppercase tracking-wider">
-                                            {t('filter.type_tour')}
-                                        </span>
-                                    ) : (
-                                        <span className="inline-flex bg-indigo-50 text-indigo-600 font-extrabold text-[9px] px-2 py-0.5 rounded-md uppercase tracking-wider">
-                                            {t('filter.type_location')}
-                                        </span>
-                                    )}
-                                </td>
-
-                                {/* 4. Star score */}
-                                <td className="px-6 py-4">
-                                    {renderStars(item.score)}
-                                </td>
-
-                                {/* 5. Comment snippet with images preview */}
-                                <td className="px-6 py-4">
-                                    <div className="flex flex-col gap-1.5 max-w-[260px]">
-                                        <p className="text-[12px] font-bold text-slate-600 line-clamp-2 leading-relaxed" title={item.comment}>
-                                            {item.comment || <em className="text-slate-300 font-normal">{t('table.no_comment')}</em>}
-                                        </p>
-                                        
-                                        {/* Image attachments previews */}
-                                        {item.images.length > 0 && (
-                                            <div className="flex gap-1 overflow-x-auto py-0.5">
-                                                {item.images.slice(0, 3).map((img, i) => (
-                                                    <div 
-                                                        key={i}
-                                                        onClick={() => setSelectedComment({
-                                                            userName: item.userName,
-                                                            reviewableName: item.reviewableName,
-                                                            comment: item.comment,
-                                                            score: item.score,
-                                                            images: item.images
-                                                        })}
-                                                        className="w-8 h-8 rounded-md border border-slate-100 shrink-0 overflow-hidden cursor-pointer hover:opacity-85 transition-opacity"
-                                                    >
-                                                        <img src={img} alt={t('table.attachment_alt')} className="w-full h-full object-cover" />
-                                                    </div>
-                                                ))}
-                                                {item.images.length > 3 && (
-                                                    <div className="w-8 h-8 bg-slate-100 rounded-md border border-slate-100 flex items-center justify-center text-[10px] font-black text-slate-500 shrink-0 select-none">
-                                                        +{item.images.length - 3}
-                                                    </div>
+                {/* Table wrapper */}
+                <div className="overflow-x-auto">
+                    <table className="w-full border-collapse text-left">
+                        <thead>
+                            <tr className="bg-[#F8FAFC]/60 border-b border-[#F1F5F9]">
+                                <th className="px-6 py-3.5 text-[10px] font-black text-[#94A3B8] uppercase tracking-widest">{t('table.header_user')}</th>
+                                <th className="px-6 py-3.5 text-[10px] font-black text-[#94A3B8] uppercase tracking-widest">{t('table.header_target')}</th>
+                                <th className="px-6 py-3.5 text-[10px] font-black text-[#94A3B8] uppercase tracking-widest w-[100px]">{t('filter.category')}</th>
+                                <th className="px-6 py-3.5 text-[10px] font-black text-[#94A3B8] uppercase tracking-widest w-[110px]">{t('stats.ratings')}</th>
+                                <th className="px-6 py-3.5 text-[10px] font-black text-[#94A3B8] uppercase tracking-widest w-[280px]">{t('table.header_feedback')}</th>
+                                <th className="px-6 py-3.5 text-[10px] font-black text-[#94A3B8] uppercase tracking-widest w-[110px]">{t('table.header_status')}</th>
+                                <th className="px-6 py-3.5 text-[10px] font-black text-[#94A3B8] uppercase tracking-widest w-[110px]">{t('table.header_date')}</th>
+                                <th className="px-6 py-3.5 text-[10px] font-black text-[#94A3B8] uppercase tracking-widest w-[130px] text-right">{t('table.header_actions')}</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-[#F1F5F9]">
+                            {items.map((item) => (
+                                <tr key={item.id} className="hover:bg-[#14b8a6]/5 transition-colors group/row">
+                                    {/* 1. User */}
+                                    <td className="px-6 py-4">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-8 h-8 rounded-full bg-slate-200 border border-[#E2E8F0] flex items-center justify-center font-bold text-[#0F172A] text-xs shrink-0 overflow-hidden shadow-xs">
+                                                {item.userAvatar ? (
+                                                    <img src={item.userAvatar} alt={item.userName} className="w-full h-full object-cover" />
+                                                ) : (
+                                                    item.userName.charAt(0).toUpperCase()
                                                 )}
                                             </div>
+                                            <span className="text-[13px] font-black text-[#0F172A] truncate max-w-[130px]" title={item.userName}>
+                                                {item.userName}
+                                            </span>
+                                        </div>
+                                    </td>
+
+                                    {/* 2. Reviewable target */}
+                                    <td className="px-6 py-4">
+                                        <div className="flex items-center gap-1 max-w-[200px]">
+                                            <span className="text-[13px] font-bold text-[#0F172A]/90 truncate" title={item.reviewableName}>
+                                                {item.reviewableName}
+                                            </span>
+                                            <a
+                                                href={
+                                                    item.reviewableType === 'tour'
+                                                        ? `/admin/tours/edit/${item.reviewableId}`
+                                                        : `/admin/locations/edit/${item.reviewableId}`
+                                                }
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="text-[#94A3B8] hover:text-[#14b8a6] transition-colors shrink-0"
+                                                title={t('table.tooltip_view')}
+                                            >
+                                                <ExternalLink size={13} />
+                                            </a>
+                                        </div>
+                                    </td>
+
+                                    {/* 3. Class Type Badge */}
+                                    <td className="px-6 py-4">
+                                        {item.reviewableType === 'tour' ? (
+                                            <span className="inline-flex bg-teal-50 text-[#14b8a6] font-extrabold text-[9px] px-2 py-0.5 rounded-md uppercase tracking-wider border border-teal-100/55">
+                                                {t('filter.type_tour')}
+                                            </span>
+                                        ) : (
+                                            <span className="inline-flex bg-indigo-50 text-indigo-600 font-extrabold text-[9px] px-2 py-0.5 rounded-md uppercase tracking-wider border border-indigo-100/55">
+                                                {t('filter.type_location')}
+                                            </span>
                                         )}
-                                    </div>
-                                </td>
+                                    </td>
 
-                                {/* 6. Moderation Status */}
-                                <td className="px-6 py-4">
-                                    {renderStatusBadge(item.status)}
-                                </td>
+                                    {/* 4. Star score */}
+                                    <td className="px-6 py-4">
+                                        {renderStars(item.score)}
+                                    </td>
 
-                                {/* 7. Created At */}
-                                <td className="px-6 py-4">
-                                    <div className="flex flex-col">
-                                        <span className="text-[12px] font-bold text-slate-700">{item.createdAt}</span>
-                                        <span className="text-[10px] font-semibold text-slate-400 mt-0.5">{item.createdAtTime}</span>
-                                    </div>
-                                </td>
+                                    {/* 5. Comment snippet with images preview */}
+                                    <td className="px-6 py-4">
+                                        <div className="flex flex-col gap-1.5 max-w-[260px]">
+                                            <p className="text-[12px] font-bold text-[#0F172A]/85 line-clamp-2 leading-relaxed" title={item.comment}>
+                                                {item.comment || <em className="text-[#94A3B8] font-normal">{t('table.no_comment')}</em>}
+                                            </p>
+                                            
+                                            {/* Image attachments previews */}
+                                            {item.images.length > 0 && (
+                                                <div className="flex gap-1 overflow-x-auto py-0.5">
+                                                    {item.images.slice(0, 3).map((img, i) => (
+                                                        <div 
+                                                            key={i}
+                                                            onClick={() => setSelectedComment({
+                                                                userName: item.userName,
+                                                                reviewableName: item.reviewableName,
+                                                                comment: item.comment,
+                                                                score: item.score,
+                                                                images: item.images
+                                                            })}
+                                                            className="w-8 h-8 rounded-md border border-[#E2E8F0] shrink-0 overflow-hidden cursor-pointer hover:opacity-85 transition-opacity"
+                                                        >
+                                                            <img src={img} alt={t('table.attachment_alt')} className="w-full h-full object-cover" />
+                                                        </div>
+                                                    ))}
+                                                    {item.images.length > 3 && (
+                                                        <div className="w-8 h-8 bg-[#F8FAFC] rounded-md border border-[#E2E8F0] flex items-center justify-center text-[10px] font-black text-[#94A3B8] shrink-0 select-none">
+                                                            +{item.images.length - 3}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            )}
+                                        </div>
+                                    </td>
 
-                                {/* 8. Quick Moderation Actions */}
-                                <td className="px-6 py-4 text-right">
-                                    <div className="flex items-center justify-end gap-1.5 opacity-85 group-hover/row:opacity-100 transition-opacity">
-                                        {/* Expand full comment */}
-                                        <button
-                                            type="button"
-                                            onClick={() => setSelectedComment({
-                                                userName: item.userName,
-                                                reviewableName: item.reviewableName,
-                                                comment: item.comment,
-                                                score: item.score,
-                                                images: item.images
-                                            })}
-                                            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-all cursor-pointer"
-                                            title={t('table.tooltip_view')}
-                                        >
-                                            <Eye size={15} />
-                                        </button>
+                                    {/* 6. Moderation Status */}
+                                    <td className="px-6 py-4">
+                                        {renderStatusBadge(item.status)}
+                                    </td>
 
-                                        {/* Approve action */}
-                                        {item.status !== 'approved' && (
+                                    {/* 7. Created At */}
+                                    <td className="px-6 py-4">
+                                        <div className="flex flex-col">
+                                            <span className="text-[12px] font-bold text-[#0F172A]/90">{item.createdAt}</span>
+                                            <span className="text-[10px] font-semibold text-[#94A3B8] mt-0.5">{item.createdAtTime}</span>
+                                        </div>
+                                    </td>
+
+                                    {/* 8. Quick Moderation Actions */}
+                                    <td className="px-6 py-4 text-right">
+                                        <div className="flex items-center justify-end gap-1.5 opacity-85 group-hover/row:opacity-100 transition-opacity">
+                                            {/* Expand full comment */}
                                             <button
                                                 type="button"
-                                                onClick={() => onApprove(item.id)}
-                                                disabled={isModerating}
-                                                className="p-1.5 rounded-lg text-emerald-500 hover:bg-emerald-50 active:scale-90 transition-all cursor-pointer disabled:opacity-50"
-                                                title={t('table.tooltip_approve')}
+                                                onClick={() => setSelectedComment({
+                                                    userName: item.userName,
+                                                    reviewableName: item.reviewableName,
+                                                    comment: item.comment,
+                                                    score: item.score,
+                                                    images: item.images
+                                                })}
+                                                className="p-1.5 rounded-lg text-[#94A3B8] hover:text-[#14b8a6] hover:bg-[#14b8a6]/10 transition-all cursor-pointer"
+                                                title={t('table.tooltip_view')}
                                             >
-                                                <Check size={15} />
+                                                <Eye size={15} />
                                             </button>
-                                        )}
 
-                                        {/* Reject action */}
-                                        {item.status !== 'rejected' && (
-                                            <button
-                                                type="button"
-                                                onClick={() => onReject(item.id)}
-                                                disabled={isModerating}
-                                                className="p-1.5 rounded-lg text-amber-500 hover:bg-amber-50 active:scale-90 transition-all cursor-pointer disabled:opacity-50"
-                                                title={t('table.tooltip_reject')}
-                                            >
-                                                <X size={15} />
-                                            </button>
-                                        )}
+                                            {/* Approve action */}
+                                            {item.status !== 'approved' && (
+                                                <button
+                                                    type="button"
+                                                    onClick={() => onApprove(item.id)}
+                                                    disabled={isModerating}
+                                                    className="p-1.5 rounded-lg text-emerald-500 hover:bg-emerald-50 active:scale-90 transition-all cursor-pointer disabled:opacity-50"
+                                                    title={t('table.tooltip_approve')}
+                                                >
+                                                    <Check size={15} />
+                                                </button>
+                                            )}
 
-                                        {/* Delete action (Admin only) */}
-                                        {isAdmin && (
-                                            <button
-                                                type="button"
-                                                onClick={() => {
-                                                    if (window.confirm(t('table.confirm_delete'))) {
-                                                        onDelete(item.id);
-                                                    }
-                                                }}
-                                                disabled={isModerating}
-                                                className="p-1.5 rounded-lg text-rose-500 hover:bg-rose-50 active:scale-90 transition-all cursor-pointer disabled:opacity-50"
-                                                title={t('table.tooltip_delete')}
-                                            >
-                                                <Trash2 size={15} />
-                                            </button>
-                                        )}
-                                    </div>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
+                                            {/* Reject action */}
+                                            {item.status !== 'rejected' && (
+                                                <button
+                                                    type="button"
+                                                    onClick={() => onReject(item.id)}
+                                                    disabled={isModerating}
+                                                    className="p-1.5 rounded-lg text-amber-500 hover:bg-amber-50 active:scale-90 transition-all cursor-pointer disabled:opacity-50"
+                                                    title={t('table.tooltip_reject')}
+                                                >
+                                                    <X size={15} />
+                                                </button>
+                                            )}
 
-            {/* Pagination Controls */}
-            <div className="px-6 py-4 border-t border-slate-100 flex flex-col sm:flex-row gap-4 justify-between items-center bg-slate-50/50">
-                <span className="text-[12px] font-bold text-slate-500">
-                    {t('table.pagination_showing', { from: startIndex, to: endIndex, total: pagination.total.toLocaleString() })}
-                </span>
+                                            {/* Delete action (Admin only) */}
+                                            {isAdmin && (
+                                                <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        if (window.confirm(t('table.confirm_delete'))) {
+                                                            onDelete(item.id);
+                                                        }
+                                                    }}
+                                                    disabled={isModerating}
+                                                    className="p-1.5 rounded-lg text-rose-500 hover:bg-rose-50 active:scale-90 transition-all cursor-pointer disabled:opacity-50"
+                                                    title={t('table.tooltip_delete')}
+                                                >
+                                                    <Trash2 size={15} />
+                                                </button>
+                                            )}
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
 
-                <div className="flex gap-1.5 items-center">
-                    <button
-                        type="button"
-                        onClick={() => onPageChange(pagination.currentPage - 1)}
-                        disabled={pagination.currentPage <= 1 || isModerating}
-                        className="px-3.5 py-1.5 rounded-lg text-xs font-bold border border-slate-100 bg-white text-slate-600 hover:bg-slate-50 active:scale-95 disabled:opacity-50 disabled:active:scale-100 transition-all cursor-pointer select-none"
-                    >
-                        {t('common:pagination.previous')}
-                    </button>
+                {/* Pagination Controls */}
+                <div className="px-6 py-4 border-t border-[#F1F5F9] flex flex-col sm:flex-row gap-4 justify-between items-center bg-[#F8FAFC]/50">
+                    <span className="text-[12px] font-bold text-[#94A3B8]">
+                        {t('table.pagination_showing', { from: startIndex, to: endIndex, total: pagination.total.toLocaleString() })}
+                    </span>
 
-                    {/* Numeric buttons */}
-                    {[...Array(Math.min(5, pagination.lastPage))].map((_, i) => {
-                        let pageNum = 1;
-                        if (pagination.currentPage <= 3) {
-                            pageNum = i + 1;
-                        } else if (pagination.currentPage >= pagination.lastPage - 2) {
-                            pageNum = Math.max(1, pagination.lastPage - 4 + i);
-                        } else {
-                            pageNum = pagination.currentPage - 2 + i;
-                        }
+                    <div className="flex gap-1.5 items-center">
+                        <button
+                            type="button"
+                            onClick={() => onPageChange(pagination.currentPage - 1)}
+                            disabled={pagination.currentPage <= 1 || isModerating}
+                            className="px-3.5 py-1.5 rounded-lg text-xs font-bold border border-[#E2E8F0] bg-white text-slate-600 hover:border-[#14b8a6] hover:text-[#14b8a6] hover:bg-[#14b8a6]/5 active:scale-95 disabled:opacity-50 disabled:active:scale-100 transition-all duration-150 cursor-pointer select-none"
+                        >
+                            {t('common:pagination.previous')}
+                        </button>
 
-                        if (pageNum > pagination.lastPage) return null;
+                        {/* Numeric buttons */}
+                        {[...Array(Math.min(5, pagination.lastPage))].map((_, i) => {
+                            let pageNum = 1;
+                            if (pagination.currentPage <= 3) {
+                                pageNum = i + 1;
+                            } else if (pagination.currentPage >= pagination.lastPage - 2) {
+                                pageNum = Math.max(1, pagination.lastPage - 4 + i);
+                            } else {
+                                pageNum = pagination.currentPage - 2 + i;
+                            }
 
-                        const isActive = pageNum === pagination.currentPage;
+                            if (pageNum > pagination.lastPage) return null;
 
-                        return (
-                            <button
-                                key={pageNum}
-                                type="button"
-                                onClick={() => onPageChange(pageNum)}
-                                disabled={isModerating}
-                                className={`w-8 h-8 rounded-lg text-xs font-black transition-all flex items-center justify-center cursor-pointer select-none ${
-                                    isActive
-                                        ? 'bg-[#14b8a6] text-white shadow-xs'
-                                        : 'bg-white border border-slate-100 text-slate-600 hover:bg-slate-50'
-                                }`}
-                            >
-                                {pageNum}
-                            </button>
-                        );
-                    })}
+                            const isActive = pageNum === pagination.currentPage;
 
-                    <button
-                        type="button"
-                        onClick={() => onPageChange(pagination.currentPage + 1)}
-                        disabled={pagination.currentPage >= pagination.lastPage || isModerating}
-                        className="px-3.5 py-1.5 rounded-lg text-xs font-bold border border-slate-100 bg-white text-slate-600 hover:bg-slate-50 active:scale-95 disabled:opacity-50 disabled:active:scale-100 transition-all cursor-pointer select-none"
-                    >
-                        {t('common:pagination.next')}
-                    </button>
+                            return (
+                                <button
+                                    key={pageNum}
+                                    type="button"
+                                    onClick={() => onPageChange(pageNum)}
+                                    disabled={isModerating}
+                                    className={`w-8 h-8 rounded-lg text-xs font-black transition-all flex items-center justify-center cursor-pointer select-none ${
+                                        isActive
+                                            ? 'bg-[#14b8a6] text-white shadow-xs'
+                                            : 'bg-white border border-[#E2E8F0] text-slate-600 hover:border-[#14b8a6] hover:text-[#14b8a6] hover:bg-[#14b8a6]/5'
+                                    }`}
+                                >
+                                    {pageNum}
+                                </button>
+                            );
+                        })}
+
+                        <button
+                            type="button"
+                            onClick={() => onPageChange(pagination.currentPage + 1)}
+                            disabled={pagination.currentPage >= pagination.lastPage || isModerating}
+                            className="px-3.5 py-1.5 rounded-lg text-xs font-bold border border-[#E2E8F0] bg-white text-slate-600 hover:border-[#14b8a6] hover:text-[#14b8a6] hover:bg-[#14b8a6]/5 active:scale-95 disabled:opacity-50 disabled:active:scale-100 transition-all duration-150 cursor-pointer select-none"
+                        >
+                            {t('common:pagination.next')}
+                        </button>
                 </div>
             </div>
+        </div>
 
             {/* Comment detail popup modal */}
             {selectedComment && (

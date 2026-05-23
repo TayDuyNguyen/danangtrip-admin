@@ -1,5 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
+import { ROUTES } from "@/routes/routes";
 import { 
     Eye, Edit2, Ban, LockOpen, Trash2, ArrowUpDown, ChevronUp, ChevronDown,
     ShieldAlert, User, Check
@@ -39,6 +41,7 @@ export const UserTable = ({
     onSort,
 }: UserTableProps) => {
     const { t, i18n } = useTranslation("user");
+    const navigate = useNavigate();
     const [activeRoleDropdownId, setActiveRoleDropdownId] = useState<number | null>(null);
     const dropdownRef = useRef<HTMLDivElement | null>(null);
 
@@ -182,9 +185,10 @@ export const UserTable = ({
                                 user: "bg-slate-50/70 border-slate-200/50 text-slate-600",
                             };
 
-                            const statusBadgeColors = {
+                            const statusBadgeColors: Record<string, string> = {
                                 active: "bg-emerald-50/70 border-emerald-200/50 text-emerald-700",
                                 banned: "bg-rose-50/70 border-rose-200/50 text-rose-700",
+                                pending: "bg-amber-50/70 border-amber-200/50 text-amber-700",
                             };
 
                             return (
@@ -320,7 +324,7 @@ export const UserTable = ({
                                         <div className="flex items-center justify-end gap-1.5">
                                             {/* View button */}
                                             <button
-                                                onClick={onUnavailableAction}
+                                                onClick={() => navigate(ROUTES.USERS_DETAIL.replace(":id", String(user.id)))}
                                                 className="w-8 h-8 rounded-lg border border-slate-200 flex items-center justify-center text-slate-500 hover:text-[#14B8A6] hover:bg-slate-50 transition-all cursor-pointer"
                                                 title={t("actions.view")}
                                             >
