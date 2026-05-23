@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Calendar, Filter, RefreshCw } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useLocationCategoriesQuery, useLocationFilterDistrictsQuery } from '@/hooks/useLocationQueries';
+import CustomSelect, { type Option } from '@/components/ui/CustomSelect';
 import type { LocationReportFilters } from '@/dataHelper/report.dataHelper';
 
 type LocalFilters = Omit<LocationReportFilters, 'page' | 'per_page'>;
@@ -26,8 +27,24 @@ const LocationReportFilterBar: React.FC<LocationReportFilterBarProps> = ({
     // Dropdown data from existing location query hooks (reuse cache)
     const { data: categories = [], isLoading: catsLoading } = useLocationCategoriesQuery();
     const { data: districts  = [], isLoading: distsLoading } = useLocationFilterDistrictsQuery();
+    const categoryOptions: Option[] = useMemo(
+        () => [
+            { value: 'all', label: t('location_report:filter.category_all') },
+            ...categories.map((category) => ({ value: category.id, label: category.name })),
+        ],
+        [categories, t]
+    );
+    const districtOptions: Option[] = useMemo(
+        () => [
+            { value: 'all', label: t('location_report:filter.district_all') },
+            ...districts.map((district) => ({ value: district, label: district })),
+        ],
+        [districts, t]
+    );
+    const selectedCategory = categoryOptions.find((option) => String(option.value) === String(filters.category_id ?? 'all')) ?? categoryOptions[0];
+    const selectedDistrict = districtOptions.find((option) => option.value === (filters.district || 'all')) ?? districtOptions[0];
 
-    const applyQuickRange = (range: '7days' | '30days' | '3months' | 'thisyear') => {
+    const getQuickRangeDates = (range: '7days' | '30days' | '3months' | 'thisyear') => {
         const today    = new Date();
         let fromDate   = new Date();
 
@@ -37,8 +54,24 @@ const LocationReportFilterBar: React.FC<LocationReportFilterBarProps> = ({
         else if (range === 'thisyear') { fromDate = new Date(today.getFullYear(), 0, 1); }
 
         const fmt = (d: Date) => d.toISOString().split('T')[0];
-        onFilterChange({ from: fmt(fromDate), to: fmt(today) });
+        return { from: fmt(fromDate), to: fmt(today) };
     };
+
+    const applyQuickRange = (range: '7days' | '30days' | '3months' | 'thisyear') => {
+        onFilterChange(getQuickRangeDates(range));
+    };
+
+    const isQuickRangeActive = (range: '7days' | '30days' | '3months' | 'thisyear') => {
+        const rangeDates = getQuickRangeDates(range);
+        return filters.from === rangeDates.from && filters.to === rangeDates.to;
+    };
+
+    const quickRangeButtonClass = (range: '7days' | '30days' | '3months' | 'thisyear') =>
+        `px-3.5 py-1.5 rounded-lg text-xs font-black border transition-all duration-150 cursor-pointer disabled:opacity-50 ${
+            isQuickRangeActive(range)
+                ? 'bg-[#14b8a6] border-[#14b8a6] text-white shadow-xs'
+                : 'bg-[#F8FAFC] border-[#F1F5F9] hover:bg-[#14b8a6]/5 hover:border-[#14b8a6]/30 text-[#0F172A]/70 hover:text-[#14b8a6]'
+        }`;
 
     const inputCls = `
         w-full px-3 py-2.5 text-sm font-bold text-[#0F172A] bg-[#F8FAFC] border border-[#F1F5F9]
@@ -90,18 +123,14 @@ const LocationReportFilterBar: React.FC<LocationReportFilterBarProps> = ({
                             <label className="text-xs font-black text-[#94A3B8] uppercase tracking-widest">
                                 {t('location_report:filter.category')}
                             </label>
-                            <select
-                                id="location-filter-category"
-                                value={String(filters.category_id ?? 'all')}
-                                onChange={e => onFilterChange({ category_id: e.target.value })}
-                                className={inputCls}
-                                disabled={isSubmitting || catsLoading}
-                            >
-                                <option value="all">{t('location_report:filter.category_all')}</option>
-                                {categories.map(cat => (
-                                    <option key={cat.id} value={cat.id}>{cat.name}</option>
-                                ))}
-                            </select>
+                            <CustomSelect
+                                inputId="location-filter-category"
+                                options={categoryOptions}
+                                value={selectedCategory}
+                                onChange={(option) => onFilterChange({ category_id: (option as Option).value })}
+                                isDisabled={isSubmitting || catsLoading}
+                                size="sm"
+                            />
                         </div>
 
                         {/* District */}
@@ -109,18 +138,14 @@ const LocationReportFilterBar: React.FC<LocationReportFilterBarProps> = ({
                             <label className="text-xs font-black text-[#94A3B8] uppercase tracking-widest">
                                 {t('location_report:filter.district')}
                             </label>
-                            <select
-                                id="location-filter-district"
-                                value={filters.district || 'all'}
-                                onChange={e => onFilterChange({ district: e.target.value })}
-                                className={inputCls}
-                                disabled={isSubmitting || distsLoading}
-                            >
-                                <option value="all">{t('location_report:filter.district_all')}</option>
-                                {districts.map(d => (
-                                    <option key={d} value={d}>{d}</option>
-                                ))}
-                            </select>
+                            <CustomSelect
+                                inputId="location-filter-district"
+                                options={districtOptions}
+                                value={selectedDistrict}
+                                onChange={(option) => onFilterChange({ district: String((option as Option).value) })}
+                                isDisabled={isSubmitting || distsLoading}
+                                size="sm"
+                            />
                         </div>
                     </div>
 
@@ -137,7 +162,7 @@ const LocationReportFilterBar: React.FC<LocationReportFilterBarProps> = ({
                                     type="button"
                                     onClick={() => applyQuickRange(r)}
                                     disabled={isSubmitting}
-                                    className="px-3.5 py-1.5 rounded-lg text-xs font-black bg-[#F8FAFC] border border-[#F1F5F9] hover:bg-[#14b8a6]/5 hover:border-[#14b8a6]/30 text-[#0F172A]/70 hover:text-[#14b8a6] transition-all duration-150 cursor-pointer disabled:opacity-50"
+                                    className={quickRangeButtonClass(r)}
                                 >
                                     {t(`location_report:filter.range_${r}`)}
                                 </button>

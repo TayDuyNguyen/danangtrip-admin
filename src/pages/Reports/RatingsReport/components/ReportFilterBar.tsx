@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Calendar, Filter, RefreshCw } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import CustomSelect, { type Option } from '@/components/ui/CustomSelect';
 
 interface ReportFilterBarProps {
     filters: {
@@ -23,9 +24,27 @@ const ReportFilterBar: React.FC<ReportFilterBarProps> = ({
     isSubmitting = false,
 }) => {
     const { t } = useTranslation(['ratings', 'common']);
+    const statusOptions: Option[] = useMemo(
+        () => [
+            { value: 'all', label: t('filter.status_all') },
+            { value: 'pending', label: t('filter.status_pending') },
+            { value: 'approved', label: t('filter.status_approved') },
+            { value: 'rejected', label: t('filter.status_rejected') },
+        ],
+        [t]
+    );
+    const typeOptions: Option[] = useMemo(
+        () => [
+            { value: 'all', label: t('filter.type_all') },
+            { value: 'location', label: t('filter.type_location') },
+            { value: 'tour', label: t('filter.type_tour') },
+        ],
+        [t]
+    );
+    const selectedStatus = statusOptions.find((option) => option.value === filters.status) ?? statusOptions[0];
+    const selectedType = typeOptions.find((option) => option.value === filters.type) ?? typeOptions[0];
 
-    // Quick Range handlers
-    const applyQuickRange = (range: '7days' | '30days' | '3months' | 'thisyear') => {
+    const getQuickRangeDates = (range: '7days' | '30days' | '3months' | 'thisyear') => {
         const today = new Date();
         let fromDate = new Date();
 
@@ -41,11 +60,28 @@ const ReportFilterBar: React.FC<ReportFilterBarProps> = ({
 
         const formatDateStr = (date: Date) => date.toISOString().split('T')[0];
 
-        onFilterChange({
+        return {
             from: formatDateStr(fromDate),
             to: formatDateStr(today),
-        });
+        };
     };
+
+    // Quick Range handlers
+    const applyQuickRange = (range: '7days' | '30days' | '3months' | 'thisyear') => {
+        onFilterChange(getQuickRangeDates(range));
+    };
+
+    const isQuickRangeActive = (range: '7days' | '30days' | '3months' | 'thisyear') => {
+        const rangeDates = getQuickRangeDates(range);
+        return filters.from === rangeDates.from && filters.to === rangeDates.to;
+    };
+
+    const quickRangeButtonClass = (range: '7days' | '30days' | '3months' | 'thisyear') =>
+        `px-3.5 py-1.5 rounded-lg text-xs font-bold border transition-all cursor-pointer ${
+            isQuickRangeActive(range)
+                ? 'bg-[#14b8a6] border-[#14b8a6] text-white shadow-xs'
+                : 'bg-[#F8FAFC] hover:bg-[#14b8a6]/5 hover:text-[#14b8a6] border-[#E2E8F0] hover:border-[#14b8a6]/20 text-[#0F172A]/70'
+        }`;
 
     return (
         <div className="p-[1px] rounded-3xl bg-gradient-to-br from-[#14b8a6]/20 via-slate-200/25 to-slate-100/10 shadow-xs hover:shadow-md hover:from-[#14b8a6]/30 transition-all duration-300 mb-6">
@@ -87,16 +123,14 @@ const ReportFilterBar: React.FC<ReportFilterBarProps> = ({
                                 <Filter size={13} className="text-[#14b8a6]" />
                                 {t('filter.moderation_status')}
                             </label>
-                            <select
-                                value={filters.status}
-                                onChange={(e) => onFilterChange({ status: e.target.value as 'all' | 'pending' | 'approved' | 'rejected' })}
-                                className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm font-bold text-[#0F172A] focus:outline-hidden focus:ring-2 focus:ring-[#14b8a6]/20 focus:border-[#14b8a6] transition-all appearance-none cursor-pointer"
-                            >
-                                <option value="all">{t('filter.status_all')}</option>
-                                <option value="pending">{t('filter.status_pending')}</option>
-                                <option value="approved">{t('filter.status_approved')}</option>
-                                <option value="rejected">{t('filter.status_rejected')}</option>
-                            </select>
+                            <CustomSelect
+                                inputId="ratings-filter-status"
+                                options={statusOptions}
+                                value={selectedStatus}
+                                onChange={(option) => onFilterChange({ status: (option as Option).value as ReportFilterBarProps['filters']['status'] })}
+                                isDisabled={isSubmitting}
+                                size="sm"
+                            />
                         </div>
 
                         {/* Type Select */}
@@ -105,15 +139,14 @@ const ReportFilterBar: React.FC<ReportFilterBarProps> = ({
                                 <Filter size={13} className="text-[#14b8a6]" />
                                 {t('filter.category')}
                             </label>
-                            <select
-                                value={filters.type}
-                                onChange={(e) => onFilterChange({ type: e.target.value as 'all' | 'location' | 'tour' })}
-                                className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm font-bold text-[#0F172A] focus:outline-hidden focus:ring-2 focus:ring-[#14b8a6]/20 focus:border-[#14b8a6] transition-all appearance-none cursor-pointer"
-                            >
-                                <option value="all">{t('filter.type_all')}</option>
-                                <option value="location">{t('filter.type_location')}</option>
-                                <option value="tour">{t('filter.type_tour')}</option>
-                            </select>
+                            <CustomSelect
+                                inputId="ratings-filter-type"
+                                options={typeOptions}
+                                value={selectedType}
+                                onChange={(option) => onFilterChange({ type: (option as Option).value as ReportFilterBarProps['filters']['type'] })}
+                                isDisabled={isSubmitting}
+                                size="sm"
+                            />
                         </div>
                     </div>
 
@@ -127,28 +160,28 @@ const ReportFilterBar: React.FC<ReportFilterBarProps> = ({
                             <button
                                 type="button"
                                 onClick={() => applyQuickRange('7days')}
-                                className="px-3.5 py-1.5 rounded-lg text-xs font-bold bg-[#F8FAFC] hover:bg-[#14b8a6]/5 hover:text-[#14b8a6] border border-[#E2E8F0] hover:border-[#14b8a6]/20 text-[#0F172A]/70 transition-all cursor-pointer"
+                                className={quickRangeButtonClass('7days')}
                             >
                                 {t('filter.range_7days')}
                             </button>
                             <button
                                 type="button"
                                 onClick={() => applyQuickRange('30days')}
-                                className="px-3.5 py-1.5 rounded-lg text-xs font-bold bg-[#F8FAFC] hover:bg-[#14b8a6]/5 hover:text-[#14b8a6] border border-[#E2E8F0] hover:border-[#14b8a6]/20 text-[#0F172A]/70 transition-all cursor-pointer"
+                                className={quickRangeButtonClass('30days')}
                             >
                                 {t('filter.range_30days')}
                             </button>
                             <button
                                 type="button"
                                 onClick={() => applyQuickRange('3months')}
-                                className="px-3.5 py-1.5 rounded-lg text-xs font-bold bg-[#F8FAFC] hover:bg-[#14b8a6]/5 hover:text-[#14b8a6] border border-[#E2E8F0] hover:border-[#14b8a6]/20 text-[#0F172A]/70 transition-all cursor-pointer"
+                                className={quickRangeButtonClass('3months')}
                             >
                                 {t('filter.range_3months')}
                             </button>
                             <button
                                 type="button"
                                 onClick={() => applyQuickRange('thisyear')}
-                                className="px-3.5 py-1.5 rounded-lg text-xs font-bold bg-[#F8FAFC] hover:bg-[#14b8a6]/5 hover:text-[#14b8a6] border border-[#E2E8F0] hover:border-[#14b8a6]/20 text-[#0F172A]/70 transition-all cursor-pointer"
+                                className={quickRangeButtonClass('thisyear')}
                             >
                                 {t('filter.range_thisyear')}
                             </button>

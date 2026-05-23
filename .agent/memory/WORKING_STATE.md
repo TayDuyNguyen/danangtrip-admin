@@ -3,49 +3,47 @@
 ## Current Status
 
 - Date: 2026-05-23
-- Active feature/task: `admin_users_create` & `web_recommendations_relocation`
-- Status: Completed
-- Next step: Wait for user review and approval
-- Objective: Build the authenticated admin screen for creating a new user account and relocate Gợi ý cho bạn page into the profile section inside Next.js Client Web.
+- Active feature/task: `admin_users_edit`
+- Status: Completed (Steps 1 to 9)
+- Next step: Step 10: final review, deploy report, and review artifacts creation
+- Objective: Build the authenticated admin screen for editing user accounts (`/admin/users/:id/edit`).
 - Mode: Verification
 - Owner: AI collaborator
 
 ## Progress Breakdown
 
-- [x] Step 1: Setup and API Validation Alignment
-- [x] Step 2: Frontend Base Configurations
-- [x] Step 3: Validation and i18n Translations
-- [x] Step 4: UI Implementation & Integration
-- [x] Step 5: Verification and Testing (Admin)
-- [x] Step 6: Client Web recommendations page relocation & verification
+- [x] Step 1: API and Types Contract Configuration
+- [x] Step 2: Routing Configuration
+- [x] Step 3: Translation Files Modification
+- [x] Step 4: Layout & Components Implementation
+- [x] Step 5: Integration with User Detail and User List Screens
+- [x] Step 6: Testing & Quality Gate Checks (Prepush checks)
 
 ## Current Reality
 
-- Completed backend API alignment inside `StoreUserRequest.php` allowing `status` validation rule.
-- Added route constants and private child routes lazy loading in `danangtrip-admin`.
-- Implemented Yup validation schema `createUserSchema` with optional/nullable formatting to resolve TS conflicts.
-- Implemented `UserCreate` entry page and `UserCreateForm` form component with strict role selection, Active status toggle, and autocomplete prevention.
-- Added Vietnamese and English locales for all fields and validation errors.
-- Verified compilation and types using `npm run prepush:check` - passed successfully with 0 errors (including Linter, Typechecker, Production build, and Playwright console error test suites).
-- Moved Gợi ý cho bạn page inside `/profile/recommendations` under Next.js App Router.
-- Integrated Gợi ý cho bạn page into the Profile layout by wrapping it in `ProfileLayoutWrapper` and updating route constants and breadcrumbs translation keys.
-- Verified client web project compilation using `npm run typecheck` and `npm run lint` - both passed with 100% SUCCESS and 0 errors!
+- Modified API client, validation schemas, endpoints, and react query hooks to support user updating.
+- Aligned backend API validator (`UpdateUserRequest.php`) on `danangtrip-api` to validate and update the `status` field properly in a single request.
+- Registered `/admin/users/:id/edit` and lazy loaded the page inside React Router v7 layout.
+- Added full Vietnamese and English translation strings in `public/lang/vi/user.json` and `public/lang/en/user.json`.
+- Implemented premium-styled, responsive `UserEdit` and `UserEditForm` pages with skeletons, warning dialogs, and dirty form blocker (`UnsavedChangesGuard`).
+- Embedded self-protection rules (disable toggle/roles when editing own profile) and email modification warnings.
+- Wired Edit shortcuts inside the User Details page (`UserDetailHeader` and `UserActionsCard`) and User List table (`UserTable`).
+- Verified all quality gates using `npm run prepush:check` - linter, typecheck, production build, and all 6 console error playwright test suites passed with 100% SUCCESS and 0 errors!
+- Generated test case report: `.agent/artifacts/test-cases/2026-05-23__admin_users_edit__test-report.md`.
 
 ## Validation
 
-- Admin Typecheck: SUCCESS
-- Admin Linter check: SUCCESS
-- Admin Production build: SUCCESS
-- Admin Playwright console tests: SUCCESS (6/6 passed)
-- Web Typecheck: SUCCESS (0 TypeScript errors)
-- Web Linter check: SUCCESS (0 ESLint errors)
+- Typecheck: SUCCESS
+- Linter check: SUCCESS
+- Production build: SUCCESS
+- Playwright console tests: SUCCESS (6/6 passed)
 
 ## Known Issues / Risks
 
-- None. Screen compiles flawlessly and behaves correctly in strict static checking environments.
+- None.
 
 ## Artifacts
 
-- Implementation Plan: `C:\Users\NGUYEN DUY TAY\.gemini\antigravity\brain\c4ba57ef-fe97-4c2a-9a7e-0f516ff3b5c5\implementation_plan.md`
-- Task checklist: `C:\Users\NGUYEN DUY TAY\.gemini\antigravity\brain\c4ba57ef-fe97-4c2a-9a7e-0f516ff3b5c5\task.md`
-- Walkthrough: `C:\Users\NGUYEN DUY TAY\.gemini\antigravity\brain\c4ba57ef-fe97-4c2a-9a7e-0f516ff3b5c5\walkthrough.md`
+- Implementation Plan: `C:\Users\NGUYEN DUY TAY\.gemini\antigravity\brain\98f5f9af-fba6-4bd7-bd22-8458b6895c13\implementation_plan.md`
+- Task checklist: `C:\Users\NGUYEN DUY TAY\.gemini\antigravity\brain\98f5f9af-fba6-4bd7-bd22-8458b6895c13\task.md`
+- Test report: `d:/DATN/danangtrip-admin/.agent/artifacts/test-cases/2026-05-23__admin_users_edit__test-report.md`

@@ -20,7 +20,6 @@ interface UserTableProps {
     onRoleChange: (id: number, newRole: string) => void;
     onStatusToggle: (id: number, currentStatus: string) => void;
     onDelete: (id: number) => void;
-    onUnavailableAction: () => void;
     currentUserId?: number;
     sorting: { sortBy: string; sortOrder: "asc" | "desc" };
     onSort: (field: string) => void;
@@ -35,7 +34,6 @@ export const UserTable = ({
     onRoleChange,
     onStatusToggle,
     onDelete,
-    onUnavailableAction,
     currentUserId,
     sorting,
     onSort,
@@ -333,7 +331,7 @@ export const UserTable = ({
                                             
                                             {/* Edit button */}
                                             <button
-                                                onClick={onUnavailableAction}
+                                                onClick={() => navigate(ROUTES.USERS_EDIT.replace(":id", String(user.id)))}
                                                 className="w-8 h-8 rounded-lg border border-slate-200 flex items-center justify-center text-slate-500 hover:text-amber-600 hover:bg-slate-50 transition-all cursor-pointer"
                                                 title={t("actions.edit")}
                                             >

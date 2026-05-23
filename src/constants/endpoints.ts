@@ -77,7 +77,7 @@ export const API_ENDPOINTS = {
         STATUS_COUNTS: '/admin/bookings/status-counts',
         UPDATE_STATUS: (id: string | number) => `/admin/bookings/${id}/status`,
         DETAIL: (id: string | number) => `/admin/bookings/${id}`,
-        INVOICE: (id: string | number) => `/user/bookings/${id}/invoice`,
+        INVOICE: (id: string | number) => `/admin/bookings/${id}/invoice`,
     },
     // Payments management
     PAYMENTS: {
@@ -120,6 +120,7 @@ export const API_ENDPOINTS = {
     USERS: {
         LIST: '/admin/users',
         DETAIL: (id: string | number) => `/admin/users/${id}`,
+        UPDATE: (id: string | number) => `/admin/users/${id}`,
         BOOKINGS: (id: string | number) => `/admin/users/${id}/bookings`,
         RATINGS: (id: string | number) => `/admin/users/${id}/ratings`,
         UPDATE_ROLE: (id: string | number) => `/admin/users/${id}/role`,

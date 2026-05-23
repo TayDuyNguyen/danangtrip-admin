@@ -107,51 +107,148 @@ export const mapReportRatingItem = (raw: RawRatingsReportItem): RatingsReportIte
     };
 };
 
+type RawRatingAggregateItem = {
+    date: string;
+    status: RatingsReportItemViewModel['status'];
+    count: number | string;
+};
+
+const emptyRatingsReport = (): RatingsReportViewModel => ({
+    stats: {
+        total: 0,
+        totalTrend: 0,
+        pending: 0,
+        pendingTrend: 0,
+        approved: 0,
+        approvedTrend: 0,
+        average: 0,
+        averageTrend: 0,
+    },
+    charts: {
+        trend: [],
+        stars: [
+            { stars: 5, count: 0, percentage: 0 },
+            { stars: 4, count: 0, percentage: 0 },
+            { stars: 3, count: 0, percentage: 0 },
+            { stars: 2, count: 0, percentage: 0 },
+            { stars: 1, count: 0, percentage: 0 },
+        ],
+        statuses: [
+            { status: 'approved', labelKey: 'ratings.status.approved', count: 0, percentage: 0, color: '#10B981' },
+            { status: 'pending', labelKey: 'ratings.status.pending', count: 0, percentage: 0, color: '#F59E0B' },
+            { status: 'rejected', labelKey: 'ratings.status.rejected', count: 0, percentage: 0, color: '#EF4444' },
+        ],
+        types: [
+            { type: 'location', labelKey: 'ratings.type.location', count: 0, average: 0 },
+            { type: 'tour', labelKey: 'ratings.type.tour', count: 0, average: 0 },
+        ],
+    },
+    table: {
+        items: [],
+        pagination: {
+            currentPage: 1,
+            lastPage: 1,
+            perPage: 10,
+            total: 0,
+        },
+    },
+});
+
+const mapAggregateRatingsReport = (rows: RawRatingAggregateItem[]): RatingsReportViewModel => {
+    const totalsByDate = new Map<string, { total: number; approved: number }>();
+    const statusDist: Record<RatingsReportItemViewModel['status'], number> = {
+        pending: 0,
+        approved: 0,
+        rejected: 0,
+    };
+
+    rows.forEach((row) => {
+        const count = toNumberSafe(row.count, 0);
+        const dateTotal = totalsByDate.get(row.date) || { total: 0, approved: 0 };
+
+        totalsByDate.set(row.date, {
+            total: dateTotal.total + count,
+            approved: dateTotal.approved + (row.status === 'approved' ? count : 0),
+        });
+
+        if (row.status in statusDist) {
+            statusDist[row.status] += count;
+        }
+    });
+
+    const total = Object.values(statusDist).reduce((sum, count) => sum + count, 0);
+    const totalStatusCount = Object.values(statusDist).reduce((sum, count) => sum + count, 0);
+    const trend: TrendChartDataPoint[] = Array.from(totalsByDate.entries())
+        .sort(([left], [right]) => left.localeCompare(right))
+        .map(([date, value]) => ({
+            label: formatDateLabel(date),
+            total: value.total,
+            approved: value.approved,
+        }));
+
+    const statuses: StatusDistributionPoint[] = [
+        { status: 'approved' as const, labelKey: 'ratings.status.approved', count: statusDist.approved, percentage: 0, color: '#10B981' },
+        { status: 'pending' as const, labelKey: 'ratings.status.pending', count: statusDist.pending, percentage: 0, color: '#F59E0B' },
+        { status: 'rejected' as const, labelKey: 'ratings.status.rejected', count: statusDist.rejected, percentage: 0, color: '#EF4444' },
+    ].map(item => ({
+        ...item,
+        percentage: totalStatusCount > 0 ? Math.round((item.count / totalStatusCount) * 100) : 0,
+    }));
+
+    const items: RatingsReportItemViewModel[] = rows.map((row, index) => ({
+        id: -(index + 1),
+        score: 0,
+        comment: `${toNumberSafe(row.count, 0).toLocaleString()} ratings`,
+        images: [],
+        status: row.status,
+        reviewableType: 'location',
+        reviewableId: 0,
+        reviewableName: 'Grouped ratings report row',
+        userName: row.date,
+        userAvatar: '',
+        createdAt: formatDate(row.date),
+        createdAtTime: '',
+    }));
+
+    return {
+        stats: {
+            total,
+            totalTrend: 0,
+            pending: statusDist.pending,
+            pendingTrend: 0,
+            approved: statusDist.approved,
+            approvedTrend: 0,
+            average: 0,
+            averageTrend: 0,
+        },
+        charts: {
+            trend,
+            stars: emptyRatingsReport().charts.stars,
+            statuses,
+            types: emptyRatingsReport().charts.types,
+        },
+        table: {
+            items,
+            pagination: {
+                currentPage: 1,
+                lastPage: 1,
+                perPage: Math.max(items.length, 10),
+                total: items.length,
+            },
+        },
+    };
+};
+
 /**
  * Main mapper transforming raw reports API response into RatingsReportViewModel
  */
-export const mapRatingsReport = (raw: RawRatingsReport | undefined | null): RatingsReportViewModel => {
+export const mapRatingsReport = (raw: RawRatingsReport | RawRatingAggregateItem[] | undefined | null): RatingsReportViewModel => {
     if (!raw) {
-        return {
-            stats: {
-                total: 0,
-                totalTrend: 0,
-                pending: 0,
-                pendingTrend: 0,
-                approved: 0,
-                approvedTrend: 0,
-                average: 0,
-                averageTrend: 0,
-            },
-            charts: {
-                trend: [],
-                stars: [
-                    { stars: 5, count: 0, percentage: 0 },
-                    { stars: 4, count: 0, percentage: 0 },
-                    { stars: 3, count: 0, percentage: 0 },
-                    { stars: 2, count: 0, percentage: 0 },
-                    { stars: 1, count: 0, percentage: 0 },
-                ],
-                statuses: [
-                    { status: 'approved', labelKey: 'ratings.status.approved', count: 0, percentage: 0, color: '#10B981' },
-                    { status: 'pending', labelKey: 'ratings.status.pending', count: 0, percentage: 0, color: '#F59E0B' },
-                    { status: 'rejected', labelKey: 'ratings.status.rejected', count: 0, percentage: 0, color: '#EF4444' },
-                ],
-                types: [
-                    { type: 'location', labelKey: 'ratings.type.location', count: 0, average: 0 },
-                    { type: 'tour', labelKey: 'ratings.type.tour', count: 0, average: 0 },
-                ],
-            },
-            table: {
-                items: [],
-                pagination: {
-                    currentPage: 1,
-                    lastPage: 1,
-                    perPage: 10,
-                    total: 0,
-                },
-            },
-        };
+        return emptyRatingsReport();
+    }
+
+    if (Array.isArray(raw)) {
+        return mapAggregateRatingsReport(raw);
     }
 
     const summary = raw.summary;
@@ -261,10 +358,103 @@ export const mapReportBookingItem = (raw: RawBookingsReportItem): BookingsReport
     };
 };
 
+type RawBookingAggregateItem = {
+    date: string;
+    booking_status: BookingsReportItemViewModel['status'];
+    payment_status: string;
+    count: number | string;
+    total_amount: number | string;
+};
+
+const mapAggregateBookingsReport = (rows: RawBookingAggregateItem[]): BookingsReportViewModel => {
+    const totalsByDate = new Map<string, { bookings: number; revenue: number }>();
+    const statusDist: Record<BookingsReportItemViewModel['status'], number> = {
+        pending: 0,
+        confirmed: 0,
+        completed: 0,
+        cancelled: 0,
+    };
+
+    rows.forEach((row) => {
+        const count = toNumberSafe(row.count, 0);
+        const revenue = toNumberSafe(row.total_amount, 0);
+        const dateTotal = totalsByDate.get(row.date) || { bookings: 0, revenue: 0 };
+
+        totalsByDate.set(row.date, {
+            bookings: dateTotal.bookings + count,
+            revenue: dateTotal.revenue + revenue,
+        });
+
+        if (row.booking_status in statusDist) {
+            statusDist[row.booking_status] += count;
+        }
+    });
+
+    const total = Object.values(statusDist).reduce((sum, count) => sum + count, 0);
+    const revenue = rows.reduce((sum, row) => sum + toNumberSafe(row.total_amount, 0), 0);
+    const totalStatusCount = Object.values(statusDist).reduce((sum, count) => sum + count, 0);
+
+    const trend: BookingTrendChartDataPoint[] = Array.from(totalsByDate.entries())
+        .sort(([left], [right]) => left.localeCompare(right))
+        .map(([date, value]) => ({
+            label: formatDateLabel(date),
+            bookings: value.bookings,
+            revenue: value.revenue,
+        }));
+
+    const statuses: BookingStatusDistributionPoint[] = [
+        { status: 'pending' as const, labelKey: 'booking.status.pending', count: statusDist.pending, percentage: 0, color: '#F59E0B' },
+        { status: 'confirmed' as const, labelKey: 'booking.status.confirmed', count: statusDist.confirmed, percentage: 0, color: '#3B82F6' },
+        { status: 'completed' as const, labelKey: 'booking.status.completed', count: statusDist.completed, percentage: 0, color: '#10B981' },
+        { status: 'cancelled' as const, labelKey: 'booking.status.cancelled', count: statusDist.cancelled, percentage: 0, color: '#EF4444' },
+    ].map(item => ({
+        ...item,
+        percentage: totalStatusCount > 0 ? Math.round((item.count / totalStatusCount) * 100) : 0,
+    }));
+
+    const items: BookingsReportItemViewModel[] = rows.map((row, index) => ({
+        id: -(index + 1),
+        bookingCode: row.date,
+        customerName: `${toNumberSafe(row.count, 0).toLocaleString()} bookings`,
+        tourName: 'Grouped booking report row',
+        totalAmount: toNumberSafe(row.total_amount, 0),
+        status: row.booking_status,
+        paymentStatus: row.payment_status === 'paid' || row.payment_status === 'refunded' ? row.payment_status : 'pending',
+        bookedAt: formatDate(row.date),
+        bookedAtTime: '',
+    }));
+
+    return {
+        stats: {
+            total,
+            totalTrend: 0,
+            completed: statusDist.completed,
+            completedTrend: 0,
+            cancelled: statusDist.cancelled,
+            cancelledTrend: 0,
+            revenue,
+            revenueTrend: 0,
+        },
+        charts: {
+            trend,
+            statuses,
+        },
+        table: {
+            items,
+            pagination: {
+                currentPage: 1,
+                lastPage: 1,
+                perPage: Math.max(items.length, 10),
+                total: items.length,
+            },
+        },
+    };
+};
+
 /**
  * Main mapper transforming raw bookings API response into BookingsReportViewModel
  */
-export const mapBookingsReport = (raw: RawBookingsReport | undefined | null): BookingsReportViewModel => {
+export const mapBookingsReport = (raw: RawBookingsReport | RawBookingAggregateItem[] | undefined | null): BookingsReportViewModel => {
     if (!raw) {
         return {
             stats: {
@@ -296,6 +486,10 @@ export const mapBookingsReport = (raw: RawBookingsReport | undefined | null): Bo
                 },
             },
         };
+    }
+
+    if (Array.isArray(raw)) {
+        return mapAggregateBookingsReport(raw);
     }
 
     const summary = raw.summary;

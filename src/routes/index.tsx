@@ -32,6 +32,7 @@ const UsersReport = React.lazy(() => import('@/pages/Reports/UsersReport'));
 const UserList = React.lazy(() => import('@/pages/Users/UserList'));
 const UserCreate = React.lazy(() => import('@/pages/Users/UserCreate'));
 const UserDetail = React.lazy(() => import('@/pages/Users/UserDetail'));
+const UserEdit = React.lazy(() => import('@/pages/Users/UserEdit'));
 import ErrorPage from '@/pages/ErrorPage';
 
 
@@ -101,6 +102,7 @@ const router = createBrowserRouter([
                     { path: ROUTES.USERS_LIST, element: withSuspense(UserList) },
                     { path: ROUTES.USERS_CREATE, element: withSuspense(UserCreate) },
                     { path: ROUTES.USERS_DETAIL, element: withSuspense(UserDetail) },
+                    { path: ROUTES.USERS_EDIT, element: withSuspense(UserEdit) },
                 ]
             }
 

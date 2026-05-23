@@ -116,15 +116,13 @@ export const UserDetailHeader = ({
 
                         {/* Actions Right */}
                         <div className="flex items-center gap-3">
-                            <button
-                                type="button"
-                                disabled
-                                title={t('actions.edit_unavailable', 'Chức năng chỉnh sửa sẽ được bổ sung ở màn sau')}
-                                className="inline-flex items-center gap-2 px-4 py-2.5 text-xs font-bold bg-slate-50 border border-slate-200 text-slate-300 rounded-xl cursor-not-allowed"
+                            <Link
+                                to={ROUTES.USERS_EDIT.replace(':id', String(user.id))}
+                                className="inline-flex items-center gap-2 px-4 py-2.5 text-xs font-bold bg-white border border-slate-200 text-slate-700 rounded-xl hover:bg-slate-50 transition-all duration-200 cursor-pointer"
                             >
                                 <Edit2 size={13} />
                                 <span>{t('actions.edit', 'Chỉnh sửa')}</span>
-                            </button>
+                            </Link>
 
                             {user.status === 'active' ? (
                                 <button

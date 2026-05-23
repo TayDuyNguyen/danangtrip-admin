@@ -155,13 +155,19 @@ const BookingsReportTable: React.FC<BookingsReportTableProps> = ({
                                 <tr key={item.id} className="hover:bg-[#14b8a6]/5 transition-colors group/row">
                                     {/* 1. Code */}
                                     <td className="px-6 py-4">
-                                        <Link
-                                            to={`/admin/bookings/${item.id}`}
-                                            className="text-[13px] font-black text-[#14b8a6] hover:underline flex items-center gap-1"
-                                        >
-                                            #{item.bookingCode}
-                                            <ExternalLink size={11} className="opacity-0 group-hover/row:opacity-100 transition-opacity" />
-                                        </Link>
+                                        {item.id > 0 ? (
+                                            <Link
+                                                to={`/admin/bookings/${item.id}`}
+                                                className="text-[13px] font-black text-[#14b8a6] hover:underline flex items-center gap-1"
+                                            >
+                                                #{item.bookingCode}
+                                                <ExternalLink size={11} className="opacity-0 group-hover/row:opacity-100 transition-opacity" />
+                                            </Link>
+                                        ) : (
+                                            <span className="text-[13px] font-black text-[#14b8a6]">
+                                                {item.bookingCode}
+                                            </span>
+                                        )}
                                     </td>
 
                                     {/* 2. Customer */}
@@ -205,13 +211,19 @@ const BookingsReportTable: React.FC<BookingsReportTableProps> = ({
 
                                     {/* 8. Action Link */}
                                     <td className="px-6 py-4 text-right">
-                                        <Link
-                                            to={`/admin/bookings/${item.id}`}
-                                            className="p-1.5 inline-flex rounded-lg text-[#94A3B8] hover:text-[#14b8a6] hover:bg-[#14b8a6]/10 transition-all cursor-pointer"
-                                            title={t('table.tooltip_detail')}
-                                        >
-                                            <Eye size={15} />
-                                        </Link>
+                                        {item.id > 0 ? (
+                                            <Link
+                                                to={`/admin/bookings/${item.id}`}
+                                                className="p-1.5 inline-flex rounded-lg text-[#94A3B8] hover:text-[#14b8a6] hover:bg-[#14b8a6]/10 transition-all cursor-pointer"
+                                                title={t('table.tooltip_detail')}
+                                            >
+                                                <Eye size={15} />
+                                            </Link>
+                                        ) : (
+                                            <span className="p-1.5 inline-flex rounded-lg text-[#CBD5E1]">
+                                                <Eye size={15} />
+                                            </span>
+                                        )}
                                     </td>
                                 </tr>
                             ))}

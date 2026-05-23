@@ -159,11 +159,22 @@ export const useUserMutations = () => {
         },
     });
 
+    const updateUserMutation = useMutation({
+        mutationFn: ({ id, data }: { id: number | string; data: unknown }) =>
+            userApi.update(id, data),
+        onSuccess: (_, variables) => {
+            queryClient.invalidateQueries({ queryKey: userKeys.all });
+            queryClient.invalidateQueries({ queryKey: userKeys.detail(variables.id) });
+            queryClient.invalidateQueries({ queryKey: ["dashboard"] });
+        },
+    });
+
     return {
         updateRoleMutation,
         updateStatusMutation,
         deleteMutation,
         exportMutation,
         createUserMutation,
+        updateUserMutation,
     };
 };

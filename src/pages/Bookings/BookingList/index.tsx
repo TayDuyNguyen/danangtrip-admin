@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 
 import { ROUTES } from '@/routes/routes';
@@ -25,6 +25,8 @@ import Pagination from '@/components/common/Pagination';
 const BookingList = () => {
     const { t } = useTranslation('booking');
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
+    const userId = searchParams.get('user_id') || undefined;
     
     // State
     const [page, setPage] = useState(1);
@@ -41,17 +43,24 @@ const BookingList = () => {
 
     const [cancelConfig, setCancelConfig] = useState<BookingItem | null>(null);
     const [detailConfig, setDetailConfig] = useState<BookingItem | null>(null);
+    const activeFilters: BookingListFilters = {
+        ...filters,
+        user_id: userId,
+    };
 
     // Queries
     const { 
         data: listData, 
-        isLoading: isListLoading 
-    } = useAdminBookingsQuery(filters, page, limit);
+        isLoading: isListLoading,
+        isFetching: isListFetching,
+    } = useAdminBookingsQuery(activeFilters, page, limit);
     
     const { 
         data: statsData, 
-        isLoading: isStatsLoading 
+        isLoading: isStatsLoading,
+        isFetching: isStatsFetching,
     } = useAdminBookingStatsQuery({
+        user_id: activeFilters.user_id,
         search: filters.search,
         date_from: filters.date_from,
         date_to: filters.date_to
@@ -67,7 +76,7 @@ const BookingList = () => {
     const total = listData?.meta.total || 0;
 
     const handleFilterChange = (newFilters: BookingListFilters) => {
-        setFilters(newFilters);
+        setFilters({ ...newFilters, user_id: undefined });
         setPage(1);
     };
 
@@ -109,7 +118,7 @@ const BookingList = () => {
 
     const handleExport = () => {
         exportMutation.mutate(
-            { ...filters, fallbackFilename: `bookings_export_${new Date().getTime()}.xlsx` },
+            { ...activeFilters, fallbackFilename: `bookings_export_${new Date().getTime()}.xlsx` },
             {
                 onSuccess: () => toast.success(t('messages.export_success')),
                 onError: () => toast.error(t('messages.export_error'))
@@ -126,19 +135,20 @@ const BookingList = () => {
 
             <BookingStats 
                 stats={statsData}
-                isLoading={isStatsLoading}
+                isLoading={isStatsLoading || isStatsFetching}
             />
 
             <BookingFilter 
-                key={JSON.stringify(filters)}
-                filters={filters}
+                key={JSON.stringify(activeFilters)}
+                filters={activeFilters}
                 onFilterChange={handleFilterChange}
             />
 
             <div className="mb-10">
                 <BookingTimeline 
                     data={bookings}
-                    isLoading={isListLoading}
+                    isLoading={isListLoading && !listData}
+                    isFetching={isListFetching}
                     onView={(booking) => navigate(ROUTES.BOOKINGS_DETAIL.replace(':id', booking.id.toString()))}
                     onConfirm={handleConfirmBooking}
                     onCancel={handleCancelClick}
