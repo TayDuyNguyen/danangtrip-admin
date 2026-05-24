@@ -56,5 +56,58 @@
         "delete_success": "Xóa thông báo thành công!",
         "bulk_delete_success": "Xóa các thông báo đã chọn thành công!",
         "network_error": "Đã xảy ra lỗi kết nối. Vui lòng thử lại!"
+    },
+    "send": {
+        "title": "Gửi Thông báo",
+        "subtitle": "Gửi thông báo đến người dùng hệ thống",
+        "breadcrumb": "Thông báo / Gửi Thông báo",
+        "btn_cancel": "Hủy",
+        "btn_submit": "Gửi thông báo",
+        "btn_sending": "Đang gửi...",
+        "mode_individual": "Gửi cá nhân",
+        "mode_bulk": "Gửi hàng loạt",
+        "bulk_warning": "Thông báo sẽ được gửi đến tất cả người dùng trong hệ thống ({{count}} người dùng). Hành động này không thể hoàn tác.",
+        "label_recipient": "Người nhận *",
+        "placeholder_search_user": "Tìm theo tên, email, username...",
+        "loading_users": "Đang tải người dùng...",
+        "loading_more_users": "Đang tải thêm người dùng...",
+        "no_user_selected": "Chưa chọn người nhận",
+        "label_type": "Loại thông báo *",
+        "label_title": "Tiêu đề *",
+        "placeholder_title": "Nhập tiêu đề thông báo...",
+        "label_content": "Nội dung *",
+        "placeholder_content": "Nhập nội dung thông báo...",
+        "label_data": "Link đích",
+        "placeholder_data": "Ví dụ: /profile/bookings/1008 hoặc https://danangtrip.vn/vi/profile/bookings/1008",
+        "label_data_helper": "Không bắt buộc. Dán link trang cần mở khi người dùng click thông báo.",
+        "preview_title": "Xem trước",
+        "preview_empty_title": "Tiêu đề thông báo",
+        "preview_time": "Vừa xong",
+        "preview_to_all": "Tất cả {{count}} người dùng",
+        "guide_title": "💡 Lưu ý",
+        "guide_item_1": "Tiêu đề nên ngắn gọn, rõ ràng (tối đa 100 ký tự)",
+        "guide_item_2": "Thông báo hàng loạt không thể hoàn tác",
+        "guide_item_3": "Link đích là tùy chọn và sẽ mở khi người dùng click",
+        "guide_item_4": "Người dùng nhận thông báo trong app và email",
+        "validation": {
+            "user_required": "Vui lòng chọn người nhận",
+            "title_required": "Tiêu đề là bắt buộc",
+            "title_max": "Tiêu đề không quá 100 ký tự",
+            "content_required": "Nội dung là bắt buộc",
+            "content_max": "Nội dung không quá 500 ký tự",
+            "data_invalid_json": "Dữ liệu JSON không hợp lệ",
+            "data_invalid_link": "Link phải bắt đầu bằng /, http:// hoặc https://"
+        },
+        "dialog": {
+            "bulk_title": "Xác nhận gửi hàng loạt?",
+            "bulk_body": "Thông báo sẽ được gửi đến tất cả {{count}} người dùng. Hành động này không thể hoàn tác.",
+            "bulk_confirm": "Xác nhận gửi",
+            "bulk_cancel": "Hủy"
+        },
+        "toast": {
+            "send_individual_success": "Đã gửi thông báo thành công!",
+            "send_bulk_success": "Đã gửi đến tất cả {{count}} người dùng thành công!",
+            "send_failed": "Có lỗi xảy ra khi gửi thông báo."
+        }
     }
 }

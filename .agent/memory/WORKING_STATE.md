@@ -3,49 +3,49 @@
 ## Current Status
 
 - Date: 2026-05-24
-- Active feature/task: `admin_notifications_list`
+- Active feature/task: `admin_notifications_send`
 - Status: Completed (Steps 1 to 10)
-- Next step: Await user approval to push the branch
-- Objective: Build the authenticated admin notifications list screen (`/admin/notifications`) as a high-fidelity listing interface with general stats, debounce search, complex selectors and bulk action delete operations.
+- Next step: Await user approval and deploy branches
+- Objective: Build the Send Notification page (`/admin/notifications/send`) to allow administrators and staff to compose and dispatch system announcements in individual or bulk modes with live preview, validation safety guards, optional target links, and Gmail-backed email delivery through the API.
 - Mode: Handoff
 - Owner: AI collaborator
 
 ## Progress Breakdown
 
-- [x] Step 1: Extend Backend API filters and stats counts on `danangtrip-api`
-- [x] Step 2: Establish frontend TypeScript interface typings, mappers, and API clients
-- [x] Step 3: Register route path constants and lazy loading private route mappings
-- [x] Step 4: Synchronize Vietnamese and English translations with i18n namespace
-- [x] Step 5: Implement NotificationStatsRow cards grids with skeletons
-- [x] Step 6: Implement NotificationFilterBar debounced searches and dropdown queries
-- [x] Step 7: Implement NotificationTable dynamic lists, checkbox selects and sorting headers
-- [x] Step 8: Wire React Query queries/mutations and URL SearchParams bindings
-- [x] Step 9: Fix typescript compile errors (RawUserItem field, Lucide title props)
-- [x] Step 10: Validate Quality Gates successfully via prepush checks (lint, typecheck, build, test:console)
+- [x] Step 1: Analyze user spec, routes layout, and backend models validation requests
+- [x] Step 2: Establish custom API endpoints wrappers (`send` & `sendAll`) inside `notificationApi.ts`
+- [x] Step 3: Implement custom mutation hooks (`sendMutation` & `sendAllMutation`) in `useNotificationQueries.ts`
+- [x] Step 4: Register route constants and map lazy loaded router children in `routes.ts` & `index.tsx`
+- [x] Step 5: Synchronize Vietnamese and English translations under `notification.json` files
+- [x] Step 6: Create page layout shell and components structure inside `NotificationSend` page folder
+- [x] Step 7: Build debounced recipient autocomplete selector in `RecipientSelector.tsx`
+- [x] Step 8: Build live update preview card and warning alerts in `NotificationPreview.tsx`
+- [x] Step 9: Build safety confirmation dialog box in `BulkConfirmDialog.tsx`
+- [x] Step 10: Verify quality gates: admin prepush check passed, API phpstan/tests passed, deploy and review artifacts generated.
 
 ## Current Reality
 
-- Modified API validation request (`AdminListNotificationRequest.php`), repository (`NotificationRepository.php`), and service (`NotificationService.php`) on `danangtrip-api` to filter by keyword `search`, status `is_read`, and attach global status count summaries (`stats`).
-- Registered route path `/admin/notifications` in React Router v7 layout private children mapping.
-- Implemented strong type schemas, data transformation mappers, notificationApi endpoints client, and React Query custom queries/mutations hook.
-- Added full Vietnamese and English translation strings in `public/lang/vi/notification.json` and `public/lang/en/notification.json`.
-- Implemented premium-styled, responsive list page layout. Included debounced search bar input, filter selects row, stats summary rows, relative timestamp converter, single backdrop confirm deletion dialog, and parallel bulk delete loops.
-- Verified all quality gates using `npm run prepush:check` - ESLint linting passed, tsc typecheck passed, Vite production build succeeded, and Playwright console check passed successfully (6/6 passed)!
+- Added lazy routes setup for route `/admin/notifications/send` in React Router v7.
+- Defined matching API clients, axiosClient wrappers, and custom React Query mutations.
+- Added translation keys inside `public/lang/vi/notification.json` and `public/lang/en/notification.json`.
+- Implemented premium responsive page styling featuring debounced paginated system-users searching, character limit progress notifications, plain target-link input, real-time live mockup rendering, and safety confirmation checks.
+- Added API email copy delivery through Laravel Mail with Gmail SMTP configuration guidance.
+- Verified and passed admin quality checks (linter, compiler type-checker, production packaging bundle builds, and console smoke tests) plus API phpstan/tests.
 
 ## Validation
 
-- Typecheck: SUCCESS
-- Linter check: SUCCESS
-- Production build: SUCCESS
-- Playwright console tests: SUCCESS (6/6 passed)
+- Admin prepush: SUCCESS (lint/typecheck/build/console smoke passed)
+- API static analysis: SUCCESS (`composer analyze`)
+- API tests: SUCCESS (`composer test`, 12 tests / 48 assertions)
 
 ## Known Issues / Risks
 
-- None.
+- Gmail SMTP delivery requires runtime `.env` values and a Google App Password.
+- Bulk email sends are synchronous; queue-backed mail delivery is recommended if user volume grows.
 
 ## Artifacts
 
-- Implementation Plan: `C:\Users\NGUYEN DUY TAY\.gemini\antigravity\brain\c6bac274-492b-4513-8ac9-12e10aeeb1e1\implementation_plan.md`
-- Task checklist: `C:\Users\NGUYEN DUY TAY\.gemini\antigravity\brain\c6bac274-492b-4513-8ac9-12e10aeeb1e1\task.md`
-- Walkthrough: `C:\Users\NGUYEN DUY TAY\.gemini\antigravity\brain\c6bac274-492b-4513-8ac9-12e10aeeb1e1\walkthrough.md`
-- Review report: `C:\Users\NGUYEN DUY TAY\.gemini\antigravity\brain\c6bac274-492b-4513-8ac9-12e10aeeb1e1\review.md`
+- Implementation Plan: `C:\Users\NGUYEN DUY TAY\.gemini\antigravity\brain\3f97ee59-ff5e-414d-abd4-d72199bf9d72\implementation_plan.md`
+- Task checklist: `C:\Users\NGUYEN DUY TAY\.gemini\antigravity\brain\3f97ee59-ff5e-414d-abd4-d72199bf9d72\task.md`
+- Deploy report: `.agent/artifacts/deploy/2026-05-24__admin_notifications_send__deploy-report.md`
+- Review report: `.agent/artifacts/review/2026-05-24__admin_notifications_send__review.md`

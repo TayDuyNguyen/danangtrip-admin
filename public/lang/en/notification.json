@@ -56,5 +56,58 @@
         "delete_success": "Notification deleted successfully!",
         "bulk_delete_success": "Selected notifications deleted successfully!",
         "network_error": "An error occurred. Please try again!"
+    },
+    "send": {
+        "title": "Send Notification",
+        "subtitle": "Send notifications to system users",
+        "breadcrumb": "Notifications / Send Notification",
+        "btn_cancel": "Cancel",
+        "btn_submit": "Send notification",
+        "btn_sending": "Sending...",
+        "mode_individual": "Send Individual",
+        "mode_bulk": "Send Bulk",
+        "bulk_warning": "Notification will be sent to all users in the system ({{count}} users). This action cannot be undone.",
+        "label_recipient": "Recipient *",
+        "placeholder_search_user": "Search by name, email, username...",
+        "loading_users": "Loading users...",
+        "loading_more_users": "Loading more users...",
+        "no_user_selected": "No recipient selected",
+        "label_type": "Notification Type *",
+        "label_title": "Title *",
+        "placeholder_title": "Enter notification title...",
+        "label_content": "Content *",
+        "placeholder_content": "Enter notification content...",
+        "label_data": "Target link",
+        "placeholder_data": "Example: /profile/bookings/1008 or https://danangtrip.vn/vi/profile/bookings/1008",
+        "label_data_helper": "Optional. Paste a page link to open when the user clicks the notification.",
+        "preview_title": "Preview",
+        "preview_empty_title": "Notification title",
+        "preview_time": "Just now",
+        "preview_to_all": "All {{count}} users",
+        "guide_title": "💡 Notes",
+        "guide_item_1": "Title should be short and clear (max 100 characters)",
+        "guide_item_2": "Bulk notifications cannot be undone",
+        "guide_item_3": "Target link is optional and opens when the user clicks",
+        "guide_item_4": "Users receive notifications in-app and via email",
+        "validation": {
+            "user_required": "Please select a recipient",
+            "title_required": "Title is required",
+            "title_max": "Title must not exceed 100 characters",
+            "content_required": "Content is required",
+            "content_max": "Content must not exceed 500 characters",
+            "data_invalid_json": "Invalid JSON data",
+            "data_invalid_link": "Link must start with /, http://, or https://"
+        },
+        "dialog": {
+            "bulk_title": "Confirm Bulk Send?",
+            "bulk_body": "Notification will be sent to all {{count}} users. This action cannot be undone.",
+            "bulk_confirm": "Confirm Send",
+            "bulk_cancel": "Cancel"
+        },
+        "toast": {
+            "send_individual_success": "Notification sent successfully!",
+            "send_bulk_success": "Sent to all {{count}} users successfully!",
+            "send_failed": "An error occurred while sending the notification."
+        }
     }
 }
