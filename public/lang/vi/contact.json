@@ -1,0 +1,72 @@
+{
+    "breadcrumb": "Liên hệ",
+    "title": "Liên hệ",
+    "subtitle": "Quản lý yêu cầu liên hệ từ khách hàng",
+    "actions": {
+        "export": "Xuất Excel",
+        "reply": "Trả lời",
+        "delete": "Xóa liên hệ",
+        "send_reply": "Gửi trả lời",
+        "sending": "Đang gửi..."
+    },
+    "stats": {
+        "total": "TỔNG LIÊN HỆ",
+        "new": "MỚI",
+        "read": "ĐÃ ĐỌC",
+        "replied": "ĐÃ TRẢ LỜI"
+    },
+    "list": {
+        "search_placeholder": "Tìm liên hệ...",
+        "tabs": {
+            "all": "Tất cả",
+            "new": "Mới",
+            "read": "Đã đọc",
+            "replied": "Đã trả lời"
+        },
+        "empty": "Không có yêu cầu liên hệ nào",
+        "time": {
+            "just_now": "Vừa xong",
+            "minutes_ago": "{{count}} phút trước",
+            "hours_ago": "{{count}} giờ trước",
+            "days_ago": "{{count}} ngày trước"
+        }
+    },
+    "detail": {
+        "empty_state_title": "Chọn một liên hệ để xem chi tiết",
+        "empty_state_subtitle": "Danh sách liên hệ ở bên trái",
+        "subject_label": "TIÊU ĐỀ",
+        "sender_label": "NGƯỜI GỬI",
+        "message_label": "NỘI DUNG",
+        "sent_at": "Gửi lúc {{time}}",
+        "phone": "Điện thoại",
+        "email": "Email",
+        "reply_section_title": "Trả lời",
+        "reply_to": "Gửi đến: {{email}}",
+        "reply_placeholder": "Nhập nội dung trả lời...",
+        "reply_disclaimer": "Trả lời sẽ được gửi qua email của khách hàng",
+        "replied_title": "Nội dung đã trả lời",
+        "replied_label": "NỘI DUNG TRẢ LỜI",
+        "replied_by_meta": "{{time}} · Admin {{name}}",
+        "replied_success_email": "Email đã được gửi đến khách hàng"
+    },
+    "delete_modal": {
+        "title": "Xóa liên hệ này?",
+        "body": "Liên hệ từ {{name}} sẽ bị xóa vĩnh viễn.",
+        "confirm": "Xóa",
+        "cancel": "Hủy"
+    },
+    "validation": {
+        "reply_required": "Vui lòng nhập nội dung trả lời",
+        "reply_min": "Nội dung trả lời phải ít nhất 10 ký tự",
+        "reply_max": "Nội dung trả lời không được vượt quá 2000 ký tự"
+    },
+    "toast": {
+        "reply_success": "Đã gửi trả lời!",
+        "delete_success": "Đã xóa liên hệ!",
+        "export_success": "Xuất Excel thành công!",
+        "network_error": "Có lỗi xảy ra. Vui lòng thử lại."
+    },
+    "pagination": {
+        "showing_range": "Hiển thị {{from}}–{{to}} / {{total}}"
+    }
+}
