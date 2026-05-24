@@ -3,7 +3,7 @@
 ## Last Updated
 
 - Date: 2026-05-24
-- Status: Completed (`admin_users_create`, `web_recommendations_relocation`, `admin_users_edit`, & `admin_contacts`)
+- Status: Completed (`admin_users_create`, `web_recommendations_relocation`, `admin_users_edit`, `admin_contacts`, & `admin_notifications_list`)
 
 ## Current Features
 
@@ -19,23 +19,27 @@
 - **Feature 4: `admin_contacts`**
   - Route: `/admin/contacts` (DanangTrip Admin)
   - Status: Completed. Authenticated contacts management split screen built, integrated, and verified.
+- **Feature 5: `admin_notifications_list`**
+  - Route: `/admin/notifications` (DanangTrip Admin)
+  - Status: Completed. Authenticated notifications list page built, integrated, and verified.
 
-## Technical Summary - `admin_contacts`
+## Technical Summary - `admin_notifications_list`
 
-- **Backend API search support (`danangtrip-api`):** Modified `IndexContactRequest.php` and `ContactRepository.php` to accept and filter by search keyword parameter `q` (fuzzy matching name, email, subject, and message).
+- **Backend API filters & stats (`danangtrip-api`):** Modified `AdminListNotificationRequest.php` and `NotificationRepository.php` to accept and filter by optional query parameters `search` (fuzzy title/content matching) and `is_read` (boolean read status). Modified `NotificationService.php` to calculate and attach global aggregates `stats` (total, read, unread counts) to the paginated list response.
 - **Routing & Client Setup:**
-  - Route Constant `CONTACTS` registered in `src/routes/routes.ts`.
+  - Route Constant `NOTIFICATIONS` registered in `src/routes/routes.ts`.
   - Lazy routes import and child route registered in `src/routes/index.tsx`.
-  - Endpoints listing/detail/reply/delete/export defined in `src/constants/endpoints.ts`.
-  - Sidebar navigation Link added inside `Sidebar.tsx`.
-  - Contact API wrappers implemented in `contactApi.ts` and Query/Mutation hooks created in `useContactQueries.ts`.
-- **UI Master-Detail Components:**
-  - Split-pane layout page built under `src/pages/Contacts/`.
-  - Left fixed list pane with search field, status filter tabs, paginated contact item rows (`ContactListItem.tsx`), and mini-pagination.
-  - Stats card rows grid (`ContactStatsRow.tsx`) showing total, new, read, and replied counts with pulse unread badge indicators.
-  - Right detail panel (`ContactDetailPanel.tsx`) showing full subject headers, sender email/phone links, user messages, green answered panels (with replier names/timestamps), inline email replies form (`ReplyForm.tsx` validated with Yup), and backdrop deletions confirmation modal (`DeleteContactDialog.tsx`).
+  - Endpoints listing/send/send-all/delete registered in `src/constants/endpoints.ts`.
+  - Types schemas, mappers, axiosClient API endpoints wrapper, and React Query custom query/mutation hooks implemented.
+- **UI Components:**
+  - Trang chính `NotificationList/index.tsx` coordinating SearchParams synchronization and bulk selection overrides.
+  - Stats row grids component `NotificationStatsRow.tsx` displaying color-coded summaries with loader animations.
+  - Filters bar `NotificationFilterBar.tsx` integrating debounced search, category types select, read states select, and active users recipient dropdown.
+  - List table `NotificationTable.tsx` featuring row checkboxes, dynamic categoric tags, relative times string converter, and unread row yellow highlights.
+  - Delete dialog modal `DeleteNotificationDialog.tsx`.
 - **Translations:**
-  - Registered full translations inside `public/lang/vi/contact.json` and `public/lang/en/contact.json`.
+  - Registered full translations inside `public/lang/vi/notification.json` and `public/lang/en/notification.json`.
+  - Added `'notification'` to the namespaces configured in `src/i18n/index.ts`.
 
 ## Final Verification
 
@@ -52,4 +56,4 @@
 
 ## Next Action
 
-Await user review and approval for deployment/push.
+Await user review and approval to push the branch.

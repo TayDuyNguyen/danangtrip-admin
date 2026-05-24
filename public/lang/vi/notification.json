@@ -1,0 +1,60 @@
+{
+    "breadcrumb": "Thông báo / Danh sách Thông báo",
+    "title": "Danh sách Thông báo",
+    "subtitle": "Quản lý thông báo hệ thống gửi đến người dùng",
+    "actions": {
+        "send": "Gửi thông báo",
+        "bulk_delete": "Xóa các mục đã chọn",
+        "bulk_delete_confirm": "Bạn có chắc muốn xóa {{count}} thông báo đã chọn?"
+    },
+    "stats": {
+        "total": "TỔNG THÔNG BÁO",
+        "read": "ĐÃ ĐỌC",
+        "unread": "CHƯA ĐỌC"
+    },
+    "filters": {
+        "search_placeholder": "Tìm theo tiêu đề, nội dung...",
+        "filter_button": "Lọc",
+        "reset_button": "Đặt lại",
+        "select_type": "Tất cả loại",
+        "select_status": "Tất cả trạng thái",
+        "select_user": "Tất cả người nhận",
+        "active_filters": "Bộ lọc đang kích hoạt"
+    },
+    "types": {
+        "all": "Tất cả",
+        "booking": "ĐẶT TOUR",
+        "rating": "ĐÁNH GIÁ",
+        "system": "HỆ THỐNG",
+        "promotion": "KHUYẾN MÃI"
+    },
+    "statuses": {
+        "all": "Tất cả",
+        "read": "Đã đọc",
+        "unread": "Chưa đọc"
+    },
+    "table": {
+        "recipient": "Người nhận",
+        "content": "Nội dung",
+        "type": "Loại",
+        "time": "Thời gian",
+        "is_read": "Đã đọc",
+        "actions": "Thao tác",
+        "selected": "Đã chọn {{count}}",
+        "displaying": "Hiển thị {{start}}–{{end}} / {{total}} thông báo",
+        "per_page": "Bản ghi mỗi trang",
+        "empty": "Không có thông báo nào",
+        "empty_sub": "Thử thay đổi bộ lọc hoặc gửi thông báo mới"
+    },
+    "dialog": {
+        "delete_title": "Xóa thông báo này?",
+        "delete_body": "Thông báo sẽ bị xóa vĩnh viễn khỏi hệ thống. Bạn có chắc chắn muốn tiếp tục?",
+        "delete_confirm": "Xóa",
+        "cancel": "Hủy"
+    },
+    "toast": {
+        "delete_success": "Xóa thông báo thành công!",
+        "bulk_delete_success": "Xóa các thông báo đã chọn thành công!",
+        "network_error": "Đã xảy ra lỗi kết nối. Vui lòng thử lại!"
+    }
+}

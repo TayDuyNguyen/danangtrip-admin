@@ -408,3 +408,32 @@
 ### Outcome
 - All remaining English strings on the `/admin/users` screen have been successfully extracted and translated.
 - Localized date/number formatting is fully synchronized with active browser/user language settings.
+
+## 2026-05-24 — Steps 01 to 10: Complete Implementation & Quality Gate (admin_notifications_list)
+
+### Actions Taken
+- **Mở rộng API Backend (`danangtrip-api`)**:
+  - Thêm trường validation `search` (chuỗi) và `is_read` (boolean) vào `AdminListNotificationRequest.php`.
+  - Hỗ trợ các bộ lọc `is_read` và tìm kiếm mờ `search` (trên title và content) trong hàm `getAdminNotifications` của `NotificationRepository.php`.
+  - Tính toán thêm thống kê tổng quan `stats` (tổng số, đã đọc, chưa đọc) trong `NotificationService.php` để phản hồi chung với dữ liệu danh sách phân trang.
+- **Hạ tầng & Đăng ký Tuyến đường (`danangtrip-admin`)**:
+  - Đăng ký tuyến đường `ROUTES.NOTIFICATIONS` trong `routes.ts` và đăng ký lazy route Suspense trong `src/routes/index.tsx`.
+  - Thêm các endpoint API (`LIST`, `DELETE`, `SEND`, `SEND_ALL`) vào hằng số `API_ENDPOINTS.NOTIFICATIONS` trong `endpoints.ts`.
+  - Khai báo kiểu dữ liệu TypeScript an toàn trong `src/types/notification.ts` và đăng ký export trong `src/types/index.ts`.
+  - Tạo mapper resilient `notification.mapper.ts` sử dụng `toNumberSafe` và `toArraySafe`.
+  - Khai báo API wrapper `notificationApi.ts` và React Query hooks `useAdminNotificationsQuery` & `useNotificationMutations` trong `useNotificationQueries.ts`.
+  - Tạo tệp bản dịch `public/lang/vi/notification.json` và `public/lang/en/notification.json` đồng bộ 100%. Đăng ký namespace `notification` trong `src/i18n/index.ts`.
+- **Phát triển Giao diện UI (`danangtrip-admin`)**:
+  - Tạo trang chính `NotificationList/index.tsx` quản lý bộ lọc URL SearchParams và trượt mở bulk actions.
+  - Tạo `NotificationStatsRow.tsx` hiển thị 3 thẻ thống kê premium (Tổng số, Đã đọc, Chưa đọc) kèm skeleton loading.
+  - Tạo `NotificationFilterBar.tsx` hỗ trợ debounce search 300ms và tự động load danh sách người nhận từ `userApi`.
+  - Tạo `NotificationTable.tsx` hiển thị danh sách, sortable time column, checkbox chọn hàng loạt và highlight hàng chưa đọc.
+  - Tạo `DeleteNotificationDialog.tsx` modal Glassmorphism tinh tế.
+- **Kiểm định Chất lượng (Quality Gate)**:
+  - Khắc phục lỗi linter unused import `ArrowUpDown` ở `index.tsx`.
+  - Khắc phục lỗi typecheck: dùng `full_name` thay vì `fullName` của `RawUserItem` trong `NotificationFilterBar.tsx`.
+  - Khắc phục lỗi typecheck: gỡ bỏ `title` prop không được hỗ trợ trực tiếp trên Lucide icons `CheckCircle2` và `Radio` trong `NotificationTable.tsx`.
+  - Chạy Quality Gate tổng thể dự án `npm run prepush:check`: **THÀNH CÔNG** (Linter OK, Typecheck OK, Build OK, Playwright E2E console tests 6/6 OK).
+
+### Outcome
+- Tính năng `admin_notifications_list` đã được hoàn thiện 100% cực kỳ cao cấp, mượt mà và an toàn, vượt qua toàn bộ các bài kiểm tra chất lượng tự động của dự án.

@@ -1,0 +1,60 @@
+{
+    "breadcrumb": "Notifications / Notification List",
+    "title": "Notification List",
+    "subtitle": "Manage system notifications sent to users",
+    "actions": {
+        "send": "Send Notification",
+        "bulk_delete": "Delete Selected",
+        "bulk_delete_confirm": "Are you sure you want to delete {{count}} selected notifications?"
+    },
+    "stats": {
+        "total": "TOTAL NOTIFICATIONS",
+        "read": "READ",
+        "unread": "UNREAD"
+    },
+    "filters": {
+        "search_placeholder": "Search title, content...",
+        "filter_button": "Filter",
+        "reset_button": "Reset",
+        "select_type": "All Types",
+        "select_status": "All Statuses",
+        "select_user": "All Recipients",
+        "active_filters": "Active Filters"
+    },
+    "types": {
+        "all": "All",
+        "booking": "BOOKING",
+        "rating": "RATING",
+        "system": "SYSTEM",
+        "promotion": "PROMOTION"
+    },
+    "statuses": {
+        "all": "All",
+        "read": "Read",
+        "unread": "Unread"
+    },
+    "table": {
+        "recipient": "Recipient",
+        "content": "Content",
+        "type": "Type",
+        "time": "Time",
+        "is_read": "Read",
+        "actions": "Actions",
+        "selected": "Selected {{count}}",
+        "displaying": "Displaying {{start}}–{{end}} / {{total}} notifications",
+        "per_page": "Records per page",
+        "empty": "No notifications found",
+        "empty_sub": "Try changing filters or send a new notification"
+    },
+    "dialog": {
+        "delete_title": "Delete this notification?",
+        "delete_body": "This notification will be permanently removed from the system. Are you sure you want to proceed?",
+        "delete_confirm": "Delete",
+        "cancel": "Cancel"
+    },
+    "toast": {
+        "delete_success": "Notification deleted successfully!",
+        "bulk_delete_success": "Selected notifications deleted successfully!",
+        "network_error": "An error occurred. Please try again!"
+    }
+}
