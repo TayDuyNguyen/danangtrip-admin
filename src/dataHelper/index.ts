@@ -28,5 +28,6 @@ export * from './user.dataHelper';
 export * from './user.mapper';
 export * from './contact.dataHelper';
 export * from './contact.mapper';
+export * from './notification.mapper';
 
 

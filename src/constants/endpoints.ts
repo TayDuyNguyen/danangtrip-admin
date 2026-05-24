@@ -44,6 +44,12 @@ export const API_ENDPOINTS = {
         DELETE: (id: string | number) => `/admin/contacts/${id}`,
         EXPORT: '/admin/contacts/export',
     },
+    NOTIFICATIONS: {
+        LIST: '/admin/notifications',
+        SEND: '/admin/notifications/send',
+        SEND_ALL: '/admin/notifications/send-all',
+        DELETE: (id: string | number) => `/admin/notifications/${id}`,
+    },
     // Export endpoints
     EXPORT: {
         BOOKINGS: '/admin/bookings/export',

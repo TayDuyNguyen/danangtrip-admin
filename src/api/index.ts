@@ -11,6 +11,7 @@ export * from './paymentApi';
 export * from './reportApi';
 export * from './userApi';
 export * from './contactApi';
+export * from './notificationApi';
 
 
 
