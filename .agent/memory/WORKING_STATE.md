@@ -1,40 +1,51 @@
 # Working State
 
 ## Current Status
-- Date: 2026-05-21
-- Active feature/task: admin-dashboard
-- Status: Completed Step 10-optimization-deploy
-- Current step: Completed
+
+- Date: 2026-05-24
+- Active feature/task: `admin_notifications_send`
+- Status: Completed (Steps 1 to 10)
+- Next step: Await user approval and deploy branches
+- Objective: Build the Send Notification page (`/admin/notifications/send`) to allow administrators and staff to compose and dispatch system announcements in individual or bulk modes with live preview, validation safety guards, optional target links, and Gmail-backed email delivery through the API.
+- Mode: Handoff
 - Owner: AI collaborator
 
-## Current Objective
-- Standardize, harden, and complete the 10-step pipeline for the Dashboard screen.
+## Progress Breakdown
 
-## Files Recently Updated
-- D:\DATN\danangtrip-admin\.agent\artifacts\analysis\2026-05-21__admin-dashboard__screen-analysis.md (Created Step 01 screen analysis)
-- D:\DATN\danangtrip-admin\.agent\artifacts\api-contracts\2026-05-21__admin-dashboard__api-contract.md (Created Step 03 API contract)
-- D:\DATN\danangtrip-admin\.agent\artifacts\routing\2026-05-21__admin-dashboard__route-plan.md (Created Step 04 route plan)
-- D:\DATN\danangtrip-admin\.agent\artifacts\ui-specs\2026-05-21__admin-dashboard__ui-spec.md (Updated & hardened Step 05 UI spec)
-- D:\DATN\danangtrip-admin\.agent\artifacts\integration\2026-05-21__admin-dashboard__data-integration.md (Created Step 06 data integration)
-- D:\DATN\danangtrip-admin\.agent\artifacts\interaction-specs\2026-05-21__admin-dashboard__interaction-spec.md (Created Step 07 interaction spec)
-- D:\DATN\danangtrip-admin\.agent\artifacts\auth\2026-05-21__admin-dashboard__auth-permissions-review.md (Created Step 08 auth review)
-- D:\DATN\danangtrip-admin\.agent\artifacts\test-cases\2026-05-21__admin-dashboard__test-report.md (Created Step 09 QA test report)
-- D:\DATN\danangtrip-admin\.agent\artifacts\deploy\2026-05-21__admin-dashboard__deploy-report.md (Created Step 10 deploy report)
-- D:\DATN\danangtrip-admin\.agent\artifacts\review\2026-05-21__admin-dashboard__review.md (Created Step 10 feature review summary)
-- D:\DATN\danangtrip-admin\.agent\memory\WORKING_STATE.md (Updated status to Completed)
+- [x] Step 1: Analyze user spec, routes layout, and backend models validation requests
+- [x] Step 2: Establish custom API endpoints wrappers (`send` & `sendAll`) inside `notificationApi.ts`
+- [x] Step 3: Implement custom mutation hooks (`sendMutation` & `sendAllMutation`) in `useNotificationQueries.ts`
+- [x] Step 4: Register route constants and map lazy loaded router children in `routes.ts` & `index.tsx`
+- [x] Step 5: Synchronize Vietnamese and English translations under `notification.json` files
+- [x] Step 6: Create page layout shell and components structure inside `NotificationSend` page folder
+- [x] Step 7: Build debounced recipient autocomplete selector in `RecipientSelector.tsx`
+- [x] Step 8: Build live update preview card and warning alerts in `NotificationPreview.tsx`
+- [x] Step 9: Build safety confirmation dialog box in `BulkConfirmDialog.tsx`
+- [x] Step 10: Verify quality gates: admin prepush check passed, API phpstan/tests passed, deploy and review artifacts generated.
 
-## Current Decisions In Force
-- REPO_FACTS.md is the compact repo reality anchor.
-- Every skill step must update WORKING_STATE.md before it is considered complete.
+## Current Reality
 
-## Known Open Items
-- Stacked bar chart for booking trend is limited to single series by backend endpoint.
-- Top tours table is missing average ratings and thumbnail fields from raw response.
-- Non-blocking Vite warnings remain for `lottie-web` eval usage and chunks above the default 500kB warning threshold.
+- Added lazy routes setup for route `/admin/notifications/send` in React Router v7.
+- Defined matching API clients, axiosClient wrappers, and custom React Query mutations.
+- Added translation keys inside `public/lang/vi/notification.json` and `public/lang/en/notification.json`.
+- Implemented premium responsive page styling featuring debounced paginated system-users searching, character limit progress notifications, plain target-link input, real-time live mockup rendering, and safety confirmation checks.
+- Added API email copy delivery through Laravel Mail with Gmail SMTP configuration guidance.
+- Verified and passed admin quality checks (linter, compiler type-checker, production packaging bundle builds, and console smoke tests) plus API phpstan/tests.
 
-## Immediate Next Steps
-- Deliver Conventional Commit Handoff to USER.
-- Suggested branch: `feat/DATN-79/admin-dashboard`.
-- Suggested commit: `feat(dashboard): harden admin dashboard delivery`.
+## Validation
 
+- Admin prepush: SUCCESS (lint/typecheck/build/console smoke passed)
+- API static analysis: SUCCESS (`composer analyze`)
+- API tests: SUCCESS (`composer test`, 12 tests / 48 assertions)
 
+## Known Issues / Risks
+
+- Gmail SMTP delivery requires runtime `.env` values and a Google App Password.
+- Bulk email sends are synchronous; queue-backed mail delivery is recommended if user volume grows.
+
+## Artifacts
+
+- Implementation Plan: `C:\Users\NGUYEN DUY TAY\.gemini\antigravity\brain\3f97ee59-ff5e-414d-abd4-d72199bf9d72\implementation_plan.md`
+- Task checklist: `C:\Users\NGUYEN DUY TAY\.gemini\antigravity\brain\3f97ee59-ff5e-414d-abd4-d72199bf9d72\task.md`
+- Deploy report: `.agent/artifacts/deploy/2026-05-24__admin_notifications_send__deploy-report.md`
+- Review report: `.agent/artifacts/review/2026-05-24__admin_notifications_send__review.md`

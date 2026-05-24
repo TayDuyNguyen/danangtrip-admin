@@ -5,3 +5,4 @@ export * from "./category.schema";
 export * from "./tourCategory.schema";
 export * from "./location.schema";
 export * from "./booking.schema";
+export * from "./user.schema";

@@ -89,7 +89,13 @@
         "users": "Người dùng",
         "finance": "Tài chính & Điểm",
         "reports": "Báo cáo & Thống kê",
+        "reports_ratings": "Báo cáo Đánh giá",
+        "reports_bookings": "Báo cáo Đơn hàng",
+        "reports_revenue": "Báo cáo Doanh thu",
+        "reports_locations": "Báo cáo Địa điểm",
+        "reports_users": "Báo cáo Người dùng",
         "notifications": "Thông báo",
+        "contacts": "Liên hệ",
         "settings": "Cài đặt",
         "logout": "Đăng xuất"
     },

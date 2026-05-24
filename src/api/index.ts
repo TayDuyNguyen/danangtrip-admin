@@ -8,3 +8,10 @@ export * from './categoryApi';
 export * from './scheduleApi';
 export * from './bookingApi';
 export * from './paymentApi';
+export * from './reportApi';
+export * from './userApi';
+export * from './contactApi';
+export * from './notificationApi';
+
+
+

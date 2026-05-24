@@ -14,7 +14,8 @@ import {
     ChevronDown,
     MapPin,
     ChevronLeft,
-    ChevronRight
+    ChevronRight,
+    Mail
 } from 'lucide-react';
 import { ROUTES } from '@/routes/routes';
 import { useTranslation } from 'react-i18next';
@@ -45,9 +46,21 @@ const navItems = [
     { icon: Hotel, label: 'sidebar.hotels', path: '/admin/hotels' },
     { icon: ShoppingCart, label: 'sidebar.orders', path: ROUTES.BOOKINGS_LIST },
     { icon: CreditCard, label: 'sidebar.payments', path: ROUTES.PAYMENTS_LIST },
+    {
+        icon: FileText, label: 'sidebar.reports', path: '/admin/reports',
+        subItems: [
+            { label: 'sidebar.reports_ratings', path: ROUTES.REPORTS_RATINGS },
+            { label: 'sidebar.reports_bookings', path: ROUTES.REPORTS_BOOKINGS },
+            { label: 'sidebar.reports_revenue', path: ROUTES.REPORTS_REVENUE },
+            { label: 'sidebar.reports_locations', path: ROUTES.REPORTS_LOCATIONS },
+            { label: 'sidebar.reports_users', path: ROUTES.REPORTS_USERS },
+        ]
+    },
     { icon: FileText, label: 'sidebar.posts', path: '/admin/posts' },
-    { icon: Users, label: 'sidebar.users', path: '/admin/users' },
+    { icon: Users, label: 'sidebar.users', path: ROUTES.USERS_LIST },
     { icon: Bell, label: 'sidebar.notifications', path: '/admin/notifications' },
+    { icon: Mail, label: 'sidebar.contacts', path: ROUTES.CONTACTS },
+
     { icon: Settings, label: 'sidebar.settings', path: '/admin/settings' },
 ];
 
@@ -75,7 +88,8 @@ const Sidebar = () => {
     // State to track which submenus are open
     const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({
         '/admin/tours': location.pathname.startsWith('/admin/tours'),
-        '/admin/locations': location.pathname.startsWith('/admin/locations')
+        '/admin/locations': location.pathname.startsWith('/admin/locations'),
+        '/admin/reports': location.pathname.startsWith('/admin/reports')
     });
 
     const toggleMenu = (path: string) => {

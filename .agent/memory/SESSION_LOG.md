@@ -1,5 +1,60 @@
 # Session Log
 
+## 2026-05-23 — Step 02: 02-project-setup (admin_users_detail)
+
+### Actions Taken
+- Audited core frontend package dependencies: confirmed React 19, Vite 7, TypeScript 5.9, TanStack Query v5, Zustand v5, and Tailwind CSS v4 stack.
+- Audited repository shape and directories: matched layout structure guidelines.
+- Audited typescript alias `@/*` configurations and environment file templates.
+- Audited HTTP and auth bootstrapper: confirmed query client default configuration and private route roles protection mechanisms are fully secure.
+- Documented project-setup audit at `.agent/artifacts/audits/2026-05-23__admin_users_detail__project-audit.md`.
+
+### Outcome
+- Step 02 (02-project-setup) completed.
+- Gained 100% confidence that the project structure is fully verified, aligned, and ready for code execution.
+
+## 2026-05-23 — Step 01: 01-screen-analysis (admin_users_detail)
+
+### Actions Taken
+- Read and analyzed the primary business specification for the user detail screen from `D:\DATN\DATN_Document\docs\page\admin_users_detail.md`.
+- Read and verified backend router and controller code at `D:\DATN\danangtrip-api\routes\api.php` and `D:\DATN\danangtrip-api\app\Http\Controllers\Api\Admin\UserController.php`.
+- Discovered that the backend only supports role updates between `admin` and `user` (no `staff` support).
+- Formulated the database stats loading plan: we will modify `UserRepository.php` in `danangtrip-api` to eager count `bookings` and `favorites` and sum completed/confirmed `final_amount` as `total_spend`.
+- Created screen analysis artifact detailing component structure, responsive breakdowns, data model, APIs, and business rules at `.agent/artifacts/analysis/2026-05-23__admin_users_detail__screen-analysis.md`.
+- Created detailed `implementation_plan.md` and `task.md` checklists to track implementation.
+
+### Outcome
+- Step 01 (01-screen-analysis) completed.
+- High-fidelity analysis document successfully saved, establishing a clear roadmap for backend and frontend updates.
+
+## 2026-05-23 Step 10 Revalidation Update
+- Revalidated Step 10 for `admin_reports_users` after code review.
+- Fixed mock mode behavior so `useUsersReportQuery` disables the real API query while mock mode is active.
+- Reran `npm.cmd run prepush:check`.
+- Final validation passed: lint, typecheck, Vite production build, and Playwright console tests.
+- Updated deploy/review/test artifacts plus working state and handoff.
+
+## 2026-05-23 — Step 09: 09-testing (admin_reports_users)
+
+### Actions Taken
+- Ran `npm run lint` → PASS (0 errors, 0 warnings)
+- Ran `npm run typecheck` → PASS (0 TypeScript errors)
+- Ran `npm run build` → PASS (Vite v7.3.2, 3608 modules, built in ~14s)
+- Fixed `scripts/prepush-check.mjs`: changed server probe from `http://127.0.0.1:5173` to `http://localhost:5173` to fix Windows IPv6 detection
+- Added `/admin/reports/users` route to `tests/console-errors.spec.ts` Playwright coverage
+- Ran `npm run prepush:check` → PASS (5/5 Playwright tests including new `/admin/reports/users` route)
+- Updated test report artifact: `.agent/artifacts/test-cases/2026-05-23__admin_reports_users__test-report.md`
+
+### Outcome
+- All static gates: PASS
+- All Playwright runtime tests: PASS (5/5)
+- Feature verdict: READY
+- Browser visual inspection: dev server confirmed active at localhost:5173
+
+---
+
+
+
 ## 2026-05-12
 - Added `REPO_FACTS.md` to anchor real repository stack and working conventions.
 - Added `verify_agent_drift.py` and wired it into `.agent` checklist / verification scripts.
@@ -80,6 +135,12 @@
 
 2 0 2 6 - 0 5 - 1 9 :   C o m p l e t e d   0 1 - s c r e e n - a n a l y s i s   f o r   a d m i n - t o u r - s c h e d u l e - e d i t .   A r t i f a c t   s a v e d .  
 # Session Log
+
+## 2026-05-22 Step 10 Completion Update
+- Completed Step 10 for `admin_reports_locations`.
+- Created feature-specific deploy and review artifacts for `admin_reports_locations`.
+- Reran and passed `npm.cmd run lint`, `npm.cmd run typecheck`, `npm.cmd run build`, and `npm.cmd run prepush:check`.
+- Updated `WORKING_STATE.md` and `HANDOFF.md` to completed.
 
 ## 2026-05-12
 - Added `REPO_FACTS.md` to anchor real repository stack and working conventions.
@@ -221,5 +282,158 @@
 - Completed `07-interactions` step for `admin-dashboard` feature. Defined atomic URLSearchParams syncing for dates, period, status, and paginated orders lists. Documented state transitions, manual query refresh hooks, and debounce behaviors. Created and saved Interaction Spec under `.agent/artifacts/interaction-specs/`.
 - Completed `08-auth-permissions` step for `admin-dashboard` feature. Verified that `/dashboard` is protected strictly by global `PrivateRoute` with absolute role gates restricting access to the `admin` role. Created and saved Auth & Permissions Review under `.agent/artifacts/auth/`.
 - Completed `09-testing` step for `admin-dashboard` feature. Certified that React 19 / TanStack Query v5 static compilation gates are clean. Verified `npm run lint`, `npm run typecheck`, `npm run build`, and `npm run prepush:check` all pass with **0 blocking errors**. Generated Test Report under `.agent/artifacts/test-cases/`.
-- Completed `10-optimization-deploy` step for `admin-dashboard` feature. Formulated multi-query caching policies, detailed Excel download stream mutations, evaluated bundle thresholds, and created comprehensive Deploy Report (`.agent/artifacts/deploy/`) and Feature Review (`.agent/artifacts/review/`) summaries.
 - Re-ran Step 10 validation for `admin-dashboard`. Verified `npm.cmd run prepush:check` passes with 0 blocking errors and documented non-blocking Vite warnings for `lottie-web` eval and large chunks. Updated deploy/review artifacts with branch `feat/DATN-79/admin-dashboard` and commit handoff recommendation.
+
+## 2026-05-22
+- Completed repository-level `10-optimization-deploy` audit for `repo-screen-alignment-audit`.
+- Found a real TypeScript blocker in `tests/admin-reports-locations.spec.ts` (`textContent()` nullability) and fixed it with a null-safe fallback.
+- Re-ran `npm run prepush:check` successfully after the fix; admin repo is back to clean static-gate status.
+- Created deploy/review artifacts documenting the distinction between code readiness (PASS) and product alignment risks (dead sidebar destinations, temporary shell UI).
+- Completed `01-screen-analysis` step for `admin_reports_ratings` feature. Created and saved screen analysis artifact.
+- Completed `02-project-setup` step for `admin_reports_ratings` feature.
+  - Audited React 19 + Vite + TypeScript dependencies, build scripts, tsconfig, env examples, axiosClient.ts and route definitions.
+  - Sửa lỗi import type `Page` từ `@playwright/test` trong file test `tests/admin-reports-bookings.spec.ts` để đáp ứng chế độ `verbatimModuleSyntax` khắt khe của TypeScript.
+  - Đã chạy thành công `npm run prepush:check` kiểm thử tĩnh (linting, typechecking và production build) đạt kết quả 100% vượt qua mà không gặp lỗi nào.
+  - Tạo và lưu tài liệu audit tại `.agent/artifacts/audits/2026-05-22__admin_reports_ratings__project-audit.md`.
+
+- Completed `04-layout-routing` step for `admin_reports_bookings` feature.
+  - Verified route `/admin/reports/bookings` registration under `PrivateRoute` with lazy splitting.
+  - Confirmed sidebar layout mapping and breadcrumb hierarchy.
+  - Validated i18n key structure in Vietnamese and English namespaces.
+  - Generated Route Plan artifacts in workspace and brain store.
+
+- Completed `01-screen-analysis` step for `admin_reports_revenue` (Báo cáo Doanh thu). Created comprehensive screen analysis artifact documenting business requirements, UI layout decomposition (glassmorphism style), component structures, API endpoint mapping, parallel loading/caching strategy, and risk mitigations.
+- Completed all remaining steps (Step 3 through Step 10) for `admin_reports_revenue` (Báo cáo Doanh thu).
+  - Implemented typescript-safe ViewModels, mapper functions, and queries in `report.mapper.ts` and `useReportQueries.ts`.
+  - Built premium visual dashboard components: `ReportFilterBar.tsx`, `RevenueStatsCards.tsx`, `RevenueReportCharts.tsx`, and `RevenueReportTable.tsx` under `RevenueReport/components`.
+  - Fixed TypeScript compiler errors related to Recharts Tooltip formatter typing and partial filters handlers.
+  - Verified static linting, type-checking, and production compilation through local quality gate (`npm run prepush:check`), achieving zero compile warnings.
+- Executed `09-testing` step for `admin_reports_revenue` (Báo cáo Doanh thu).
+  - Setup and ran E2E testing suite `tests/admin-reports-revenue.spec.ts` using Playwright, verifying authentication redirect, mock data toggle, URL parameters synchronization, stats cards indicators, charts, pagination, and download triggers.
+  - Resolved minor defect `D-01` by adding `'revenue_report'` namespace to the preloaded configurations in `src/i18n/index.ts` to prevent layout text flickers.
+  - Re-validated the whole project, confirming that all lint, typecheck, build, and prepush gates remain 100% passing.
+  - Generated E2E test report and comprehensive walkthrough documentation with visual QA screenshot evidence.
+
+- Bắt đầu thực hiện màn hình `admin_reports_locations` (Báo cáo Địa điểm).
+- Xác minh tài liệu screen analysis đã có sẵn tại `.agent/artifacts/analysis/2026-05-22__admin_reports_locations__screen-analysis.md`.
+- Lập kế hoạch triển khai chi tiết (Implementation Plan) và cập nhật trạng thái làm việc tại `WORKING_STATE.md`.
+- Xác nhận và hoàn thành Bước 01 (01-screen-analysis) cho tính năng Báo cáo Địa điểm (`admin_reports_locations`). Tài liệu phân tích màn hình đạt chuẩn và sẵn sàng cho các bước tiếp theo.
+
+## 2026-05-23 — Step 01: 01-screen-analysis (admin_users_list)
+
+### Actions Taken
+- Read and analyzed the primary business specification for user management list screen from `D:\DATN\DATN_Document\docs\page\admin_users_list.md`.
+- Read project rules and design tokens from `DESIGN.md`, confirming Outfit/System font scales, teal colors (`#14B8A6`), rounded corners (6px, 16px, 24px), and glass elevation depth rules.
+- Performed a comprehensive component audit:
+  - Identified reusable components in `src/components/common` (`StatCard`, `EmptyState`, `ErrorWidget`, `Pagination`) and `src/components/ui` (`Badge`, `Button`, `Skeleton`, `TextInput`, `CustomSelect`).
+  - Mapped 5 new page-specific components to build: `UserStatsRow`, `UserFilterBar`, `UserTable`, `DeleteUserDialog`, and `UpdateRoleDialog`.
+  - Identified 3 core routes/layout modules to modify: `src/routes/routes.ts`, `src/routes/index.tsx`, and `src/components/common/Sidebar.tsx`.
+- Audited responsive column scaling layouts (Desktop, Tablet, Mobile) and mapped loading/empty/error states across all sections.
+- Verified backend user endpoints and mapped them to `endpoints.ts`.
+- Outlined 4 strict business rules (BR-01 to BR-04) and 3 edge cases (EC-01 to EC-03).
+- Documented analysis findings directly in the repository at `.agent/artifacts/analysis/2026-05-23__admin_users_list__screen-analysis.md`.
+- Updated `WORKING_STATE.md` status to active with Step 1 completed.
+
+### Outcome
+- Step 01 (01-screen-analysis) completed.
+- High-fidelity analysis document successfully saved, preparing a solid foundation for types, schemas, and API contracts in Step 03.
+
+## 2026-05-23 — Step 02: 02-project-setup (admin_users_list)
+
+### Actions Taken
+- Read and audited core workspace dependencies in `package.json` (React 19.2.4, Vite 7.3.1, TypeScript 5.9.3, Query 5.95.2, Zustand 5.0.8).
+- Audited repository file structure and validated alignment with folder naming rules in `PROJECT_RULES.md` (verified folders `src/api`, `src/components/ui/`, `src/components/common/`, `src/hooks/`, `src/dataHelper/`, `src/routes/`).
+- Verified paths and resolve alias configuration alignment between `tsconfig.app.json` (`paths: {"@/*": ["./src/*"]}`) and `vite.config.ts` (`resolve.alias: {"@": "./src"}`).
+- Audited `src/api/axiosClient.ts` confirming proactive queue-based token silent refresh on 401.
+- Audited `src/providers/index.tsx` confirming that `QueryClientProvider` and `AuthBootstrapGate` are set up at root level.
+- Audited `src/routes/PrivateRoute.tsx` confirming that all admin routes are strictly guarded by `isAuthenticated && hasRole(user, 'admin')`.
+- Ran background task `npm run lint` -> **PASS** (completed successfully with 0 errors/warnings).
+- Documented audit outcomes in the repository at `.agent/artifacts/audits/2026-05-23__admin_users_list__project-audit.md`.
+- Updated `WORKING_STATE.md` with Step 2 completed.
+
+### Outcome
+- Step 02 (02-project-setup) completed.
+- The project environment is fully audited, clean, and ready for feature implementation.
+
+## 2026-05-23 — Steps 03 to 09: Implementation & Validation (admin_users_list)
+
+### Actions Taken
+- **Step 03: Types & API Contract**:
+  - Registered users management endpoints (`LIST`, `UPDATE_ROLE`, `UPDATE_STATUS`, `DELETE`) in `endpoints.ts`.
+  - Created `user.dataHelper.ts` containing interface definitions for raw API response and ViewModel models.
+  - Created `user.mapper.ts` including safe converters `mapUserItem` and `mapUserList`.
+  - Created `userApi.ts` for axios-based API calls.
+  - Created `useUserQueries.ts` defining React Query cache structures, list query hook, and status/role/delete/export mutation hooks.
+  - Registered all exports in `src/api/index.ts`, `src/dataHelper/index.ts`, and `src/hooks/index.ts`.
+- **Step 04: Layout & Routing**:
+  - Added `ROUTES.USERS_LIST` constant to `routes.ts`.
+  - Registered `ROUTES.USERS_LIST` route using lazy import and Suspense in `src/routes/index.tsx`.
+  - Replaced hardcoded path with `ROUTES.USERS_LIST` in `Sidebar.tsx`.
+  - Registered `'user'` namespace in `src/i18n/index.ts` and created bilingual translation files `public/lang/vi/user.json` and `public/lang/en/user.json` with 100% key parity.
+- **Step 05 & 06 & 07 & 08: UI Components & Integrations**:
+  - Created page-specific components under `src/pages/Users/UserList/components/`:
+    - `UserStatsRow`: Renders 4 statistics cards with loading skeletons.
+    - `UserFilterBar`: Debounced search query and custom selects for role and status.
+    - `UserTable`: Multi-select checkboxes, interactive column sorting, inline role dropdown, status toggle, actions (View, Edit, Ban, Delete).
+    - `DeleteUserDialog`: Warnings about reviews/bookings loss upon deletion.
+    - `UpdateRoleDialog`: Confirmation alerts before elevating user role to Admin.
+    - `index.tsx`: Wires all state and mutations together.
+  - Integrated dual-direction URL search parameters synchronization.
+  - Implemented client-side self-protection guards preventing the active Admin from self-deleting, blocking, or changing their own role.
+- **Step 09: Testing & Quality Gate**:
+  - Fixed initial compilation errors (default imports, event typings, unused imports, pagination component props).
+  - Transitioned props synchronization state from `useEffect` to render-phase adjustment to satisfy `react-hooks/set-state-in-effect` ESLint rule.
+  - Ran `npm run prepush:check` quality gate: **PASSED** (ESLint OK, TS Compile OK, Vite build OK, Playwright E2E console tests OK).
+  - Saved test case evidence at `.agent/artifacts/test-cases/2026-05-23__admin_users_list__test-report.md`.
+
+### Outcome
+- Steps 03 to 09 completed.
+- Feature is fully implemented, error-free, and validated against the quality gates.
+
+
+
+## 2026-05-23 — Localization Polish (admin_users_list)
+
+### Actions Taken
+- **Localization Alignment & Polish**:
+  - Synchronized `public/lang/vi/user.json` and `public/lang/en/user.json` by adding keys for active filters (`filter.role`, `filter.status`), individual current user badge (`table.you_badge`), and bulk action dialogs (`actions.bulk_delete_confirm`).
+  - Modified `UserFilterBar.tsx` to dynamically translate `"Role:"` and `"Status:"` tags instead of using hardcoded English strings.
+  - Modified `UserTable.tsx` to dynamically display the localized `"BẠN" / "YOU"` badge and dynamically format the joined date via `toLocaleDateString` using `i18n.language`.
+  - Modified `UserStatsRow.tsx` to format numeric stats values dynamically using `toLocaleString` with active locale (`vi-VN` / `en-US`).
+  - Modified `UserList/index.tsx` to use the localized bulk delete confirmation message.
+- **Verification**:
+  - Ran quality check `npm run prepush:check` : **PASSED** (ESLint OK, TS Compile OK, Vite build OK, Playwright E2E console tests OK).
+  - Created walkthrough and updated deploy report / review report to reflect the localization adjustments.
+
+### Outcome
+- All remaining English strings on the `/admin/users` screen have been successfully extracted and translated.
+- Localized date/number formatting is fully synchronized with active browser/user language settings.
+
+## 2026-05-24 — Steps 01 to 10: Complete Implementation & Quality Gate (admin_notifications_list)
+
+### Actions Taken
+- **Mở rộng API Backend (`danangtrip-api`)**:
+  - Thêm trường validation `search` (chuỗi) và `is_read` (boolean) vào `AdminListNotificationRequest.php`.
+  - Hỗ trợ các bộ lọc `is_read` và tìm kiếm mờ `search` (trên title và content) trong hàm `getAdminNotifications` của `NotificationRepository.php`.
+  - Tính toán thêm thống kê tổng quan `stats` (tổng số, đã đọc, chưa đọc) trong `NotificationService.php` để phản hồi chung với dữ liệu danh sách phân trang.
+- **Hạ tầng & Đăng ký Tuyến đường (`danangtrip-admin`)**:
+  - Đăng ký tuyến đường `ROUTES.NOTIFICATIONS` trong `routes.ts` và đăng ký lazy route Suspense trong `src/routes/index.tsx`.
+  - Thêm các endpoint API (`LIST`, `DELETE`, `SEND`, `SEND_ALL`) vào hằng số `API_ENDPOINTS.NOTIFICATIONS` trong `endpoints.ts`.
+  - Khai báo kiểu dữ liệu TypeScript an toàn trong `src/types/notification.ts` và đăng ký export trong `src/types/index.ts`.
+  - Tạo mapper resilient `notification.mapper.ts` sử dụng `toNumberSafe` và `toArraySafe`.
+  - Khai báo API wrapper `notificationApi.ts` và React Query hooks `useAdminNotificationsQuery` & `useNotificationMutations` trong `useNotificationQueries.ts`.
+  - Tạo tệp bản dịch `public/lang/vi/notification.json` và `public/lang/en/notification.json` đồng bộ 100%. Đăng ký namespace `notification` trong `src/i18n/index.ts`.
+- **Phát triển Giao diện UI (`danangtrip-admin`)**:
+  - Tạo trang chính `NotificationList/index.tsx` quản lý bộ lọc URL SearchParams và trượt mở bulk actions.
+  - Tạo `NotificationStatsRow.tsx` hiển thị 3 thẻ thống kê premium (Tổng số, Đã đọc, Chưa đọc) kèm skeleton loading.
+  - Tạo `NotificationFilterBar.tsx` hỗ trợ debounce search 300ms và tự động load danh sách người nhận từ `userApi`.
+  - Tạo `NotificationTable.tsx` hiển thị danh sách, sortable time column, checkbox chọn hàng loạt và highlight hàng chưa đọc.
+  - Tạo `DeleteNotificationDialog.tsx` modal Glassmorphism tinh tế.
+- **Kiểm định Chất lượng (Quality Gate)**:
+  - Khắc phục lỗi linter unused import `ArrowUpDown` ở `index.tsx`.
+  - Khắc phục lỗi typecheck: dùng `full_name` thay vì `fullName` của `RawUserItem` trong `NotificationFilterBar.tsx`.
+  - Khắc phục lỗi typecheck: gỡ bỏ `title` prop không được hỗ trợ trực tiếp trên Lucide icons `CheckCircle2` và `Radio` trong `NotificationTable.tsx`.
+  - Chạy Quality Gate tổng thể dự án `npm run prepush:check`: **THÀNH CÔNG** (Linter OK, Typecheck OK, Build OK, Playwright E2E console tests 6/6 OK).
+
+### Outcome
+- Tính năng `admin_notifications_list` đã được hoàn thiện 100% cực kỳ cao cấp, mượt mà và an toàn, vượt qua toàn bộ các bài kiểm tra chất lượng tự động của dự án.

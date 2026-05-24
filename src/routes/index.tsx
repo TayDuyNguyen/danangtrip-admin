@@ -24,7 +24,20 @@ const BookingList = React.lazy(() => import('@/pages/Bookings/BookingList'));
 const BookingDetail = React.lazy(() => import('@/pages/Bookings/BookingDetail'));
 const PaymentList = React.lazy(() => import('@/pages/Payments/PaymentList'));
 const PaymentDetail = React.lazy(() => import('@/pages/Payments/PaymentDetail'));
+const RatingsReport = React.lazy(() => import('@/pages/Reports/RatingsReport'));
+const BookingsReport = React.lazy(() => import('@/pages/Reports/BookingsReport'));
+const RevenueReport = React.lazy(() => import('@/pages/Reports/RevenueReport'));
+const LocationReport = React.lazy(() => import('@/pages/Reports/LocationReport'));
+const UsersReport = React.lazy(() => import('@/pages/Reports/UsersReport'));
+const UserList = React.lazy(() => import('@/pages/Users/UserList'));
+const UserCreate = React.lazy(() => import('@/pages/Users/UserCreate'));
+const UserDetail = React.lazy(() => import('@/pages/Users/UserDetail'));
+const UserEdit = React.lazy(() => import('@/pages/Users/UserEdit'));
+const Contacts = React.lazy(() => import('@/pages/Contacts'));
+const NotificationList = React.lazy(() => import('@/pages/Notifications/NotificationList'));
+const NotificationSend = React.lazy(() => import('@/pages/Notifications/NotificationSend'));
 import ErrorPage from '@/pages/ErrorPage';
+
 
 /**
  * Page loader component
@@ -84,8 +97,21 @@ const router = createBrowserRouter([
                     { path: ROUTES.BOOKINGS_DETAIL, element: withSuspense(BookingDetail) },
                     { path: ROUTES.PAYMENTS_LIST, element: withSuspense(PaymentList) },
                     { path: ROUTES.PAYMENTS_DETAIL, element: withSuspense(PaymentDetail) },
+                    { path: ROUTES.REPORTS_RATINGS, element: withSuspense(RatingsReport) },
+                    { path: ROUTES.REPORTS_BOOKINGS, element: withSuspense(BookingsReport) },
+                    { path: ROUTES.REPORTS_REVENUE, element: withSuspense(RevenueReport) },
+                    { path: ROUTES.REPORTS_LOCATIONS, element: withSuspense(LocationReport) },
+                    { path: ROUTES.REPORTS_USERS, element: withSuspense(UsersReport) },
+                    { path: ROUTES.USERS_LIST, element: withSuspense(UserList) },
+                    { path: ROUTES.USERS_CREATE, element: withSuspense(UserCreate) },
+                    { path: ROUTES.USERS_DETAIL, element: withSuspense(UserDetail) },
+                    { path: ROUTES.USERS_EDIT, element: withSuspense(UserEdit) },
+                    { path: ROUTES.NOTIFICATIONS, element: withSuspense(NotificationList) },
+                    { path: ROUTES.NOTIFICATIONS_SEND, element: withSuspense(NotificationSend) },
+                    { path: ROUTES.CONTACTS, element: withSuspense(Contacts) },
                 ]
             }
+
         ],
     },
     {

@@ -28,3 +28,9 @@ dist-ssr
 *.sln
 *.sw?
 
+# Test results and screenshots
+test-results/
+
+# Codegraph
+.codegraph/
+

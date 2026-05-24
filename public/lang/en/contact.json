@@ -1,0 +1,72 @@
+{
+    "breadcrumb": "Contacts",
+    "title": "Contacts",
+    "subtitle": "Manage contact requests from customers",
+    "actions": {
+        "export": "Export Excel",
+        "reply": "Reply",
+        "delete": "Delete Contact",
+        "send_reply": "Send Reply",
+        "sending": "Sending..."
+    },
+    "stats": {
+        "total": "TOTAL CONTACTS",
+        "new": "NEW",
+        "read": "READ",
+        "replied": "REPLIED"
+    },
+    "list": {
+        "search_placeholder": "Search contacts...",
+        "tabs": {
+            "all": "All",
+            "new": "New",
+            "read": "Read",
+            "replied": "Replied"
+        },
+        "empty": "No contact requests found",
+        "time": {
+            "just_now": "Just now",
+            "minutes_ago": "{{count}} mins ago",
+            "hours_ago": "{{count}} hours ago",
+            "days_ago": "{{count}} days ago"
+        }
+    },
+    "detail": {
+        "empty_state_title": "Select a contact to view details",
+        "empty_state_subtitle": "The contact list is on the left",
+        "subject_label": "SUBJECT",
+        "sender_label": "SENDER",
+        "message_label": "MESSAGE CONTENT",
+        "sent_at": "Sent at {{time}}",
+        "phone": "Phone",
+        "email": "Email",
+        "reply_section_title": "Reply",
+        "reply_to": "Send to: {{email}}",
+        "reply_placeholder": "Type your reply message here...",
+        "reply_disclaimer": "The reply will be sent via email to the customer",
+        "replied_title": "Replied Content",
+        "replied_label": "REPLY CONTENT",
+        "replied_by_meta": "{{time}} · Admin {{name}}",
+        "replied_success_email": "Email has been sent to customer successfully"
+    },
+    "delete_modal": {
+        "title": "Delete this contact?",
+        "body": "The contact from {{name}} will be permanently deleted.",
+        "confirm": "Delete",
+        "cancel": "Cancel"
+    },
+    "validation": {
+        "reply_required": "Please enter a reply content",
+        "reply_min": "Reply must be at least 10 characters",
+        "reply_max": "Reply cannot exceed 2000 characters"
+    },
+    "toast": {
+        "reply_success": "Reply sent successfully!",
+        "delete_success": "Contact deleted successfully!",
+        "export_success": "Excel exported successfully!",
+        "network_error": "An error occurred. Please try again."
+    },
+    "pagination": {
+        "showing_range": "Showing {{from}}–{{to}} of {{total}}"
+    }
+}

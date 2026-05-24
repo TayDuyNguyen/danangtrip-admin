@@ -1,0 +1,93 @@
+{
+    "title": "Báo cáo Địa điểm",
+    "subtitle": "Thống kê phân bổ, lượt xem, yêu thích và đánh giá các địa điểm du lịch tại Đà Nẵng",
+    "breadcrumb": {
+        "home": "Trang chủ",
+        "reports": "Báo cáo",
+        "current": "Báo cáo Địa điểm"
+    },
+    "mock": {
+        "toggle_title": "Nhấp để bật/tắt chế độ giả lập dữ liệu",
+        "mock_on": "Dữ liệu Giả lập (On)",
+        "mock_off": "Dữ liệu Thật (Off)",
+        "toast_to_mock": "Không kết nối được API Laravel. Đã tự động kích hoạt chế độ Giả lập (Mock Data).",
+        "toast_switched_mock": "Đã chuyển sang chế độ Giả lập (Mock Data)",
+        "toast_switched_real": "Đã chuyển sang chế độ Dữ liệu thật (API Laravel)"
+    },
+    "export": {
+        "btn_label": "Xuất CSV",
+        "toast_loading": "Đang chuẩn bị và xuất file CSV từ API...",
+        "toast_success": "Xuất báo cáo CSV thành công!",
+        "toast_error": "Xuất file CSV thất bại. Vui lòng thử lại.",
+        "toast_mock_loading": "Đang chuẩn bị file CSV giả lập...",
+        "toast_mock_success": "Xuất báo cáo CSV giả lập thành công!"
+    },
+    "error": {
+        "load_failed": "Không thể tải dữ liệu từ API",
+        "connection": "Đã xảy ra sự cố kết nối với hệ thống API của Laravel.",
+        "retry_btn": "Thử lại",
+        "use_mock_btn": "Sử dụng Mock Data"
+    },
+    "filter": {
+        "from_date": "Từ ngày",
+        "to_date": "Đến ngày",
+        "category": "Danh mục",
+        "category_all": "Tất cả danh mục",
+        "district": "Quận/Huyện",
+        "district_all": "Tất cả quận/huyện",
+        "status": "Trạng thái",
+        "status_all": "Tất cả trạng thái",
+        "status_active": "Đang hoạt động",
+        "status_inactive": "Đã khóa",
+        "quick_filters": "Lọc nhanh:",
+        "range_7days": "7 ngày",
+        "range_30days": "30 ngày",
+        "range_3months": "3 tháng",
+        "range_thisyear": "Năm nay",
+        "btn_reset": "Mặc định",
+        "btn_apply": "Áp dụng",
+        "validation": {
+            "date_range": "Ngày bắt đầu không thể lớn hơn ngày kết thúc."
+        },
+        "toast_reset": "Đã lập lại bộ lọc về mặc định."
+    },
+    "stats": {
+        "total": "Tổng địa điểm",
+        "active": "Đang hoạt động",
+        "featured": "Địa điểm nổi bật",
+        "total_views": "Tổng lượt xem"
+    },
+    "charts": {
+        "category_title": "Phân bổ theo Danh mục",
+        "category_subtitle": "Tỷ lệ địa điểm theo từng danh mục du lịch",
+        "district_title": "Phân bổ theo Quận/Huyện",
+        "district_subtitle": "Số lượng địa điểm tại từng quận/huyện Đà Nẵng",
+        "no_data": "Không có dữ liệu biểu đồ trong khoảng thời gian này",
+        "count_label": "Số lượng",
+        "others_label": "Khác"
+    },
+    "table": {
+        "title": "Xếp hạng Địa điểm",
+        "subtitle": "Danh sách địa điểm được sắp xếp theo hiệu suất",
+        "tab_views": "Top Lượt xem",
+        "tab_favorites": "Top Yêu thích",
+        "tab_ratings": "Top Đánh giá",
+        "header_rank": "#",
+        "header_name": "Tên địa điểm",
+        "header_category": "Danh mục",
+        "header_district": "Quận/Huyện",
+        "header_views": "Lượt xem",
+        "header_favorites": "Yêu thích",
+        "header_rating": "Điểm đánh giá",
+        "header_status": "Trạng thái",
+        "header_actions": "Chi tiết",
+        "status_active": "Hoạt động",
+        "status_inactive": "Đã khóa",
+        "no_data_title": "Không có dữ liệu địa điểm",
+        "no_data_desc": "Không tìm thấy địa điểm nào khớp với bộ lọc hoặc điều kiện của bạn.",
+        "btn_view_detail": "Xem chi tiết",
+        "pagination_showing": "Hiển thị {{from}}–{{to}} trong tổng số {{total}} địa điểm",
+        "btn_prev": "Trước",
+        "btn_next": "Sau"
+    }
+}

@@ -1,0 +1,98 @@
+{
+    "title": "Báo cáo Đơn hàng",
+    "subtitle": "Thống kê xu hướng đặt tour, phân cơ cấu trạng thái và doanh thu",
+    "breadcrumb": {
+        "home": "Trang chủ",
+        "reports": "Báo cáo",
+        "current": "Báo cáo Đơn hàng"
+    },
+    "mock": {
+        "toggle_title": "Nhấp để bật/tắt chế độ giả lập dữ liệu",
+        "mock_on": "Dữ liệu Giả lập (On)",
+        "mock_off": "Dữ liệu Thật (Off)",
+        "toast_to_mock": "Không kết nối được API Laravel. Đã tự động kích hoạt chế độ Giả lập (Mock Data).",
+        "toast_switched_mock": "Đã chuyển sang chế độ Giả lập (Mock Data)",
+        "toast_switched_real": "Đã chuyển sang chế độ Dữ liệu thật (API Laravel)"
+    },
+    "export": {
+        "btn_label": "Xuất Excel",
+        "toast_loading": "Đang chuẩn bị và xuất file Excel từ API...",
+        "toast_success": "Xuất báo cáo Excel thành công!",
+        "toast_error": "Xuất file Excel thất bại. Vui lòng thử lại.",
+        "toast_mock_loading": "Đang chuẩn bị file Excel giả lập...",
+        "toast_mock_success": "Xuất báo cáo Excel giả lập thành công!"
+    },
+    "error": {
+        "load_failed": "Không thể tải dữ liệu từ API",
+        "connection": "Đã xảy ra sự cố kết nối với hệ thống API của Laravel.",
+        "retry_btn": "Thử lại",
+        "use_mock_btn": "Sử dụng Mock Data"
+    },
+    "filter": {
+        "from_date": "Từ ngày",
+        "to_date": "Đến ngày",
+        "booking_status": "Trạng thái đơn hàng",
+        "payment_status": "Trạng thái thanh toán",
+        "status_all": "Tất cả trạng thái",
+        "status_pending": "Chờ xử lý",
+        "status_confirmed": "Đã xác nhận",
+        "status_completed": "Đã hoàn thành",
+        "status_cancelled": "Đã hủy",
+        "payment_all": "Tất cả trạng thái",
+        "payment_pending": "Chờ thanh toán",
+        "payment_paid": "Đã thanh toán",
+        "payment_refunded": "Đã hoàn tiền",
+        "quick_filters": "Lọc nhanh:",
+        "range_7days": "7 ngày",
+        "range_30days": "30 ngày",
+        "range_3months": "3 tháng",
+        "range_thisyear": "Năm nay",
+        "btn_reset": "Mặc định",
+        "btn_apply": "Áp dụng",
+        "validation": {
+            "date_range": "Ngày bắt đầu không thể lớn hơn ngày kết thúc."
+        },
+        "toast_reset": "Đã lập lại bộ lọc về mặc định."
+    },
+    "stats": {
+        "total": "Tổng đơn hàng",
+        "completed": "Đơn thành công",
+        "cancelled": "Đơn đã hủy",
+        "revenue": "Doanh thu tạm tính"
+    },
+    "charts": {
+        "trend_title": "Xu hướng đơn hàng",
+        "trend_subtitle": "Theo ngày/tuần/tháng",
+        "status_title": "Phân bố trạng thái",
+        "status_subtitle": "Tỷ lệ theo trạng thái đơn",
+        "no_data": "Không có dữ liệu biểu đồ trong khoảng thời gian này",
+        "bookings_label": "Đơn hàng",
+        "revenue_label": "Doanh thu (đ)"
+    },
+    "table": {
+        "title": "Danh sách đơn hàng",
+        "subtitle": "Danh sách đơn hàng chi tiết theo các bộ lọc",
+        "total_count": "{{total}} đơn hàng",
+        "header_code": "Mã đơn hàng",
+        "header_customer": "Khách hàng",
+        "header_tour": "Tour du lịch",
+        "header_amount": "Tổng tiền",
+        "header_status": "Trạng thái đơn",
+        "header_payment": "Thanh toán",
+        "header_date": "Ngày đặt",
+        "header_detail": "Chi tiết",
+        "status_completed": "Hoàn thành",
+        "status_confirmed": "Đã xác nhận",
+        "status_cancelled": "Đã hủy",
+        "status_pending": "Chờ xử lý",
+        "payment_paid": "Đã thanh toán",
+        "payment_refunded": "Đã hoàn tiền",
+        "payment_pending": "Chờ thanh toán",
+        "tooltip_detail": "Xem chi tiết đơn hàng",
+        "no_data_title": "Không tìm thấy đơn hàng nào",
+        "no_data_desc": "Không tìm thấy đơn hàng nào khớp với bộ lọc thời gian hoặc điều kiện của bạn.",
+        "pagination_showing": "Hiển thị {{from}}–{{to}} trong tổng số {{total}} đơn hàng",
+        "btn_prev": "Trước",
+        "btn_next": "Sau"
+    }
+}

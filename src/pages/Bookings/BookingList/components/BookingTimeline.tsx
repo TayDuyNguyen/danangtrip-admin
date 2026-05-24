@@ -2,25 +2,27 @@ import { useTranslation } from 'react-i18next';
 import BookingCard from './BookingCard';
 import type { BookingItem } from '@/dataHelper/booking.dataHelper';
 import { ShoppingCart } from 'lucide-react';
+import LoadingReact from '@/components/loading';
 
 interface Props {
     data: BookingItem[];
     isLoading?: boolean;
+    isFetching?: boolean;
     onView: (booking: BookingItem) => void;
     onConfirm: (id: number) => void;
     onCancel: (booking: BookingItem) => void;
 }
 
-const BookingTimeline = ({ data, isLoading, onView, onConfirm, onCancel }: Props) => {
+const BookingTimeline = ({ data, isLoading, isFetching, onView, onConfirm, onCancel }: Props) => {
     const { t } = useTranslation('booking');
 
     if (isLoading) {
         return (
-            <div className="relative pl-12 space-y-6">
-                <div className="absolute left-[24px] top-0 bottom-0 w-[2px] bg-slate-100" />
-                {[1, 2, 3].map((i) => (
-                    <div key={i} className="bg-white border border-slate-100 rounded-3xl p-6 h-48 animate-pulse" />
-                ))}
+            <div className="bg-white border border-slate-100 rounded-3xl py-20 px-8 flex flex-col items-center justify-center text-center shadow-sm">
+                <LoadingReact type="spin" color="#14b8a6" height={42} width={42} />
+                <p className="mt-4 text-sm font-black text-[#14b8a6]">
+                    {t('loading.list', 'Đang tải danh sách đơn hàng...')}
+                </p>
             </div>
         );
     }
@@ -55,6 +57,15 @@ const BookingTimeline = ({ data, isLoading, onView, onConfirm, onCancel }: Props
                     onCancel={onCancel}
                 />
             ))}
+
+            {isFetching && (
+                <div className="relative z-10 rounded-2xl border border-[#14b8a6]/20 bg-white/95 px-5 py-4 shadow-sm">
+                    <div className="flex items-center justify-center gap-2 text-sm font-black text-[#14b8a6]">
+                        <LoadingReact type="spin" color="#14b8a6" height={18} width={18} />
+                        {t('loading.list', 'Đang tải danh sách đơn hàng...')}
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

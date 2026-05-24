@@ -18,21 +18,46 @@ export const API_ENDPOINTS = {
         USER_GROWTH: '/admin/dashboard/user-growth',
         // Top 5 tours table
         TOP_TOURS: '/admin/dashboard/top-tours',
+        // Top locations table/report
+        TOP_LOCATIONS: '/admin/dashboard/top-locations',
         // Recent orders table
         BOOKINGS: '/admin/bookings',
     },
     // Fallback endpoints for missing stats fields
     RATINGS: {
         LIST: '/admin/ratings',
+        APPROVE: (id: string | number) => `/admin/ratings/${id}/approve`,
+        REJECT: (id: string | number) => `/admin/ratings/${id}/reject`,
+        DELETE: (id: string | number) => `/admin/ratings/${id}`,
+    },
+    REPORTS: {
+        RATINGS: '/admin/reports/ratings',
+        BOOKINGS: '/admin/reports/bookings',
+        REVENUE_DETAIL: '/admin/reports/revenue-detail',
+        LOCATIONS: '/admin/reports/locations',
+        USERS: '/admin/reports/users',
     },
     CONTACTS: {
         LIST: '/admin/contacts',
+        DETAIL: (id: string | number) => `/admin/contacts/${id}`,
+        REPLY: (id: string | number) => `/admin/contacts/${id}/reply`,
+        DELETE: (id: string | number) => `/admin/contacts/${id}`,
+        EXPORT: '/admin/contacts/export',
+    },
+    NOTIFICATIONS: {
+        LIST: '/admin/notifications',
+        SEND: '/admin/notifications/send',
+        SEND_ALL: '/admin/notifications/send-all',
+        DELETE: (id: string | number) => `/admin/notifications/${id}`,
     },
     // Export endpoints
     EXPORT: {
         BOOKINGS: '/admin/bookings/export',
         PAYMENTS: '/admin/payments/export',
         TOURS: '/admin/tours/export',
+        RATINGS: '/admin/ratings/export',
+        LOCATIONS: '/admin/locations/export',
+        USERS: '/admin/users/export',
     },
     // Tours management
     TOURS: {
@@ -62,7 +87,7 @@ export const API_ENDPOINTS = {
         STATUS_COUNTS: '/admin/bookings/status-counts',
         UPDATE_STATUS: (id: string | number) => `/admin/bookings/${id}/status`,
         DETAIL: (id: string | number) => `/admin/bookings/${id}`,
-        INVOICE: (id: string | number) => `/user/bookings/${id}/invoice`,
+        INVOICE: (id: string | number) => `/admin/bookings/${id}/invoice`,
     },
     // Payments management
     PAYMENTS: {
@@ -100,5 +125,17 @@ export const API_ENDPOINTS = {
         AMENITIES: '/amenities',
         RATING_STATS: (id: string | number) => `/locations/${id}/rating-stats`,
         RATINGS: (id: string | number) => `/locations/${id}/ratings`,
+    },
+    // Users management
+    USERS: {
+        LIST: '/admin/users',
+        DETAIL: (id: string | number) => `/admin/users/${id}`,
+        UPDATE: (id: string | number) => `/admin/users/${id}`,
+        BOOKINGS: (id: string | number) => `/admin/users/${id}/bookings`,
+        RATINGS: (id: string | number) => `/admin/users/${id}/ratings`,
+        UPDATE_ROLE: (id: string | number) => `/admin/users/${id}/role`,
+        UPDATE_STATUS: (id: string | number) => `/admin/users/${id}/status`,
+        DELETE: (id: string | number) => `/admin/users/${id}`,
     }
 } as const;
+

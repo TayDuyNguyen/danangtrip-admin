@@ -17,4 +17,17 @@ export const ROUTES = {
     BOOKINGS_DETAIL: '/admin/bookings/:id',
     PAYMENTS_LIST: '/admin/payments',
     PAYMENTS_DETAIL: '/admin/payments/:id',
+    REPORTS_RATINGS: '/admin/reports/ratings',
+    REPORTS_BOOKINGS: '/admin/reports/bookings',
+    REPORTS_REVENUE: '/admin/reports/revenue',
+    REPORTS_LOCATIONS: '/admin/reports/locations',
+    REPORTS_USERS: '/admin/reports/users',
+    USERS_LIST: '/admin/users',
+    USERS_CREATE: '/admin/users/create',
+    USERS_DETAIL: '/admin/users/:id',
+    USERS_EDIT: '/admin/users/:id/edit',
+    NOTIFICATIONS: '/admin/notifications',
+    NOTIFICATIONS_SEND: '/admin/notifications/send',
+    CONTACTS: '/admin/contacts',
 } as const;
+

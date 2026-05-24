@@ -1,0 +1,91 @@
+{
+  "title": "Users Report",
+  "subtitle": "Track monthly signup growth metrics, active status distribution, and export standard Excel datasets",
+  "breadcrumb": {
+    "home": "Home",
+    "reports": "Reports & Stats",
+    "current": "Users Report"
+  },
+  "filter": {
+    "year_label": "Reporting Year",
+    "year_value": "Year {{year}}",
+    "role_label": "Role (Export)",
+    "role_all": "All Roles",
+    "role_admin": "Administrator",
+    "role_user": "User",
+    "status_label": "Status (Export)",
+    "status_all": "All Statuses",
+    "status_active": "Active",
+    "status_banned": "Banned",
+    "tip_text": "* Note: Year selector filters visualizations. Role & Status selectors apply to Excel Export only.",
+    "btn_reset": "Reset",
+    "btn_apply": "Apply",
+    "toast_reset": "Filters have been reset to default values.",
+    "validation": {
+      "year_invalid": "Invalid reporting year (must be between 2000 and 2027)."
+    }
+  },
+  "stats": {
+    "new_users": "New Users",
+    "active_year": "Active Year",
+    "total_users": "Total System Users",
+    "active_rate": "Active Rate",
+    "status_na": "Other Source",
+    "na_label": "Check Dashboard",
+    "gap_tooltip": "These high-level metrics are tracked in the main System Dashboard."
+  },
+  "charts": {
+    "growth_title": "Monthly signup growth",
+    "growth_subtitle": "Statistics of newly registered accounts grouped by month",
+    "no_data": "No new user signup statistics recorded in this calendar year",
+    "users_label": "New registered users",
+    "legend_users": "New signups count"
+  },
+  "table": {
+    "title": "Growth Breakdown",
+    "subtitle": "Detailed monthly signup metrics and running cumulative total calculations",
+    "total_rows": "Total {{count}} months",
+    "header_month": "Month",
+    "header_new_users": "New Signups",
+    "header_cumulative": "Cumulative Total",
+    "no_data_title": "Empty stats table",
+    "no_data_desc": "No detailed new user signups available for the selected year."
+  },
+  "export": {
+    "btn_label": "Export Excel",
+    "toast_loading": "Preparing users spreadsheet...",
+    "toast_success": "Users list has been exported successfully!",
+    "toast_error": "Failed to export users list.",
+    "toast_mock_loading": "Simulating mock users list export...",
+    "toast_mock_success": "Mock users dataset downloaded successfully!"
+  },
+  "mock": {
+    "mock_on": "Mock Mode: ON",
+    "mock_off": "Mock Mode: OFF",
+    "toggle_title": "Toggle mock data visualization",
+    "toast_to_mock": "Users report API is not active on backend. Mock mode has been automatically enabled.",
+    "toast_switched_mock": "Switched to simulated mock data mode.",
+    "toast_switched_real": "Switched to real API database mode."
+  },
+  "error": {
+    "load_failed": "Failed to load users report",
+    "connection": "API connection timeout or backend server is offline.",
+    "retry_btn": "Retry",
+    "use_mock_btn": "Use Mock Data"
+  },
+  "month_short": {
+    "1": "Jan", "2": "Feb", "3": "Mar", "4": "Apr", "5": "May", "6": "Jun",
+    "7": "Jul", "8": "Aug", "9": "Sep", "10": "Oct", "11": "Nov", "12": "Dec"
+  },
+  "month_long": {
+    "1": "January", "2": "February", "3": "March", "4": "April", "5": "May", "6": "June",
+    "7": "July", "8": "August", "9": "September", "10": "October", "11": "November", "12": "December"
+  },
+  "units": {
+    "users": "users"
+  },
+  "month_long_label": {
+    "1": "January", "2": "February", "3": "March", "4": "April", "5": "May", "6": "June",
+    "7": "July", "8": "August", "9": "September", "10": "October", "11": "November", "12": "December"
+  }
+}

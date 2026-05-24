@@ -1,0 +1,91 @@
+{
+  "title": "Báo cáo Người dùng",
+  "subtitle": "Theo dõi tăng trưởng đăng ký người dùng mới, phân bổ trạng thái và xuất báo cáo dữ liệu chuyên nghiệp",
+  "breadcrumb": {
+    "home": "Trang chủ",
+    "reports": "Báo cáo & Thống kê",
+    "current": "Báo cáo Người dùng"
+  },
+  "filter": {
+    "year_label": "Năm Báo Cáo",
+    "year_value": "Năm {{year}}",
+    "role_label": "Vai Trò (Xuất)",
+    "role_all": "Tất cả vai trò",
+    "role_admin": "Quản trị viên",
+    "role_user": "Người dùng",
+    "status_label": "Trạng Thái (Xuất)",
+    "status_all": "Tất cả trạng thái",
+    "status_active": "Hoạt động",
+    "status_banned": "Bị khóa",
+    "tip_text": "* Lưu ý: Bộ lọc Năm kiểm soát biểu đồ. Vai Trò/Trạng Thái chỉ áp dụng khi Xuất Excel.",
+    "btn_reset": "Đặt lại",
+    "btn_apply": "Áp dụng",
+    "toast_reset": "Đã đặt các bộ lọc về mặc định.",
+    "validation": {
+      "year_invalid": "Năm lọc không hợp lệ (chỉ nhận số từ 2000 đến 2027)."
+    }
+  },
+  "stats": {
+    "new_users": "Người dùng mới",
+    "active_year": "Năm chọn",
+    "total_users": "Tổng số người dùng",
+    "active_rate": "Tỉ lệ hoạt động",
+    "status_na": "Nguồn khác",
+    "na_label": "Xem Dashboard",
+    "gap_tooltip": "Chỉ số này được thống kê tổng quan ở Bảng Điều Khiển chính."
+  },
+  "charts": {
+    "growth_title": "Tăng trưởng người dùng mới",
+    "growth_subtitle": "Thống kê số lượng tài khoản đăng ký mới theo từng tháng",
+    "no_data": "Không có dữ liệu tăng trưởng mới trong năm này",
+    "users_label": "Người dùng mới đăng ký",
+    "legend_users": "Số lượng đăng ký mới"
+  },
+  "table": {
+    "title": "Chi tiết tăng trưởng",
+    "subtitle": "Bảng tổng hợp chi tiết số đăng ký mới và tổng lũy kế tích lũy theo tháng",
+    "total_rows": "Tổng số {{count}} tháng",
+    "header_month": "Tháng",
+    "header_new_users": "Đăng ký mới",
+    "header_cumulative": "Tổng lũy kế trong năm",
+    "no_data_title": "Bảng số liệu trống",
+    "no_data_desc": "Không có thống kê chi tiết người dùng mới trong năm được chọn."
+  },
+  "export": {
+    "btn_label": "Xuất Excel",
+    "toast_loading": "Đang chuẩn bị file xuất báo cáo người dùng...",
+    "toast_success": "Đã xuất báo cáo danh sách người dùng thành công!",
+    "toast_error": "Lỗi khi xuất danh sách người dùng.",
+    "toast_mock_loading": "Đang giả lập xuất báo cáo người dùng mẫu...",
+    "toast_mock_success": "Đã tải xuống tệp dữ liệu mẫu thành công!"
+  },
+  "mock": {
+    "mock_on": "Dữ liệu mẫu: Bật",
+    "mock_off": "Dữ liệu mẫu: Tắt",
+    "toggle_title": "Bật/Tắt chế độ dữ liệu mẫu",
+    "toast_to_mock": "API báo cáo người dùng chưa sẵn sàng trên backend. Đã kích hoạt chế độ dữ liệu giả lập.",
+    "toast_switched_mock": "Đã chuyển sang chế độ dữ liệu mẫu.",
+    "toast_switched_real": "Đã chuyển sang chế độ dữ liệu thực từ API."
+  },
+  "error": {
+    "load_failed": "Không thể tải báo cáo người dùng",
+    "connection": "Lỗi kết nối API backend hoặc hệ thống chưa khởi chạy.",
+    "retry_btn": "Thử lại",
+    "use_mock_btn": "Dùng dữ liệu mẫu"
+  },
+  "month_short": {
+    "1": "T1", "2": "T2", "3": "T3", "4": "T4", "5": "T5", "6": "T6",
+    "7": "T7", "8": "T8", "9": "T9", "10": "T10", "11": "T11", "12": "T12"
+  },
+  "month_long": {
+    "1": "Tháng 1", "2": "Tháng 2", "3": "Tháng 3", "4": "Tháng 4", "5": "Tháng 5", "6": "Tháng 6",
+    "7": "Tháng 7", "8": "Tháng 8", "9": "Tháng 9", "10": "Tháng 10", "11": "Tháng 11", "12": "Tháng 12"
+  },
+  "units": {
+    "users": "người"
+  },
+  "month_long_label": {
+    "1": "Tháng Một", "2": "Tháng Hai", "3": "Tháng Ba", "4": "Tháng Tư", "5": "Tháng Năm", "6": "Tháng Sáu",
+    "7": "Tháng Bảy", "8": "Tháng Tám", "9": "Tháng Chín", "10": "Tháng Mười", "11": "Tháng Mười Một", "12": "Tháng Mười Hai"
+  }
+}
