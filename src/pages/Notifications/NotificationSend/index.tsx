@@ -19,6 +19,8 @@ interface FormValues {
     data: string;
 }
 
+type NotificationData = Record<string, unknown>;
+
 export const NotificationSend = () => {
     const { t } = useTranslation("notification");
     const navigate = useNavigate();
@@ -63,10 +65,10 @@ export const NotificationSend = () => {
         setResetSignal((current) => current + 1);
     };
 
-    const buildNotificationData = (link: string) => {
+    const buildNotificationData = (link: string): NotificationData | undefined => {
         const trimmedLink = link.trim();
 
-        return trimmedLink ? { url: trimmedLink } : null;
+        return trimmedLink ? { url: trimmedLink } : undefined;
     };
 
     // Submitting handler
@@ -81,7 +83,7 @@ export const NotificationSend = () => {
                     type: values.type,
                     title: values.title,
                     content: values.content,
-                    data: notificationData,
+                    ...(notificationData ? { data: notificationData } : {}),
                 },
                 {
                     onSuccess: () => {
@@ -112,7 +114,7 @@ export const NotificationSend = () => {
                 type: pendingBulkValues.type,
                 title: pendingBulkValues.title,
                 content: pendingBulkValues.content,
-                data: notificationData,
+                ...(notificationData ? { data: notificationData } : {}),
             },
             {
                 onSuccess: () => {
