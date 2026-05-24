@@ -3,7 +3,7 @@
 ## Last Updated
 
 - Date: 2026-05-24
-- Status: Completed (`admin_users_create`, `web_recommendations_relocation`, `admin_users_edit`, `admin_contacts`, & `admin_notifications_list`)
+- Status: Completed (`admin_users_create`, `web_recommendations_relocation`, `admin_users_edit`, `admin_contacts`, `admin_notifications_list`, & `admin_notifications_send`)
 
 ## Current Features
 
@@ -22,32 +22,44 @@
 - **Feature 5: `admin_notifications_list`**
   - Route: `/admin/notifications` (DanangTrip Admin)
   - Status: Completed. Authenticated notifications list page built, integrated, and verified.
+- **Feature 6: `admin_notifications_send`**
+  - Route: `/admin/notifications/send` (DanangTrip Admin)
+  - Status: Completed. Authenticated notification send composer page built, integrated, and verified.
 
-## Technical Summary - `admin_notifications_list`
+## Technical Summary - `admin_notifications_send`
 
-- **Backend API filters & stats (`danangtrip-api`):** Modified `AdminListNotificationRequest.php` and `NotificationRepository.php` to accept and filter by optional query parameters `search` (fuzzy title/content matching) and `is_read` (boolean read status). Modified `NotificationService.php` to calculate and attach global aggregates `stats` (total, read, unread counts) to the paginated list response.
+- **Backend API wiring (`danangtrip-api`):** `POST /admin/notifications/send` and `POST /admin/notifications/send-all` remain the dispatch endpoints. API service now also sends an email copy through Laravel Mail/Gmail SMTP when configured.
 - **Routing & Client Setup:**
-  - Route Constant `NOTIFICATIONS` registered in `src/routes/routes.ts`.
+  - Route Constant `NOTIFICATIONS_SEND` registered in `src/routes/routes.ts`.
   - Lazy routes import and child route registered in `src/routes/index.tsx`.
-  - Endpoints listing/send/send-all/delete registered in `src/constants/endpoints.ts`.
-  - Types schemas, mappers, axiosClient API endpoints wrapper, and React Query custom query/mutation hooks implemented.
+  - Endpoint actions (`send` and `sendAll`) registered in `src/api/notificationApi.ts`.
+  - React Query custom mutation hooks (`sendMutation` and `sendAllMutation`) implemented in `src/hooks/useNotificationQueries.ts`.
 - **UI Components:**
-  - Trang chính `NotificationList/index.tsx` coordinating SearchParams synchronization and bulk selection overrides.
-  - Stats row grids component `NotificationStatsRow.tsx` displaying color-coded summaries with loader animations.
-  - Filters bar `NotificationFilterBar.tsx` integrating debounced search, category types select, read states select, and active users recipient dropdown.
-  - List table `NotificationTable.tsx` featuring row checkboxes, dynamic categoric tags, relative times string converter, and unread row yellow highlights.
-  - Delete dialog modal `DeleteNotificationDialog.tsx`.
+  - Main composer page `NotificationSend/index.tsx` coordinating layout and mutation workflows.
+  - Autocomplete selector `RecipientSelector.tsx` implementing debounced queries to user list and displaying user tags.
+  - Live preview card `NotificationPreview.tsx` rendering dynamically styled mockups matching notification categories.
+  - Safe alert check `BulkConfirmDialog.tsx` protecting bulk sends.
+  - Validation form `NotificationSendForm.tsx` using `react-hook-form` + `yupResolver` with collapsible target-link input.
+  - Success handling clears the form and selected user instead of navigating away.
 - **Translations:**
-  - Registered full translations inside `public/lang/vi/notification.json` and `public/lang/en/notification.json`.
-  - Added `'notification'` to the namespaces configured in `src/i18n/index.ts`.
+  - Registered translations inside `public/lang/vi/notification.json` and `public/lang/en/notification.json`.
+- **API email support:**
+  - Added `AdminNotificationMail` mailable template.
+  - Updated `NotificationService` to send email after DB notification creation while logging SMTP failures without breaking in-app notifications.
+  - Updated `UserRepository::chunkAll()` to include email/full_name for bulk mail dispatch.
+  - Documented Gmail SMTP `.env` values in `danangtrip-api/README.md`.
 
 ## Final Verification
 
-- **Admin (`prepush:check`):** Passed successfully!
-  - 0 ESLint errors (Linter passed)
-  - 0 TypeScript compilation errors (Typecheck passed)
-  - Production build compiled successfully
-  - Playwright Console checks passed (6/6 console tests passed)
+- **Admin (`npm.cmd run prepush:check`):** Passed successfully.
+  - 0 ESLint errors; 3 React Compiler warnings related to `react-hook-form watch()`.
+  - 0 TypeScript compilation errors.
+  - Vite production build passed.
+  - Playwright console route smoke passed 6 tests.
+- **API:**
+  - PHP syntax checks passed for modified files.
+  - `composer analyze` passed.
+  - `composer test` passed: 12 tests / 48 assertions.
 
 ## Read First Next Session
 

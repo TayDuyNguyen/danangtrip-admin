@@ -38,7 +38,36 @@ export const useNotificationMutations = () => {
         },
     });
 
+    const sendMutation = useMutation({
+        mutationFn: (data: {
+            user_id: number;
+            type: string;
+            title: string;
+            content: string;
+            data?: Record<string, unknown> | null;
+        }) => notificationApi.send(data),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: notificationKeys.all });
+            queryClient.invalidateQueries({ queryKey: ["dashboard"] });
+        },
+    });
+
+    const sendAllMutation = useMutation({
+        mutationFn: (data: {
+            type: string;
+            title: string;
+            content: string;
+            data?: Record<string, unknown> | null;
+        }) => notificationApi.sendAll(data),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: notificationKeys.all });
+            queryClient.invalidateQueries({ queryKey: ["dashboard"] });
+        },
+    });
+
     return {
         deleteMutation,
+        sendMutation,
+        sendAllMutation,
     };
 };

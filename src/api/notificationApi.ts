@@ -1,6 +1,6 @@
 import axiosClient from "./axiosClient";
 import { API_ENDPOINTS } from "@/constants";
-import type { NotificationListFilters, RawNotificationListResponse } from "@/types";
+import type { NotificationListFilters, RawNotificationListResponse, RawNotificationItem } from "@/types";
 import type { ApiResponse } from "@/types";
 
 export const notificationApi = {
@@ -21,5 +21,22 @@ export const notificationApi = {
 
     delete: (id: number | string): Promise<ApiResponse<null>> =>
         axiosClient.delete(API_ENDPOINTS.NOTIFICATIONS.DELETE(id)),
+
+    send: (data: {
+        user_id: number;
+        type: string;
+        title: string;
+        content: string;
+        data?: Record<string, unknown> | null;
+    }): Promise<ApiResponse<RawNotificationItem>> =>
+        axiosClient.post(API_ENDPOINTS.NOTIFICATIONS.SEND, data),
+
+    sendAll: (data: {
+        type: string;
+        title: string;
+        content: string;
+        data?: Record<string, unknown> | null;
+    }): Promise<ApiResponse<null>> =>
+        axiosClient.post(API_ENDPOINTS.NOTIFICATIONS.SEND_ALL, data),
 };
 export default notificationApi;

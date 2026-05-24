@@ -35,6 +35,7 @@ const UserDetail = React.lazy(() => import('@/pages/Users/UserDetail'));
 const UserEdit = React.lazy(() => import('@/pages/Users/UserEdit'));
 const Contacts = React.lazy(() => import('@/pages/Contacts'));
 const NotificationList = React.lazy(() => import('@/pages/Notifications/NotificationList'));
+const NotificationSend = React.lazy(() => import('@/pages/Notifications/NotificationSend'));
 import ErrorPage from '@/pages/ErrorPage';
 
 
@@ -106,6 +107,7 @@ const router = createBrowserRouter([
                     { path: ROUTES.USERS_DETAIL, element: withSuspense(UserDetail) },
                     { path: ROUTES.USERS_EDIT, element: withSuspense(UserEdit) },
                     { path: ROUTES.NOTIFICATIONS, element: withSuspense(NotificationList) },
+                    { path: ROUTES.NOTIFICATIONS_SEND, element: withSuspense(NotificationSend) },
                     { path: ROUTES.CONTACTS, element: withSuspense(Contacts) },
                 ]
             }
