@@ -39,6 +39,10 @@ export const API_ENDPOINTS = {
     },
     CONTACTS: {
         LIST: '/admin/contacts',
+        DETAIL: (id: string | number) => `/admin/contacts/${id}`,
+        REPLY: (id: string | number) => `/admin/contacts/${id}/reply`,
+        DELETE: (id: string | number) => `/admin/contacts/${id}`,
+        EXPORT: '/admin/contacts/export',
     },
     // Export endpoints
     EXPORT: {

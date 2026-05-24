@@ -14,7 +14,8 @@ import {
     ChevronDown,
     MapPin,
     ChevronLeft,
-    ChevronRight
+    ChevronRight,
+    Mail
 } from 'lucide-react';
 import { ROUTES } from '@/routes/routes';
 import { useTranslation } from 'react-i18next';
@@ -58,6 +59,7 @@ const navItems = [
     { icon: FileText, label: 'sidebar.posts', path: '/admin/posts' },
     { icon: Users, label: 'sidebar.users', path: ROUTES.USERS_LIST },
     { icon: Bell, label: 'sidebar.notifications', path: '/admin/notifications' },
+    { icon: Mail, label: 'sidebar.contacts', path: ROUTES.CONTACTS },
 
     { icon: Settings, label: 'sidebar.settings', path: '/admin/settings' },
 ];

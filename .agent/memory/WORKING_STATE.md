@@ -2,34 +2,35 @@
 
 ## Current Status
 
-- Date: 2026-05-23
-- Active feature/task: `admin_users_edit`
-- Status: Completed (Steps 1 to 9)
-- Next step: Step 10: final review, deploy report, and review artifacts creation
-- Objective: Build the authenticated admin screen for editing user accounts (`/admin/users/:id/edit`).
-- Mode: Verification
+- Date: 2026-05-24
+- Active feature/task: `admin_contacts`
+- Status: Completed (Steps 1 to 10)
+- Next step: Await user approval to push the branch
+- Objective: Build the authenticated admin contacts management screen (`/admin/contacts`) as a master-detail split panel interface.
+- Mode: Handoff
 - Owner: AI collaborator
 
 ## Progress Breakdown
 
-- [x] Step 1: API and Types Contract Configuration
-- [x] Step 2: Routing Configuration
-- [x] Step 3: Translation Files Modification
-- [x] Step 4: Layout & Components Implementation
-- [x] Step 5: Integration with User Detail and User List Screens
-- [x] Step 6: Testing & Quality Gate Checks (Prepush checks)
+- [x] Step 1: Extend Backend API search capabilities
+- [x] Step 2: Establish front-end types, mappers, and contactApi client
+- [x] Step 3: Register route path and sidebar link layout integrations
+- [x] Step 4: Synchronize Vietnamese and English translations
+- [x] Step 5: Implement index page split-pane layout and ContactStatsRow components
+- [x] Step 6: Implement ContactListItem and left master list toolbar/pagination components
+- [x] Step 7: Implement ContactDetailPanel, validated ReplyForm, and DeleteContactDialog components
+- [x] Step 8: Wire React Query hooks and coordinate URL SearchParams state bindings
+- [x] Step 9: Validate quality gates via prepush checks (lint, typecheck, build, test:console)
+- [x] Step 10: Produce final review, deploy report, and handoff recommendations
 
 ## Current Reality
 
-- Modified API client, validation schemas, endpoints, and react query hooks to support user updating.
-- Aligned backend API validator (`UpdateUserRequest.php`) on `danangtrip-api` to validate and update the `status` field properly in a single request.
-- Registered `/admin/users/:id/edit` and lazy loaded the page inside React Router v7 layout.
-- Added full Vietnamese and English translation strings in `public/lang/vi/user.json` and `public/lang/en/user.json`.
-- Implemented premium-styled, responsive `UserEdit` and `UserEditForm` pages with skeletons, warning dialogs, and dirty form blocker (`UnsavedChangesGuard`).
-- Embedded self-protection rules (disable toggle/roles when editing own profile) and email modification warnings.
-- Wired Edit shortcuts inside the User Details page (`UserDetailHeader` and `UserActionsCard`) and User List table (`UserTable`).
-- Verified all quality gates using `npm run prepush:check` - linter, typecheck, production build, and all 6 console error playwright test suites passed with 100% SUCCESS and 0 errors!
-- Generated test case report: `.agent/artifacts/test-cases/2026-05-23__admin_users_edit__test-report.md`.
+- Modified API validation request (`IndexContactRequest.php`) and repository (`ContactRepository.php`) on `danangtrip-api` to filter by keyword `q`.
+- Registered route path `/admin/contacts` in React Router v7 layout and added Mail link under notifications in the sidebar navigation tree.
+- Implemented strong type schemas, data transformation mappers, axiosClient service endpoints, and React Query custom query/mutation hooks.
+- Added full Vietnamese and English translation strings in `public/lang/vi/contact.json` and `public/lang/en/contact.json`.
+- Implemented premium-styled, responsive contacts index page split layout. Included debounced keyword input, status tabs, stats cards, unread badges, relative timestamp parser, character counter form, backdrop delete modal, and excel blob downloads.
+- Verified all quality gates using `npm run prepush:check` - ESLint linting passed, tsc typecheck passed, Vite production build succeeded, and Playwright console check passed successfully (6/6 passed)!
 
 ## Validation
 
@@ -44,6 +45,6 @@
 
 ## Artifacts
 
-- Implementation Plan: `C:\Users\NGUYEN DUY TAY\.gemini\antigravity\brain\98f5f9af-fba6-4bd7-bd22-8458b6895c13\implementation_plan.md`
-- Task checklist: `C:\Users\NGUYEN DUY TAY\.gemini\antigravity\brain\98f5f9af-fba6-4bd7-bd22-8458b6895c13\task.md`
-- Test report: `d:/DATN/danangtrip-admin/.agent/artifacts/test-cases/2026-05-23__admin_users_edit__test-report.md`
+- Implementation Plan: `C:\Users\NGUYEN DUY TAY\.gemini\antigravity\brain\999b82c1-03df-4ae2-921d-d9bf481f64e9\implementation_plan.md`
+- Task checklist: `C:\Users\NGUYEN DUY TAY\.gemini\antigravity\brain\999b82c1-03df-4ae2-921d-d9bf481f64e9\task.md`
+- Walkthrough: `C:\Users\NGUYEN DUY TAY\.gemini\antigravity\brain\999b82c1-03df-4ae2-921d-d9bf481f64e9\walkthrough.md`

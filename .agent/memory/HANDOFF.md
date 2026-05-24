@@ -2,8 +2,8 @@
 
 ## Last Updated
 
-- Date: 2026-05-23
-- Status: Completed (`admin_users_create`, `web_recommendations_relocation`, & `admin_users_edit`)
+- Date: 2026-05-24
+- Status: Completed (`admin_users_create`, `web_recommendations_relocation`, `admin_users_edit`, & `admin_contacts`)
 
 ## Current Features
 
@@ -16,26 +16,26 @@
 - **Feature 3: `admin_users_edit`**
   - Route: `/admin/users/:id/edit` (DanangTrip Admin)
   - Status: Completed. Screen to edit existing user accounts built, integrated, and verified.
+- **Feature 4: `admin_contacts`**
+  - Route: `/admin/contacts` (DanangTrip Admin)
+  - Status: Completed. Authenticated contacts management split screen built, integrated, and verified.
 
-## Technical Summary - `admin_users_edit`
+## Technical Summary - `admin_contacts`
 
-- **Backend API Alignment (`danangtrip-api`):** Modified `UpdateUserRequest.php` to accept a custom `status` validation rule, enabling single-request updates for basic details, roles, and status through the PUT payload.
+- **Backend API search support (`danangtrip-api`):** Modified `IndexContactRequest.php` and `ContactRepository.php` to accept and filter by search keyword parameter `q` (fuzzy matching name, email, subject, and message).
 - **Routing & Client Setup:**
-  - Route Constant `USERS_EDIT` registered in `src/routes/routes.ts`.
+  - Route Constant `CONTACTS` registered in `src/routes/routes.ts`.
   - Lazy routes import and child route registered in `src/routes/index.tsx`.
-  - Main update endpoint defined in `src/constants/endpoints.ts`.
-  - `update` method added to `userApi.ts`.
-  - `updateUserMutation` hook registered in `useUserMutations`.
-- **UI Components:**
-  - Built premium-styled, fully localized `UserEdit` and `UserEditForm` form pages under `src/pages/Users/UserEdit/`.
-  - Prefilled form values, username readonly label, and warning/information boxes.
-  - Form validation via Yup schema `editUserSchema` supporting full i18n messages (`vi` and `en`).
-  - Added email modification warning and self-protection logic (disables toggle/roles when editing own profile).
-  - Integrated `UnsavedChangesGuard` dialog to prevent accidental navigation when form fields are dirty.
-- **Integration Links:**
-  - Enabled Edit buttons on User List table (`UserTable.tsx`).
-  - Enabled Edit buttons on User Detail header (`UserDetailHeader.tsx`).
-  - Enabled Edit buttons on User Detail sidebar actions card (`UserActionsCard.tsx`).
+  - Endpoints listing/detail/reply/delete/export defined in `src/constants/endpoints.ts`.
+  - Sidebar navigation Link added inside `Sidebar.tsx`.
+  - Contact API wrappers implemented in `contactApi.ts` and Query/Mutation hooks created in `useContactQueries.ts`.
+- **UI Master-Detail Components:**
+  - Split-pane layout page built under `src/pages/Contacts/`.
+  - Left fixed list pane with search field, status filter tabs, paginated contact item rows (`ContactListItem.tsx`), and mini-pagination.
+  - Stats card rows grid (`ContactStatsRow.tsx`) showing total, new, read, and replied counts with pulse unread badge indicators.
+  - Right detail panel (`ContactDetailPanel.tsx`) showing full subject headers, sender email/phone links, user messages, green answered panels (with replier names/timestamps), inline email replies form (`ReplyForm.tsx` validated with Yup), and backdrop deletions confirmation modal (`DeleteContactDialog.tsx`).
+- **Translations:**
+  - Registered full translations inside `public/lang/vi/contact.json` and `public/lang/en/contact.json`.
 
 ## Final Verification
 
@@ -52,4 +52,4 @@
 
 ## Next Action
 
-Await user review and deployment approval.
+Await user review and approval for deployment/push.
