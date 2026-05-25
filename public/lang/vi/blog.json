@@ -1,0 +1,70 @@
+{
+    "breadcrumb": "Blog / Danh sách Bài viết",
+    "title": "Danh sách Bài viết",
+    "subtitle": "Quản lý nội dung blog du lịch Đà Nẵng",
+    "stats": {
+        "total": "TỔNG BÀI VIẾT",
+        "published": "ĐÃ XUẤT BẢN",
+        "draft": "BẢN NHÁP",
+        "archived": "LƯU TRỮ"
+    },
+    "filters": {
+        "search_placeholder": "Tìm theo tiêu đề bài viết...",
+        "category": "Danh mục",
+        "status": "Trạng thái",
+        "category_all": "Tất cả danh mục",
+        "status_all": "Tất cả trạng thái",
+        "btn_filter": "Lọc",
+        "btn_reset": "Đặt lại"
+    },
+    "table": {
+        "selected": "Đã chọn {{count}}",
+        "displaying": "Hiển thị {{start}}–{{end}} / {{total}} bài viết",
+        "per_page": "Số dòng",
+        "col_article": "Bài viết",
+        "col_category": "Danh mục",
+        "col_views": "Lượt xem",
+        "col_created": "Ngày tạo",
+        "col_published": "Ngày xuất bản",
+        "col_status": "Trạng thái",
+        "col_actions": "Thao tác",
+        "views": "lượt xem",
+        "no_published_date": "—",
+        "scheduled": "LÊN LỊCH",
+        "views_count": "{{count}} lượt xem"
+    },
+    "actions": {
+        "create": "Thêm bài viết",
+        "view": "Xem",
+        "edit": "Sửa",
+        "delete": "Xóa",
+        "bulk_publish": "Xuất bản",
+        "bulk_archive": "Lưu trữ",
+        "bulk_delete": "Xóa",
+        "bulk_delete_confirm": "Bạn có chắc chắn muốn xóa {{count}} bài viết đã chọn? Hành động này không thể hoàn tác.",
+        "confirm_delete_title": "Xóa bài viết này?",
+        "confirm_delete_body": "Bài viết \"{{title}}\" sẽ bị xóa vĩnh viễn.",
+        "confirm_delete_warning": "Tất cả danh mục liên kết sẽ bị gỡ theo.",
+        "cancel": "Hủy",
+        "confirm": "Xác nhận",
+        "status_draft": "Bản nháp",
+        "status_published": "Đã xuất bản",
+        "status_archived": "Lưu trữ"
+    },
+    "status": {
+        "draft": "BẢN NHÁP",
+        "published": "ĐÃ XUẤT BẢN",
+        "archived": "LƯU TRỮ"
+    },
+    "empty": {
+        "title": "Không tìm thấy bài viết nào",
+        "subtitle": "Thử thay đổi bộ lọc hoặc tạo bài viết mới"
+    },
+    "toast": {
+        "delete_success": "Đã xóa bài viết thành công",
+        "status_success": "Cập nhật trạng thái bài viết thành công",
+        "bulk_delete_success": "Đã xóa các bài viết thành công",
+        "bulk_status_success": "Đã cập nhật trạng thái các bài viết thành công",
+        "network_error": "Lỗi mạng hoặc máy chủ không phản hồi"
+    }
+}

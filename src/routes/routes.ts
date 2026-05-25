@@ -29,5 +29,8 @@ export const ROUTES = {
     NOTIFICATIONS: '/admin/notifications',
     NOTIFICATIONS_SEND: '/admin/notifications/send',
     CONTACTS: '/admin/contacts',
+    BLOG_POSTS: '/admin/blog-posts',
+    BLOG_POSTS_CREATE: '/admin/blog-posts/create',
+    BLOG_POSTS_EDIT: '/admin/blog-posts/edit/:id',
 } as const;
 

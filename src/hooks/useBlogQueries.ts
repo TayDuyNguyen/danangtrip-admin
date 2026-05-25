@@ -1,0 +1,68 @@
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { blogApi } from "@/api/blogApi";
+import { mapBlogPostList, mapBlogCategory } from "@/dataHelper/blog.mapper";
+import type { BlogListFilters } from "@/types";
+
+export const blogKeys = {
+    all: ["blogs"] as const,
+    lists: () => [...blogKeys.all, "list"] as const,
+    list: (filters: BlogListFilters, page: number, limit: number) =>
+        [...blogKeys.lists(), { ...filters, page, limit }] as const,
+    categories: () => [...blogKeys.all, "categories"] as const,
+};
+
+export const useAdminBlogPostsQuery = (
+    filters: BlogListFilters,
+    page: number,
+    limit: number
+) => {
+    return useQuery({
+        queryKey: blogKeys.list(filters, page, limit),
+        queryFn: async () => {
+            const response = await blogApi.getList({ ...filters, page, per_page: limit });
+            if (!response.data) throw new Error("Empty response");
+            return mapBlogPostList(response.data);
+        },
+        staleTime: 1000 * 30, // 30 seconds
+    });
+};
+
+export const useBlogCategoriesQuery = () => {
+    return useQuery({
+        queryKey: blogKeys.categories(),
+        queryFn: async () => {
+            const response = await blogApi.getCategories();
+            if (!response.data) throw new Error("Empty response");
+            const data = response.data;
+            return Array.isArray(data) ? data.map(mapBlogCategory) : [];
+        },
+        staleTime: 1000 * 60 * 5, // 5 minutes
+    });
+};
+
+export const useBlogMutations = () => {
+    const queryClient = useQueryClient();
+
+    const deleteMutation = useMutation({
+        mutationFn: (id: number | string) =>
+            blogApi.delete(id),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: blogKeys.all });
+            queryClient.invalidateQueries({ queryKey: ["dashboard"] });
+        },
+    });
+
+    const updateStatusMutation = useMutation({
+        mutationFn: ({ id, status }: { id: number | string; status: string }) =>
+            blogApi.updateStatus(id, status),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: blogKeys.all });
+            queryClient.invalidateQueries({ queryKey: ["dashboard"] });
+        },
+    });
+
+    return {
+        deleteMutation,
+        updateStatusMutation,
+    };
+};

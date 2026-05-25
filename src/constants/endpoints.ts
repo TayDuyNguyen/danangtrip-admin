@@ -136,6 +136,13 @@ export const API_ENDPOINTS = {
         UPDATE_ROLE: (id: string | number) => `/admin/users/${id}/role`,
         UPDATE_STATUS: (id: string | number) => `/admin/users/${id}/status`,
         DELETE: (id: string | number) => `/admin/users/${id}`,
+    },
+    // Blog Posts management
+    BLOG: {
+        LIST: '/admin/blog-posts',
+        CATEGORIES: '/admin/blog-categories',
+        PATCH_STATUS: (id: string | number) => `/admin/blog-posts/${id}/status`,
+        DELETE: (id: string | number) => `/admin/blog-posts/${id}`,
     }
 } as const;
 
