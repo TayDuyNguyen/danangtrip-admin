@@ -1,0 +1,70 @@
+{
+    "breadcrumb": "Blog / Article List",
+    "title": "Blog Posts",
+    "subtitle": "Manage Da Nang tourism blog content",
+    "stats": {
+        "total": "TOTAL POSTS",
+        "published": "PUBLISHED",
+        "draft": "DRAFTS",
+        "archived": "ARCHIVED"
+    },
+    "filters": {
+        "search_placeholder": "Search by article title...",
+        "category": "Category",
+        "status": "Status",
+        "category_all": "All Categories",
+        "status_all": "All Statuses",
+        "btn_filter": "Filter",
+        "btn_reset": "Reset"
+    },
+    "table": {
+        "selected": "Selected {{count}}",
+        "displaying": "Showing {{start}}–{{end}} of {{total}} articles",
+        "per_page": "Display",
+        "col_article": "Article",
+        "col_category": "Category",
+        "col_views": "Views",
+        "col_created": "Created At",
+        "col_published": "Published At",
+        "col_status": "Status",
+        "col_actions": "Actions",
+        "views": "views",
+        "no_published_date": "—",
+        "scheduled": "SCHEDULED",
+        "views_count": "{{count}} views"
+    },
+    "actions": {
+        "create": "Create post",
+        "view": "View",
+        "edit": "Edit",
+        "delete": "Delete",
+        "bulk_publish": "Publish",
+        "bulk_archive": "Archive",
+        "bulk_delete": "Delete",
+        "bulk_delete_confirm": "Are you sure you want to delete {{count}} selected articles? This action cannot be undone.",
+        "confirm_delete_title": "Delete this article?",
+        "confirm_delete_body": "The article \"{{title}}\" will be permanently deleted.",
+        "confirm_delete_warning": "All associated categories will be unlinked.",
+        "cancel": "Cancel",
+        "confirm": "Confirm",
+        "status_draft": "Draft",
+        "status_published": "Published",
+        "status_archived": "Archived"
+    },
+    "status": {
+        "draft": "DRAFT",
+        "published": "PUBLISHED",
+        "archived": "ARCHIVED"
+    },
+    "empty": {
+        "title": "No articles found",
+        "subtitle": "Try changing the filters or create a new article"
+    },
+    "toast": {
+        "delete_success": "Blog post deleted successfully",
+        "status_success": "Blog post status updated successfully",
+        "bulk_delete_success": "Blog posts deleted successfully",
+        "bulk_status_success": "Blog posts status updated successfully",
+        "network_error": "Network error or server failed to respond"
+    }
+}
