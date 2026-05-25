@@ -1,6 +1,6 @@
 import type { TourCategory } from '@/dataHelper/tourCategory.dataHelper';
 import CategoryCard from './CategoryCard';
-import * as Icons from 'lucide-react';
+import { FolderOpen } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Reorder } from 'framer-motion';
 
@@ -20,7 +20,7 @@ const CategoryGrid = ({ categories, onEdit, onDelete, onStatusChange, isReorderM
         return (
             <div className="py-20 flex flex-col items-center justify-center text-center bg-white rounded-[32px] border border-dashed border-slate-200">
                 <div className="w-24 h-24 bg-slate-50 rounded-[32px] flex items-center justify-center mb-6">
-                    <Icons.FolderOpen size={48} className="text-slate-200" />
+                    <FolderOpen size={48} className="text-slate-200" />
                 </div>
                 <h3 className="text-xl font-black text-slate-900 tracking-tight">{t('messages.no_data')}</h3>
                 <p className="text-slate-500 font-medium mt-2">{t('messages.no_data_subtitle')}</p>

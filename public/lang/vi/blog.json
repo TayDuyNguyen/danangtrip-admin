@@ -65,6 +65,70 @@
         "status_success": "Cập nhật trạng thái bài viết thành công",
         "bulk_delete_success": "Đã xóa các bài viết thành công",
         "bulk_status_success": "Đã cập nhật trạng thái các bài viết thành công",
-        "network_error": "Lỗi mạng hoặc máy chủ không phản hồi"
+        "network_error": "Lỗi mạng hoặc máy chủ không phản hồi",
+        "draft_success": "Đã lưu bản nháp thành công!",
+        "publish_success": "Bài viết đã được xuất bản!",
+        "category_create_success": "Tạo danh mục thành công!",
+        "upload_error": "Lỗi tải ảnh lên!"
+    },
+    "create_title": "Tạo Bài viết mới",
+    "create_subtitle": "Viết và xuất bản bài viết blog du lịch",
+    "form": {
+        "title": "Tiêu đề bài viết",
+        "title_placeholder": "Nhập tiêu đề bài viết...",
+        "slug": "Slug",
+        "slug_placeholder": "tieu-de-bai-viet",
+        "slug_auto": "Tự động",
+        "excerpt": "Mô tả ngắn (Excerpt)",
+        "excerpt_placeholder": "Mô tả ngắn gọn về bài viết, hiển thị trong danh sách...",
+        "content": "Nội dung",
+        "content_placeholder": "Bắt đầu viết nội dung bài viết...",
+        "required": "Bắt buộc",
+        "sections": {
+            "content": "Nội dung bài viết",
+            "publish": "Xuất bản",
+            "categories": "Danh mục",
+            "featured_image": "Ảnh đại diện",
+            "guidelines": "💡 Lưu ý"
+        },
+        "publish": {
+            "status": "Trạng thái",
+            "draft": "Bản nháp (draft)",
+            "draft_helper": "Chưa hiển thị công khai",
+            "published": "Xuất bản ngay (published)",
+            "published_helper": "Hiển thị ngay sau khi lưu",
+            "scheduled": "Lên lịch (scheduled)",
+            "scheduled_helper": "Xuất bản vào thời điểm đã chọn",
+            "date": "Ngày xuất bản",
+            "time": "Giờ",
+            "save_draft": "Lưu bản nháp",
+            "publish_btn": "Xuất bản"
+        },
+        "categories": {
+            "placeholder": "Chọn danh mục...",
+            "add_new": "Thêm danh mục mới",
+            "add_btn": "Thêm",
+            "input_placeholder": "Tên danh mục mới..."
+        },
+        "media": {
+            "upload_drag": "Kéo thả ảnh vào đây hoặc",
+            "select_btn": "Chọn ảnh",
+            "helper": "PNG, JPG, WEBP · Tối đa 5MB · Khuyến nghị 1200x630px",
+            "change": "Thay đổi",
+            "delete": "Xóa"
+        },
+        "guidelines": {
+            "item_1": "Tiêu đề nên ngắn gọn, có từ khóa SEO",
+            "item_2": "Ảnh đại diện tỷ lệ 16:9 (1200x630px)",
+            "item_3": "Mô tả ngắn hiển thị trong kết quả tìm kiếm",
+            "item_4": "Lưu nháp trước khi xuất bản để kiểm tra"
+        },
+        "validation": {
+            "title_required": "Tiêu đề bài viết không được để trống",
+            "title_max": "Tiêu đề không được vượt quá 255 ký tự",
+            "content_required": "Nội dung bài viết không được để trống",
+            "categories_required": "Vui lòng chọn ít nhất một danh mục",
+            "excerpt_max": "Tóm tắt không được vượt quá 500 ký tự"
+        }
     }
 }

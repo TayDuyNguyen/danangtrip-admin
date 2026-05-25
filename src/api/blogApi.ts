@@ -1,6 +1,14 @@
 import axiosClient from "./axiosClient";
 import { API_ENDPOINTS } from "@/constants";
-import type { BlogListFilters, RawBlogPostListResponse, RawBlogCategory, ApiResponse } from "@/types";
+import type {
+    BlogListFilters,
+    RawBlogPostListResponse,
+    RawBlogCategory,
+    ApiResponse,
+    CreateBlogPostPayload,
+    CreateBlogCategoryPayload,
+    RawBlogPost
+} from "@/types";
 
 export const blogApi = {
     getList: (params: BlogListFilters & { page?: number; per_page?: number }): Promise<ApiResponse<RawBlogPostListResponse>> => {
@@ -21,6 +29,12 @@ export const blogApi = {
 
     getCategories: (): Promise<ApiResponse<RawBlogCategory[]>> =>
         axiosClient.get(API_ENDPOINTS.BLOG.CATEGORIES),
+
+    create: (payload: CreateBlogPostPayload): Promise<ApiResponse<RawBlogPost>> =>
+        axiosClient.post(API_ENDPOINTS.BLOG.CREATE, payload),
+
+    createCategory: (payload: CreateBlogCategoryPayload): Promise<ApiResponse<RawBlogCategory>> =>
+        axiosClient.post(API_ENDPOINTS.BLOG.CREATE_CATEGORY, payload),
 
     updateStatus: (id: number | string, status: string): Promise<ApiResponse<void>> =>
         axiosClient.patch(API_ENDPOINTS.BLOG.PATCH_STATUS(id), { status }),

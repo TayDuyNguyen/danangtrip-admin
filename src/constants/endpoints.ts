@@ -140,7 +140,9 @@ export const API_ENDPOINTS = {
     // Blog Posts management
     BLOG: {
         LIST: '/admin/blog-posts',
+        CREATE: '/admin/blog-posts',
         CATEGORIES: '/admin/blog-categories',
+        CREATE_CATEGORY: '/admin/blog-categories',
         PATCH_STATUS: (id: string | number) => `/admin/blog-posts/${id}/status`,
         DELETE: (id: string | number) => `/admin/blog-posts/${id}`,
     }

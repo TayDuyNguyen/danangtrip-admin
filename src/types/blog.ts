@@ -93,3 +93,19 @@ export interface BlogListFilters {
     sort?: string;
     order?: 'asc' | 'desc';
 }
+
+export interface CreateBlogPostPayload {
+    title: string;
+    content: string;
+    excerpt?: string | null;
+    featured_image?: string | null;
+    category_ids: number[];
+    status?: 'draft' | 'published' | 'archived';
+    published_at?: string | null;
+}
+
+export interface CreateBlogCategoryPayload {
+    name: string;
+    slug?: string;
+    description?: string | null;
+}

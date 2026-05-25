@@ -1,4 +1,5 @@
-import { useForm, Controller, useWatch } from 'react-hook-form';
+import { useRef, useState } from 'react';
+import { useForm, Controller, useWatch, type FieldErrors } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useTranslation } from 'react-i18next';
 import {
@@ -20,6 +21,7 @@ import {
 } from 'lucide-react';
 import { TextInput } from '@/components/ui/TextInput';
 import { TextareaField } from '@/components/ui/TextareaField';
+import { CurrencyInput } from '@/components/ui/CurrencyInput';
 import CustomSelect from '@/components/ui/CustomSelect';
 import type { Option } from '@/components/ui/CustomSelect';
 import ToggleSwitch from '@/components/ui/ToggleSwitch';
@@ -38,17 +40,48 @@ import {
 } from '@/hooks/useLocationQueries';
 import MapPicker from './MapPicker';
 import MarkdownEditor from './MarkdownEditor';
-import ImageUploader from './ImageUploader';
+import ImageUploader, { type ImageUploaderHandle } from './ImageUploader';
 import TagSelector from './TagSelector';
 import { slugifyVietnamese } from '@/utils/slug';
 
 interface LocationFormProps {
     isEdit?: boolean;
     initialData?: CreateLocationInput & { id: number };
+    onSubmittingChange?: (isSubmitting: boolean) => void;
+    onSuccess?: () => void;
 }
 
-const LocationForm = ({ isEdit = false, initialData }: LocationFormProps) => {
+const createDefaultValues = {
+    name: '',
+    slug: '',
+    category_id: 0 as number,
+    subcategory_id: null,
+    description: '',
+    short_description: '',
+    address: '',
+    district: '',
+    latitude: undefined as unknown as number,
+    longitude: undefined as unknown as number,
+    phone: '',
+    email: '',
+    website: '',
+    opening_hours: '',
+    price_min: null,
+    price_max: null,
+    price_level: 1,
+    status: 'active' as const,
+    is_featured: false,
+    tags: [],
+    amenities: [],
+    thumbnail: '',
+    images: [],
+    video_url: '',
+};
+
+const LocationForm = ({ isEdit = false, initialData, onSubmittingChange, onSuccess }: LocationFormProps) => {
     const { t } = useTranslation('location');
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const imageUploaderRef = useRef<ImageUploaderHandle>(null);
     const { data: categories = [], isLoading: categoriesLoading } = useLocationCategoriesQuery();
     const { data: tags = [], isLoading: tagsLoading } = useLocationTagsQuery();
     const { data: amenities = [], isLoading: amenitiesLoading } = useLocationAmenitiesQuery();
@@ -63,29 +96,98 @@ const LocationForm = ({ isEdit = false, initialData }: LocationFormProps) => {
         handleSubmit,
         setValue,
         watch,
+        reset,
         formState: { errors }
     } = useForm<CreateLocationInput>({
         resolver: yupResolver(createLocationSchema(t)),
-        defaultValues: initialData || {
-            status: 'active',
-            is_featured: false,
-            tags: [],
-            amenities: [],
-            images: [],
-            price_level: 1
-        }
+        defaultValues: initialData || createDefaultValues
     } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
 
-    const onSubmit = (data: CreateLocationInput) => {
-        if (isEdit && initialData?.id) {
-            updateMutation.mutate({ id: initialData.id, data });
-        } else {
-            createMutation.mutate(data as any); // eslint-disable-line @typescript-eslint/no-explicit-any
+    const normalizeOpeningHours = (value: CreateLocationInput['opening_hours']) => {
+        if (Array.isArray(value)) {
+            const items = value.map((item) => String(item).trim()).filter(Boolean);
+            return items.length > 0 ? items : null;
         }
+
+        if (typeof value !== 'string') return null;
+
+        const items = value
+            .split(/\r?\n/)
+            .map((item) => item.trim())
+            .filter(Boolean);
+
+        return items.length > 0 ? items : null;
+    };
+
+    const setSubmittingState = (nextValue: boolean) => {
+        setIsSubmitting(nextValue);
+        onSubmittingChange?.(nextValue);
+    };
+
+    const onSubmit = async (data: CreateLocationInput) => {
+        setSubmittingState(true);
+        try {
+            const dataWithUploadedImages = await imageUploaderRef.current?.uploadPendingImages(data) ?? data;
+            const payload = {
+                ...dataWithUploadedImages,
+                opening_hours: normalizeOpeningHours(dataWithUploadedImages.opening_hours),
+            } as CreateLocationInput;
+
+            if (isEdit && initialData?.id) {
+                await updateMutation.mutateAsync({ id: initialData.id, data: payload });
+                onSuccess?.();
+            } else {
+                await createMutation.mutateAsync(payload as any); // eslint-disable-line @typescript-eslint/no-explicit-any
+                imageUploaderRef.current?.clearPendingImages();
+                reset(createDefaultValues as CreateLocationInput);
+                onSuccess?.();
+            }
+        } finally {
+            setSubmittingState(false);
+        }
+    };
+
+    const focusFirstInvalidField = (formErrors: FieldErrors<CreateLocationInput>) => {
+        const fieldOrder: Array<keyof CreateLocationInput> = [
+            'name',
+            'slug',
+            'category_id',
+            'short_description',
+            'description',
+            'address',
+            'district',
+            'phone',
+            'email',
+            'website',
+            'latitude',
+            'longitude',
+            'price_min',
+            'price_max',
+            'thumbnail',
+        ];
+        const firstField = fieldOrder.find((field) => formErrors[field]) || (Object.keys(formErrors)[0] as keyof CreateLocationInput | undefined);
+        if (!firstField) return;
+
+        const fieldContainer = document.querySelector<HTMLElement>(`[data-location-field="${String(firstField)}"]`);
+        const focusTarget = fieldContainer?.querySelector<HTMLElement>(
+            'input:not([type="hidden"]), textarea, button, [tabindex]:not([tabindex="-1"])'
+        );
+
+        fieldContainer?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        window.setTimeout(() => focusTarget?.focus(), 220);
     };
 
     const watchName = useWatch({ control, name: 'name' });
     const watchAllFields = useWatch({ control });
+    const debugErrors = Object.fromEntries(
+        Object.entries(errors).map(([key, value]) => [
+            key,
+            {
+                type: value?.type,
+                message: value?.message,
+            },
+        ])
+    );
 
     const handleAutoSlug = () => {
         if (watchName) {
@@ -108,7 +210,7 @@ const LocationForm = ({ isEdit = false, initialData }: LocationFormProps) => {
     return (
         <form
             id="location-form"
-            onSubmit={handleSubmit(onSubmit)}
+            onSubmit={handleSubmit(onSubmit, focusFirstInvalidField)}
             className="flex flex-col lg:flex-row gap-8"
         >
             {/* Left Column: Form Fields */}
@@ -123,7 +225,7 @@ const LocationForm = ({ isEdit = false, initialData }: LocationFormProps) => {
                     />
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="md:col-span-2 space-y-2">
+                        <div className="md:col-span-2 space-y-2" data-location-field="name">
                             <label className="text-sm font-semibold text-slate-700 block">{t('form.basic.name')}</label>
                             <TextInput
                                 placeholder={t('form.basic.name_placeholder')}
@@ -134,7 +236,7 @@ const LocationForm = ({ isEdit = false, initialData }: LocationFormProps) => {
                             {errors.name && <p className="text-xs text-red-500 font-medium">{errors.name.message}</p>}
                         </div>
 
-                        <div className="md:col-span-2 space-y-2">
+                        <div className="md:col-span-2 space-y-2" data-location-field="slug">
                             <label className="text-sm font-semibold text-slate-700 block">{t('form.basic.slug')}</label>
                             <div className="flex items-start gap-3">
                                 <div className="flex-1">
@@ -161,7 +263,7 @@ const LocationForm = ({ isEdit = false, initialData }: LocationFormProps) => {
                             name="category_id"
                             control={control}
                             render={({ field }) => (
-                                <div className="space-y-2">
+                                <div className="space-y-2" data-location-field="category_id">
                                     <label className="text-sm font-semibold text-slate-700 block mb-1">
                                         {t('form.basic.category')} <span className="text-red-500">*</span>
                                     </label>
@@ -177,7 +279,7 @@ const LocationForm = ({ isEdit = false, initialData }: LocationFormProps) => {
                             )}
                         />
 
-                        <div className="md:col-span-2 space-y-2">
+                        <div className="md:col-span-2 space-y-2" data-location-field="short_description">
                             <label className="text-sm font-semibold text-slate-700 block">{t('form.basic.short_description')}</label>
                             <TextareaField
                                 placeholder={t('form.basic.short_description_placeholder')}
@@ -188,7 +290,7 @@ const LocationForm = ({ isEdit = false, initialData }: LocationFormProps) => {
                             {errors.short_description && <p className="text-xs text-red-500 font-medium">{errors.short_description.message}</p>}
                         </div>
 
-                        <div className="md:col-span-2">
+                        <div className="md:col-span-2" data-location-field="description">
                             <Controller
                                 name="description"
                                 control={control}
@@ -216,7 +318,7 @@ const LocationForm = ({ isEdit = false, initialData }: LocationFormProps) => {
                     />
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="md:col-span-2 space-y-2">
+                        <div className="md:col-span-2 space-y-2" data-location-field="address">
                             <label className="text-sm font-semibold text-slate-700 block">{t('form.contact.address')}</label>
                             <TextInput
                                 placeholder={t('form.contact.address_placeholder')}
@@ -231,7 +333,7 @@ const LocationForm = ({ isEdit = false, initialData }: LocationFormProps) => {
                             name="district"
                             control={control}
                             render={({ field }) => (
-                                <div className="space-y-2">
+                                <div className="space-y-2" data-location-field="district">
                                     <label className="text-sm font-semibold text-slate-700 block mb-1">
                                         {t('form.contact.district')} <span className="text-red-500">*</span>
                                     </label>
@@ -246,7 +348,7 @@ const LocationForm = ({ isEdit = false, initialData }: LocationFormProps) => {
                             )}
                         />
 
-                        <div className="space-y-2">
+                        <div className="space-y-2" data-location-field="phone">
                             <label className="text-sm font-semibold text-slate-700 block">{t('form.contact.phone')}</label>
                             <TextInput
                                 placeholder={t('form.contact.phone_placeholder')}
@@ -257,7 +359,7 @@ const LocationForm = ({ isEdit = false, initialData }: LocationFormProps) => {
                             {errors.phone && <p className="text-xs text-red-500 font-medium">{errors.phone.message}</p>}
                         </div>
 
-                        <div className="space-y-2">
+                        <div className="space-y-2" data-location-field="email">
                             <label className="text-sm font-semibold text-slate-700 block">{t('form.contact.email')}</label>
                             <TextInput
                                 placeholder={t('form.contact.email_placeholder')}
@@ -268,7 +370,7 @@ const LocationForm = ({ isEdit = false, initialData }: LocationFormProps) => {
                             {errors.email && <p className="text-xs text-red-500 font-medium">{errors.email.message}</p>}
                         </div>
 
-                        <div className="space-y-2">
+                        <div className="space-y-2" data-location-field="website">
                             <label className="text-sm font-semibold text-slate-700 block">{t('form.contact.website')}</label>
                             <TextInput
                                 placeholder={t('form.contact.website_placeholder')}
@@ -290,27 +392,29 @@ const LocationForm = ({ isEdit = false, initialData }: LocationFormProps) => {
                         required
                     />
 
-                    <Controller
-                        name="latitude"
-                        control={control}
-                        render={({ field: latField }) => (
-                            <Controller
-                                name="longitude"
-                                control={control}
-                                render={({ field: lngField }) => (
-                                    <MapPicker
-                                        lat={latField.value}
-                                        lng={lngField.value}
-                                        onChange={(lat, lng) => {
-                                            latField.onChange(lat);
-                                            lngField.onChange(lng);
-                                        }}
-                                        address={watchAllFields.address}
-                                    />
-                                )}
-                            />
-                        )}
-                    />
+                    <div data-location-field={errors.latitude ? 'latitude' : errors.longitude ? 'longitude' : 'map'}>
+                        <Controller
+                            name="latitude"
+                            control={control}
+                            render={({ field: latField }) => (
+                                <Controller
+                                    name="longitude"
+                                    control={control}
+                                    render={({ field: lngField }) => (
+                                        <MapPicker
+                                            lat={latField.value}
+                                            lng={lngField.value}
+                                            onChange={(lat, lng) => {
+                                                latField.onChange(lat);
+                                                lngField.onChange(lng);
+                                            }}
+                                            address={watchAllFields.address}
+                                        />
+                                    )}
+                                />
+                            )}
+                        />
+                    </div>
                     {(errors.latitude || errors.longitude) && (
                         <p className="text-xs text-red-500 font-medium mt-2">
                             {t('location:validation.required', { field: t('form.sections.map') })}
@@ -327,24 +431,54 @@ const LocationForm = ({ isEdit = false, initialData }: LocationFormProps) => {
                     />
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="space-y-2">
+                        <div className="space-y-2" data-location-field="price_min">
                             <label className="text-sm font-semibold text-slate-700 block">{t('form.pricing.price_min')}</label>
-                            <TextInput
-                                type="number"
-                                {...register('price_min')}
-                                invalid={!!errors.price_min}
-                                leftIcon={<DollarSign className="w-4 h-4" />}
+                            <Controller
+                                name="price_min"
+                                control={control}
+                                render={({ field }) => (
+                                    <div className="relative">
+                                        <CurrencyInput
+                                            value={field.value ?? null}
+                                            onChange={field.onChange}
+                                            onBlur={field.onBlur}
+                                            name={field.name}
+                                            ref={field.ref}
+                                            invalid={!!errors.price_min}
+                                            placeholder="0"
+                                            className="h-[52px] pr-16 rounded-2xl"
+                                        />
+                                        <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">
+                                            {t('form.pricing.currency_suffix')}
+                                        </span>
+                                    </div>
+                                )}
                             />
                             {errors.price_min && <p className="text-xs text-red-500 font-medium">{errors.price_min.message}</p>}
                         </div>
 
-                        <div className="space-y-2">
+                        <div className="space-y-2" data-location-field="price_max">
                             <label className="text-sm font-semibold text-slate-700 block">{t('form.pricing.price_max')}</label>
-                            <TextInput
-                                type="number"
-                                {...register('price_max')}
-                                invalid={!!errors.price_max}
-                                leftIcon={<DollarSign className="w-4 h-4" />}
+                            <Controller
+                                name="price_max"
+                                control={control}
+                                render={({ field }) => (
+                                    <div className="relative">
+                                        <CurrencyInput
+                                            value={field.value ?? null}
+                                            onChange={field.onChange}
+                                            onBlur={field.onBlur}
+                                            name={field.name}
+                                            ref={field.ref}
+                                            invalid={!!errors.price_max}
+                                            placeholder="0"
+                                            className="h-[52px] pr-16 rounded-2xl"
+                                        />
+                                        <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">
+                                            {t('form.pricing.currency_suffix')}
+                                        </span>
+                                    </div>
+                                )}
                             />
                             {errors.price_max && <p className="text-xs text-red-500 font-medium">{errors.price_max.message}</p>}
                         </div>
@@ -359,12 +493,20 @@ const LocationForm = ({ isEdit = false, initialData }: LocationFormProps) => {
                                     </label>
                                     <CustomSelect
                                         options={[
-                                            { value: 1, label: '$ (Free/Cheap)' },
-                                            { value: 2, label: '$$ (Affordable)' },
-                                            { value: 3, label: '$$$ (Expensive)' },
-                                            { value: 4, label: '$$$$ (Very Expensive)' },
+                                            { value: 1, label: '$ - Miễn phí / rẻ' },
+                                            { value: 2, label: '$$ - Phổ thông' },
+                                            { value: 3, label: '$$$ - Cao' },
+                                            { value: 4, label: '$$$$ - Rất cao' },
                                         ]}
-                                        value={{ value: field.value || 1, label: `${'$'.repeat(field.value || 1)}` }}
+                                        value={{
+                                            value: field.value || 1,
+                                            label: [
+                                                '$ - Miễn phí / rẻ',
+                                                '$$ - Phổ thông',
+                                                '$$$ - Cao',
+                                                '$$$$ - Rất cao',
+                                            ][(field.value || 1) - 1],
+                                        }}
                                         onChange={(opt: Option | null) => field.onChange(opt?.value)}
                                     />
                                 </div>
@@ -373,11 +515,16 @@ const LocationForm = ({ isEdit = false, initialData }: LocationFormProps) => {
 
                         <div className="space-y-2">
                             <label className="text-sm font-semibold text-slate-700 block">{t('form.pricing.opening_hours')}</label>
-                            <TextInput
+                            <TextareaField
                                 placeholder={t('form.pricing.opening_hours_placeholder')}
                                 {...register('opening_hours')}
-                                leftIcon={<Clock className="w-4 h-4" />}
+                                rows={3}
+                                className="min-h-[92px] rounded-2xl"
                             />
+                            <p className="flex items-center gap-1.5 text-xs font-medium text-slate-400">
+                                <Clock className="w-3.5 h-3.5" />
+                                {t('form.pricing.opening_hours_helper')}
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -429,7 +576,9 @@ const LocationForm = ({ isEdit = false, initialData }: LocationFormProps) => {
                         subtitle={t('form.section_descriptions.media')}
                         required
                     />
-                    <ImageUploader setValue={setValue} watch={watch} />
+                    <div data-location-field="thumbnail">
+                        <ImageUploader ref={imageUploaderRef} setValue={setValue} watch={watch} />
+                    </div>
                     {errors.thumbnail && <p className="text-xs text-red-500 font-bold mt-2">{errors.thumbnail.message}</p>}
                 </div>
             </div>
@@ -439,10 +588,7 @@ const LocationForm = ({ isEdit = false, initialData }: LocationFormProps) => {
                 {/* DEBUG: Show validation errors in dev mode if needed */}
                 {Object.keys(errors).length > 0 && import.meta.env.DEV && (
                     <div className="bg-red-50 p-4 rounded-2xl border border-red-100 text-[10px] font-mono text-red-600 overflow-auto max-h-40">
-                        <pre>{JSON.stringify({
-                            ...errors,
-                            opening_hours: typeof watchAllFields.opening_hours === 'string' ? watchAllFields.opening_hours : (watchAllFields.opening_hours ? '' : null)
-                        }, null, 2)}</pre>
+                        <pre>{JSON.stringify(debugErrors, null, 2)}</pre>
                     </div>
                 )}
                 <div className="sticky top-28 space-y-6">
@@ -538,7 +684,7 @@ const LocationForm = ({ isEdit = false, initialData }: LocationFormProps) => {
                             form="location-form"
                             type="submit"
                             className="w-full rounded-2xl bg-[#14b8a6] hover:bg-[#0d9488] text-white h-14 font-bold shadow-lg shadow-[#14b8a6]/20"
-                            isLoading={isEdit ? updateMutation.isPending : createMutation.isPending}
+                            isLoading={isSubmitting}
                         >
                             {isEdit ? t('form.actions.update_location') : t('form.actions.create_location')}
                         </Button>

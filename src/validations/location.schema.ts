@@ -114,7 +114,7 @@ export interface CreateLocationInput {
     phone?: string | null;
     email?: string | null;
     website?: string | null;
-    opening_hours?: string | null;
+    opening_hours?: string | string[] | null;
     price_min?: number | null;
     price_max?: number | null;
     price_level?: number | null;

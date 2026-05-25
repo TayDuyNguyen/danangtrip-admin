@@ -1,8 +1,7 @@
 import { Edit2, Trash2, GripVertical, MapPinned } from 'lucide-react';
-import * as Icons from 'lucide-react';
 import type { ComponentType, CSSProperties } from 'react';
 import { cn } from '@/utils/cn';
-import { resolveCategoryIconName } from '@/utils/categoryIcon';
+import { getCategoryIconComponent } from '@/utils/categoryIcon';
 import type { Category } from '@/dataHelper/category.dataHelper';
 import { useTranslation } from 'react-i18next';
 
@@ -18,8 +17,7 @@ interface CategoryCardProps {
 const CategoryCard = ({ category, displayOrder, onEdit, onDelete, onStatusChange, isReorderMode }: CategoryCardProps) => {
     const { t } = useTranslation('location');
 
-    const iconName = resolveCategoryIconName(category.icon, 'MapPinned');
-    const IconComponent = (Icons as unknown as Record<string, ComponentType<{ size?: number; className?: string; style?: CSSProperties }>>)[iconName] || MapPinned;
+    const IconComponent = (getCategoryIconComponent(category.icon, 'MapPinned') || MapPinned) as ComponentType<{ size?: number; className?: string; style?: CSSProperties }>;
     const nextStatus = category.status === 'active' ? 'inactive' : 'active';
     const progress = Math.min((category.locationsCount / 50) * 100, 100);
     const visibleOrder = displayOrder ?? category.sortOrder;
