@@ -24,13 +24,15 @@ export const BlogFilterBar = ({
     onReset,
 }: BlogFilterBarProps) => {
     const { t } = useTranslation("blog");
+    const [prevSearch, setPrevSearch] = useState(filters.search || "");
     const [searchVal, setSearchVal] = useState(filters.search || "");
 
-    const debouncedSearch = useDebounce(searchVal, 300);
-
-    useEffect(() => {
+    if (filters.search !== prevSearch) {
+        setPrevSearch(filters.search || "");
         setSearchVal(filters.search || "");
-    }, [filters.search]);
+    }
+
+    const debouncedSearch = useDebounce(searchVal, 300);
 
     useEffect(() => {
         const normalizedSearch = debouncedSearch.trim();
