@@ -82,6 +82,8 @@
     "edit_title": "Chỉnh sửa Bài viết",
     "edit_subtitle": "Chỉnh sửa và cập nhật bài viết blog",
     "edit_breadcrumb": "Chỉnh sửa Bài viết",
+    "detail_title": "Chi tiết Bài viết",
+    "detail_breadcrumb": "Chi tiết",
     "quick_actions": "Thao tác nhanh",
     "duplicate_confirm_title": "Nhân bản bài viết này?",
     "duplicate_confirm_body": "Một bài viết mới sẽ được tạo với nội dung được điền sẵn từ bài viết hiện tại.",

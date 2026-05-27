@@ -82,6 +82,8 @@
     "edit_title": "Edit Blog Post",
     "edit_subtitle": "Edit and update blog post content",
     "edit_breadcrumb": "Edit Post",
+    "detail_title": "Blog Post Details",
+    "detail_breadcrumb": "Details",
     "quick_actions": "Quick Actions",
     "duplicate_confirm_title": "Duplicate this post?",
     "duplicate_confirm_body": "A new blog post will be created with pre-filled content from this post.",

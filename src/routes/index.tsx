@@ -1,5 +1,5 @@
 import React, { Suspense } from 'react';
-import { createBrowserRouter, Navigate, RouterProvider, useLocation } from 'react-router-dom';
+import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom';
 import PublicRoute from './PublicRoute';
 import PrivateRoute from './PrivateRoute';
 import { ROUTES } from './routes';
@@ -39,6 +39,7 @@ const NotificationSend = React.lazy(() => import('@/pages/Notifications/Notifica
 const BlogPostList = React.lazy(() => import('@/pages/Blog/BlogPostList'));
 const BlogPostCreate = React.lazy(() => import('@/pages/Blog/BlogPostCreate'));
 const BlogPostEdit = React.lazy(() => import('@/pages/Blog/BlogPostEdit'));
+const BlogPostDetail = React.lazy(() => import('@/pages/Blog/BlogPostDetail'));
 import ErrorPage from '@/pages/ErrorPage';
 
 
@@ -60,11 +61,6 @@ const withSuspense = (Component: React.ComponentType) => (
     </Suspense>
 );
 
-const RedirectToBlogList = () => {
-    const location = useLocation();
-
-    return <Navigate to={`${ROUTES.BLOG_POSTS}${location.search}`} replace />;
-};
 
 /**
  * Router component
@@ -121,7 +117,7 @@ const router = createBrowserRouter([
                     { path: ROUTES.BLOG_POSTS, element: withSuspense(BlogPostList) },
                     { path: ROUTES.BLOG_POSTS_CREATE, element: withSuspense(BlogPostCreate) },
                     { path: ROUTES.BLOG_POSTS_EDIT, element: withSuspense(BlogPostEdit) },
-                    { path: '/admin/blog-posts/:id', element: <RedirectToBlogList /> },
+                    { path: ROUTES.BLOG_POSTS_DETAIL, element: withSuspense(BlogPostDetail) },
                 ]
             }
 
