@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm, Controller, useWatch } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
     BookOpen,
     Link as LinkIcon,
@@ -18,16 +18,24 @@ import SectionHeader from '@/components/common/SectionHeader';
 import { Button } from '@/components/ui/Button';
 import { createBlogPostSchema } from '@/validations/blog.schema';
 import type { CreateBlogPostInput } from '@/validations/blog.schema';
+import type { BlogPostViewModel } from '@/types';
 import {
     useBlogCategoriesQuery,
     useCreateBlogPostMutation,
     useCreateBlogCategoryMutation
 } from '@/hooks/useBlogQueries';
+import { blogApi } from '@/api/blogApi';
 import { slugifyVietnamese } from '@/utils/slug';
 import BlogMarkdownEditor from './BlogMarkdownEditor';
 import FeaturedImageUploader from './FeaturedImageUploader';
 
-const BlogPostForm = () => {
+interface BlogPostFormProps {
+    publishOption: 'draft' | 'published' | 'scheduled';
+    onPublishOptionChange: (option: 'draft' | 'published' | 'scheduled') => void;
+    onSubmittingChange?: (submitting: boolean) => void;
+}
+
+const BlogPostForm = ({ publishOption, onPublishOptionChange, onSubmittingChange }: BlogPostFormProps) => {
     const { t } = useTranslation('blog');
     const navigate = useNavigate();
 
@@ -41,9 +49,12 @@ const BlogPostForm = () => {
     const [newCategoryName, setNewCategoryName] = useState('');
 
     // 3. State for scheduling option in UI
-    const [publishOption, setPublishOption] = useState<'draft' | 'published' | 'scheduled'>('draft');
     const [scheduleDate, setScheduleDate] = useState('');
     const [scheduleTime, setScheduleTime] = useState('09:00');
+
+    const location = useLocation();
+    const duplicateData = location.state?.duplicateData as BlogPostViewModel | undefined;
+    const [isResolvingDuplicate, setIsResolvingDuplicate] = useState(!!duplicateData);
 
     // 4. Form setup
     const {
@@ -55,15 +66,65 @@ const BlogPostForm = () => {
     } = useForm<CreateBlogPostInput>({
         resolver: yupResolver(createBlogPostSchema(t)),
         defaultValues: {
-            title: '',
-            content: '',
-            excerpt: '',
-            featured_image: '',
-            category_ids: [],
+            title: duplicateData ? `${duplicateData.title} (Copy)` : '',
+            content: duplicateData?.content || '',
+            excerpt: duplicateData?.excerpt || '',
+            featured_image: duplicateData?.featuredImage || '',
+            category_ids: duplicateData?.categories?.map((c) => c.id) || [],
             status: 'draft',
             published_at: ''
         }
     } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
+
+    // Resolve unique duplicate title on mount
+    useEffect(() => {
+        let isMounted = true;
+
+        const checkAndResolveSlug = async () => {
+            if (!duplicateData) return;
+
+            try {
+                let candidateTitle = `${duplicateData.title} (Copy)`;
+                let candidateSlug = slugifyVietnamese(candidateTitle);
+                let exists = true;
+                let counter = 1;
+
+                const res = await blogApi.checkSlug(candidateSlug);
+                exists = res.data?.exists ?? false;
+
+                while (exists && isMounted) {
+                    counter++;
+                    candidateTitle = `${duplicateData.title} (Copy ${counter})`;
+                    candidateSlug = slugifyVietnamese(candidateTitle);
+                    
+                    const nextRes = await blogApi.checkSlug(candidateSlug);
+                    exists = nextRes.data?.exists ?? false;
+                }
+
+                if (isMounted) {
+                    setValue('title', candidateTitle, { shouldValidate: true, shouldDirty: true });
+                    setIsResolvingDuplicate(false);
+                }
+            } catch (error) {
+                console.error('Error resolving unique duplicate title:', error);
+                if (isMounted) {
+                    setIsResolvingDuplicate(false);
+                }
+            }
+        };
+
+        checkAndResolveSlug();
+
+        return () => {
+            isMounted = false;
+        };
+    }, [duplicateData, setValue]);
+
+    // Sync isSubmitting with parent
+    const isPendingSubmitting = createPostMutation.isPending || isSubmitting || isResolvingDuplicate;
+    useEffect(() => {
+        onSubmittingChange?.(isPendingSubmitting);
+    }, [isPendingSubmitting, onSubmittingChange]);
 
     const watchTitle = useWatch({ control, name: 'title' });
     const watchExcerpt = useWatch({ control, name: 'excerpt' }) || '';
@@ -149,7 +210,7 @@ const BlogPostForm = () => {
                 className="hidden"
                 onClick={() => {
                     setValue('status', 'draft');
-                    setPublishOption('draft');
+                    onPublishOptionChange('draft');
                 }}
             />
             <button
@@ -158,7 +219,7 @@ const BlogPostForm = () => {
                 className="hidden"
                 onClick={() => {
                     if (publishOption === 'draft') {
-                        setPublishOption('published');
+                        onPublishOptionChange('published');
                         setValue('status', 'published');
                     }
                 }}
@@ -198,9 +259,16 @@ const BlogPostForm = () => {
                                 danangtrip.vn/blog/
                                 <span className="font-semibold text-slate-700">{slugVal || t('form.slug_placeholder')}</span>
                             </span>
-                            <span className="ml-auto text-[10px] font-bold uppercase tracking-wider bg-[#14B8A6]/10 text-[#0f766e] px-2 py-0.5 rounded-md select-none shrink-0">
-                                {t('form.slug_auto')}
-                            </span>
+                            {isResolvingDuplicate ? (
+                                <span className="ml-auto flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-500 px-2 py-0.5 rounded-md select-none shrink-0">
+                                    <Loader2 size={10} className="animate-spin" />
+                                    {t('form.checking_slug', { defaultValue: 'Đang kiểm tra...' })}
+                                </span>
+                            ) : (
+                                <span className="ml-auto text-[10px] font-bold uppercase tracking-wider bg-[#14B8A6]/10 text-[#0f766e] px-2 py-0.5 rounded-md select-none shrink-0">
+                                    {t('form.slug_auto')}
+                                </span>
+                            )}
                         </div>
 
                         {/* Excerpt Field */}
@@ -253,7 +321,7 @@ const BlogPostForm = () => {
 
                         <div className="space-y-5">
                             {/* Status options radio group */}
-                            <div className="flex flex-col gap-3.5">
+                             <div className="flex flex-col gap-3.5">
                                 {/* Option Draft */}
                                 <label className="flex items-start gap-3 cursor-pointer group">
                                     <input
@@ -261,7 +329,7 @@ const BlogPostForm = () => {
                                         name="publish_option"
                                         checked={publishOption === 'draft'}
                                         onChange={() => {
-                                            setPublishOption('draft');
+                                            onPublishOptionChange('draft');
                                             setValue('status', 'draft');
                                         }}
                                         className="mt-1 w-4 h-4 text-[#14B8A6] focus:ring-[#14B8A6]"
@@ -281,7 +349,7 @@ const BlogPostForm = () => {
                                         name="publish_option"
                                         checked={publishOption === 'published'}
                                         onChange={() => {
-                                            setPublishOption('published');
+                                            onPublishOptionChange('published');
                                             setValue('status', 'published');
                                         }}
                                         className="mt-1 w-4 h-4 text-[#14B8A6] focus:ring-[#14B8A6]"
@@ -301,7 +369,7 @@ const BlogPostForm = () => {
                                         name="publish_option"
                                         checked={publishOption === 'scheduled'}
                                         onChange={() => {
-                                            setPublishOption('scheduled');
+                                            onPublishOptionChange('scheduled');
                                             setValue('status', 'published');
                                         }}
                                         className="mt-1 w-4 h-4 text-[#14B8A6] focus:ring-[#14B8A6]"

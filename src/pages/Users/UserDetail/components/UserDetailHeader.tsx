@@ -2,6 +2,8 @@ import { ArrowLeft, Edit2, Ban, LockOpen, ShieldAlert } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, Link } from 'react-router-dom';
 import { ROUTES } from '@/routes/routes';
+import Breadcrumbs from '@/components/common/Breadcrumbs';
+import { Users } from 'lucide-react';
 import type { UserItem } from '@/dataHelper';
 
 interface UserDetailHeaderProps {
@@ -34,19 +36,13 @@ export const UserDetailHeader = ({
     return (
         <div className="flex flex-col gap-3">
             {/* Breadcrumbs */}
-            <div className="flex items-center gap-2 text-xs font-black text-slate-400 uppercase tracking-wider select-none px-1">
-                <Link to={ROUTES.DASHBOARD} className="hover:text-[#14b8a6] transition-colors duration-150">
-                    {t('detail.breadcrumb_home', 'Bảng điều khiển')}
-                </Link>
-                <span className="text-slate-300">/</span>
-                <Link to={ROUTES.USERS_LIST} className="hover:text-[#14b8a6] transition-colors duration-150">
-                    {t('detail.breadcrumb_users', 'Người dùng')}
-                </Link>
-                <span className="text-slate-300">/</span>
-                <span className="text-slate-600 truncate max-w-[150px] md:max-w-xs">
-                    {user.fullName}
-                </span>
-            </div>
+            <Breadcrumbs
+                icon={Users}
+                items={[
+                    { label: t('detail.breadcrumb_users', 'Người dùng'), path: ROUTES.USERS_LIST },
+                    { label: user.fullName },
+                ]}
+            />
 
             {/* ─── Gradient border shell header card ─── */}
             <div className="p-[1px] rounded-3xl bg-gradient-to-br from-[#14b8a6]/30 via-slate-200/20 to-transparent shadow-sm hover:shadow-md transition-all duration-300">

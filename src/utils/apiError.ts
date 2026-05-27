@@ -122,7 +122,7 @@ function getFirstValidationError(payload?: ApiErrorPayload): string | undefined 
     return undefined;
 }
 
-export function getLocalizedApiErrorMessage(fallback: string, error?: unknown): string {
+export function mapApiErrorMessage(fallback: string, error?: unknown): string {
     const payload = (error as { response?: { data?: ApiErrorPayload } })?.response?.data;
     const validationError = getFirstValidationError(payload);
 
@@ -148,3 +148,5 @@ export function getLocalizedApiErrorMessage(fallback: string, error?: unknown): 
 
     return fallback;
 }
+
+export const getLocalizedApiErrorMessage = mapApiErrorMessage;

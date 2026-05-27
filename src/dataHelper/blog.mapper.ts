@@ -43,6 +43,7 @@ export const mapBlogPost = (raw: RawBlogPost): BlogPostViewModel => {
         status: raw.status || 'draft',
         publishedAt: raw.published_at ? new Date(raw.published_at) : null,
         createdAt: new Date(raw.created_at),
+        updatedAt: new Date(raw.updated_at),
         author: mapBlogPostAuthor(raw.author),
         categories: toArraySafe<RawBlogCategory>(raw.categories).map(mapBlogCategory),
     };

@@ -22,6 +22,7 @@ import { UserAccountSidebar } from './components/UserAccountSidebar';
 import { UserActionsCard } from './components/UserActionsCard';
 import { ChangeRoleDialog } from './components/ChangeRoleDialog';
 import { ConfirmDeleteUserDialog } from './components/ConfirmDeleteUserDialog';
+import { mapApiErrorMessage } from '@/utils';
 
 const UserDetail = () => {
     const { id } = useParams<{ id: string }>();
@@ -86,11 +87,7 @@ const UserDetail = () => {
                     refetchUser();
                 },
                 onError: (err) => {
-                    const axiosError = err as Error & { response?: { data?: { message?: string } } };
-                    toast.error(
-                        axiosError?.response?.data?.message ||
-                        t('detail.toast_status_error', 'Cập nhật trạng thái thất bại.')
-                    );
+                    toast.error(mapApiErrorMessage(t('detail.toast_status_error'), err));
                 }
             }
         );
@@ -108,11 +105,7 @@ const UserDetail = () => {
                     refetchUser();
                 },
                 onError: (err) => {
-                    const axiosError = err as Error & { response?: { data?: { message?: string } } };
-                    toast.error(
-                        axiosError?.response?.data?.message ||
-                        t('detail.toast_role_error', 'Cập nhật vai trò thất bại.')
-                    );
+                    toast.error(mapApiErrorMessage(t('detail.toast_role_error'), err));
                 }
             }
         );
@@ -130,11 +123,7 @@ const UserDetail = () => {
                 }, 1000);
             },
             onError: (err) => {
-                const axiosError = err as Error & { response?: { data?: { message?: string } } };
-                toast.error(
-                    axiosError?.response?.data?.message ||
-                    t('detail.toast_delete_error', 'Xóa tài khoản thất bại.')
-                );
+                toast.error(mapApiErrorMessage(t('detail.toast_delete_error'), err));
             }
         });
     };

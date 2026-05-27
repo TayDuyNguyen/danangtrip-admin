@@ -11,6 +11,7 @@ import DeleteContactDialog from "./components/DeleteContactDialog";
 
 import { useAdminContactsQuery, useContactDetailQuery, useContactMutations } from "@/hooks/useContactQueries";
 import type { ContactListFilters } from "@/dataHelper";
+import Breadcrumbs from "@/components/common/Breadcrumbs";
 
 export const Contacts = () => {
     const { t } = useTranslation("contact");
@@ -160,31 +161,30 @@ export const Contacts = () => {
     ];
 
     return (
-        <main className="p-4 sm:p-6 max-w-7xl mx-auto flex flex-col gap-6 font-sans h-[calc(100vh-88px)] overflow-hidden">
+        <main className="p-1 sm:p-2 max-w-[1600px] mx-auto flex flex-col gap-6 font-sans h-[calc(100vh-88px)] overflow-hidden">
             {/* Page Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-5 shrink-0">
-                <div>
-                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">
-                        {t("breadcrumb")}
-                    </span>
-                    <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight leading-none">
-                        {t("title")}
-                    </h1>
-                    <p className="text-sm font-semibold text-slate-400 mt-1.5">
-                        {t("subtitle")}
-                    </p>
-                </div>
-
-                <div className="flex items-center gap-3 shrink-0">
-                    <button
-                        onClick={handleExport}
-                        disabled={exportMutation.isPending}
-                        className="px-5 py-3 bg-white hover:bg-slate-50 border border-slate-200 text-slate-600 hover:text-slate-900 rounded-2xl transition-all duration-300 font-bold text-sm flex items-center gap-2 cursor-pointer shadow-xs disabled:opacity-50 disabled:pointer-events-none select-none active:scale-[0.98]"
-                    >
-                        <Download size={16} />
-                        {t("actions.export")}
-                    </button>
-                </div>
+            <div className="border-b border-slate-100 pb-5 shrink-0">
+                <Breadcrumbs
+                    icon={Mail}
+                    items={[
+                        { label: t("breadcrumb"), isRaw: true }
+                    ]}
+                    actions={[
+                        {
+                            label: t("actions.export"),
+                            icon: Download,
+                            onClick: handleExport,
+                            variant: "outline",
+                            disabled: exportMutation.isPending,
+                        }
+                    ]}
+                />
+                <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight leading-none mt-4">
+                    {t("title")}
+                </h1>
+                <p className="text-sm font-semibold text-slate-400 mt-1.5">
+                    {t("subtitle")}
+                </p>
             </div>
 
             {/* Stats row cards */}

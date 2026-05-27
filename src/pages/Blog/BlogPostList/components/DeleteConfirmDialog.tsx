@@ -8,6 +8,8 @@ interface DeleteConfirmDialogProps {
     onConfirm: () => void;
     postTitle?: string;
     isMutating?: boolean;
+    isBulk?: boolean;
+    count?: number;
 }
 
 export const DeleteConfirmDialog = ({
@@ -16,10 +18,24 @@ export const DeleteConfirmDialog = ({
     onConfirm,
     postTitle = "",
     isMutating = false,
+    isBulk = false,
+    count = 0,
 }: DeleteConfirmDialogProps) => {
     const { t } = useTranslation("blog");
 
     if (!isOpen) return null;
+
+    const titleText = isBulk 
+        ? t("actions.bulk_delete_confirm_title", { defaultValue: "Xóa các bài viết đã chọn?" }) 
+        : t("actions.confirm_delete_title");
+
+    const bodyText = isBulk 
+        ? t("actions.bulk_delete_confirm", { count }) 
+        : t("actions.confirm_delete_body", { title: postTitle });
+
+    const warningText = isBulk 
+        ? t("actions.bulk_delete_warning", { defaultValue: "Hành động này không thể hoàn tác. Các bài viết đã chọn sẽ bị xóa vĩnh viễn." }) 
+        : t("actions.confirm_delete_warning");
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
@@ -38,16 +54,16 @@ export const DeleteConfirmDialog = ({
 
                 {/* Text Description */}
                 <h3 className="text-slate-900 font-black text-lg tracking-tight mb-2">
-                    {t("actions.confirm_delete_title")}
+                    {titleText}
                 </h3>
                 <p className="text-slate-400 text-sm font-semibold mb-4 px-2 leading-relaxed">
-                    {t("actions.confirm_delete_body", { title: postTitle })}
+                    {bodyText}
                 </p>
 
                 {/* Warning Alert Container */}
                 <div className="flex items-start gap-2 bg-[#FEF3C7] border border-[#FDE68A] p-3 rounded-2xl text-left text-[#92400E] text-xs font-bold w-full mb-6">
                     <AlertTriangle size={16} className="shrink-0 mt-0.5" />
-                    <span>{t("actions.confirm_delete_warning")}</span>
+                    <span>{warningText}</span>
                 </div>
 
                 {/* Footer Buttons */}

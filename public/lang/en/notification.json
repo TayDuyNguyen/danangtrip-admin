@@ -1,5 +1,5 @@
 {
-    "breadcrumb": "Notifications / Notification List",
+    "breadcrumb": "Notifications",
     "title": "Notification List",
     "subtitle": "Manage system notifications sent to users",
     "actions": {
@@ -60,7 +60,7 @@
     "send": {
         "title": "Send Notification",
         "subtitle": "Send notifications to system users",
-        "breadcrumb": "Notifications / Send Notification",
+        "breadcrumb": "Send Notification",
         "btn_cancel": "Cancel",
         "btn_submit": "Send notification",
         "btn_sending": "Sending...",

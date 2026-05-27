@@ -1,6 +1,9 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
+import Breadcrumbs from '@/components/common/Breadcrumbs';
+import { Map } from 'lucide-react';
+import { ROUTES } from '@/routes/routes';
 
 import type { Option } from '@/components/ui/CustomSelect';
 import type { TourFilters } from '@/dataHelper/tour.dataHelper';
@@ -133,29 +136,19 @@ const SchedulesPage = () => {
         setSelectedIds((prev) => Array.from(new Set([...prev, ...ids])));
     };
 
-    const handleBulkAvailable = () => {
-        if (selectedIds.length === 0) {
-            return;
-        }
-        bulkStatus({ ids: selectedIds, status: ScheduleStatus.AVAILABLE });
-        setSelectedIds([]);
-    };
-
-    const handleBulkCancel = () => {
-        if (selectedIds.length === 0) {
-            return;
-        }
-        bulkStatus({ ids: selectedIds, status: ScheduleStatus.CANCELLED });
-        setSelectedIds([]);
-    };
-
     return (
         <div className="p-4 lg:p-10 mx-auto min-h-screen bg-white font-sans space-y-6">
             <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
                 <div>
-                    <p className="text-xs font-semibold text-text-secondary uppercase tracking-wide mb-1">
-                        {t('schedules:breadcrumb')}
-                    </p>
+                    <div className="mb-2">
+                        <Breadcrumbs
+                            icon={Map}
+                            items={[
+                                { label: 'sidebar.tours', path: ROUTES.TOURS_LIST },
+                                { label: 'sidebar.tour_schedules' }
+                            ]}
+                        />
+                    </div>
                     <h1 className="text-2xl font-black text-[#1E293B]">{t('schedules:title')}</h1>
                     <p className="text-sm text-[#64748B] mt-1">{t('schedules:subtitle')}</p>
                 </div>
@@ -174,30 +167,6 @@ const SchedulesPage = () => {
                     });
                 }}
             />
-
-            {selectedIds.length > 0 ? (
-                <div className="flex flex-wrap items-center gap-3 px-4 py-3 bg-blue-100 border border-slate-100 rounded-xl">
-                    <span className="text-[13px] font-bold text-slate-900">
-                        {t('schedules:actions.selected_count', { count: selectedIds.length })}
-                    </span>
-                    <button
-                        type="button"
-                        disabled={isBulk}
-                        onClick={handleBulkAvailable}
-                        className="px-3 py-1.5 rounded-lg bg-[#f4fce3] text-[#0f766e] text-xs font-bold hover:opacity-90 disabled:opacity-50"
-                    >
-                        {t('schedules:actions.bulk_activate')}
-                    </button>
-                    <button
-                        type="button"
-                        disabled={isBulk}
-                        onClick={handleBulkCancel}
-                        className="px-3 py-1.5 rounded-lg bg-[#FEE2E2] text-[#EF4444] text-xs font-bold hover:opacity-90 disabled:opacity-50"
-                    >
-                        {t('schedules:actions.bulk_cancel')}
-                    </button>
-                </div>
-            ) : null}
 
             <FilterBar
                 key={filterBarKey}
@@ -228,6 +197,8 @@ const SchedulesPage = () => {
                     onToggleAllPage={toggleAllPage}
                     onStatusChange={(id, status) => updateStatus({ id, status })}
                     onDelete={setDeleteTarget}
+                    onBulkStatusChange={(ids, status) => bulkStatus({ ids, status: status === 'available' ? ScheduleStatus.AVAILABLE : ScheduleStatus.CANCELLED })}
+                    isBulkMutating={isBulk}
                 />
             )}
 

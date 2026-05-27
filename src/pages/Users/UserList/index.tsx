@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { Download, Plus, Trash2, Ban, LockOpen } from "lucide-react";
+import { Download, Plus, Users } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/store";
+import Breadcrumbs from "@/components/common/Breadcrumbs";
 
 import UserStatsRow from "./components/UserStatsRow";
 import UserFilterBar from "./components/UserFilterBar";
@@ -13,8 +14,6 @@ import UpdateRoleDialog from "./components/UpdateRoleDialog";
 
 import { useAdminUsersQuery, useUserMutations } from "@/hooks/useUserQueries";
 import type { UserListFilters } from "@/dataHelper";
-import CustomSelect, { type Option } from "@/components/ui/CustomSelect";
-import Pagination from "@/components/common/Pagination";
 
 export const UserList = () => {
     const { t } = useTranslation("user");
@@ -34,7 +33,7 @@ export const UserList = () => {
     const filters: UserListFilters = { q, role, status, sort_by: sortBy, sort_order: sortOrder };
 
     // Queries & Mutations
-    const { data, isLoading, isError } = useAdminUsersQuery(filters, page, perPage);
+    const { data, isLoading, isFetching, refetch, isError } = useAdminUsersQuery(filters, page, perPage);
     const { updateRoleMutation, updateStatusMutation, deleteMutation, exportMutation } = useUserMutations();
 
     // Table State
@@ -58,7 +57,6 @@ export const UserList = () => {
         setSelectedIds([]);
         setSearchParams(params);
     };
-
 
     // Handle single row selection
     const handleSelectRow = (id: number) => {
@@ -235,48 +233,46 @@ export const UserList = () => {
     const bannedUsersCount = data ? data.data.filter((u) => u.status === "banned").length : 0;
     const adminCount = data ? data.data.filter((u) => u.role === "admin").length : 0;
 
-
-
-    const perPageOptions: Option[] = [
-        { value: 10, label: "10" },
-        { value: 20, label: "20" },
-        { value: 50, label: "50" },
-    ];
-
-    const currentPerPageOpt = perPageOptions.find((o) => o.value === perPage) || perPageOptions[0];
-
     return (
-        <main className="p-6 max-w-7xl mx-auto flex flex-col gap-6 font-sans">
+        <main className="p-1 sm:p-2 max-w-[1600px] mx-auto flex flex-col gap-6 font-sans">
             {/* Page Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-5">
-                <div>
-                    <span className="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-1">
-                        {t("breadcrumb")}
-                    </span>
-                    <h1 className="text-3xl font-black text-slate-900 tracking-tight leading-none">
-                        {t("title")}
-                    </h1>
-                    <p className="text-sm font-semibold text-slate-400 mt-1.5">
-                        {t("subtitle")}
-                    </p>
-                </div>
+            <div className="flex flex-col gap-3 mb-6">
+                <Breadcrumbs
+                    icon={Users}
+                    items={[
+                        { label: t("breadcrumb"), isRaw: true }
+                    ]}
+                />
 
-                <div className="flex items-center gap-3 shrink-0">
-                    <button
-                        onClick={handleExport}
-                        disabled={exportMutation.isPending}
-                        className="px-5 py-3 bg-white hover:bg-slate-50 border border-slate-200 text-slate-600 hover:text-slate-900 rounded-2xl transition-all duration-300 font-bold text-sm flex items-center gap-2 cursor-pointer shadow-xs disabled:opacity-50"
-                    >
-                        <Download size={16} />
-                        {t("actions.export")}
-                    </button>
-                    <button
-                        onClick={() => navigate("/admin/users/create")}
-                        className="px-5 py-3 bg-[#14B8A6] hover:bg-[#0f766e] text-white rounded-2xl transition-all duration-300 font-bold text-sm flex items-center gap-2 cursor-pointer shadow-lg shadow-[#14B8A6]/20 hover:shadow-[#0f766e]/30"
-                    >
-                        <Plus size={16} />
-                        {t("actions.create")}
-                    </button>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-5">
+                    <div>
+                        <h1 className="text-3xl font-black text-slate-900 tracking-tight leading-none">
+                            {t("title")}
+                        </h1>
+                        <p className="text-sm font-semibold text-slate-400 mt-1.5">
+                            {t("subtitle")}
+                        </p>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                        <button
+                            type="button"
+                            onClick={handleExport}
+                            disabled={exportMutation.isPending}
+                            className="px-5 py-3 bg-white hover:bg-slate-50 border border-slate-200 text-slate-600 hover:text-slate-900 rounded-2xl transition-all duration-300 font-bold text-sm flex items-center gap-2 cursor-pointer shadow-sm disabled:opacity-50 h-11 shrink-0"
+                        >
+                            <Download size={16} className={exportMutation.isPending ? 'animate-bounce' : ''} />
+                            {t("actions.export")}
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => navigate("/admin/users/create")}
+                            className="px-5 py-3 bg-[#14b8a6] hover:bg-[#0f766e] text-white rounded-2xl transition-all duration-300 font-bold text-sm flex items-center gap-2 cursor-pointer shadow-md shadow-[#14b8a6]/20 h-11 shrink-0"
+                        >
+                            <Plus size={16} />
+                            {t("actions.create")}
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -298,77 +294,11 @@ export const UserList = () => {
                 onReset={() => updateParams({}, 1)}
             />
 
-            {/* Table Toolbar & Bulk actions overlay */}
-            <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-white/60 p-4 rounded-3xl border border-slate-100 shadow-2xs">
-                <div className="flex items-center gap-3 w-full md:w-auto">
-                    {selectedIds.length > 0 ? (
-                        <div className="flex items-center gap-3 animate-in fade-in duration-200">
-                            <span className="text-sm font-bold text-[#0f766e] bg-[#14B8A6]/10 px-3 py-1.5 rounded-full">
-                                {t("table.selected", { count: selectedIds.length })}
-                            </span>
-                            <div className="flex items-center gap-1.5">
-                                <button
-                                    onClick={() => executeBulkStatus("active")}
-                                    disabled={isBulkMutating}
-                                    className="px-3 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200/50 transition-all font-bold text-xs flex items-center gap-1 cursor-pointer disabled:opacity-50"
-                                >
-                                    <LockOpen size={12} />
-                                    {t("actions.bulk_activate")}
-                                </button>
-                                <button
-                                    onClick={() => executeBulkStatus("banned")}
-                                    disabled={isBulkMutating}
-                                    className="px-3 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200/50 transition-all font-bold text-xs flex items-center gap-1 cursor-pointer disabled:opacity-50"
-                                >
-                                    <Ban size={12} />
-                                    {t("actions.bulk_block")}
-                                </button>
-                                <button
-                                    onClick={executeBulkDelete}
-                                    disabled={isBulkMutating}
-                                    className="px-3 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200/50 transition-all font-bold text-xs flex items-center gap-1 cursor-pointer disabled:opacity-50"
-                                >
-                                    <Trash2 size={12} />
-                                    {t("actions.bulk_delete")}
-                                </button>
-                            </div>
-                        </div>
-                    ) : (
-                        <span className="text-xs font-bold text-slate-400">
-                            {t("subtitle")}
-                        </span>
-                    )}
-                </div>
-
-                <div className="flex items-center gap-4 shrink-0 justify-end w-full md:w-auto">
-                    <span className="text-xs font-bold text-slate-400 whitespace-nowrap">
-                        {t("table.displaying", {
-                            start: data?.data.length ? (page - 1) * perPage + 1 : 0,
-                            end: data?.data.length ? (page - 1) * perPage + data.data.length : 0,
-                            total: totalUsersCount,
-                        })}
-                    </span>
-
-                    <div className="flex items-center gap-2 shrink-0">
-                        <span className="text-xs font-bold text-slate-400 whitespace-nowrap">{t("table.per_page")}</span>
-                        <div className="w-[80px]">
-                            <CustomSelect
-                                options={perPageOptions}
-                                value={currentPerPageOpt}
-                                onChange={(opt) => {
-                                    if (opt) updateParams(filters, 1, opt.value as number);
-                                }}
-                                size="sm"
-                            />
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             {/* Table component */}
             <UserTable
                 data={data?.data || []}
                 isLoading={isLoading}
+                isRefreshing={isFetching && !isLoading}
                 selectedIds={selectedIds}
                 onSelectRow={handleSelectRow}
                 onSelectAll={handleSelectAll}
@@ -378,19 +308,16 @@ export const UserList = () => {
                 currentUserId={currentUser?.id}
                 sorting={{ sortBy, sortOrder }}
                 onSort={handleSort}
+                page={page}
+                limit={perPage}
+                total={totalUsersCount}
+                onPageChange={(p) => updateParams(filters, p)}
+                onLimitChange={(size) => updateParams(filters, 1, size)}
+                onRefresh={refetch}
+                onBulkStatus={executeBulkStatus}
+                onBulkDelete={executeBulkDelete}
+                isBulkMutating={isBulkMutating}
             />
-
-            {/* Pagination Controls */}
-            {data && data.meta.last_page > 1 && (
-                <div className="mt-2 flex justify-center">
-                    <Pagination
-                        currentPage={page}
-                        totalItems={totalUsersCount}
-                        pageSize={perPage}
-                        onPageChange={(p) => updateParams(filters, p)}
-                    />
-                </div>
-            )}
 
             {/* Dialog Confirmation Modals */}
             <DeleteUserDialog

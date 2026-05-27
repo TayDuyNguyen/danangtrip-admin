@@ -4,7 +4,7 @@
     },
     "title": "Departure schedules",
     "subtitle": "Manage all departure schedules across tours",
-    "breadcrumb": "Tours / Schedules",
+    "breadcrumb": "Schedules",
     "status": {
         "available": "Active",
         "full": "Full",

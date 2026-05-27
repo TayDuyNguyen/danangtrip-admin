@@ -48,7 +48,10 @@
         "leave": "Leave"
     },
     "breadcrumb": {
-        "home": "Home"
+        "home": "Home",
+        "edit": "Edit",
+        "view": "Detail",
+        "add": "Add New"
     },
     "confirm_delete": "Are you sure you want to delete this item?",
     "error": {

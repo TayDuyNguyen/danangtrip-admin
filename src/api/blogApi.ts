@@ -6,6 +6,7 @@ import type {
     RawBlogCategory,
     ApiResponse,
     CreateBlogPostPayload,
+    UpdateBlogPostPayload,
     CreateBlogCategoryPayload,
     RawBlogPost
 } from "@/types";
@@ -32,6 +33,15 @@ export const blogApi = {
 
     create: (payload: CreateBlogPostPayload): Promise<ApiResponse<RawBlogPost>> =>
         axiosClient.post(API_ENDPOINTS.BLOG.CREATE, payload),
+
+    checkSlug: (slug: string): Promise<ApiResponse<{ exists: boolean }>> =>
+        axiosClient.get(API_ENDPOINTS.BLOG.CHECK_SLUG, { params: { slug } }),
+
+    getDetail: (id: number | string): Promise<ApiResponse<RawBlogPost>> =>
+        axiosClient.get(API_ENDPOINTS.BLOG.DETAIL(id)),
+
+    update: (id: number | string, payload: UpdateBlogPostPayload): Promise<ApiResponse<RawBlogPost>> =>
+        axiosClient.put(API_ENDPOINTS.BLOG.UPDATE(id), payload),
 
     createCategory: (payload: CreateBlogCategoryPayload): Promise<ApiResponse<RawBlogCategory>> =>
         axiosClient.post(API_ENDPOINTS.BLOG.CREATE_CATEGORY, payload),

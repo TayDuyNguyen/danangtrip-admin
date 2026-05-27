@@ -59,6 +59,7 @@ export interface BlogPostViewModel {
     status: 'draft' | 'published' | 'archived';
     publishedAt: Date | null;
     createdAt: Date;
+    updatedAt: Date;
     author: BlogPostAuthorViewModel | null;
     categories: BlogCategoryViewModel[];
 }
@@ -100,6 +101,16 @@ export interface CreateBlogPostPayload {
     excerpt?: string | null;
     featured_image?: string | null;
     category_ids: number[];
+    status?: 'draft' | 'published' | 'archived';
+    published_at?: string | null;
+}
+
+export interface UpdateBlogPostPayload {
+    title?: string;
+    content?: string;
+    excerpt?: string | null;
+    featured_image?: string | null;
+    category_ids?: number[];
     status?: 'draft' | 'published' | 'archived';
     published_at?: string | null;
 }

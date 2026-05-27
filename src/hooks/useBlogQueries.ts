@@ -1,11 +1,12 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { blogApi } from "@/api/blogApi";
-import { mapBlogPostList, mapBlogCategory } from "@/dataHelper/blog.mapper";
-import type { BlogListFilters, CreateBlogPostPayload, CreateBlogCategoryPayload } from "@/types";
+import { mapBlogPostList, mapBlogCategory, mapBlogPost } from "@/dataHelper/blog.mapper";
+import type { BlogListFilters, CreateBlogPostPayload, UpdateBlogPostPayload, CreateBlogCategoryPayload } from "@/types";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import axiosClient from "@/api/axiosClient";
 import { API_ENDPOINTS } from "@/constants";
+import { mapApiErrorMessage } from "@/utils";
 
 export const blogKeys = {
     all: ["blogs"] as const,
@@ -13,6 +14,8 @@ export const blogKeys = {
     list: (filters: BlogListFilters, page: number, limit: number) =>
         [...blogKeys.lists(), { ...filters, page, limit }] as const,
     categories: () => [...blogKeys.all, "categories"] as const,
+    details: () => [...blogKeys.all, "detail"] as const,
+    detail: (id: string | number) => [...blogKeys.details(), id] as const,
 };
 
 export const useAdminBlogPostsQuery = (
@@ -27,6 +30,20 @@ export const useAdminBlogPostsQuery = (
             if (!response.data) throw new Error("Empty response");
             return mapBlogPostList(response.data);
         },
+        staleTime: 1000 * 30, // 30 seconds
+    });
+};
+
+export const useAdminBlogPostQuery = (id: string | number | undefined) => {
+    return useQuery({
+        queryKey: blogKeys.detail(id || ""),
+        queryFn: async () => {
+            if (!id) throw new Error("No blog post ID provided");
+            const response = await blogApi.getDetail(id);
+            if (!response.data) throw new Error("Empty response");
+            return mapBlogPost(response.data);
+        },
+        enabled: !!id,
         staleTime: 1000 * 30, // 30 seconds
     });
 };
@@ -53,15 +70,33 @@ export const useCreateBlogPostMutation = () => {
         onSuccess: (response) => {
             const status = response.data?.status;
             if (status === "published") {
-                toast.success(t("toast.publish_success", { defaultValue: "Bài viết đã được xuất bản!" }));
+                toast.success(t("toast.publish_success"));
             } else {
-                toast.success(t("toast.draft_success", { defaultValue: "Đã lưu bản nháp thành công!" }));
+                toast.success(t("toast.draft_success"));
             }
             queryClient.invalidateQueries({ queryKey: blogKeys.all });
             queryClient.invalidateQueries({ queryKey: ["dashboard"] });
         },
         onError: () => {
             toast.error(t("toast.network_error"));
+        },
+    });
+};
+
+export const useUpdateBlogPostMutation = () => {
+    const queryClient = useQueryClient();
+    const { t } = useTranslation("blog");
+
+    return useMutation({
+        mutationFn: ({ id, payload }: { id: number | string; payload: UpdateBlogPostPayload }) =>
+            blogApi.update(id, payload),
+        onSuccess: () => {
+            toast.success(t("toast.update_success"));
+            queryClient.invalidateQueries({ queryKey: blogKeys.all });
+            queryClient.invalidateQueries({ queryKey: ["dashboard"] });
+        },
+        onError: () => {
+            toast.error(t("toast.update_error"));
         },
     });
 };
@@ -73,13 +108,11 @@ export const useCreateBlogCategoryMutation = () => {
     return useMutation({
         mutationFn: (payload: CreateBlogCategoryPayload) => blogApi.createCategory(payload),
         onSuccess: () => {
-            toast.success(t("toast.category_create_success", { defaultValue: "Tạo danh mục thành công!" }));
+            toast.success(t("toast.category_create_success"));
             queryClient.invalidateQueries({ queryKey: blogKeys.categories() });
         },
         onError: (err: unknown) => {
-            const error = err as { response?: { data?: { message?: string } } };
-            const message = error?.response?.data?.message || t("toast.network_error");
-            toast.error(message);
+            toast.error(mapApiErrorMessage(t("toast.network_error"), err));
         },
     });
 };
@@ -98,7 +131,7 @@ export const useBlogUploadMutations = () => {
                 return res.data; // contains url, public_id, asset_id
             },
             onError: () => {
-                toast.error(t("toast.upload_error", { defaultValue: "Lỗi tải ảnh lên!" }));
+                toast.error(t("toast.upload_error"));
             },
         }),
         deleteImageMutation: useMutation({

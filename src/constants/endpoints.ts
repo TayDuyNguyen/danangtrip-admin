@@ -141,6 +141,9 @@ export const API_ENDPOINTS = {
     BLOG: {
         LIST: '/admin/blog-posts',
         CREATE: '/admin/blog-posts',
+        CHECK_SLUG: '/admin/blog-posts/check-slug',
+        DETAIL: (id: string | number) => `/admin/blog-posts/${id}`,
+        UPDATE: (id: string | number) => `/admin/blog-posts/${id}`,
         CATEGORIES: '/admin/blog-categories',
         CREATE_CATEGORY: '/admin/blog-categories',
         PATCH_STATUS: (id: string | number) => `/admin/blog-posts/${id}/status`,

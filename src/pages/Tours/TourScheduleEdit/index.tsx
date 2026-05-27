@@ -34,6 +34,7 @@ const TourScheduleEdit = () => {
     const { t } = useTranslation(['schedules', 'common']);
 
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+    const [bypassGuard, setBypassGuard] = useState(false);
 
     const { data: schedule, isLoading: isLoadingSchedule } = useSchedule(id);
     const { data: tour, isLoading: isLoadingTour } = useTourDetailQuery(schedule?.tourId);
@@ -110,12 +111,15 @@ const TourScheduleEdit = () => {
             },
             {
                 onSuccess: () => {
+                    setBypassGuard(true);
                     const tourId = schedule?.tourId;
-                    if (fromTourEdit && tourId != null && tourId !== '') {
-                        navigate(ROUTES.TOURS_EDIT.replace(':id', String(tourId)));
-                        return;
-                    }
-                    navigate(`${ROUTES.TOURS_SCHEDULES}?tour_id=${tourId}`);
+                    setTimeout(() => {
+                        if (fromTourEdit && tourId != null && tourId !== '') {
+                            navigate(ROUTES.TOURS_EDIT.replace(':id', String(tourId)));
+                            return;
+                        }
+                        navigate(`${ROUTES.TOURS_SCHEDULES}?tour_id=${tourId}`);
+                    }, 0);
                 },
             }
         );
@@ -126,7 +130,10 @@ const TourScheduleEdit = () => {
         deleteScheduleMutation.mutate(id, {
             onSuccess: () => {
                 setIsDeleteDialogOpen(false);
-                navigate(ROUTES.TOURS_SCHEDULES);
+                setBypassGuard(true);
+                setTimeout(() => {
+                    navigate(ROUTES.TOURS_SCHEDULES);
+                }, 0);
             }
         });
     };
@@ -292,7 +299,7 @@ const TourScheduleEdit = () => {
                 isDeleting={deleteScheduleMutation.isPending}
             />
 
-            <UnsavedChangesGuard isDirty={methods.formState.isDirty} />
+            <UnsavedChangesGuard isDirty={methods.formState.isDirty && !bypassGuard} />
         </div>
     );
 };

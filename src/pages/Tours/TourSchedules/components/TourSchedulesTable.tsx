@@ -36,6 +36,8 @@ type Props = {
     onToggleAllPage: (checked: boolean) => void;
     onStatusChange: (id: number, status: string) => void;
     onDelete: (schedule: Schedule) => void;
+    onBulkStatusChange?: (ids: number[], status: 'available' | 'cancelled') => void;
+    isBulkMutating?: boolean;
 };
 
 const TourSchedulesTable = ({
@@ -55,8 +57,10 @@ const TourSchedulesTable = ({
     onToggleAllPage,
     onStatusChange,
     onDelete,
+    onBulkStatusChange,
+    isBulkMutating,
 }: Props) => {
-    const { t, i18n } = useTranslation(['schedules', 'common']);
+    const { t, i18n } = useTranslation(['schedules', 'tour', 'common']);
     const navigate = useNavigate();
 
     const pageIds = useMemo(() => data.map((r) => Number(r.id)), [data]);
@@ -87,37 +91,59 @@ const TourSchedulesTable = ({
 
     return (
         <div className="bg-white border border-[#E2E8F0] rounded-2xl overflow-hidden shadow-sm">
-            <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 px-6 py-4 border-b border-[#E2E8F0]">
-                <div className="flex items-center gap-3">
-                    {selectedIds.length > 0 && (
-                        <span className="text-[13px] font-semibold text-[#14b8a6]">
-                            {t('schedules:actions.selected_count', { count: selectedIds.length })}
-                        </span>
-                    )}
-                </div>
-                <div className="flex flex-wrap items-center gap-4 sm:ml-auto">
-                    {(isRefreshing || isLoading) && (
-                        <div className="animate-fade-in">
-                            <RefreshCw className="w-3.5 h-3.5 text-[#14b8a6] animate-spin" />
+            <div className="flex flex-col sm:flex-row justify-between items-center px-[24px] py-[16px] border-b border-[#E2E8F0] gap-4">
+                <div className="flex items-center gap-4 w-full sm:w-auto">
+                    {selectedIds.length > 0 ? (
+                        <div className="flex items-center gap-4 animate-in fade-in slide-in-from-left-2 duration-150">
+                            <span className="text-[13px] font-bold text-[#14b8a6] whitespace-nowrap">
+                                {t('schedules:actions.selected_count', { count: selectedIds.length })}
+                            </span>
+                            <div className="h-4 w-px bg-[#E2E8F0]" />
+                            <div className="flex items-center gap-2 overflow-x-auto py-1 no-scrollbar">
+                                <button
+                                    onClick={() => onBulkStatusChange?.(selectedIds, 'available')}
+                                    disabled={isBulkMutating}
+                                    className="px-3 py-1.5 bg-[#D1FAE5] text-[#10B981] rounded-md text-[12px] font-bold hover:brightness-95 transition-all duration-150 shadow-sm whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                                >
+                                    {t('schedules:actions.bulk_activate')}
+                                </button>
+                                <button
+                                    onClick={() => onBulkStatusChange?.(selectedIds, 'cancelled')}
+                                    disabled={isBulkMutating}
+                                    className="px-3 py-1.5 bg-[#FEE2E2] text-[#EF4444] rounded-md text-[12px] font-bold hover:brightness-95 transition-all duration-150 shadow-sm whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                                >
+                                    {t('schedules:actions.bulk_cancel')}
+                                </button>
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="flex items-center gap-2">
+                            <h2 className="text-[14px] font-bold text-[#1E293B] uppercase tracking-wider">{t('schedules:table.title', 'Danh sách lịch trình')}</h2>
+                            {(isRefreshing || isLoading) && (
+                                <div className="animate-fade-in">
+                                    <RefreshCw className="w-3.5 h-3.5 text-[#14b8a6] animate-spin" />
+                                </div>
+                            )}
                         </div>
                     )}
-                    <span className="text-[13px] font-medium text-text-secondary">
+                </div>
+
+                <div className="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end">
+                    <span className="text-[13px] text-text-secondary font-sans">
                         {t('schedules:table.showing_summary', {
                             start: total > 0 ? (page - 1) * limit + 1 : 0,
                             end: Math.min(page * limit, total),
                             total,
                         })}
                     </span>
-                    <label className="flex items-center gap-2 text-[13px] text-[#64748B]">
-                        <CustomSelect
-                            value={{ value: limit, label: limit }}
-                            onChange={(opt: Option | null) => onLimitChange(Number(opt?.value))}
-                            options={[10, 20, 50].map((n) => ({ value: n, label: n }))}
-                            size="sm"
-                            containerClassName="w-[84px]"
-                            isSearchable={false}
-                        />
-                    </label>
+                    <CustomSelect
+                        options={[10, 20, 50].map((n) => ({ value: n, label: t('table.items_per_page', { count: n, ns: 'tour', defaultValue: `${n} dòng` }) }))}
+                        value={{ value: limit, label: t('table.items_per_page', { count: limit, ns: 'tour', defaultValue: `${limit} dòng` }) }}
+                        onChange={(opt: Option | null) => onLimitChange(Number(opt?.value))}
+                        className="text-[12px] w-[120px]"
+                        isSearchable={false}
+                        size="sm"
+                    />
                 </div>
             </div>
 
@@ -182,8 +208,16 @@ const TourSchedulesTable = ({
                             </tr>
                         ) : data.length === 0 ? (
                             <tr>
-                                <td colSpan={10} className="py-16 text-center text-[#64748B] text-sm font-medium">
-                                    {t('schedules:no_data.title')}
+                                <td colSpan={10} className="py-[80px] text-center">
+                                    <div className="flex flex-col items-center gap-3">
+                                        <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center">
+                                            <RefreshCw size={32} className="text-[#E2E8F0]" />
+                                        </div>
+                                        <div className="space-y-1">
+                                            <p className="text-[#1E293B] font-bold text-[16px]">{t('schedules:no_data.title', 'Không có dữ liệu')}</p>
+                                            <p className="text-text-secondary text-[14px]">{t('schedules:no_data.subtitle', 'Không tìm thấy lịch trình nào')}</p>
+                                        </div>
+                                    </div>
                                 </td>
                             </tr>
                         ) : (

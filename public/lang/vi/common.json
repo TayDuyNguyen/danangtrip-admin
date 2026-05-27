@@ -48,7 +48,10 @@
         "leave": "Rời đi"
     },
     "breadcrumb": {
-        "home": "Trang chủ"
+        "home": "Trang chủ",
+        "edit": "Chỉnh sửa",
+        "view": "Chi tiết",
+        "add": "Thêm mới"
     },
     "confirm_delete": "Bạn có chắc muốn xóa mục này?",
     "error": {
