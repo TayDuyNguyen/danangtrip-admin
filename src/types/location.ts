@@ -18,7 +18,7 @@ export interface RawLocation {
     phone?: string;
     email?: string;
     website?: string;
-    opening_hours?: string;
+    opening_hours?: string | string[] | Record<string, string>;
     latitude?: number | string;
     longitude?: number | string;
     thumbnail: string | null;
@@ -80,7 +80,7 @@ export interface CreateLocationInput {
     phone?: string;
     email?: string;
     website?: string;
-    opening_hours?: string;
+    opening_hours?: string | string[] | null;
     price_min?: number;
     price_max?: number;
     price_level?: number;

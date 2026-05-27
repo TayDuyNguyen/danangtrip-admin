@@ -45,11 +45,11 @@
         "inactive": "TẠM DỪNG"
     },
     "priceLevels": {
-        "free": "Miễn phí",
-        "low": "$",
-        "medium": "$$",
-        "high": "$$$",
-        "unknown": "N/A"
+        "free": "$ - Miễn phí / Rẻ",
+        "low": "$$ - Phổ thông",
+        "medium": "$$$ - Cao",
+        "high": "$$$$ - Rất cao",
+        "unknown": "Chưa cập nhật"
     },
     "messages": {
         "delete_confirm": "Địa điểm <strong>{{name}}</strong> sẽ bị xóa vĩnh viễn.",
@@ -136,7 +136,8 @@
             "price_max": "Giá cao nhất",
             "price_level": "Mức giá (1-4)",
             "opening_hours": "Giờ mở cửa",
-            "opening_hours_placeholder": "VD: 07:30 - 21:00 hàng ngày",
+            "opening_hours_placeholder": "VD: 07:30 - 21:00 hàng ngày\nVD: Thứ 2-6: 08:00 - 21:00\nVD: Thứ 7-CN: 09:00 - 22:00",
+            "opening_hours_helper": "Mỗi dòng là một khung giờ. VD: Thứ 2-6: 08:00 - 21:00",
             "currency_suffix": "VNĐ"
         },
         "media": {
@@ -202,6 +203,8 @@
             "no_description": "Chưa có mô tả chi tiết cho địa điểm này.",
             "price_estimate": "Mức giá ước tính",
             "no_price": "Liên hệ đơn vị vận hành để cập nhật giá.",
+            "tags": "Tags",
+            "no_tags": "Chưa có tag nào được gắn.",
             "no_amenities": "Chưa có thông tin tiện ích."
         },
         "map": {

@@ -1,7 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { blogApi } from "@/api/blogApi";
 import { mapBlogPostList, mapBlogCategory } from "@/dataHelper/blog.mapper";
-import type { BlogListFilters } from "@/types";
+import type { BlogListFilters, CreateBlogPostPayload, CreateBlogCategoryPayload } from "@/types";
+import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
+import axiosClient from "@/api/axiosClient";
+import { API_ENDPOINTS } from "@/constants";
 
 export const blogKeys = {
     all: ["blogs"] as const,
@@ -38,6 +42,70 @@ export const useBlogCategoriesQuery = () => {
         },
         staleTime: 1000 * 60 * 5, // 5 minutes
     });
+};
+
+export const useCreateBlogPostMutation = () => {
+    const queryClient = useQueryClient();
+    const { t } = useTranslation("blog");
+
+    return useMutation({
+        mutationFn: (payload: CreateBlogPostPayload) => blogApi.create(payload),
+        onSuccess: (response) => {
+            const status = response.data?.status;
+            if (status === "published") {
+                toast.success(t("toast.publish_success", { defaultValue: "Bài viết đã được xuất bản!" }));
+            } else {
+                toast.success(t("toast.draft_success", { defaultValue: "Đã lưu bản nháp thành công!" }));
+            }
+            queryClient.invalidateQueries({ queryKey: blogKeys.all });
+            queryClient.invalidateQueries({ queryKey: ["dashboard"] });
+        },
+        onError: () => {
+            toast.error(t("toast.network_error"));
+        },
+    });
+};
+
+export const useCreateBlogCategoryMutation = () => {
+    const queryClient = useQueryClient();
+    const { t } = useTranslation("blog");
+
+    return useMutation({
+        mutationFn: (payload: CreateBlogCategoryPayload) => blogApi.createCategory(payload),
+        onSuccess: () => {
+            toast.success(t("toast.category_create_success", { defaultValue: "Tạo danh mục thành công!" }));
+            queryClient.invalidateQueries({ queryKey: blogKeys.categories() });
+        },
+        onError: (err: unknown) => {
+            const error = err as { response?: { data?: { message?: string } } };
+            const message = error?.response?.data?.message || t("toast.network_error");
+            toast.error(message);
+        },
+    });
+};
+
+export const useBlogUploadMutations = () => {
+    const { t } = useTranslation("blog");
+
+    return {
+        uploadImageMutation: useMutation({
+            mutationFn: async (file: File) => {
+                const formData = new FormData();
+                formData.append("image", file);
+                const res = await axiosClient.post(API_ENDPOINTS.UPLOAD.IMAGE, formData, {
+                    headers: { "Content-Type": "multipart/form-data" },
+                });
+                return res.data; // contains url, public_id, asset_id
+            },
+            onError: () => {
+                toast.error(t("toast.upload_error", { defaultValue: "Lỗi tải ảnh lên!" }));
+            },
+        }),
+        deleteImageMutation: useMutation({
+            mutationFn: (publicId: string) =>
+                axiosClient.delete(API_ENDPOINTS.UPLOAD.DELETE, { data: { public_id: publicId } }),
+        }),
+    };
 };
 
 export const useBlogMutations = () => {

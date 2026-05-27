@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -22,6 +22,24 @@ interface MapPickerProps {
 }
 
 const DANANG_CENTER: [number, number] = [16.0544, 108.2022];
+const GEOCODE_DELAY_MS = 750;
+const MIN_ADDRESS_LENGTH = 8;
+
+type GeocodeStatus = 'idle' | 'searching' | 'found' | 'not-found' | 'error';
+
+interface NominatimResult {
+    lat: string;
+    lon: string;
+}
+
+const normalizeAddressQuery = (value: string) => {
+    const trimmed = value.trim();
+    if (!trimmed) return '';
+
+    return /đà nẵng|da nang/i.test(trimmed)
+        ? `${trimmed}, Việt Nam`
+        : `${trimmed}, Đà Nẵng, Việt Nam`;
+};
 
 function LocationMarker({ position, setPosition }: { position: L.LatLngExpression, setPosition: (pos: L.LatLng) => void }) {
     useMapEvents({
@@ -46,11 +64,91 @@ const MapPicker = ({ lat, lng, onChange, address }: MapPickerProps) => {
     const [position, setPosition] = useState<L.LatLngExpression>(
         lat && lng ? [lat, lng] : DANANG_CENTER
     );
+    const [geocodeStatus, setGeocodeStatus] = useState<GeocodeStatus>('idle');
+    const lastResolvedAddressRef = useRef('');
 
     const handleSetPosition = useCallback((newPos: L.LatLng) => {
         setPosition([newPos.lat, newPos.lng]);
         onChange(newPos.lat, newPos.lng);
     }, [onChange]);
+
+    useEffect(() => {
+        if (lat && lng) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional prop-to-state sync
+            setPosition([lat, lng]);
+        } else {
+            // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional prop-to-state sync
+            setPosition(DANANG_CENTER);
+        }
+    }, [lat, lng]);
+
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- guard clause before async side-effect
+    useEffect(() => {
+        const query = normalizeAddressQuery(address || '');
+        if (query.length < MIN_ADDRESS_LENGTH) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            setGeocodeStatus('idle');
+            return;
+        }
+
+        if (query === lastResolvedAddressRef.current) {
+            return;
+        }
+
+        const controller = new AbortController();
+        const timeout = window.setTimeout(async () => {
+            setGeocodeStatus('searching');
+
+            try {
+                const params = new URLSearchParams({
+                    format: 'jsonv2',
+                    q: query,
+                    limit: '1',
+                    countrycodes: 'vn',
+                    viewbox: '107.75,16.35,108.55,15.75',
+                    bounded: '0',
+                });
+                const response = await fetch(`https://nominatim.openstreetmap.org/search?${params.toString()}`, {
+                    signal: controller.signal,
+                    headers: {
+                        Accept: 'application/json',
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error('Geocoding failed');
+                }
+
+                const results = (await response.json()) as NominatimResult[];
+                const first = results[0];
+                if (!first) {
+                    setGeocodeStatus('not-found');
+                    return;
+                }
+
+                const nextLat = Number(first.lat);
+                const nextLng = Number(first.lon);
+                if (!Number.isFinite(nextLat) || !Number.isFinite(nextLng)) {
+                    setGeocodeStatus('not-found');
+                    return;
+                }
+
+                lastResolvedAddressRef.current = query;
+                setPosition([nextLat, nextLng]);
+                onChange(nextLat, nextLng);
+                setGeocodeStatus('found');
+            } catch (error) {
+                if ((error as Error).name !== 'AbortError') {
+                    setGeocodeStatus('error');
+                }
+            }
+        }, GEOCODE_DELAY_MS);
+
+        return () => {
+            window.clearTimeout(timeout);
+            controller.abort();
+        };
+    }, [address, onChange]);
 
     return (
         <div className="space-y-4">
@@ -106,7 +204,12 @@ const MapPicker = ({ lat, lng, onChange, address }: MapPickerProps) => {
             {address && (
                 <div className="flex gap-3 rounded-xl border border-slate-100 bg-slate-50/50 p-4 text-sm text-slate-600 italic">
                     <Info className="w-5 h-5 text-[#14b8a6] shrink-0 mt-0.5" />
-                    <span>{address}</span>
+                    <span>
+                        {address}
+                        {geocodeStatus === 'searching' && <span className="ml-2 text-[#14b8a6]">Đang tìm tọa độ...</span>}
+                        {geocodeStatus === 'not-found' && <span className="ml-2 text-amber-600">Không tìm thấy tọa độ phù hợp.</span>}
+                        {geocodeStatus === 'error' && <span className="ml-2 text-red-500">Không thể tìm tọa độ lúc này.</span>}
+                    </span>
                 </div>
             )}
         </div>

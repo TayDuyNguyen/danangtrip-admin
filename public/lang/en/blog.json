@@ -65,6 +65,70 @@
         "status_success": "Blog post status updated successfully",
         "bulk_delete_success": "Blog posts deleted successfully",
         "bulk_status_success": "Blog posts status updated successfully",
-        "network_error": "Network error or server failed to respond"
+        "network_error": "Network error or server failed to respond",
+        "draft_success": "Draft saved successfully!",
+        "publish_success": "Blog post published successfully!",
+        "category_create_success": "Category created successfully!",
+        "upload_error": "Failed to upload image!"
+    },
+    "create_title": "Create New Post",
+    "create_subtitle": "Write and publish a travel blog post",
+    "form": {
+        "title": "Post Title",
+        "title_placeholder": "Enter post title...",
+        "slug": "Slug",
+        "slug_placeholder": "post-title-slug",
+        "slug_auto": "Auto",
+        "excerpt": "Short Description (Excerpt)",
+        "excerpt_placeholder": "A brief description of the post, shown in listings...",
+        "content": "Content",
+        "content_placeholder": "Start writing the blog post content...",
+        "required": "Required",
+        "sections": {
+            "content": "Post Content",
+            "publish": "Publish Settings",
+            "categories": "Categories",
+            "featured_image": "Featured Image",
+            "guidelines": "💡 Guidelines"
+        },
+        "publish": {
+            "status": "Status",
+            "draft": "Draft",
+            "draft_helper": "Not visible to the public",
+            "published": "Publish immediately",
+            "published_helper": "Visible immediately after saving",
+            "scheduled": "Schedule",
+            "scheduled_helper": "Publish at selected date/time",
+            "date": "Publish Date",
+            "time": "Time",
+            "save_draft": "Save Draft",
+            "publish_btn": "Publish"
+        },
+        "categories": {
+            "placeholder": "Select category...",
+            "add_new": "Add New Category",
+            "add_btn": "Add",
+            "input_placeholder": "New category name..."
+        },
+        "media": {
+            "upload_drag": "Drag and drop image here or",
+            "select_btn": "Select image",
+            "helper": "PNG, JPG, WEBP · Max 5MB · Recommended 1200x630px",
+            "change": "Change",
+            "delete": "Delete"
+        },
+        "guidelines": {
+            "item_1": "Title should be descriptive and SEO friendly",
+            "item_2": "Featured image ratio should be 16:9 (1200x630px)",
+            "item_3": "Excerpt is used for search engine snippets",
+            "item_4": "Save drafts and verify before publishing"
+        },
+        "validation": {
+            "title_required": "Post title is required",
+            "title_max": "Title must not exceed 255 characters",
+            "content_required": "Post content is required",
+            "categories_required": "Please select at least one category",
+            "excerpt_max": "Excerpt must not exceed 500 characters"
+        }
     }
 }

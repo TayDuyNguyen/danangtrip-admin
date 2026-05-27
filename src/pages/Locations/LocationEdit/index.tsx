@@ -12,11 +12,12 @@ import DeleteLocationModal from '../components/DeleteLocationModal';
 import { useAuth } from '@/store/useUserStore';
 
 const LocationEdit = () => {
-    const { t } = useTranslation('location');
+    const { t } = useTranslation(['location', 'common']);
     const navigate = useNavigate();
     const { user } = useAuth();
     const { id } = useParams<{ id: string }>();
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const isAdmin = user?.role === 'admin';
 
@@ -79,7 +80,7 @@ const LocationEdit = () => {
                                 </span>
                             </div>
                             <h1 className="text-xl font-bold text-slate-900 tracking-tight">
-                                {isLoading ? t('common.loading') : t('edit_title')}
+                                {isLoading ? t('common:loading') : t('edit_title')}
                             </h1>
                         </div>
                     </div>
@@ -108,7 +109,8 @@ const LocationEdit = () => {
                         <Button
                             form="location-form"
                             type="submit"
-                            disabled={isLoading}
+                            isLoading={isSubmitting}
+                            disabled={isSubmitting || isLoading}
                             className="rounded-xl bg-[#14b8a6] hover:bg-[#0d9488] text-white px-8 font-bold shadow-lg shadow-[#14b8a6]/20 transition-all hover:scale-[1.02] active:scale-95"
                         >
                             <Sparkles className="w-4 h-4 mr-2" />
@@ -136,6 +138,10 @@ const LocationEdit = () => {
                             <LocationForm 
                                 isEdit 
                                 initialData={locationData}
+                                onSubmittingChange={setIsSubmitting}
+                                onSuccess={() => {
+                                    navigate(ROUTES.LOCATIONS_DETAIL.replace(':id', id || ''));
+                                }}
                             />
                         )}
                     </>
