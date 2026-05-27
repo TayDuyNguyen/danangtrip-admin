@@ -24,12 +24,15 @@ import {
     Trash2,
     CalendarPlus,
     Edit2,
+    Loader2,
+    ArrowLeft,
 } from 'lucide-react';
 
 import { createTourSchema, type CreateTourInput } from '@/validations/tour.schema';
 import { useTourMutations, useTourCategoriesQuery, useTourDetailQuery } from '@/hooks/useTourQueries';
 import { ROUTES } from '@/routes/routes';
 import { computeDiscountedPrice, slugifyVietnamese, scrollToFirstError, cn } from '@/utils';
+import Breadcrumbs from '@/components/common/Breadcrumbs';
 import CustomSelect from '@/components/ui/CustomSelect';
 import { TextInput } from '@/components/ui/TextInput';
 import { CurrencyInput } from '@/components/ui/CurrencyInput';
@@ -71,26 +74,9 @@ function EditTour() {
     const { t, i18n } = useTranslation(['tour', 'common', 'schedules']);
     const navigate = useNavigate();
     const { id } = useParams<{ id: string }>();
-    const [isScrolled, setIsScrolled] = useState(false);
     const [autoSlug, setAutoSlug] = useState(false);
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     const [schedulePendingDelete, setSchedulePendingDelete] = useState<Schedule | null>(null);
-
-    useEffect(() => {
-        const handleScroll = (e: Event) => {
-            const target = e.target as HTMLElement;
-            if (target && (target.tagName === 'MAIN' || target.classList.contains('overflow-y-auto'))) {
-                setIsScrolled((prev) => {
-                    const currentScroll = target.scrollTop;
-                    if (!prev && currentScroll > 10) return true;
-                    if (prev && currentScroll < 2) return false;
-                    return prev;
-                });
-            }
-        };
-        window.addEventListener('scroll', handleScroll, true);
-        return () => window.removeEventListener('scroll', handleScroll, true);
-    }, []);
 
     // Parallel fetching Rule §14
     const {
@@ -221,17 +207,6 @@ function EditTour() {
 
     const busy = isSubmitting || updateTourMutation.isPending;
 
-    if (tourLoading) {
-        return (
-            <div className="flex items-center justify-center min-h-[60vh]">
-                <div className="flex flex-col items-center gap-4">
-                    <div className="w-10 h-10 border-4 border-[#ccfbf1] border-t-[#14b8a6] rounded-full animate-spin" />
-                    <p className="text-slate-500 font-medium">{t('common:loading')}</p>
-                </div>
-            </div>
-        );
-    }
-
     if (tourError) {
         return (
             <div className="w-full px-4 sm:px-6 lg:px-10 py-12">
@@ -255,82 +230,75 @@ function EditTour() {
 
     return (
         <form onSubmit={onSubmit} className="min-h-screen bg-surface pb-20 font-sans" noValidate>
-            <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200 transition-all duration-300 shadow-sm rounded-b-2xl">
-                <div
-                    className={cn(
-                        'w-full px-4 sm:px-6 lg:px-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between transition-all duration-300',
-                        isScrolled ? 'py-3' : 'py-5 lg:py-6'
-                    )}
-                >
-                    <div className="flex-1 min-w-0">
-                        <nav
-                            className={cn(
-                                'flex flex-wrap items-center gap-x-1 gap-y-0.5 text-xs font-medium text-text-secondary transition-all duration-300',
-                                isScrolled ? 'opacity-0 h-0 overflow-hidden mb-0' : 'opacity-100 h-auto mb-2'
-                            )}
+            <div className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-slate-200/60 shadow-xs">
+                <div className="max-w-[1600px] mx-auto px-4 md:px-8 h-20 flex items-center justify-between">
+                    {/* Header Left: Breadcrumb + Title */}
+                    <div className="flex items-center gap-4">
+                        <button
+                            type="button"
+                            className="rounded-full w-10 h-10 p-0 hover:bg-slate-100 cursor-pointer flex items-center justify-center border-0 bg-transparent text-slate-600"
+                            onClick={() => navigate(ROUTES.TOURS_LIST)}
                         >
-                            <span>{t('title.breadcrumb_parent')}</span>
-                            <span aria-hidden>/</span>
+                            <ArrowLeft className="w-5 h-5 text-slate-600" />
+                        </button>
+                        <div>
+                            <div className="mb-1">
+                                <Breadcrumbs
+                                    icon={Map}
+                                    items={[
+                                        { label: 'sidebar.tours', path: ROUTES.TOURS_LIST },
+                                        { label: 'sidebar.tour_list', path: ROUTES.TOURS_LIST },
+                                        { label: 'breadcrumb.edit' }
+                                    ]}
+                                />
+                            </div>
+                            <h1 className="text-xl font-bold text-slate-900 tracking-tight leading-none">
+                                {t('title.edit', { defaultValue: 'Chỉnh sửa Tour' })}
+                            </h1>
+                            {!tourLoading && tourName && (
+                                <p className="text-xs text-slate-400 font-medium truncate max-w-[200px] sm:max-w-[400px] mt-1 select-all">
+                                    {tourName}
+                                </p>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Header Right: Buttons */}
+                    {!tourLoading && (
+                        <div className="hidden md:flex items-center gap-3">
                             <button
                                 type="button"
                                 onClick={() => navigate(ROUTES.TOURS_LIST)}
-                                className="hover:text-slate-600 transition-colors"
+                                className="rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 font-semibold h-10 px-5 transition-all bg-white cursor-pointer"
                             >
-                                {t('title.breadcrumb_list')}
+                                {t('form.actions.cancel')}
                             </button>
-                            <span aria-hidden>/</span>
-                            <span className="text-slate-600">{t('title.breadcrumb_edit')}</span>
-                        </nav>
-                        <div className="flex items-center gap-3">
-                            <h1
-                                className={cn(
-                                    'font-bold text-[#1E293B] tracking-tight transition-all duration-300',
-                                    isScrolled ? 'text-lg' : 'text-2xl'
-                                )}
+                            <button
+                                type="submit"
+                                disabled={busy}
+                                className="flex items-center gap-2 px-6 h-10 rounded-xl bg-[#14b8a6] hover:bg-[#0f766e] disabled:bg-[#5dd4c7] text-white text-sm font-bold shadow-lg shadow-[#14b8a6]/20 transition-all hover:scale-[1.02] active:scale-95 cursor-pointer"
                             >
-                                {t('title.edit')}
-                            </h1>
-                            {isScrolled && (
-                                <span className="hidden md:inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-[#dff7f4] text-[#0f766e] animate-in fade-in slide-in-from-left-2 duration-300">
-                                    {t('title.breadcrumb_edit')}
-                                </span>
-                            )}
+                                {busy ? (
+                                    <Loader2 className="w-4 h-4 animate-spin" />
+                                ) : (
+                                    <Save className="w-4 h-4" />
+                                )}
+                                {busy ? t('common:actions.saving') : t('form.actions.save_changes')}
+                            </button>
                         </div>
-                        <p
-                            className={cn(
-                                'text-sm text-[#64748B] max-w-xl transition-all duration-300',
-                                isScrolled ? 'opacity-0 h-0 overflow-hidden mt-0' : 'opacity-100 h-auto mt-1'
-                            )}
-                        >
-                            {t('form.edit_subtitle')}
-                        </p>
-                    </div>
-
-                    <div className="flex flex-wrap items-center gap-3 shrink-0">
-                        <button
-                            type="button"
-                            onClick={() => navigate(ROUTES.TOURS_LIST)}
-                            className="px-5 py-2.5 text-sm font-semibold rounded-md border border-[#E2E8F0] bg-white text-[#64748B] hover:border-[#EF4444] hover:text-[#EF4444] transition-colors"
-                        >
-                            {t('form.actions.cancel')}
-                        </button>
-                        <button
-                            type="submit"
-                            disabled={busy}
-                            className="flex items-center gap-2 px-5 py-2.5 rounded-md bg-[#14b8a6] hover:bg-[#0f766e] disabled:bg-[#5dd4c7] text-white text-sm font-semibold shadow-sm transition-colors"
-                        >
-                            {busy ? (
-                                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                            ) : (
-                                <Save className="w-4 h-4" />
-                            )}
-                            {busy ? t('common:actions.saving') : t('form.actions.save_changes')}
-                        </button>
-                    </div>
+                    )}
                 </div>
             </div>
 
             <div className="w-full px-4 sm:px-6 lg:px-10 pt-8">
+                {tourLoading ? (
+                    <div className="flex items-center justify-center min-h-[40vh] w-full">
+                        <div className="flex flex-col items-center gap-4 animate-pulse">
+                            <div className="w-10 h-10 border-4 border-[#ccfbf1] border-t-[#14b8a6] rounded-full animate-spin" />
+                            <p className="text-slate-400 font-medium">{t('common:loading')}</p>
+                        </div>
+                    </div>
+                ) : (
                 <div className="flex flex-col lg:flex-row gap-8 items-start">
                     <div className="w-full lg:flex-1 space-y-6">
                         <div
@@ -906,6 +874,7 @@ function EditTour() {
                         />
                     </aside>
                 </div>
+                )}
             </div>
             <TourDeleteDialog
                 isOpen={isDeleteDialogOpen}

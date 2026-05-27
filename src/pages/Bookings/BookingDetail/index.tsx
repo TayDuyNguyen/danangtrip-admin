@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useParams, useNavigate, NavLink } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { 
     ArrowLeft, 
@@ -14,12 +14,11 @@ import {
     XCircle, 
     AlertCircle, 
     ShoppingBag,
+    ShoppingCart,
     DollarSign,
     CreditCard,
     FileText,
-    Sparkles,
     Users,
-    ChevronRight,
     Loader2
 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -29,6 +28,7 @@ import {
     useAdminBookingDetailQuery, 
     useBookingMutations 
 } from '@/hooks/useBookingQueries';
+import Breadcrumbs from '@/components/common/Breadcrumbs';
 import BookingStatusBadge from '../BookingList/components/BookingStatusBadge';
 import PaymentStatusBadge from '../BookingList/components/PaymentStatusBadge';
 import BookingCancelDialog from '../BookingList/components/BookingCancelDialog';
@@ -291,138 +291,123 @@ const BookingDetail = () => {
     const totalChildren = booking?.items.reduce((sum, item) => sum + item.quantityChild, 0) || 0;
     const totalInfants = booking?.items.reduce((sum, item) => sum + item.quantityInfant, 0) || 0;
 
-    // Loading State
-    if (isLoading) {
-        return (
-            <div className="p-4 lg:p-10 mx-auto min-h-screen bg-[#F8FAFC] font-sans">
-                {/* Header Skeleton */}
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-12 animate-pulse">
-                    <div className="space-y-3">
-                        <div className="h-4 w-48 bg-slate-200 rounded-full" />
-                        <div className="h-8 w-64 bg-slate-200 rounded-lg" />
-                        <div className="h-4 w-96 bg-slate-200 rounded-full" />
-                    </div>
-                    <div className="flex gap-3">
-                        <div className="h-11 w-32 bg-slate-200 rounded-xl" />
-                        <div className="h-11 w-44 bg-slate-200 rounded-xl" />
-                    </div>
-                </div>
-
-                {/* Grid Skeleton */}
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                    <div className="lg:col-span-8 space-y-8 animate-pulse">
-                        <div className="bg-white rounded-3xl p-6 lg:p-8 h-48 border border-slate-100 shadow-xs" />
-                        <div className="bg-white rounded-3xl p-6 lg:p-8 h-64 border border-slate-100 shadow-xs" />
-                        <div className="bg-white rounded-3xl p-6 lg:p-8 h-48 border border-slate-100 shadow-xs" />
-                    </div>
-                    <div className="lg:col-span-4 space-y-8 animate-pulse">
-                        <div className="bg-white rounded-3xl p-6 lg:p-8 h-56 border border-slate-100 shadow-xs" />
-                        <div className="bg-white rounded-3xl p-6 lg:p-8 h-44 border border-slate-100 shadow-xs" />
-                        <div className="bg-white rounded-3xl p-6 lg:p-8 h-64 border border-slate-100 shadow-xs" />
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
-    // Error State
-    if (isError || !booking) {
-        return (
-            <div className="p-4 lg:p-10 mx-auto min-h-screen bg-[#F8FAFC] flex flex-col items-center justify-center font-sans">
-                <div className="bg-white border border-slate-100 p-8 lg:p-12 rounded-3xl max-w-md text-center shadow-xl hover:shadow-2xl transition-all duration-300">
-                    <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-rose-50 text-rose-500 mb-6">
-                        <AlertCircle size={32} />
-                    </div>
-                    <h3 className="text-[20px] font-bold text-slate-900 mb-2">
-                        {t('messages.update_error')}
-                    </h3>
-                    <p className="text-[14px] text-slate-500 font-bold mb-8 leading-relaxed">
-                        {t('detail.error_description')}
-                    </p>
-                    <div className="flex gap-3 justify-center">
-                        <button
-                            onClick={handleBack}
-                            className="flex items-center gap-2 px-5 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-slate-600 font-bold text-[14px] hover:bg-slate-100 transition-all active:scale-95 duration-150"
-                        >
-                            <ArrowLeft size={16} />
-                            {t('detail.back_button')}
-                        </button>
-                        <button
-                            onClick={() => refetch()}
-                            className="flex items-center gap-2 px-5 py-3 bg-[#14b8a6] text-white font-bold text-[14px] rounded-2xl hover:bg-[#0d9488] shadow-lg shadow-teal-500/20 transition-all active:scale-95 duration-150"
-                        >
-                            {t('detail.retry_button')}
-                        </button>
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
-    const isTerminalState = booking.bookingStatus === 'completed' || booking.bookingStatus === 'cancelled';
+    const isTerminalState = booking ? (booking.bookingStatus === 'completed' || booking.bookingStatus === 'cancelled') : false;
 
     return (
-        <div className="p-4 lg:p-10 mx-auto min-h-screen bg-[#F8FAFC] font-sans">
-            {/* Breadcrumbs & Header Section */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-10">
-                <div>
-                    <nav className="flex items-center gap-2 mb-2.5 text-[12px] font-bold text-slate-400">
-                        <NavLink to={ROUTES.DASHBOARD} className="hover:text-[#14b8a6] transition-colors">
-                            {t('common:breadcrumb.home')}
-                        </NavLink>
-                        <ChevronRight size={12} className="text-slate-300" />
-                        <NavLink to={ROUTES.BOOKINGS_LIST} className="hover:text-[#14b8a6] transition-colors uppercase tracking-wider text-[10px]">
-                            {t('breadcrumb.current')}
-                        </NavLink>
-                        <ChevronRight size={12} className="text-slate-300" />
-                        <span className="text-[#14b8a6] font-semibold">
-                            #{booking.code}
-                        </span>
-                    </nav>
-                    
-                    <div className="flex flex-wrap items-center gap-3">
-                        <h2 className="text-[26px] font-bold text-slate-900 leading-tight tracking-tight">
-                            {t('detail.page_title')} <span className="text-slate-300 font-light">#</span>{booking.code}
-                        </h2>
-                        <div className="flex gap-2">
-                            <BookingStatusBadge status={booking.bookingStatus} className="h-6" />
-                            <PaymentStatusBadge status={booking.paymentStatus} className="h-6" />
+        <div className="min-h-screen bg-[#F8FAFC] pb-20 font-sans">
+            {/* Sticky Header */}
+            <div className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-slate-200/60 shadow-xs">
+                <div className="max-w-[1600px] mx-auto px-4 md:px-8 h-20 flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                        <button
+                            onClick={handleBack}
+                            className="rounded-full w-10 h-10 p-0 hover:bg-slate-100 cursor-pointer flex items-center justify-center border-0 bg-transparent text-slate-600"
+                        >
+                            <ArrowLeft className="w-5 h-5" />
+                        </button>
+                        <div>
+                            <div className="mb-1">
+                                <Breadcrumbs
+                                    icon={ShoppingCart}
+                                    items={[
+                                        { label: 'sidebar.orders', path: ROUTES.BOOKINGS_LIST },
+                                        { label: 'breadcrumb.view' }
+                                    ]}
+                                />
+                            </div>
+                            <h1 className="text-xl font-bold text-slate-900 tracking-tight leading-none flex items-center gap-2">
+                                {t('detail.page_title', { defaultValue: 'Chi tiết Đơn đặt' })}
+                                {!isLoading && booking && (
+                                    <>
+                                        <span className="text-slate-350 font-light">#</span>{booking.code}
+                                        <BookingStatusBadge status={booking.bookingStatus} className="h-5" />
+                                        <PaymentStatusBadge status={booking.paymentStatus} className="h-5" />
+                                    </>
+                                )}
+                            </h1>
+                            {!isLoading && booking && (
+                                <p className="text-xs text-slate-400 font-medium truncate max-w-[200px] sm:max-w-[400px] mt-1 select-all">
+                                    {booking.customer.name} ({booking.customer.email})
+                                </p>
+                            )}
                         </div>
                     </div>
-                    <p className="text-[13px] text-slate-400 font-bold mt-1.5 flex items-center gap-1.5">
-                        <Sparkles size={14} className="text-[#14b8a6]" />
-                        {t('detail.page_subtitle')}
-                    </p>
-                </div>
 
-                <div className="flex items-center gap-3">
-                    <button
-                        onClick={handleBack}
-                        className="flex items-center gap-2 px-5 py-2.5 bg-white border border-slate-200 rounded-2xl text-slate-600 font-semibold text-[13px] hover:border-[#14b8a6] hover:text-[#14b8a6] transition-all shadow-xs active:scale-95 cursor-pointer duration-200"
-                    >
-                        <ArrowLeft size={16} />
-                        {t('detail.back_button')}
-                    </button>
-                    <button
-                        onClick={handleDownloadInvoice}
-                        disabled={getInvoiceMutation.isPending}
-                        className={`flex items-center gap-2 px-5 py-2.5 bg-white border border-slate-200 rounded-2xl text-slate-700 font-semibold text-[13px] hover:border-[#14b8a6] hover:text-[#14b8a6] hover:bg-teal-50/10 transition-all shadow-xs active:scale-95 cursor-pointer duration-200 ${getInvoiceMutation.isPending ? 'opacity-50 cursor-not-allowed' : ''}`}
-                    >
-                        {getInvoiceMutation.isPending ? (
-                            <Loader2 size={16} className="animate-spin text-[#14b8a6]" />
-                        ) : (
-                            <Download size={16} className="text-[#14b8a6]" />
-                        )}
-                        {t('detail.invoice_button')}
-                    </button>
+                    {!isLoading && booking && (
+                        <div className="hidden md:flex items-center gap-3">
+                            <button
+                                onClick={handleBack}
+                                className="flex items-center gap-2 px-5 py-2.5 bg-white border border-slate-200 rounded-2xl text-slate-600 font-semibold text-[13px] hover:border-[#14b8a6] hover:text-[#14b8a6] transition-all h-10 shadow-xs active:scale-95 cursor-pointer duration-200"
+                            >
+                                <ArrowLeft size={16} />
+                                {t('detail.back_button')}
+                            </button>
+                            <button
+                                onClick={handleDownloadInvoice}
+                                disabled={getInvoiceMutation.isPending}
+                                className={`flex items-center gap-2 px-5 py-2.5 bg-white border border-slate-200 rounded-2xl text-slate-700 font-semibold text-[13px] hover:border-[#14b8a6] hover:text-[#14b8a6] hover:bg-teal-50/10 transition-all h-10 shadow-xs active:scale-95 cursor-pointer duration-200 ${getInvoiceMutation.isPending ? 'opacity-50 cursor-not-allowed' : ''}`}
+                            >
+                                {getInvoiceMutation.isPending ? (
+                                    <Loader2 size={16} className="animate-spin text-[#14b8a6]" />
+                                ) : (
+                                    <Download size={16} className="text-[#14b8a6]" />
+                                )}
+                                {t('detail.invoice_button')}
+                            </button>
+                        </div>
+                    )}
                 </div>
             </div>
 
             {/* Core 2-Column Responsive Layout */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                
-                {/* Left Side Column (65% width equivalent) */}
-                <div className="lg:col-span-8 space-y-8">
+            <div className="max-w-[1600px] mx-auto px-4 md:px-8 mt-8">
+                {isLoading ? (
+                    /* Grid Skeleton */
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 animate-pulse">
+                        <div className="lg:col-span-8 space-y-8">
+                            <div className="bg-white rounded-3xl p-6 lg:p-8 h-48 border border-slate-100 shadow-xs" />
+                            <div className="bg-white rounded-3xl p-6 lg:p-8 h-64 border border-slate-100 shadow-xs" />
+                            <div className="bg-white rounded-3xl p-6 lg:p-8 h-48 border border-slate-100 shadow-xs" />
+                        </div>
+                        <div className="lg:col-span-4 space-y-8">
+                            <div className="bg-white rounded-3xl p-6 lg:p-8 h-56 border border-slate-100 shadow-xs" />
+                            <div className="bg-white rounded-3xl p-6 lg:p-8 h-44 border border-slate-100 shadow-xs" />
+                            <div className="bg-white rounded-3xl p-6 lg:p-8 h-64 border border-slate-100 shadow-xs" />
+                        </div>
+                    </div>
+                ) : isError || !booking ? (
+                    <div className="flex flex-col items-center justify-center py-20 font-sans">
+                        <div className="bg-white border border-slate-100 p-8 lg:p-12 rounded-3xl max-w-md text-center shadow-xl hover:shadow-2xl transition-all duration-300">
+                            <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-rose-50 text-rose-500 mb-6">
+                                <AlertCircle size={32} />
+                            </div>
+                            <h3 className="text-[20px] font-bold text-slate-900 mb-2">
+                                {t('messages.update_error')}
+                            </h3>
+                            <p className="text-[14px] text-slate-500 font-bold mb-8 leading-relaxed">
+                                {t('detail.error_description')}
+                            </p>
+                            <div className="flex gap-3 justify-center">
+                                <button
+                                    onClick={handleBack}
+                                    className="flex items-center gap-2 px-5 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-slate-600 font-bold text-[14px] hover:bg-slate-100 transition-all active:scale-95 duration-150"
+                                >
+                                    <ArrowLeft size={16} />
+                                    {t('detail.back_button')}
+                                </button>
+                                <button
+                                    onClick={() => refetch()}
+                                    className="flex items-center gap-2 px-5 py-3 bg-[#14b8a6] text-white font-bold text-[14px] rounded-2xl hover:bg-[#0d9488] shadow-lg shadow-teal-500/20 transition-all active:scale-95 duration-150"
+                                >
+                                    {t('detail.retry_button')}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                        {/* Left Side Column (65% width equivalent) */}
+                        <div className="lg:col-span-8 space-y-8">
                     
                     {/* Customer Info Card */}
                     <div className="bg-white rounded-3xl p-6 lg:p-8 border border-slate-100 shadow-xs hover:shadow-md transition-all duration-300">
@@ -691,17 +676,21 @@ const BookingDetail = () => {
 
                 </div>
             </div>
+            )}
 
             {/* Cancel Action Confirmation Dialog */}
-            <BookingCancelDialog
-                isOpen={isCancelOpen}
-                onClose={() => setIsCancelOpen(false)}
-                onConfirm={handleCancelSubmit}
-                bookingCode={booking.code}
-                customerName={booking.customer.name}
-                isSubmitting={updateStatusMutation.isPending}
-            />
+            {booking && (
+                <BookingCancelDialog
+                    isOpen={isCancelOpen}
+                    onClose={() => setIsCancelOpen(false)}
+                    onConfirm={handleCancelSubmit}
+                    bookingCode={booking.code}
+                    customerName={booking.customer.name}
+                    isSubmitting={updateStatusMutation.isPending}
+                />
+            )}
         </div>
+    </div>
     );
 };
 

@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import { ROUTES } from '@/routes/routes';
 import LocationForm from '../components/LocationForm';
+import Breadcrumbs from '@/components/common/Breadcrumbs';
 
 const LocationCreate = () => {
     const { t } = useTranslation('location');
@@ -25,11 +26,15 @@ const LocationCreate = () => {
                             <ArrowLeft className="w-5 h-5 text-slate-600" />
                         </Button>
                         <div>
-                            <div className="flex items-center gap-2 mb-0.5">
-                                <MapPin className="w-4 h-4 text-[#14b8a6]" />
-                                <span className="text-[10px] font-bold uppercase tracking-[0.1em] text-[#14b8a6]">
-                                    Administration
-                                </span>
+                            <div className="mb-1">
+                                <Breadcrumbs
+                                    icon={MapPin}
+                                    items={[
+                                        { label: 'sidebar.locations', path: ROUTES.LOCATIONS_LIST },
+                                        { label: 'sidebar.location_list', path: ROUTES.LOCATIONS_LIST },
+                                        { label: 'breadcrumb.add' }
+                                    ]}
+                                />
                             </div>
                             <h1 className="text-xl font-bold text-slate-900 tracking-tight">
                                 {t('actions.add')}

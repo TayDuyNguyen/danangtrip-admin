@@ -4,7 +4,7 @@
     },
     "title": "Lịch khởi hành",
     "subtitle": "Quản lý toàn bộ lịch khởi hành của các tour",
-    "breadcrumb": "Quản lý Tour / Lịch khởi hành",
+    "breadcrumb": "Lịch khởi hành",
     "status": {
         "available": "Đang hoạt động",
         "full": "Đầy chỗ",

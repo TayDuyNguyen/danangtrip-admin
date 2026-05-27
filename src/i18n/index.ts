@@ -23,10 +23,8 @@ i18
         keySeparator: '.',
 
         backend: {
-            loadPath: '/lang/{{lng}}/{{ns}}.json', // đường dẫn file json
+            loadPath: `/lang/{{lng}}/{{ns}}.json?v=${import.meta.env.DEV ? Date.now() : '1.0.0'}`, // đường dẫn file json
         },
-
-        lng: 'vi', // Mặc định tiếng Việt khi chưa chọn ngôn ngữ
 
         detection: {
             order: ['localStorage', 'cookie', 'querystring', 'navigator'], // thứ tự ưu tiên detect ngôn ngữ

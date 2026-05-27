@@ -1,9 +1,9 @@
 import { useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Plus, Download, ChevronRight } from 'lucide-react';
+import { Plus, Download, MapPin } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import Breadcrumbs from '@/components/common/Breadcrumbs';
 
-import { Button } from '@/components/ui/Button';
 import { ROUTES } from '@/routes/routes';
 import type { LocationFilters } from '@/dataHelper/location.dataHelper';
 
@@ -130,33 +130,42 @@ const LocationListPage = () => {
     return (
         <div className="p-1 sm:p-2 max-w-[1600px] mx-auto">
             {/* Header Area */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-                <div>
-                    <div className="flex items-center gap-2 mb-2">
-                        <span className="text-[12px] font-black text-slate-400 uppercase tracking-widest">{t('location:filters.category')}</span>
-                        <ChevronRight size={14} className="text-slate-300" />
-                        <span className="text-[12px] font-black text-slate-900 uppercase tracking-widest">{t('location:title')}</span>
-                    </div>
-                    <h1 className="text-3xl font-black text-slate-900 tracking-tighter leading-none">{t('location:title')}</h1>
-                    <p className="text-slate-400 font-bold text-sm mt-1">{t('location:subtitle')}</p>
-                </div>
+            <div className="flex flex-col gap-3 mb-6">
+                <Breadcrumbs
+                    icon={MapPin}
+                    items={[
+                        { label: 'sidebar.locations', path: ROUTES.LOCATIONS_LIST },
+                        { label: 'sidebar.location_list' }
+                    ]}
+                />
 
-                <div className="flex items-center gap-3">
-                    <Button 
-                        variant="outline" 
-                        className="bg-white border-slate-100 rounded-xl px-5 font-bold h-12 shadow-sm flex items-center gap-2"
-                    >
-                        <Download size={18} />
-                        {t('location:actions.export')}
-                    </Button>
-                    <Button 
-                        variant="primary" 
-                        onClick={() => navigate(ROUTES.LOCATIONS_CREATE)}
-                        className="bg-[#14b8a6] hover:bg-[#0d9488] text-white rounded-xl px-6 font-bold h-12 shadow-lg shadow-[#14b8a6]/20 flex items-center gap-2"
-                    >
-                        <Plus size={20} />
-                        {t('location:actions.add')}
-                    </Button>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-5">
+                    <div>
+                        <h1 className="text-3xl font-black text-slate-900 tracking-tight leading-none">
+                            {t('location:title')}
+                        </h1>
+                        <p className="text-sm font-semibold text-slate-400 mt-1.5">
+                            {t('location:subtitle')}
+                        </p>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                        <button
+                            type="button"
+                            className="px-5 py-3 bg-white hover:bg-slate-50 border border-slate-200 text-slate-600 hover:text-slate-900 rounded-2xl transition-all duration-300 font-bold text-sm flex items-center gap-2 cursor-pointer shadow-sm disabled:opacity-50 h-11 shrink-0"
+                        >
+                            <Download size={16} />
+                            {t('location:actions.export')}
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => navigate(ROUTES.LOCATIONS_CREATE)}
+                            className="px-5 py-3 bg-[#14b8a6] hover:bg-[#0f766e] text-white rounded-2xl transition-all duration-300 font-bold text-sm flex items-center gap-2 cursor-pointer shadow-md shadow-[#14b8a6]/20 h-11 shrink-0"
+                        >
+                            <Plus size={16} />
+                            {t('common:breadcrumb.add')}
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -174,40 +183,6 @@ const LocationListPage = () => {
                 onFilterChange={handleFilterChange} 
                 onReset={handleResetFilters} 
             />
-
-            {/* Bulk Actions Bar */}
-            {selectedIds.length > 0 && (
-                <div className="flex items-center justify-between bg-[#f0fdfa] border border-[#14b8a6]/20 rounded-2xl p-4 mb-4 animate-in slide-in-from-top-2 duration-300">
-                    <div className="flex items-center gap-4">
-                        <span className="text-sm font-black text-[#0f766e]">
-                            {t('location:actions.selected', { count: selectedIds.length })}
-                        </span>
-                        <div className="h-6 w-px bg-[#14b8a6]/20"></div>
-                        <div className="flex gap-2">
-                            <Button 
-                                className="bg-[#14b8a6] text-white px-4 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider h-auto"
-                                onClick={() => handleBulkAction('active')}
-                            >
-                                {t('location:actions.activate')}
-                            </Button>
-                            <Button 
-                                variant="outline"
-                                className="h-auto rounded-lg border-blue-200 bg-secondary px-4 py-1.5 text-xs font-black uppercase tracking-wider text-text-primary hover:bg-blue-200"
-                                onClick={() => handleBulkAction('inactive')}
-                            >
-                                {t('location:actions.deactivate')}
-                            </Button>
-                            <Button 
-                                variant="danger"
-                                className="px-4 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider h-auto"
-                                onClick={() => handleBulkAction('delete')}
-                            >
-                                {t('location:actions.delete')}
-                            </Button>
-                        </div>
-                    </div>
-                </div>
-            )}
 
             {/* Data Table */}
             <LocationTable 
@@ -227,6 +202,8 @@ const LocationListPage = () => {
                 onView={(id) => navigate(ROUTES.LOCATIONS_DETAIL.replace(':id', id.toString()))}
                 onEdit={(id) => navigate(ROUTES.LOCATIONS_EDIT.replace(':id', id.toString()))}
                 onDelete={handleDeleteClick}
+                onBulkAction={handleBulkAction}
+                isBulkMutating={bulkMutation.isPending}
             />
 
 

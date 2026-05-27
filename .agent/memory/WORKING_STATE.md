@@ -2,43 +2,44 @@
 
 ## Current Status
 
-- Date: 2026-05-25
-- Active feature/task: `admin_blog_posts_create`
+- Date: 2026-05-27
+- Active feature/task: `admin_blog_posts_duplicate_slug`
 - Status: Completed (Steps 1 to 10)
 - Next step: Await user approval and push to branch
-- Objective: Build the Blog Posts Create page (`/admin/blog-posts/create`) in DanangTrip Admin to allow administrators and staff to create new blog posts as drafts or published articles.
+- Objective: Resolve duplicate slug errors when generating multiple copies of a blog post, using backend checkSlug and frontend title/slug auto-numbering.
 - Mode: Completed / Review
 - Owner: AI collaborator
 
 ## Progress Breakdown
 
-- [x] Step 1: Analyze user spec, routes layout, and backend models validation requests
-- [x] Step 2: Establish custom API endpoints wrappers & backend filters
-- [x] Step 3: Implement raw types, ViewModels, and mappers
-- [x] Step 4: Register route constants and map lazy loaded router children
-- [x] Step 5: Synchronize Vietnamese and English translations
-- [x] Step 6: Create page layout shell and components structure
-- [x] Step 7: Build stats summary cards and filter bar components (N/A for Create)
-- [x] Step 8: Build blog create form and sidebar cards
-- [x] Step 9: Wire TanStack Query hooks, image uploads, and validations
-- [x] Step 10: Verify quality gates: admin prepush check passed, deploy and review artifacts generated.
+- [x] Step 1: Analyze duplicate slug generation issues across copies
+- [x] Step 2: Implement check-slug endpoint in backend API (`danangtrip-api`)
+- [x] Step 3: Integrate endpoints, wrapper methods, and states in frontend Admin (`danangtrip-admin`)
+- [x] Step 4: Implement on-mount duplicate title & slug auto-numberer resolver on frontend
+- [x] Step 5: Disable/throttle form submission buttons while slug checking is in progress
+- [x] Step 6: Verify quality gates: prepush check passed, deploy and walkthrough artifacts generated.
 
 ## Current Reality
 
-- Added lazy route mapping for `/admin/blog-posts/create` in React Router v7.
-- Defined `CreateBlogPostPayload` and validation schema `createBlogPostSchema`.
-- Implemented `create` post and `createCategory` client APIs.
-- Implemented hooks for post creation, category creation, and image uploading/deleting on Cloudinary.
-- Integrated `react-markdown-editor-lite` with inline image uploading.
-- Implemented dragging/dropping featured image uploader.
-- Created `BlogPostForm` and `BlogPostCreate` main page shell with desktop sticky header and responsive layout.
-- Added matching translations inside `blog.json` for `vi` and `en` locales.
+- Added lazy route mapping for `/admin/blog-posts/edit/:id` in React Router v7.
+- Defined `UpdateBlogPostPayload` and validation schema `createBlogPostSchema`.
+- Enforced descriptive action words before resource IDs across all edit/view routes:
+  - `USERS_DETAIL`: `/admin/users/detail/:id`
+  - `BOOKINGS_DETAIL`: `/admin/bookings/detail/:id`
+  - `PAYMENTS_DETAIL`: `/admin/payments/detail/:id`
+  - Removed old blog edit alias route `/admin/blog-posts/:id/edit` in `routes/index.tsx`.
+  - Replaced hardcoded links in `BookingsReportTable.tsx` and `RevenueReportTable.tsx` to reference `ROUTES.BOOKINGS_DETAIL`.
+- Implemented `getDetail` and `update` post client APIs.
+- Integrated `UnsavedChangesGuard` to block route navigation if form state `isDirty` is true.
+- Modified form submission to redirect users back to the post list `/admin/blog-posts` after saving changes.
+- Sync loading state dynamically from `BlogPostForm` to the sticky header and mobile bar "Lưu thay đổi" buttons.
+- Mapped "Xem bài viết" buttons to open client web details page on port 3000 (`http://localhost:3000/blog/{slug}`).
+- Cleaned up unrelated linter warning in `LocationList/index.tsx` (unused `Button` import).
 - Passed all linting, typechecking, and production build checks via `npm run prepush:check`.
 
 ## Validation
 
 - Admin prepush: SUCCESS (lint/typecheck/build/playwright-test passed)
-- PostgreSQL Sequence Synchronization: SUCCESS (Sequence values aligned globally across all database tables)
 
 ## Known Issues / Risks
 
@@ -46,8 +47,8 @@
 
 ## Artifacts
 
-- Implementation Plan: [implementation_plan.md](file:///C:/Users/NGUYEN%20DUY%20TAY/.gemini/antigravity/brain/f501ab0c-fd29-460a-a811-6f55f8078523/implementation_plan.md)
-- Task checklist: [task.md](file:///C:/Users/NGUYEN%20DUY%20TAY/.gemini/antigravity/brain/f501ab0c-fd29-460a-a811-6f55f8078523/task.md)
-- Walkthrough: [walkthrough.md](file:///C:/Users/NGUYEN%20DUY%20TAY/.gemini/antigravity/brain/f501ab0c-fd29-460a-a811-6f55f8078523/walkthrough.md)
-- Deploy report: [.agent/artifacts/deploy/2026-05-25__admin_blog_posts_create__deploy-report.md](file:///d:/DATN/danangtrip-admin/.agent/artifacts/deploy/2026-05-25__admin_blog_posts_create__deploy-report.md)
-- Review report: [.agent/artifacts/review/2026-05-25__admin_blog_posts_create__review.md](file:///d:/DATN/danangtrip-admin/.agent/artifacts/review/2026-05-25__admin_blog_posts_create__review.md)
+- Implementation Plan: [implementation_plan.md](file:///C:/Users/TUF/.gemini/antigravity/brain/3590f66c-c7b9-4301-b553-2fe9e4f2bd07/implementation_plan.md)
+- Task checklist: [task.md](file:///C:/Users/TUF/.gemini/antigravity/brain/3590f66c-c7b9-4301-b553-2fe9e4f2bd07/task.md)
+- Walkthrough: [walkthrough.md](file:///C:/Users/TUF/.gemini/antigravity/brain/3590f66c-c7b9-4301-b553-2fe9e4f2bd07/walkthrough.md)
+- Auth Review: [.agent/artifacts/auth/2026-05-27__admin_blog_posts_edit__auth-permissions-review.md](file:///d:/DATN/danangtrip-admin/.agent/artifacts/auth/2026-05-27__admin_blog_posts_edit__auth-permissions-review.md)
+- Test report: [.agent/artifacts/test-cases/2026-05-27__admin_blog_posts_edit__test-report.md](file:///d:/DATN/danangtrip-admin/.agent/artifacts/test-cases/2026-05-27__admin_blog_posts_edit__test-report.md)

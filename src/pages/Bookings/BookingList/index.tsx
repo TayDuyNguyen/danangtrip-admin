@@ -1,9 +1,8 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 
-import { ROUTES } from '@/routes/routes';
 import { 
     useAdminBookingsQuery, 
     useAdminBookingStatsQuery, 
@@ -17,20 +16,18 @@ import type {
 import BookingHeader from './components/BookingHeader';
 import BookingStats from './components/BookingStats';
 import BookingFilter from './components/BookingFilter';
-import BookingTimeline from './components/BookingTimeline';
+import BookingTable from './components/BookingTable';
 import BookingCancelDialog from './components/BookingCancelDialog';
 import BookingDetailDialog from './components/BookingDetailDialog';
-import Pagination from '@/components/common/Pagination';
 
 const BookingList = () => {
     const { t } = useTranslation('booking');
-    const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const userId = searchParams.get('user_id') || undefined;
     
     // State
     const [page, setPage] = useState(1);
-    const limit = 10;
+    const [limit, setLimit] = useState(10);
     const [filters, setFilters] = useState<BookingListFilters>({
         search: '',
         status: 'all',
@@ -53,6 +50,7 @@ const BookingList = () => {
         data: listData, 
         isLoading: isListLoading,
         isFetching: isListFetching,
+        refetch: refetchList,
     } = useAdminBookingsQuery(activeFilters, page, limit);
     
     const { 
@@ -127,7 +125,7 @@ const BookingList = () => {
     };
 
     return (
-        <div className="p-4 lg:p-10 mx-auto min-h-screen bg-[#F3F2EE] font-sans">
+        <main className="p-1 sm:p-2 max-w-[1600px] mx-auto flex flex-col gap-6 font-sans">
             <BookingHeader 
                 onExport={handleExport}
                 isExporting={exportMutation.isPending}
@@ -144,34 +142,24 @@ const BookingList = () => {
                 onFilterChange={handleFilterChange}
             />
 
-            <div className="mb-10">
-                <BookingTimeline 
-                    data={bookings}
-                    isLoading={isListLoading && !listData}
-                    isFetching={isListFetching}
-                    onView={(booking) => navigate(ROUTES.BOOKINGS_DETAIL.replace(':id', booking.id.toString()))}
-                    onConfirm={handleConfirmBooking}
-                    onCancel={handleCancelClick}
-                />
-            </div>
-
-            {total > 0 && (
-                <div className="mt-8 bg-white border border-[#E2E8F0] rounded-[16px] px-6 py-4 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
-                    <div className="text-[13px] font-medium text-[#64748B] font-sans">
-                        {t('common:pagination.showing_summary', {
-                            start: (page - 1) * limit + 1,
-                            end: Math.min(page * limit, total),
-                            total
-                        })}
-                    </div>
-                    <Pagination
-                        currentPage={page}
-                        totalItems={total}
-                        pageSize={limit}
-                        onPageChange={setPage}
-                    />
-                </div>
-            )}
+            <BookingTable 
+                data={bookings}
+                isLoading={isListLoading && !listData}
+                isRefreshing={isListFetching && !isListLoading}
+                total={total}
+                page={page}
+                limit={limit}
+                onPageChange={setPage}
+                onLimitChange={setLimit}
+                onRefresh={refetchList}
+                onConfirm={handleConfirmBooking}
+                onCancel={handleCancelClick}
+                sorting={{ sortBy: filters.sort || 'booked_at', sortOrder: filters.order || 'desc' }}
+                onSort={(field) => {
+                    const order = filters.sort === field && filters.order === 'desc' ? 'asc' : 'desc';
+                    handleFilterChange({ ...filters, sort: field, order });
+                }}
+            />
 
             <BookingDetailDialog
                 isOpen={!!detailConfig}
@@ -189,7 +177,7 @@ const BookingList = () => {
                 customerName={cancelConfig?.customer.name || ''}
                 isSubmitting={updateStatusMutation.isPending}
             />
-        </div>
+        </main>
     );
 };
 

@@ -38,6 +38,7 @@ const NotificationList = React.lazy(() => import('@/pages/Notifications/Notifica
 const NotificationSend = React.lazy(() => import('@/pages/Notifications/NotificationSend'));
 const BlogPostList = React.lazy(() => import('@/pages/Blog/BlogPostList'));
 const BlogPostCreate = React.lazy(() => import('@/pages/Blog/BlogPostCreate'));
+const BlogPostEdit = React.lazy(() => import('@/pages/Blog/BlogPostEdit'));
 import ErrorPage from '@/pages/ErrorPage';
 
 
@@ -119,9 +120,8 @@ const router = createBrowserRouter([
                     { path: ROUTES.CONTACTS, element: withSuspense(Contacts) },
                     { path: ROUTES.BLOG_POSTS, element: withSuspense(BlogPostList) },
                     { path: ROUTES.BLOG_POSTS_CREATE, element: withSuspense(BlogPostCreate) },
-                    { path: ROUTES.BLOG_POSTS_EDIT, element: <RedirectToBlogList /> },
+                    { path: ROUTES.BLOG_POSTS_EDIT, element: withSuspense(BlogPostEdit) },
                     { path: '/admin/blog-posts/:id', element: <RedirectToBlogList /> },
-                    { path: '/admin/blog-posts/:id/edit', element: <RedirectToBlogList /> },
                 ]
             }
 

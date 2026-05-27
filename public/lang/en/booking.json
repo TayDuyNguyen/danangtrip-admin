@@ -33,6 +33,7 @@
     },
     "payment_status": {
         "pending": "Pending",
+        "unpaid": "Unpaid",
         "paid": "Paid",
         "success": "Success",
         "failed": "Failed",
@@ -133,5 +134,8 @@
             "cancelled": "Cancelled"
         },
         "passengers_notice": "Note: Detailed passenger list is temporarily not supported by the API; passenger counts are displayed based on registered quantity in the booking."
+    },
+    "table": {
+        "col_actions": "Actions"
     }
 }

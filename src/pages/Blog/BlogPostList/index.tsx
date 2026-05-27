@@ -1,8 +1,9 @@
 import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { Plus, Trash2, CheckCircle, Archive } from "lucide-react";
+import { Plus, FileText } from "lucide-react";
 import { toast } from "sonner";
+import Breadcrumbs from "@/components/common/Breadcrumbs";
 
 import BlogStatsRow from "./components/BlogStatsRow";
 import BlogFilterBar from "./components/BlogFilterBar";
@@ -11,8 +12,6 @@ import DeleteConfirmDialog from "./components/DeleteConfirmDialog";
 
 import { useAdminBlogPostsQuery, useBlogCategoriesQuery, useBlogMutations } from "@/hooks/useBlogQueries";
 import type { BlogListFilters } from "@/types";
-import CustomSelect, { type Option } from "@/components/ui/CustomSelect";
-import Pagination from "@/components/common/Pagination";
 
 export const BlogPostList = () => {
     const { t } = useTranslation("blog");
@@ -37,13 +36,14 @@ export const BlogPostList = () => {
     }), [search, categoryId, status, sort, order]);
 
     // 2. Queries & Mutations
-    const { data, isLoading, isFetching, isError } = useAdminBlogPostsQuery(filters, page, perPage);
+    const { data, isLoading, isFetching, isError, refetch } = useAdminBlogPostsQuery(filters, page, perPage);
     const { data: categories = [] } = useBlogCategoriesQuery();
     const { deleteMutation, updateStatusMutation } = useBlogMutations();
 
     // 3. Selection & Modal States
     const [selectedIds, setSelectedIds] = useState<number[]>([]);
     const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null);
+    const [isBulkDeleteDialogOpen, setIsBulkDeleteDialogOpen] = useState(false);
     const [isBulkMutating, setIsBulkMutating] = useState(false);
 
     const deleteTargetTitle = data?.data.find(x => x.id === deleteTargetId)?.title || "";
@@ -125,12 +125,12 @@ export const BlogPostList = () => {
     // Bulk actions
     const executeBulkDelete = () => {
         if (selectedIds.length === 0) return;
+        setIsBulkDeleteDialogOpen(true);
+    };
 
-        const confirmDelete = window.confirm(
-            t("actions.bulk_delete_confirm", { count: selectedIds.length })
-        );
-        if (!confirmDelete) return;
-
+    const handleConfirmBulkDelete = () => {
+        if (selectedIds.length === 0) return;
+        setIsBulkDeleteDialogOpen(false);
         setIsBulkMutating(true);
         const promises = selectedIds.map((id) => deleteMutation.mutateAsync(id));
 
@@ -168,45 +168,42 @@ export const BlogPostList = () => {
 
     // 6. Pagination & Stats Computations
     const totalItems = data?.meta.total || 0;
-    const totalPages = data?.meta.last_page || 1;
 
     const totalCount = data?.stats.total || 0;
     const publishedCount = data?.stats.published || 0;
     const draftCount = data?.stats.draft || 0;
     const archivedCount = data?.stats.archived || 0;
 
-    const perPageOptions: Option[] = [
-        { value: 10, label: "10" },
-        { value: 20, label: "20" },
-        { value: 50, label: "50" },
-    ];
-
-    const currentPerPageOpt = perPageOptions.find((o) => o.value === perPage) || perPageOptions[0];
-
     return (
-        <main className="p-6 max-w-7xl mx-auto flex flex-col gap-6 font-sans">
+        <main className="p-1 sm:p-2 max-w-[1600px] mx-auto flex flex-col gap-6 font-sans">
             {/* Page Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-5 shrink-0">
-                <div>
-                    <span className="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-1">
-                        {t("breadcrumb")}
-                    </span>
-                    <h1 className="text-3xl font-black text-slate-900 tracking-tight leading-none">
-                        {t("title")}
-                    </h1>
-                    <p className="text-sm font-semibold text-slate-400 mt-1.5">
-                        {t("subtitle")}
-                    </p>
-                </div>
+            <div className="flex flex-col gap-3 mb-6">
+                <Breadcrumbs
+                    icon={FileText}
+                    items={[
+                        { label: 'sidebar.posts' }
+                    ]}
+                />
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-5 shrink-0">
+                    <div>
+                        <h1 className="text-3xl font-black text-slate-900 tracking-tight leading-none">
+                            {t("title")}
+                        </h1>
+                        <p className="text-sm font-semibold text-slate-400 mt-1.5">
+                            {t("subtitle")}
+                        </p>
+                    </div>
 
-                <div className="flex items-center gap-3 shrink-0">
-                    <button
-                        onClick={() => navigate("/admin/blog-posts/create")}
-                        className="px-5 py-3 bg-[#14B8A6] hover:bg-[#0f766e] text-white rounded-2xl transition-all duration-300 font-bold text-sm flex items-center gap-2 cursor-pointer shadow-lg shadow-[#14B8A6]/20 hover:shadow-[#0f766e]/30 select-none active:scale-[0.98]"
-                    >
-                        <Plus size={16} />
-                        {t("actions.create")}
-                    </button>
+                    <div className="flex items-center gap-3">
+                        <button
+                            type="button"
+                            onClick={() => navigate("/admin/blog-posts/create")}
+                            className="px-5 py-3 bg-[#14b8a6] hover:bg-[#0f766e] text-white rounded-2xl transition-all duration-300 font-bold text-sm flex items-center gap-2 cursor-pointer shadow-md shadow-[#14b8a6]/20 h-11 shrink-0"
+                        >
+                            <Plus size={16} />
+                            {t('common:breadcrumb.add')}
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -229,71 +226,6 @@ export const BlogPostList = () => {
                 onReset={handleResetFilters}
             />
 
-            {/* Table Toolbar & Bulk Actions */}
-            <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-white/60 p-4 rounded-3xl border border-slate-100 shadow-2xs shrink-0">
-                <div className="flex items-center gap-3 w-full md:w-auto">
-                    {selectedIds.length > 0 ? (
-                        <div className="flex items-center gap-2.5 animate-in fade-in duration-200">
-                            <span className="text-sm font-bold text-[#0f766e] bg-[#14B8A6]/10 px-3 py-1.5 rounded-full select-none">
-                                {t("table.selected", { count: selectedIds.length })}
-                            </span>
-                            <button
-                                onClick={() => executeBulkStatusChange("published")}
-                                disabled={isBulkMutating}
-                                className="px-3 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-250 transition-all font-bold text-xs flex items-center gap-1 cursor-pointer disabled:opacity-50 select-none active:scale-[0.98]"
-                            >
-                                <CheckCircle size={12} />
-                                {t("actions.bulk_publish")}
-                            </button>
-                            <button
-                                onClick={() => executeBulkStatusChange("archived")}
-                                disabled={isBulkMutating}
-                                className="px-3 py-2 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 transition-all font-bold text-xs flex items-center gap-1 cursor-pointer disabled:opacity-50 select-none active:scale-[0.98]"
-                            >
-                                <Archive size={12} />
-                                {t("actions.bulk_archive")}
-                            </button>
-                            <button
-                                onClick={executeBulkDelete}
-                                disabled={isBulkMutating}
-                                className="px-3 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-250 transition-all font-bold text-xs flex items-center gap-1 cursor-pointer disabled:opacity-50 select-none active:scale-[0.98]"
-                            >
-                                <Trash2 size={12} />
-                                {t("actions.bulk_delete")}
-                            </button>
-                        </div>
-                    ) : (
-                        <span className="text-xs font-bold text-slate-400 select-none">
-                            {t("subtitle")}
-                        </span>
-                    )}
-                </div>
-
-                <div className="flex items-center gap-4 shrink-0 justify-end w-full md:w-auto">
-                    <span className="text-xs font-bold text-slate-400 whitespace-nowrap select-none">
-                        {t("table.displaying", {
-                            start: data?.data.length ? (page - 1) * perPage + 1 : 0,
-                            end: data?.data.length ? (page - 1) * perPage + data.data.length : 0,
-                            total: totalItems,
-                        })}
-                    </span>
-
-                    <div className="flex items-center gap-2 shrink-0">
-                        <span className="text-xs font-bold text-slate-400 whitespace-nowrap select-none">{t("table.per_page")}</span>
-                        <div className="w-[85px]">
-                            <CustomSelect
-                                options={perPageOptions}
-                                value={currentPerPageOpt}
-                                onChange={(opt) => {
-                                    if (opt) updateParams(filters, 1, opt.value as number);
-                                }}
-                                size="sm"
-                            />
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             {/* List Table Grid */}
             <BlogTable
                 data={data?.data || []}
@@ -306,19 +238,16 @@ export const BlogPostList = () => {
                 onStatusChange={handleStatusChange}
                 sorting={{ sortBy: sort, sortOrder: order }}
                 onSort={handleSort}
+                page={page}
+                perPage={perPage}
+                totalItems={totalItems}
+                onPageChange={(p) => updateParams(filters, p)}
+                onPerPageChange={(size) => updateParams(filters, 1, size)}
+                onRefresh={refetch}
+                onBulkStatusChange={executeBulkStatusChange}
+                onBulkDelete={executeBulkDelete}
+                isBulkMutating={isBulkMutating}
             />
-
-            {/* Pagination Controls */}
-            {data && totalPages > 1 && (
-                <div className="mt-2 flex justify-center shrink-0">
-                    <Pagination
-                        currentPage={page}
-                        totalItems={totalItems}
-                        pageSize={perPage}
-                        onPageChange={(p) => updateParams(filters, p)}
-                    />
-                </div>
-            )}
 
             {/* Delete Confirmation Modal */}
             <DeleteConfirmDialog
@@ -327,6 +256,16 @@ export const BlogPostList = () => {
                 onConfirm={executeDelete}
                 postTitle={deleteTargetTitle}
                 isMutating={deleteMutation.isPending}
+            />
+
+            {/* Bulk Delete Confirmation Modal */}
+            <DeleteConfirmDialog
+                isOpen={isBulkDeleteDialogOpen}
+                onClose={() => setIsBulkDeleteDialogOpen(false)}
+                onConfirm={handleConfirmBulkDelete}
+                isBulk={true}
+                count={selectedIds.length}
+                isMutating={isBulkMutating}
             />
         </main>
     );

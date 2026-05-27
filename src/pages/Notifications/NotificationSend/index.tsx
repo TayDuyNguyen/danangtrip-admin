@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Send, Sparkles, HelpCircle } from "lucide-react";
+import { Sparkles, HelpCircle, Bell } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/Button";
 import { ROUTES } from "@/routes/routes";
+import Breadcrumbs from "@/components/common/Breadcrumbs";
 import { useNotificationMutations } from "@/hooks/useNotificationQueries";
 import { useAdminUsersQuery } from "@/hooks/useUserQueries";
+import { mapApiErrorMessage } from "@/utils";
 import NotificationSendForm from "./components/NotificationSendForm";
 import NotificationPreview from "./components/NotificationPreview";
 import BulkConfirmDialog from "./components/BulkConfirmDialog";
@@ -91,9 +93,7 @@ export const NotificationSend = () => {
                         clearComposeForm();
                     },
                     onError: (error: unknown) => {
-                        const axiosError = error as { response?: { data?: { message?: string } } };
-                        const errMsg = axiosError?.response?.data?.message || t("send.toast.send_failed");
-                        toast.error(errMsg);
+                        toast.error(mapApiErrorMessage(t("send.toast.send_failed"), error));
                     },
                 }
             );
@@ -122,9 +122,7 @@ export const NotificationSend = () => {
                     clearComposeForm();
                 },
                 onError: (error: unknown) => {
-                    const axiosError = error as { response?: { data?: { message?: string } } };
-                    const errMsg = axiosError?.response?.data?.message || t("send.toast.send_failed");
-                    toast.error(errMsg);
+                    toast.error(mapApiErrorMessage(t("send.toast.send_failed"), error));
                     setIsConfirmOpen(false);
                 },
             }
@@ -135,58 +133,32 @@ export const NotificationSend = () => {
 
     return (
         <div className="min-h-screen bg-slate-50 pb-20 font-sans">
-            {/* Sticky Header */}
-            <div className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-slate-200/60 shadow-xs">
-                <div className="max-w-[1600px] mx-auto px-4 md:px-8 h-20 flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                        <Button
-                            variant="ghost"
-                            className="rounded-full w-10 h-10 p-0 hover:bg-slate-100 cursor-pointer"
-                            onClick={() => navigate(ROUTES.NOTIFICATIONS)}
-                        >
-                            <ArrowLeft className="w-5 h-5 text-slate-600" />
-                        </Button>
-                        <div>
-                            <div className="flex items-center gap-2 mb-0.5">
-                                <Send className="w-4 h-4 text-[#0066CC]" />
-                                <span className="text-[10px] font-bold uppercase tracking-widest text-[#0066CC]">
-                                    {t("breadcrumb")}
-                                </span>
-                            </div>
-                            <h1 className="text-xl font-bold text-slate-900 tracking-tight leading-none">
-                                {t("send.title")}
-                            </h1>
-                        </div>
-                    </div>
-
-                    <div className="hidden md:flex items-center gap-3">
-                        <Button
-                            variant="outline"
-                            onClick={() => navigate(ROUTES.NOTIFICATIONS)}
-                            className="rounded-xl border-slate-200 text-slate-600 hover:bg-slate-50 font-semibold cursor-pointer"
-                        >
-                            {t("send.btn_cancel")}
-                        </Button>
-                        <Button
-                            form="notification-send-form"
-                            type="submit"
-                            disabled={isSubmitting}
-                            className="rounded-xl bg-[#0066CC] hover:bg-[#0052a3] text-white px-8 font-bold shadow-lg shadow-[#0066CC]/20 transition-all hover:scale-[1.02] active:scale-95 cursor-pointer"
-                        >
-                            <Sparkles className="w-4 h-4 mr-2" />
-                            {isSubmitting ? t("send.btn_sending") : t("send.btn_submit")}
-                        </Button>
-                    </div>
-                </div>
-            </div>
-
             <div className="max-w-[1600px] mx-auto px-4 md:px-8 mt-8">
                 {/* Page Breadcrumbs & Subtitles */}
                 <div className="mb-8">
-                    <span className="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-1">
-                        {t("send.breadcrumb")}
-                    </span>
-                    <h2 className="text-2xl font-black text-slate-900 tracking-tight leading-none mb-2">
+                    <Breadcrumbs
+                        icon={Bell}
+                        items={[
+                            { label: t("breadcrumb"), path: ROUTES.NOTIFICATIONS },
+                            { label: t("send.breadcrumb") },
+                        ]}
+                        actions={[
+                            {
+                                label: t("send.btn_cancel"),
+                                onClick: () => navigate(ROUTES.NOTIFICATIONS),
+                                variant: "outline",
+                            },
+                            {
+                                label: isSubmitting ? t("send.btn_sending") : t("send.btn_submit"),
+                                form: "notification-send-form",
+                                type: "submit",
+                                icon: Sparkles,
+                                variant: "primary",
+                                disabled: isSubmitting,
+                            },
+                        ]}
+                    />
+                    <h2 className="text-2xl font-black text-slate-900 tracking-tight leading-none mb-2 mt-4">
                         {t("send.title")}
                     </h2>
                     <p className="text-slate-500 max-w-2xl text-sm font-medium">

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { FileDown, MapPin, LayoutDashboard, AlertTriangle, RefreshCw, Sparkles } from 'lucide-react';
+import { FileDown, MapPin, AlertTriangle, RefreshCw, Sparkles, FileText } from 'lucide-react';
+import Breadcrumbs from '@/components/common/Breadcrumbs';
+import { ROUTES } from '@/routes/routes';
 import { useLocationsReportQuery, useReportMutations } from '@/hooks/useReportQueries';
 import LocationReportFilterBar from './components/LocationReportFilterBar';
 import LocationStatsCards from './components/LocationStatsCards';
@@ -328,27 +330,24 @@ const LocationReport: React.FC = () => {
     };
 
     return (
-        <div className="p-6 md:p-8 max-w-7xl mx-auto space-y-6 animate-in fade-in duration-300">
+        <div className="p-1 sm:p-2 max-w-[1600px] mx-auto space-y-6 animate-in fade-in duration-300">
             {/* 1. Page Header & Breadcrumb */}
             <div className="flex flex-col gap-3">
                 {/* Breadcrumbs */}
-                <div className="flex items-center gap-2 text-xs font-black text-slate-400 uppercase tracking-wider select-none px-1">
-                    <span className="hover:text-[#14b8a6] cursor-pointer flex items-center gap-1 transition-colors duration-150">
-                        <LayoutDashboard size={13} />
-                        {t('breadcrumb.home')}
-                    </span>
-                    <span className="text-slate-300">/</span>
-                    <span className="hover:text-[#14b8a6] cursor-pointer transition-colors duration-150">{t('breadcrumb.reports')}</span>
-                    <span className="text-slate-300">/</span>
-                    <span className="text-[#14b8a6]">{t('breadcrumb.current')}</span>
-                </div>
+                <Breadcrumbs
+                    icon={FileText}
+                    items={[
+                        { label: 'sidebar.reports', path: ROUTES.REPORTS_RATINGS },
+                        { label: 'sidebar.reports_locations' }
+                    ]}
+                />
 
                 {/* ─── Gradient border shell header card ─── */}
                 <div className="p-[1px] rounded-3xl bg-gradient-to-br from-[#14b8a6]/25 via-slate-200/20 to-transparent shadow-sm hover:shadow-md transition-all duration-300">
                     <div className="bg-white/98 backdrop-blur-sm rounded-[23px] px-6 py-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-[#14b8a6]/10 text-[#14b8a6] border border-[#14b8a6]/20 rounded-2xl flex items-center justify-center shadow-xs shrink-0">
-                                <MapPin size={20} />
+                            <div className="w-10 h-10 bg-gradient-to-br from-[#14b8a6] to-[#0f766e] text-white rounded-2xl flex items-center justify-center shadow-md shadow-[#14b8a6]/20 shrink-0">
+                                <MapPin size={20} strokeWidth={2.5} />
                             </div>
                             <div>
                                 <h1 className="text-[22px] font-black text-[#0F172A] tracking-tight leading-tight">{t('title')}</h1>

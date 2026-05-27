@@ -101,7 +101,7 @@ const BookingFilter = ({ filters, onFilterChange }: Props) => {
     const hasActiveFilters = activeFilters.length > 0 || (localFilters.search || '') !== '';
 
     return (
-        <div className="mb-24 rounded-2xl border border-[#E2E8F0] bg-white p-6 shadow-sm">
+        <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-xs">
             <form onSubmit={handleSubmit} className="flex flex-wrap items-center gap-3">
                 <div className="min-w-[280px] flex-1">
                     <TextInput
