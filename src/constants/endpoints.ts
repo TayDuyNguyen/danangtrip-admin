@@ -146,6 +146,9 @@ export const API_ENDPOINTS = {
         UPDATE: (id: string | number) => `/admin/blog-posts/${id}`,
         CATEGORIES: '/admin/blog-categories',
         CREATE_CATEGORY: '/admin/blog-categories',
+        REORDER_CATEGORIES: '/admin/blog-categories/reorder',
+        UPDATE_CATEGORY: (id: string | number) => `/admin/blog-categories/${id}`,
+        DELETE_CATEGORY: (id: string | number) => `/admin/blog-categories/${id}`,
         PATCH_STATUS: (id: string | number) => `/admin/blog-posts/${id}/status`,
         DELETE: (id: string | number) => `/admin/blog-posts/${id}`,
     }

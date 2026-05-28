@@ -3,10 +3,10 @@ export interface RawBlogCategory {
     name: string;
     slug: string;
     description: string | null;
-    image: string | null;
-    status: 'active' | 'inactive';
+    sort_order: number;
     created_at: string;
     updated_at: string;
+    posts_count?: number;
 }
 
 export interface BlogCategoryViewModel {
@@ -14,8 +14,8 @@ export interface BlogCategoryViewModel {
     name: string;
     slug: string;
     description: string | null;
-    image: string | null;
-    status: 'active' | 'inactive';
+    sortOrder: number;
+    postCount?: number;
 }
 
 export interface RawBlogPostAuthor {

@@ -117,6 +117,55 @@ export const useCreateBlogCategoryMutation = () => {
     });
 };
 
+export const useUpdateBlogCategoryMutation = () => {
+    const queryClient = useQueryClient();
+    const { t } = useTranslation("blog");
+
+    return useMutation({
+        mutationFn: ({ id, payload }: { id: number | string; payload: CreateBlogCategoryPayload }) =>
+            blogApi.updateCategory(id, payload),
+        onSuccess: () => {
+            toast.success(t("toast.category_update_success"));
+            queryClient.invalidateQueries({ queryKey: blogKeys.categories() });
+        },
+        onError: (err: unknown) => {
+            toast.error(mapApiErrorMessage(t("toast.network_error"), err));
+        },
+    });
+};
+
+export const useDeleteBlogCategoryMutation = () => {
+    const queryClient = useQueryClient();
+    const { t } = useTranslation("blog");
+
+    return useMutation({
+        mutationFn: (id: number | string) => blogApi.deleteCategory(id),
+        onSuccess: () => {
+            toast.success(t("toast.category_delete_success"));
+            queryClient.invalidateQueries({ queryKey: blogKeys.categories() });
+        },
+        onError: (err: unknown) => {
+            toast.error(mapApiErrorMessage(t("toast.network_error"), err));
+        },
+    });
+};
+
+export const useReorderBlogCategoriesMutation = () => {
+    const queryClient = useQueryClient();
+    const { t } = useTranslation("blog");
+
+    return useMutation({
+        mutationFn: (items: Array<{ id: number; sort_order: number }>) => blogApi.reorderCategories(items),
+        onSuccess: () => {
+            toast.success(t("category.reorder.toast_success"));
+            queryClient.invalidateQueries({ queryKey: blogKeys.categories() });
+        },
+        onError: (err: unknown) => {
+            toast.error(mapApiErrorMessage(t("category.reorder.toast_error"), err));
+        },
+    });
+};
+
 export const useBlogUploadMutations = () => {
     const { t } = useTranslation("blog");
 
