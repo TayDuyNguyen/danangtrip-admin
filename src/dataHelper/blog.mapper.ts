@@ -16,8 +16,8 @@ export const mapBlogCategory = (raw: RawBlogCategory): BlogCategoryViewModel => 
         name: raw.name || "N/A",
         slug: raw.slug || "",
         description: raw.description,
-        image: raw.image,
-        status: raw.status || 'inactive',
+        sortOrder: raw.sort_order || 0,
+        postCount: raw.posts_count || 0,
     };
 };
 

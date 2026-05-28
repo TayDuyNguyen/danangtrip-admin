@@ -4,7 +4,7 @@ export const ROUTES = {
     TOURS_LIST: '/admin/tours/list',
     TOURS_CREATE: '/admin/tours/create',
     TOURS_EDIT: '/admin/tours/edit/:id',
-    TOURS_CATEGORIES: '/admin/tours/categories',
+    TOURS_CATEGORIES: '/admin/tour-categories',
     TOURS_SCHEDULES: '/admin/tours/schedules',
     TOURS_SCHEDULE_CREATE: '/admin/tours/:id/schedules/create',
     TOURS_SCHEDULE_EDIT: '/admin/tours/schedules/edit/:id',
@@ -12,7 +12,7 @@ export const ROUTES = {
     LOCATIONS_CREATE: '/admin/locations/create',
     LOCATIONS_EDIT: '/admin/locations/edit/:id',
     LOCATIONS_DETAIL: '/admin/locations/detail/:id',
-    LOCATIONS_CATEGORIES: '/admin/locations/categories',
+    LOCATIONS_CATEGORIES: '/admin/location-categories',
     BOOKINGS_LIST: '/admin/bookings',
     BOOKINGS_DETAIL: '/admin/bookings/detail/:id',
     PAYMENTS_LIST: '/admin/payments',
@@ -33,5 +33,6 @@ export const ROUTES = {
     BLOG_POSTS_CREATE: '/admin/blog-posts/create',
     BLOG_POSTS_EDIT: '/admin/blog-posts/edit/:id',
     BLOG_POSTS_DETAIL: '/admin/blog-posts/:id',
+    BLOG_CATEGORIES: '/admin/blog-categories',
 } as const;
 

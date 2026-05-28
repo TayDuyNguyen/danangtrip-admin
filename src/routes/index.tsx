@@ -40,6 +40,7 @@ const BlogPostList = React.lazy(() => import('@/pages/Blog/BlogPostList'));
 const BlogPostCreate = React.lazy(() => import('@/pages/Blog/BlogPostCreate'));
 const BlogPostEdit = React.lazy(() => import('@/pages/Blog/BlogPostEdit'));
 const BlogPostDetail = React.lazy(() => import('@/pages/Blog/BlogPostDetail'));
+const BlogCategories = React.lazy(() => import('@/pages/Blog/BlogCategories'));
 import ErrorPage from '@/pages/ErrorPage';
 
 
@@ -86,6 +87,8 @@ const router = createBrowserRouter([
                 element: <MainLayout />,
                 children: [
                     { path: ROUTES.DASHBOARD, element: withSuspense(Dashboard) },
+                    { path: '/admin/tours/categories', element: <Navigate to={ROUTES.TOURS_CATEGORIES} replace /> },
+                    { path: '/admin/locations/categories', element: <Navigate to={ROUTES.LOCATIONS_CATEGORIES} replace /> },
                     { path: ROUTES.TOURS_LIST, element: withSuspense(TourList) },
                     { path: ROUTES.TOURS_CREATE, element: withSuspense(AddTour) },
                     { path: ROUTES.TOURS_EDIT, element: withSuspense(EditTour) },
@@ -118,6 +121,7 @@ const router = createBrowserRouter([
                     { path: ROUTES.BLOG_POSTS_CREATE, element: withSuspense(BlogPostCreate) },
                     { path: ROUTES.BLOG_POSTS_EDIT, element: withSuspense(BlogPostEdit) },
                     { path: ROUTES.BLOG_POSTS_DETAIL, element: withSuspense(BlogPostDetail) },
+                    { path: ROUTES.BLOG_CATEGORIES, element: withSuspense(BlogCategories) },
                 ]
             }
 

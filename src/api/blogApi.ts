@@ -46,6 +46,15 @@ export const blogApi = {
     createCategory: (payload: CreateBlogCategoryPayload): Promise<ApiResponse<RawBlogCategory>> =>
         axiosClient.post(API_ENDPOINTS.BLOG.CREATE_CATEGORY, payload),
 
+    reorderCategories: (items: Array<{ id: number; sort_order: number }>): Promise<ApiResponse<null>> =>
+        axiosClient.patch(API_ENDPOINTS.BLOG.REORDER_CATEGORIES, { items }),
+
+    updateCategory: (id: number | string, payload: CreateBlogCategoryPayload): Promise<ApiResponse<RawBlogCategory>> =>
+        axiosClient.put(API_ENDPOINTS.BLOG.UPDATE_CATEGORY(id), payload),
+
+    deleteCategory: (id: number | string): Promise<ApiResponse<null>> =>
+        axiosClient.delete(API_ENDPOINTS.BLOG.DELETE_CATEGORY(id)),
+
     updateStatus: (id: number | string, status: string): Promise<ApiResponse<void>> =>
         axiosClient.patch(API_ENDPOINTS.BLOG.PATCH_STATUS(id), { status }),
 

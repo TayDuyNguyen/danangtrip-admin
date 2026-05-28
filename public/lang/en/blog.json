@@ -72,6 +72,8 @@
         "draft_success": "Draft saved successfully!",
         "publish_success": "Blog post published successfully!",
         "category_create_success": "Category created successfully!",
+        "category_update_success": "Category updated successfully!",
+        "category_delete_success": "Category deleted successfully!",
         "upload_error": "Failed to upload image!",
         "update_success": "Blog post updated successfully!",
         "update_error": "Failed to update blog post!",
@@ -153,6 +155,67 @@
             "content_required": "Post content is required",
             "categories_required": "Please select at least one category",
             "excerpt_max": "Excerpt must not exceed 500 characters"
+        }
+    },
+    "category": {
+        "title": "Blog Categories",
+        "subtitle": "Manage blog classification categories",
+        "stats": {
+            "total": "TOTAL CATEGORIES",
+            "total_posts": "TOTAL POSTS"
+        },
+        "table": {
+            "col_name": "Category",
+            "col_posts_count": "Posts Count",
+            "col_actions": "Actions",
+            "search_placeholder": "Search categories...",
+            "count_suffix": "categories",
+            "drag_helper": "Drag and drop to sort"
+        },
+        "card": {
+            "label": "Category",
+            "posts_count": "Posts",
+            "no_description": "No description has been added for this category"
+        },
+        "reorder": {
+            "button_sort": "Sort order",
+            "button_sorting": "Sorting",
+            "disabled_title": "Sorting is unavailable while a search filter is active",
+            "bar_title": "Drag and drop to reorder categories",
+            "bar_hint": "The new order will be saved when you confirm",
+            "cancel": "Cancel",
+            "save": "Save order",
+            "toast_success": "Category order updated successfully!",
+            "toast_error": "Could not update category order"
+        },
+        "form": {
+            "add_title": "Add Category",
+            "edit_title": "Edit Category",
+            "badge_new": "NEW",
+            "badge_editing": "EDITING",
+            "name": "Category Name",
+            "name_placeholder": "Example: Sightseeing & Travel",
+            "slug": "Slug",
+            "slug_placeholder": "sightseeing-travel",
+            "slug_auto": "Auto",
+            "slug_helper": "Automatically generated from name",
+            "description": "Description",
+            "description_placeholder": "Brief description about the category...",
+            "preview": "PREVIEW",
+            "btn_cancel": "Cancel",
+            "btn_create": "Create",
+            "btn_save": "Save Changes"
+        },
+        "delete": {
+            "confirm_title": "Delete this category?",
+            "confirm_body": "The category \"{{name}}\" will be permanently deleted.",
+            "confirm_warning": "All associated blog posts will be unlinked from this category.",
+            "btn_delete": "Delete Category"
+        },
+        "validation": {
+            "name_required": "Category name is required",
+            "name_max": "Category name must not exceed 50 characters",
+            "slug_max": "Slug must not exceed 60 characters"
         }
     }
 }
