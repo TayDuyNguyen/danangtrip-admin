@@ -1,7 +1,7 @@
 # STACK SKILLS INDEX - DanangTrip Admin
 
 Master index for the 10 local skills in `.agent/skills/`.
-Current selected admin screen: `admin_blog_posts_edit`.
+Current selected admin screen: `admin_blog_posts_detail`.
 
 ## Current Decision Snapshot
 
@@ -9,38 +9,38 @@ Date locked: `2026-05-27`
 
 - Repo: `D:\DATN\danangtrip-admin`
 - Supporting repo: `D:\DATN\danangtrip-api`
-- Selected screen: `Chinh sua bai viet Blog`
-- Feature slug: `admin_blog_posts_edit`
-- Main route: `/admin/blog-posts/:id/edit`
-- Target page path: `src/pages/Blog/BlogPostEdit/index.tsx` unless Step 01 finds an established local convention.
-- Target component folder: `src/pages/Blog/BlogPostEdit/components`
-- Primary doc: `D:\DATN\DATN_Tài liệu\docs\page\admin_blog_posts_edit.md`
+- Document repo: `D:\DATN\DATN_Document`
+- Selected screen: `Chi tiet bai viet Blog`
+- Feature slug: `admin_blog_posts_detail`
+- Main route: `/admin/blog-posts/:id`
+- Target page path: `src/pages/Blog/BlogPostDetail/index.tsx` unless Step 01 finds an established local convention.
+- Target component folder: `src/pages/Blog/BlogPostDetail/components`
+- Primary doc: no dedicated `admin_blog_posts_detail.md` exists in `D:\DATN\DATN_Document\docs\page`; Step 01 must derive scope from list/create/edit docs and repo/API reality, then record the missing doc.
 - Related docs:
-  - `D:\DATN\DATN_Tài liệu\docs\page\admin_blog_posts_list.md`
-  - `D:\DATN\DATN_Tài liệu\docs\page\admin_blog_posts_create.md`
-  - `D:\DATN\DATN_Tài liệu\docs\page\admin_blog_categories.md`
+  - `D:\DATN\DATN_Document\docs\page\admin_blog_posts_list.md`
+  - `D:\DATN\DATN_Document\docs\page\admin_blog_posts_create.md`
+  - `D:\DATN\DATN_Document\docs\page\admin_blog_posts_edit.md`
+  - `D:\DATN\DATN_Document\docs\page\admin_blog_categories.md`
 - Primary APIs:
   - `GET /admin/blog-posts/{id}`
-  - `PUT /admin/blog-posts/{id}`
-  - `PATCH /admin/blog-posts/{id}/status`
+  - `PATCH /admin/blog-posts/{id}/status` only if detail page exposes quick publish/archive controls
 - Supporting APIs:
-  - `GET /admin/blog-categories`
-  - `POST /admin/blog-categories` only if inline category create already exists and is safe to reuse.
-  - `POST /upload/image`
-- Status: selected next screen after `admin_blog_posts_list` and `admin_blog_posts_create` completion.
+  - `GET /admin/blog-categories` only if categories need display enrichment beyond show response.
+- Status: selected after `admin_blog_posts_list`, `admin_blog_posts_create`, and `admin_blog_posts_edit` completion.
 - Cross-project rule: this admin prompt is independent from web; do not use web progress to decide admin steps.
 
 ## Why This Is Next
 
-- Progress report `0.0.12` selects `admin_blog_posts_edit` as the next admin screen.
-- Codegraph snapshot `2026-05-27 08:47`: admin `files=334`, `nodes=3185`, `edges=7306`; API `files=459`, `nodes=4409`, `edges=6360`.
+- Progress report `0.0.13` selects `admin_blog_posts_detail` as the next admin screen.
+- Codegraph snapshot `2026-05-27 21:54:15`: admin `files=340`, `nodes=3280`, `edges=6838`; API `files=461`, `nodes=4423`, `edges=6334`.
 - Repo reality confirms:
   - `src/pages/Blog/BlogPostList` exists.
   - `src/pages/Blog/BlogPostCreate` exists.
-  - `ROUTES.BLOG_POSTS_EDIT = "/admin/blog-posts/edit/:id"` exists.
-  - Router currently redirects blog edit/detail paths back to list instead of rendering a real edit page.
-- Backend exposes admin blog show/update/status/category/upload routes, so edit is API-ready.
-- This closes the next CRUD gap in the CMS blog cluster.
+  - `src/pages/Blog/BlogPostEdit` exists and has deploy artifact `2026-05-27__admin_blog_posts_edit__deploy-report.md` with lint/typecheck/build/prepush PASS.
+  - Router lazy imports `BlogPostEdit`.
+  - `ROUTES.BLOG_POSTS_EDIT` is wired to a real page.
+  - Router still redirects `/admin/blog-posts/:id` back to the list.
+- After list/create/edit, detail is the remaining blog-post CRUD route gap in admin.
 
 ## Codegraph / Repo Findings
 
@@ -51,6 +51,7 @@ Read `D:\DATN\danangtrip-admin\.codegraph\codegraph.db` and `D:\DATN\danangtrip-
 - Existing blog modules to reuse:
   - `src/pages/Blog/BlogPostList`
   - `src/pages/Blog/BlogPostCreate`
+  - `src/pages/Blog/BlogPostEdit`
   - `src/api/blogApi.ts`
   - `src/hooks/useBlogQueries.ts`
   - `src/dataHelper/blog.mapper.ts`
@@ -58,23 +59,22 @@ Read `D:\DATN\danangtrip-admin\.codegraph\codegraph.db` and `D:\DATN\danangtrip-
   - `src/validations/blog.schema.ts`
   - `public/lang/vi/blog.json`
   - `public/lang/en/blog.json`
-- Existing create form should be reused or generalized where practical instead of duplicating a parallel editor.
-- Current router redirects:
-  - `/admin/blog-posts/:id`
-  - `/admin/blog-posts/:id/edit`
-  - `ROUTES.BLOG_POSTS_EDIT`
-- This feature must replace only the edit redirect with a real edit route/page. Detail page remains out of scope unless Step 01 proves it is required.
+- Existing router state:
+  - `/admin/blog-posts/:id/edit` renders edit page.
+  - `/admin/blog-posts/:id` redirects to blog list and must become a real detail page for this feature.
+- Detail should reuse list/edit view-models and actions rather than creating a parallel API/type stack.
 
 ## Goals
 
-- Deliver `/admin/blog-posts/:id/edit` through the 10-step pipeline.
-- Fetch existing post data by ID and hydrate the form.
-- Reuse create form/editor/upload/category patterns where safe.
-- Support update as draft/published and status changes according to backend contract.
-- Preserve slug handling, validation, backend error display, loading state, dirty-state protection, cancel behavior and cache invalidation.
-- Keep blog detail, blog category CRUD and unrelated admin modules out of scope.
+- Deliver `/admin/blog-posts/:id` through the 10-step pipeline.
+- Fetch and display one blog post by ID.
+- Show publish/status, category, author, dates, slug, excerpt, featured image and rendered/preview content when available in the show response.
+- Provide actions to go back to list and edit the post.
+- Support status quick action only if the existing backend/status hook is safe and already aligned with edit/list behavior.
+- Preserve loading, error, not-found, forbidden and backend validation behavior.
+- Keep blog edit, create, categories CRUD and unrelated admin modules out of scope.
 - Produce artifacts for every step and update memory after each step.
-- Use docs root `D:\DATN\DATN_Tài liệu`; do not use stale `D:\DATN\DATN_Document` paths.
+- Use docs root `D:\DATN\DATN_Document`.
 
 ## Canonical Read Order
 
@@ -86,12 +86,14 @@ Before every skill step, read in this order:
 4. `.agent/memory/WORKING_STATE.md`
 5. `.agent/memory/HANDOFF.md`
 6. `.agent/memory/SESSION_LOG.md`
-7. Latest relevant `admin_blog_posts_list`, `admin_blog_posts_create`, and `admin_blog_posts_edit` artifacts if any
+7. Latest relevant `admin_blog_posts_list`, `admin_blog_posts_create`, and `admin_blog_posts_edit` artifacts
 8. `.agent/skills/STACK_SKILLS_INDEX.md`
 9. Current step `SKILL.md`
 10. `D:\DATN\danangtrip-admin\.codegraph\codegraph.db`
 11. `D:\DATN\danangtrip-api\.codegraph\codegraph.db`
-12. Real repo sources and docs listed in this prompt
+12. `D:\DATN\DATN_Document\docs\project_delivery_progress_report.md`
+13. Related docs listed in this prompt
+14. Real repo sources and backend routes/controllers/services/repositories discovered by Step 01
 
 If sources conflict, follow repo reality and record stale facts in the artifact.
 
@@ -106,14 +108,14 @@ If sources conflict, follow repo reality and record stale facts in the artifact.
 
 | Skill | Execution mode | Code expectation |
 | --- | --- | --- |
-| `01-screen-analysis` | Analysis only | Do not edit product code; create/update analysis artifact and memory. |
-| `02-project-setup` | Audit/setup | Verify route/form/upload/i18n setup; config fixes only if required. |
-| `03-types-api-contract` | Contract/code foundation | Add/align edit payload types, validation schema reuse, API methods, category/upload helpers if missing. |
-| `04-layout-routing` | Routing/code scaffold | Replace edit redirect with lazy route and page shell. |
-| `05-ui-components` | Code-producing | Implement edit page/form states using existing create/list design conventions. |
-| `06-data-integration` | Code-producing | Wire show query, update mutation, status mutation, categories, upload, cache invalidation and backend validation errors. |
-| `07-interactions` | Code-producing | Implement draft/publish update flows, slug behavior, dirty-state protection, reset/cancel and responsive states. |
-| `08-auth-permissions` | Code-producing when guards are wrong | Verify protected admin route, authenticated API calls and role assumptions. |
+| `01-screen-analysis` | Analysis only | Do not edit product code; document route/doc/API gaps and implementation plan. |
+| `02-project-setup` | Audit/setup | Verify route constants, lazy route conventions, i18n, artifact paths and package scripts. |
+| `03-types-api-contract` | Contract/code foundation | Confirm detail response type, show API method/hook and status action contract. |
+| `04-layout-routing` | Routing/code scaffold | Replace `/admin/blog-posts/:id` redirect with lazy detail route and page shell. |
+| `05-ui-components` | Code-producing | Implement detail header, metadata panels, image/content preview, loading/error/not-found states. |
+| `06-data-integration` | Code-producing | Wire show query, optional status mutation, cache invalidation and backend error handling. |
+| `07-interactions` | Code-producing | Implement edit/back/status interactions, confirm where needed, responsive/accessibility states. |
+| `08-auth-permissions` | Review/fix | Verify protected admin route, authenticated API calls and role/forbidden handling. |
 | `09-testing` | Validation/fix loop | Run checks/tests and fix feature-caused failures. |
 | `10-optimization-deploy` | Finalization/fix loop | Final review, deploy readiness artifacts, validation evidence, memory handoff. |
 
@@ -155,19 +157,19 @@ SYSTEM EXECUTION CONTRACT
 Act as the execution agent for repository: `D:\DATN\danangtrip-admin`
 
 CURRENT SCREEN LOCK
-- Feature slug: `admin_blog_posts_edit`
-- Screen name: `Chinh sua bai viet Blog`
-- Main route: `/admin/blog-posts/:id/edit`
-- Target page path: `D:\DATN\danangtrip-admin\src\pages\Blog\BlogPostEdit\index.tsx` unless Step 01 finds a better established local convention.
-- Target component folder: `D:\DATN\danangtrip-admin\src\pages\Blog\BlogPostEdit\components`
-- Feature type: authenticated admin/staff CMS blog-post edit form.
-- Do not switch to blog detail, blog categories CRUD, notifications, contacts, users, reports, web, or backend-only tasks.
+- Feature slug: `admin_blog_posts_detail`
+- Screen name: `Chi tiet bai viet Blog`
+- Main route: `/admin/blog-posts/:id`
+- Target page path: `D:\DATN\danangtrip-admin\src\pages\Blog\BlogPostDetail\index.tsx` unless Step 01 finds a better established local convention.
+- Target component folder: `D:\DATN\danangtrip-admin\src\pages\Blog\BlogPostDetail\components`
+- Feature type: authenticated admin/staff CMS blog-post detail screen.
+- Do not switch to blog edit, blog create, blog categories CRUD, notifications, contacts, users, reports, web, or backend-only tasks.
 
 WHY THIS IS NEXT
-- `admin_blog_posts_list` and `admin_blog_posts_create` have deploy artifacts and real code.
-- Progress report `0.0.12` selects `admin_blog_posts_edit` as the next admin screen.
-- Backend blog show/update/status/category/upload routes exist.
-- Admin edit/detail routes currently redirect to list; edit needs a real page.
+- `admin_blog_posts_list`, `admin_blog_posts_create`, and `admin_blog_posts_edit` have real code and deploy artifacts.
+- Progress report `0.0.13` selects `admin_blog_posts_detail` as the next admin screen.
+- Backend blog show/status routes exist.
+- Admin route `/admin/blog-posts/:id` still redirects to list and needs a real detail page.
 
 MANDATORY READ ORDER BEFORE ANY WORK
 1. `D:\DATN\danangtrip-admin\AGENTS.md`
@@ -176,36 +178,35 @@ MANDATORY READ ORDER BEFORE ANY WORK
 4. `D:\DATN\danangtrip-admin\.agent\memory\WORKING_STATE.md`
 5. `D:\DATN\danangtrip-admin\.agent\memory\HANDOFF.md`
 6. `D:\DATN\danangtrip-admin\.agent\memory\SESSION_LOG.md`
-7. Latest relevant blog list/create/edit artifacts if any
+7. Latest relevant blog list/create/edit artifacts
 8. `D:\DATN\danangtrip-admin\.agent\skills\STACK_SKILLS_INDEX.md`
 9. Current step `SKILL.md`
 10. `D:\DATN\danangtrip-admin\.codegraph\codegraph.db`
 11. `D:\DATN\danangtrip-api\.codegraph\codegraph.db`
+12. `D:\DATN\DATN_Document\docs\project_delivery_progress_report.md`
+13. Related blog docs: list/create/edit/categories
 
 SCREEN AND API REFERENCES
-- Progress report: `D:\DATN\DATN_Tài liệu\docs\project_delivery_progress_report.md`
-- Primary screen doc: `D:\DATN\DATN_Tài liệu\docs\page\admin_blog_posts_edit.md`
-- Related docs: `admin_blog_posts_list.md`, `admin_blog_posts_create.md`, `admin_blog_categories.md`
-- Backend routes: `D:\DATN\danangtrip-api\routes\api.php`
-- Backend request/controller/service/repository: admin blog controller, update request if present, `BlogService.php`, `BlogPostRepository.php`
+- Progress report: `D:\DATN\DATN_Document\docs\project_delivery_progress_report.md`
 - Existing list implementation: `D:\DATN\danangtrip-admin\src\pages\Blog\BlogPostList`
 - Existing create implementation: `D:\DATN\danangtrip-admin\src\pages\Blog\BlogPostCreate`
+- Existing edit implementation: `D:\DATN\danangtrip-admin\src\pages\Blog\BlogPostEdit`
+- Blog API/hooks/types/mappers: `src/api/blogApi.ts`, `src/hooks/useBlogQueries.ts`, `src/types/blog.ts`, `src/dataHelper/blog.mapper.ts`
+- Backend routes: `D:\DATN\danangtrip-api\routes\api.php`
+- Backend request/controller/service/repository: admin blog controller, `BlogService.php`, `BlogPostRepository.php`
 
 CONTRACT DETAILS
 - Show API: `GET /admin/blog-posts/{id}`.
-- Update API: `PUT /admin/blog-posts/{id}`.
-- Status API: `PATCH /admin/blog-posts/{id}/status`.
-- Category options: `GET /admin/blog-categories`.
-- Featured image upload: `POST /upload/image`.
-- Verify actual backend request names before coding; use backend-safe params only.
-- Submit draft/published update based on user action and existing backend status model.
-- Detail page and category CRUD are out of scope unless Step 01 proves a small shared dependency is required.
+- Optional status API: `PATCH /admin/blog-posts/{id}/status`.
+- Verify actual backend response shape before coding; use backend-safe params only.
+- The detail page must provide edit navigation to the existing edit route.
+- Blog edit/create/category CRUD are out of scope unless Step 01 proves a small shared dependency is required.
 
 EXECUTION RULES
 - Follow the 10-step pipeline strictly.
 - Do not mark a step complete without artifact and memory updates.
-- Keep all edits scoped to `admin_blog_posts_edit` except shared endpoint/API/types/hooks/i18n needed by this screen.
-- Prefer existing admin blog create/list patterns over a parallel architecture.
+- Keep all edits scoped to `admin_blog_posts_detail` except shared endpoint/API/types/hooks/i18n needed by this screen.
+- Prefer existing admin blog list/edit patterns over a parallel architecture.
 - Run validation in Step 09 and Step 10 as allowed by the environment.
 ```
 
@@ -214,83 +215,83 @@ EXECUTION RULES
 ### Step 01
 
 ```text
-Activate `01-screen-analysis` for `admin_blog_posts_edit`.
-Read mandatory context, codegraph, `admin_blog_posts_edit.md`, backend blog show/update/status contract, existing blog create/list code, and router redirects.
-Work: document purpose, route, API contract, missing code, reusable create/list patterns, backend/doc mismatches, risks, and implementation plan.
-Output: `.agent/artifacts/analysis/2026-05-27__admin_blog_posts_edit__screen-analysis.md`
+Activate `01-screen-analysis` for `admin_blog_posts_detail`.
+Read mandatory context, codegraph, progress report, related blog docs, backend blog show/status contract, existing blog list/create/edit code and router redirect.
+Work: document purpose, route, API contract, missing detail doc, missing code, reusable patterns, backend/doc mismatches, risks and implementation plan.
+Output: `.agent/artifacts/analysis/2026-05-27__admin_blog_posts_detail__screen-analysis.md`
 ```
 
 ### Step 02
 
 ```text
-Activate `02-project-setup` for `admin_blog_posts_edit`.
-Inspect route conventions, form libraries, upload helpers, i18n loader, artifact/memory paths, and package scripts.
+Activate `02-project-setup` for `admin_blog_posts_detail`.
+Inspect route conventions, i18n loader, API/hook/type patterns, artifact/memory paths and package scripts.
 Work: verify setup readiness and note blocking config/script issues only.
-Output: `.agent/artifacts/audits/2026-05-27__admin_blog_posts_edit__project-audit.md`
+Output: `.agent/artifacts/audits/2026-05-27__admin_blog_posts_detail__project-audit.md`
 ```
 
 ### Step 03
 
 ```text
-Activate `03-types-api-contract` for `admin_blog_posts_edit`.
-Inspect backend update request, existing blog API module, hooks, types, mapper and upload API.
-Work: add/align edit payload, show/update/status API methods, validation schema reuse, category query and upload contract.
-Output: `.agent/artifacts/api-contracts/2026-05-27__admin_blog_posts_edit__api-contract.md`
+Activate `03-types-api-contract` for `admin_blog_posts_detail`.
+Inspect backend show response, existing blog API module, hooks, types, mapper and status mutation.
+Work: add/align detail response types, show API method/query hook, view mapper and optional status contract.
+Output: `.agent/artifacts/api-contracts/2026-05-27__admin_blog_posts_detail__api-contract.md`
 ```
 
 ### Step 04
 
 ```text
-Activate `04-layout-routing` for `admin_blog_posts_edit`.
-Target route: `/admin/blog-posts/:id/edit`.
-Work: replace edit redirect with lazy route, page shell, breadcrumb/cancel paths, params handling and i18n namespace/files.
-Output: `.agent/artifacts/routing/2026-05-27__admin_blog_posts_edit__route-plan.md`
+Activate `04-layout-routing` for `admin_blog_posts_detail`.
+Target route: `/admin/blog-posts/:id`.
+Work: replace detail redirect with lazy route, page shell, breadcrumb/back/edit paths, params handling and i18n namespace/files.
+Output: `.agent/artifacts/routing/2026-05-27__admin_blog_posts_detail__route-plan.md`
 ```
 
 ### Step 05
 
 ```text
-Activate `05-ui-components` for `admin_blog_posts_edit`.
-Work: implement edit header actions, hydrated content form, editor surface, publish/category/image sidebar cards, loading/error/not-found states and responsive layout.
-Output: `.agent/artifacts/ui-specs/2026-05-27__admin_blog_posts_edit__ui-spec.md`
+Activate `05-ui-components` for `admin_blog_posts_detail`.
+Work: implement detail header actions, metadata/status/category panels, featured image block, content preview, loading/error/not-found states and responsive layout.
+Output: `.agent/artifacts/ui-specs/2026-05-27__admin_blog_posts_detail__ui-spec.md`
 ```
 
 ### Step 06
 
 ```text
-Activate `06-data-integration` for `admin_blog_posts_edit`.
-Work: wire post show query, category query, image upload, update/status mutations, cache invalidation, backend validation errors and toast feedback.
-Output: `.agent/artifacts/integration/2026-05-27__admin_blog_posts_edit__data-integration.md`
+Activate `06-data-integration` for `admin_blog_posts_detail`.
+Work: wire post show query, optional status mutation, cache invalidation, backend error handling and toast feedback.
+Output: `.agent/artifacts/integration/2026-05-27__admin_blog_posts_detail__data-integration.md`
 ```
 
 ### Step 07
 
 ```text
-Activate `07-interactions` for `admin_blog_posts_edit`.
-Work: implement draft/publish update flows, slug behavior, upload preview/remove, dirty-state protection, cancel/reset behavior, accessibility and responsive behavior.
-Output: `.agent/artifacts/interaction-specs/2026-05-27__admin_blog_posts_edit__interaction-spec.md`
+Activate `07-interactions` for `admin_blog_posts_detail`.
+Work: implement back/edit/status interactions, confirm dialogs where needed, preview link behavior, accessibility and responsive behavior.
+Output: `.agent/artifacts/interaction-specs/2026-05-27__admin_blog_posts_detail__interaction-spec.md`
 ```
 
 ### Step 08
 
 ```text
-Activate `08-auth-permissions` for `admin_blog_posts_edit`.
-Work: verify protected admin route, authenticated admin API calls, role assumptions, forbidden/not-found handling, upload authorization and no public leakage.
-Output: `.agent/artifacts/auth/2026-05-27__admin_blog_posts_edit__auth-permissions-review.md`
+Activate `08-auth-permissions` for `admin_blog_posts_detail`.
+Work: verify protected admin route, authenticated admin API calls, role assumptions, forbidden/not-found handling and no public leakage.
+Output: `.agent/artifacts/auth/2026-05-27__admin_blog_posts_detail__auth-permissions-review.md`
 ```
 
 ### Step 09
 
 ```text
-Activate `09-testing` for `admin_blog_posts_edit`.
+Activate `09-testing` for `admin_blog_posts_detail`.
 Run relevant lint/typecheck/build or prepush checks and fix feature-caused failures.
-Output: `.agent/artifacts/test-cases/2026-05-27__admin_blog_posts_edit__test-report.md`
+Output: `.agent/artifacts/test-cases/2026-05-27__admin_blog_posts_detail__test-report.md`
 ```
 
 ### Step 10
 
 ```text
-Activate `10-optimization-deploy` for `admin_blog_posts_edit`.
+Activate `10-optimization-deploy` for `admin_blog_posts_detail`.
 Perform final review, deploy readiness check, artifact closeout, memory handoff and prompt/progress update recommendation.
-Output: `.agent/artifacts/deploy/2026-05-27__admin_blog_posts_edit__deploy-report.md` and `.agent/artifacts/review/2026-05-27__admin_blog_posts_edit__review.md`
+Output: `.agent/artifacts/deploy/2026-05-27__admin_blog_posts_detail__deploy-report.md` and `.agent/artifacts/review/2026-05-27__admin_blog_posts_detail__review.md`
 ```

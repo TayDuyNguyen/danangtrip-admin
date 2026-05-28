@@ -3,52 +3,58 @@
 ## Current Status
 
 - Date: 2026-05-27
-- Active feature/task: `admin_blog_posts_duplicate_slug`
+- Active feature/task: `admin_blog_posts_detail`
 - Status: Completed (Steps 1 to 10)
 - Next step: Await user approval and push to branch
-- Objective: Resolve duplicate slug errors when generating multiple copies of a blog post, using backend checkSlug and frontend title/slug auto-numbering.
+- Objective: Implement the Blog Post Detail screen (`admin_blog_posts_detail`) under route `/admin/blog-posts/:id` inside `danangtrip-admin`.
 - Mode: Completed / Review
 - Owner: AI collaborator
 
 ## Progress Breakdown
 
-- [x] Step 1: Analyze duplicate slug generation issues across copies
-- [x] Step 2: Implement check-slug endpoint in backend API (`danangtrip-api`)
-- [x] Step 3: Integrate endpoints, wrapper methods, and states in frontend Admin (`danangtrip-admin`)
-- [x] Step 4: Implement on-mount duplicate title & slug auto-numberer resolver on frontend
-- [x] Step 5: Disable/throttle form submission buttons while slug checking is in progress
-- [x] Step 6: Verify quality gates: prepush check passed, deploy and walkthrough artifacts generated.
+- [x] Step 1: Screen Analysis & Spec Document (`01-screen-analysis`)
+- [x] Step 2: Project Setup Verification (`02-project-setup`)
+- [x] Step 3: Types & API Alignment (`03-types-api-contract`)
+- [x] Step 4: Routing & Page Scaffolding (`04-layout-routing`)
+- [x] Step 5: UI Component Implementation (`05-ui-components`)
+- [x] Step 6: Data Integration (`06-data-integration`)
+- [x] Step 7: User Interactions & Polish (`07-interactions`)
+- [x] Step 8: Security & Guard Auditing (`08-auth-permissions`)
+- [x] Step 9: Testing and Quality Gates (`09-testing`)
+- [x] Step 10: Optimization & Delivery (`10-optimization-deploy`)
 
 ## Current Reality
 
-- Added lazy route mapping for `/admin/blog-posts/edit/:id` in React Router v7.
-- Defined `UpdateBlogPostPayload` and validation schema `createBlogPostSchema`.
-- Enforced descriptive action words before resource IDs across all edit/view routes:
-  - `USERS_DETAIL`: `/admin/users/detail/:id`
-  - `BOOKINGS_DETAIL`: `/admin/bookings/detail/:id`
-  - `PAYMENTS_DETAIL`: `/admin/payments/detail/:id`
-  - Removed old blog edit alias route `/admin/blog-posts/:id/edit` in `routes/index.tsx`.
-  - Replaced hardcoded links in `BookingsReportTable.tsx` and `RevenueReportTable.tsx` to reference `ROUTES.BOOKINGS_DETAIL`.
-- Implemented `getDetail` and `update` post client APIs.
-- Integrated `UnsavedChangesGuard` to block route navigation if form state `isDirty` is true.
-- Modified form submission to redirect users back to the post list `/admin/blog-posts` after saving changes.
-- Sync loading state dynamically from `BlogPostForm` to the sticky header and mobile bar "Lưu thay đổi" buttons.
-- Mapped "Xem bài viết" buttons to open client web details page on port 3000 (`http://localhost:3000/blog/{slug}`).
-- Cleaned up unrelated linter warning in `LocationList/index.tsx` (unused `Button` import).
-- Passed all linting, typechecking, and production build checks via `npm run prepush:check`.
+- Registered `ROUTES.BLOG_POSTS_DETAIL = '/admin/blog-posts/:id'` in `routes/routes.ts`.
+- Mapped lazy routing for `/admin/blog-posts/:id` inside `routes/index.tsx` directly to the new detail page, gỡ bỏ `RedirectToBlogList` and unused `useLocation` import.
+- Created `BlogPostDetail/index.tsx` as the main orchestrator page controller.
+- Created `BlogPostDetailHeader.tsx` sticky, responsive header with breadcrumbs, edit navigations, preview buttons, and dropdown status switcher.
+- Created `BlogPostDetailContent.tsx` left-column layouts mapping cover images, title strings, copyable slug blocks, excerpt blocks, and HTML custom prose typography blocks.
+- Created `BlogPostDetailSidebar.tsx` right-column sidebar listing quick actions, published schedules, detailed metadata rows, and author profile cards.
+- Integrated translation keys for vi and en inside `public/lang/` JSON resource files.
+- Created missing specifications document `admin_blog_posts_detail.md` inside `danangtrip-api` documentation.
+- Ran all automated quality checks: `npm run prepush:check` successfully passes linting (0 errors), TS compilation (0 errors), Vite production build, and Playwright checks!
 
 ## Validation
 
-- Admin prepush: SUCCESS (lint/typecheck/build/playwright-test passed)
+- Admin prepush check: **SUCCESS** (lint/typecheck/build/playwright-test passed)
 
 ## Known Issues / Risks
 
-- None.
+- None. All compile-time and runtime checks are perfectly clean.
 
 ## Artifacts
 
-- Implementation Plan: [implementation_plan.md](file:///C:/Users/TUF/.gemini/antigravity/brain/3590f66c-c7b9-4301-b553-2fe9e4f2bd07/implementation_plan.md)
-- Task checklist: [task.md](file:///C:/Users/TUF/.gemini/antigravity/brain/3590f66c-c7b9-4301-b553-2fe9e4f2bd07/task.md)
-- Walkthrough: [walkthrough.md](file:///C:/Users/TUF/.gemini/antigravity/brain/3590f66c-c7b9-4301-b553-2fe9e4f2bd07/walkthrough.md)
-- Auth Review: [.agent/artifacts/auth/2026-05-27__admin_blog_posts_edit__auth-permissions-review.md](file:///d:/DATN/danangtrip-admin/.agent/artifacts/auth/2026-05-27__admin_blog_posts_edit__auth-permissions-review.md)
-- Test report: [.agent/artifacts/test-cases/2026-05-27__admin_blog_posts_edit__test-report.md](file:///d:/DATN/danangtrip-admin/.agent/artifacts/test-cases/2026-05-27__admin_blog_posts_edit__test-report.md)
+- Implementation Plan: [implementation_plan.md](file:///C:/Users/NGUYEN%20DUY%20TAY/.gemini/antigravity/brain/1f26a07f-202e-4600-b6de-c3edf69cad93/implementation_plan.md)
+- Task checklist: [task.md](file:///C:/Users/NGUYEN%20DUY%20TAY/.gemini/antigravity/brain/1f26a07f-202e-4600-b6de-c3edf69cad93/task.md)
+- Screen Analysis: [.agent/artifacts/analysis/2026-05-27__admin_blog_posts_detail__screen-analysis.md](file:///d:/DATN/danangtrip-admin/.agent/artifacts/analysis/2026-05-27__admin_blog_posts_detail__screen-analysis.md)
+- Project Audit: [.agent/artifacts/audits/2026-05-27__admin_blog_posts_detail__project-audit.md](file:///d:/DATN/danangtrip-admin/.agent/artifacts/audits/2026-05-27__admin_blog_posts_detail__project-audit.md)
+- API Contract: [.agent/artifacts/api-contracts/2026-05-27__admin_blog_posts_detail__api-contract.md](file:///d:/DATN/danangtrip-admin/.agent/artifacts/api-contracts/2026-05-27__admin_blog_posts_detail__api-contract.md)
+- Routing Plan: [.agent/artifacts/routing/2026-05-27__admin_blog_posts_detail__route-plan.md](file:///d:/DATN/danangtrip-admin/.agent/artifacts/routing/2026-05-27__admin_blog_posts_detail__route-plan.md)
+- UI Spec: [.agent/artifacts/ui-specs/2026-05-27__admin_blog_posts_detail__ui-spec.md](file:///d:/DATN/danangtrip-admin/.agent/artifacts/ui-specs/2026-05-27__admin_blog_posts_detail__ui-spec.md)
+- Data Integration: [.agent/artifacts/integration/2026-05-27__admin_blog_posts_detail__data-integration.md](file:///d:/DATN/danangtrip-admin/.agent/artifacts/integration/2026-05-27__admin_blog_posts_detail__data-integration.md)
+- Interaction Spec: [.agent/artifacts/interaction-specs/2026-05-27__admin_blog_posts_detail__interaction-spec.md](file:///d:/DATN/danangtrip-admin/.agent/artifacts/interaction-specs/2026-05-27__admin_blog_posts_detail__interaction-spec.md)
+- Auth Review: [.agent/artifacts/auth/2026-05-27__admin_blog_posts_detail__auth-permissions-review.md](file:///d:/DATN/danangtrip-admin/.agent/artifacts/auth/2026-05-27__admin_blog_posts_detail__auth-permissions-review.md)
+- Test report: [.agent/artifacts/test-cases/2026-05-27__admin_blog_posts_detail__test-report.md](file:///d:/DATN/danangtrip-admin/.agent/artifacts/test-cases/2026-05-27__admin_blog_posts_detail__test-report.md)
+- Deploy report: [.agent/artifacts/deploy/2026-05-27__admin_blog_posts_detail__deploy-report.md](file:///d:/DATN/danangtrip-admin/.agent/artifacts/deploy/2026-05-27__admin_blog_posts_detail__deploy-report.md)
+- Walkthrough/Review: [.agent/artifacts/review/2026-05-27__admin_blog_posts_detail__review.md](file:///d:/DATN/danangtrip-admin/.agent/artifacts/review/2026-05-27__admin_blog_posts_detail__review.md)
