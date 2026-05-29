@@ -2,12 +2,11 @@ import { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import {
-    useDebounce,
     useAdminPaymentsQuery,
     usePaymentMutations,
 } from "@/hooks";
 import Breadcrumbs from "@/components/common/Breadcrumbs";
-import { CreditCard } from "lucide-react";
+import { CreditCard, Download } from "lucide-react";
 import type { PaymentListFilters, PaymentItem } from "@/dataHelper";
 import { mapApiErrorMessage } from "@/utils";
 import PaymentStatsRow from "./components/PaymentStatsRow";
@@ -29,12 +28,9 @@ const PaymentList = () => {
     const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(10);
 
-    // Debounce filters for API requests
-    const debouncedFilters = useDebounce(filters, 400);
-
     // Fetch payments list query
     const { data: listData, isLoading, isFetching, refetch } = useAdminPaymentsQuery(
-        debouncedFilters,
+        filters,
         page,
         limit
     );
@@ -150,6 +146,18 @@ const PaymentList = () => {
                             {t("subtitle", "Quản lý, tìm kiếm và kiểm soát giao dịch thanh toán của khách hàng.")}
                         </p>
                     </div>
+                    <button
+                        onClick={handleExport}
+                        disabled={exportMutation.isPending}
+                        className="flex items-center justify-center gap-2 bg-[#14B8A6] hover:bg-[#0f766e] text-white disabled:opacity-50 rounded-xl py-2.5 px-5 text-sm font-bold shadow-lg shadow-[#14B8A6]/20 hover:shadow-xl hover:shadow-[#14B8A6]/30 transition-all duration-200 cursor-pointer self-start md:self-auto"
+                    >
+                        <Download size={16} className={exportMutation.isPending ? "animate-bounce" : ""} />
+                        <span>
+                            {exportMutation.isPending
+                                ? t("filter.exporting", "Đang xuất...")
+                                : t("filter.export_excel", "Xuất báo cáo Excel")}
+                        </span>
+                    </button>
                 </div>
             </div>
 

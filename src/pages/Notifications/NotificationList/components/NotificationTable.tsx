@@ -1,10 +1,10 @@
 import { Trash2, CheckCircle2, Radio, BellOff, ArrowUpDown, ArrowUp, ArrowDown, RefreshCw, ChevronLeft, ChevronRight } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import type { TFunction } from "i18next";
 import type { NotificationViewModel } from "@/types";
 import { clsx } from "clsx";
 import LoadingReact from "@/components/loading";
 import CustomSelect, { type Option } from "@/components/ui/CustomSelect";
+import { formatAdminTableDateTime } from "@/utils";
 
 interface NotificationTableProps {
     data: NotificationViewModel[];
@@ -28,34 +28,6 @@ interface NotificationTableProps {
     isBulkMutating?: boolean;
 }
 
-const getRelativeTimeString = (d: Date, locale: string, t: TFunction) => {
-    const now = new Date();
-    const diffMs = now.getTime() - d.getTime();
-    if (isNaN(diffMs) || diffMs < 0) return t("common:time.just_now") || "vừa xong";
-
-    const diffSec = Math.floor(diffMs / 1000);
-    const diffMin = Math.floor(diffSec / 60);
-    const diffHour = Math.floor(diffMin / 60);
-    const diffDay = Math.floor(diffHour / 24);
-
-    if (diffSec < 60) return t("common:time.just_now") || "vừa xong";
-    if (diffMin < 60) return `${diffMin} ${t("common:pagination.showing") === "Hiển thị" ? "phút trước" : "mins ago"}`;
-    if (diffHour < 24) return `${diffHour} ${t("common:pagination.showing") === "Hiển thị" ? "giờ trước" : "hours ago"}`;
-    if (diffDay < 7) return `${diffDay} ${t("common:pagination.showing") === "Hiển thị" ? "ngày trước" : "days ago"}`;
-
-    const loc = locale.toLowerCase().startsWith("vi") ? "vi-VN" : "en-GB";
-    return d.toLocaleDateString(loc, {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-    });
-};
-
-const formatTime = (d: Date) => {
-    const pad = (n: number) => String(n).padStart(2, "0");
-    return `${pad(d.getHours())}:${pad(d.getMinutes())}`;
-};
-
 export const NotificationTable = ({
     data,
     isLoading,
@@ -75,7 +47,7 @@ export const NotificationTable = ({
     onBulkDelete,
     isBulkMutating = false,
 }: NotificationTableProps) => {
-    const { t, i18n } = useTranslation(["notification", "tour", "common"]);
+    const { t } = useTranslation(["notification", "tour", "common"]);
     const lastPage = Math.max(1, Math.ceil(total / limit));
 
     const typeBadges: Record<string, { bg: string; text: string; labelKey: string }> = {
@@ -273,10 +245,7 @@ export const NotificationTable = ({
                                         <td className="p-4">
                                             <div>
                                                 <p className={`text-[12px] font-bold ${isUnread ? "text-slate-900 font-extrabold" : "text-slate-700"}`}>
-                                                    {getRelativeTimeString(item.createdAt, i18n.language, t)}
-                                                </p>
-                                                <p className="text-[10px] text-slate-400 font-semibold">
-                                                    {formatTime(item.createdAt)}
+                                                    {formatAdminTableDateTime(item.createdAt)}
                                                 </p>
                                             </div>
                                         </td>

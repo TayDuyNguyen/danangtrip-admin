@@ -89,6 +89,28 @@ export interface RawBookingStatusCounts {
     cancelled?: number;
 }
 
+export interface RawSearchTrendKeyword {
+    query: string;
+    count: number | string;
+}
+
+export interface RawSearchTrendLocation {
+    id: number | string;
+    name: string;
+    slug?: string;
+    district?: string;
+    view_count: number | string;
+    favorite_count?: number | string;
+}
+
+export interface RawSearchTrendsResponse {
+    days: number | string;
+    keywords: RawSearchTrendKeyword[];
+    clicked_queries?: RawSearchTrendKeyword[];
+    zero_result_keywords?: RawSearchTrendKeyword[];
+    locations: RawSearchTrendLocation[];
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // UI View Models - Used by components
 // ─────────────────────────────────────────────────────────────────────────────
@@ -228,6 +250,33 @@ export interface BookingStatusCounts {
     confirmed: number;
     completed: number;
     cancelled: number;
+}
+
+export interface SearchTrendKeyword {
+    query: string;
+    count: number;
+}
+
+export interface SearchTrendLocation {
+    id: string;
+    name: string;
+    slug?: string;
+    district?: string;
+    view_count: number;
+    favorite_count: number;
+}
+
+export interface SearchTrendsData {
+    days: number;
+    keywords: SearchTrendKeyword[];
+    clicked_queries: SearchTrendKeyword[];
+    zero_result_keywords: SearchTrendKeyword[];
+    locations: SearchTrendLocation[];
+}
+
+export interface SearchTrendsParams {
+    limit?: number;
+    days?: number;
 }
 
 export interface BookingStatusCountsParams {

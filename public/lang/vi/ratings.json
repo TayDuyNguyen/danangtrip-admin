@@ -1,6 +1,6 @@
 {
-    "title": "Báo cáo Đánh giá",
-    "subtitle": "Thống kê, phân tích và kiểm duyệt phản hồi khách hàng",
+    "title": "Báo cáo đánh giá",
+    "subtitle": "Thống kê, phân tích và quản lý phản hồi khách hàng",
     "toast": {
         "exporting_excel": "Đang chuẩn bị và xuất file Excel...",
         "export_success": "Xuất báo cáo Excel thành công!",
@@ -22,11 +22,15 @@
         },
         "from_date": "Từ ngày",
         "to_date": "Đến ngày",
-        "moderation_status": "Trạng thái duyệt",
+        "moderation_status": "Trạng thái hiển thị",
         "status_all": "Tất cả trạng thái",
+        "status_all_management": "Tất cả trạng thái",
         "status_pending": "Chờ duyệt",
+        "status_pending_legacy": "Chưa xử lý",
         "status_approved": "Đã duyệt",
+        "status_visible": "Đang hiển thị",
         "status_rejected": "Từ chối",
+        "status_hidden": "Đã ẩn",
         "category": "Phân loại",
         "type_all": "Tất cả loại hình",
         "type_location": "Địa điểm",
@@ -40,7 +44,10 @@
     "stats": {
         "total_ratings": "Tổng đánh giá",
         "average_score": "Điểm trung bình",
-        "ratings": "Đánh giá"
+        "ratings": "Đánh giá",
+        "visible_ratings": "Đang hiển thị",
+        "hidden_ratings": "Đã ẩn",
+        "pending_legacy": "Chưa xử lý"
     },
     "charts": {
         "trend_title": "Xu hướng đánh giá",
@@ -48,15 +55,15 @@
         "no_trend_data": "Không có dữ liệu xu hướng trong khoảng thời gian này",
         "stars_distribution": "Phân bố số sao",
         "stars_subtitle": "Tần suất và tỷ lệ phần trăm",
-        "status_subtitle": "Tỷ lệ phê duyệt và chờ duyệt",
+        "status_subtitle": "Tỷ lệ hiển thị và ẩn đánh giá",
         "type_title": "Theo loại hình dịch vụ",
         "type_subtitle": "Số lượng và điểm trung bình",
         "count_label": "Số lượng",
         "avg_label": "Điểm trung bình (★)"
     },
     "table": {
-        "details_title": "Chi tiết đánh giá",
-        "details_subtitle": "Danh sách kiểm duyệt và quản lý phản hồi",
+        "details_title": "Quản lý đánh giá",
+        "details_subtitle": "Danh sách theo dõi, ẩn và xóa phản hồi khách hàng",
         "total_ratings_count": "{{total}} đánh giá",
         "header_user": "Người dùng",
         "header_target": "Địa điểm / Tour",
@@ -67,11 +74,40 @@
         "no_comment": "Không có bình luận",
         "attachment_alt": "ảnh đính kèm",
         "tooltip_view": "Xem toàn bộ nhận xét",
-        "tooltip_approve": "Phê duyệt đánh giá",
-        "tooltip_reject": "Từ chối đánh giá",
+        "tooltip_approve": "Hiển thị đánh giá",
+        "tooltip_reject": "Ẩn đánh giá",
         "tooltip_delete": "Xóa vĩnh viễn",
         "confirm_delete": "Bạn có chắc muốn xóa đánh giá này vĩnh viễn? Hành động này không thể hoàn tác.",
-        "pagination_showing": "Hiển thị {{from}}–{{to}} trong tổng số {{total}} đánh giá"
+        "pagination_showing": "Hiển thị {{from}}–{{to}} trong tổng số {{total}} đánh giá",
+        "status_pending_legacy": "Chưa xử lý",
+        "status_visible": "Đang hiển thị",
+        "status_hidden": "Đã ẩn",
+        "rejected_reason_label": "Lý do ẩn",
+        "reject_reason_input_label": "Lý do ẩn *",
+        "reject_reason_placeholder": "Nhập lý do ẩn để ghi nhận nội bộ",
+        "warning_title": "LƯU Ý QUAN TRỌNG:",
+        "warning_bulk_desc": "Hành động này sẽ cập nhật trạng thái của tất cả đánh giá đã chọn thành 'Từ chối' (Bị ẩn) và điểm đánh giá tương ứng của Tour/Địa điểm sẽ được tính toán lại.",
+        "warning_single_desc": "Khi từ chối, bài viết đánh giá sẽ bị ẩn khỏi trang chi tiết công khai. Hệ thống sẽ tự động gửi thông báo giải thích kèm lý do tới khách hàng."
+    },
+    "actions": {
+        "hide_bulk": "Ẩn đã chọn",
+        "hide_rating": "Ẩn đánh giá",
+        "confirm_hide": "Xác nhận ẩn",
+        "approve": "Duyệt",
+        "reject": "Từ chối",
+        "cancel_approve": "Hủy duyệt",
+        "cancel": "Hủy bỏ",
+        "delete": "Xóa",
+        "processing": "Đang xử lý...",
+        "reject_bulk_title": "Từ chối hàng loạt ({{count}} đánh giá)",
+        "reject_single_title": "Xác nhận Từ chối đánh giá",
+        "reject_bulk_desc": "Bạn đang ẩn hàng loạt các đánh giá được chọn khỏi hiển thị công khai. Vui lòng ghi lại lý do ẩn.",
+        "reject_single_desc": "Bạn đang ẩn bài đánh giá này khỏi hiển thị công khai. Vui lòng nhập lý do từ chối để gửi thông báo cho khách hàng.",
+        "export_excel": "Xuất báo cáo Excel",
+        "exporting": "Đang xuất..."
+    },
+    "success": {
+        "hide_bulk_success": "Đã ẩn thành công {{count}} đánh giá."
     },
     "modal": {
         "title": "Chi tiết nhận xét",

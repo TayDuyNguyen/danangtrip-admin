@@ -9,6 +9,7 @@ import type {
     RawTopTour,
     RawBookingsResponse,
     RawBookingStatusCounts,
+    RawSearchTrendsResponse,
     RevenueParams,
     BookingTrendParams,
     UserGrowthParams,
@@ -16,6 +17,7 @@ import type {
     BookingsParams,
     BookingsExportParams,
     BookingStatusCountsParams,
+    SearchTrendsParams,
 } from "@/dataHelper/dashboard.dataHelper";
 import type { ApiResponse } from "@/types";
 
@@ -40,6 +42,9 @@ export const dashboardApi = {
 
     getTopTours: (params: TopToursParams): Promise<ApiResponse<RawTopTour[]>> =>
         axiosClient.get(API_ENDPOINTS.DASHBOARD.TOP_TOURS, { params }),
+
+    getSearchTrends: (params?: SearchTrendsParams): Promise<ApiResponse<RawSearchTrendsResponse>> =>
+        axiosClient.get(API_ENDPOINTS.DASHBOARD.SEARCH_TRENDS, { params }),
 
     getBookings: (params: BookingsParams): Promise<ApiResponse<RawBookingsResponse>> =>
         axiosClient.get(API_ENDPOINTS.DASHBOARD.BOOKINGS, { params }),

@@ -34,5 +34,6 @@ export const ROUTES = {
     BLOG_POSTS_EDIT: '/admin/blog-posts/edit/:id',
     BLOG_POSTS_DETAIL: '/admin/blog-posts/:id',
     BLOG_CATEGORIES: '/admin/blog-categories',
+    RATINGS: '/admin/ratings',
 } as const;
 

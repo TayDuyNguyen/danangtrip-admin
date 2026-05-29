@@ -20,6 +20,7 @@ export const API_ENDPOINTS = {
         TOP_TOURS: '/admin/dashboard/top-tours',
         // Top locations table/report
         TOP_LOCATIONS: '/admin/dashboard/top-locations',
+        SEARCH_TRENDS: '/admin/dashboard/search-trends',
         // Recent orders table
         BOOKINGS: '/admin/bookings',
     },

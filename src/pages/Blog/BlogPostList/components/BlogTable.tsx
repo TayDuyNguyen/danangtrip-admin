@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import LoadingReact from "@/components/loading";
 import CustomSelect, { type Option } from "@/components/ui/CustomSelect";
 import { ROUTES } from "@/routes/routes";
+import { formatAdminTableDateTime, formatAdminTableTemporal } from "@/utils";
 
 interface BlogTableProps {
     data: BlogPostViewModel[];
@@ -83,17 +84,6 @@ export const BlogTable = ({
         return sorting.sortOrder === "asc" 
             ? <ArrowUp size={14} className="ml-1.5 text-[#14b8a6]" />
             : <ArrowDown size={14} className="ml-1.5 text-[#14b8a6]" />;
-    };
-
-    const formatDate = (date: Date | null) => {
-        if (!date) return "—";
-        const pad = (n: number) => String(n).padStart(2, "0");
-        return `${pad(date.getDate())}/${pad(date.getMonth() + 1)}/${date.getFullYear()}`;
-    };
-
-    const formatDateTime = (date: Date) => {
-        const pad = (n: number) => String(n).padStart(2, "0");
-        return `${pad(date.getDate())}/${pad(date.getMonth() + 1)} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
     };
 
     const [now] = useState(() => Date.now());
@@ -346,21 +336,21 @@ export const BlogTable = ({
 
                                         {/* Ngày tạo */}
                                         <td className="p-4 text-slate-700 font-bold text-xs select-none">
-                                            <span>{formatDateTime(item.createdAt)}</span>
+                                            <span>{formatAdminTableDateTime(item.createdAt)}</span>
                                         </td>
 
                                         {/* Ngày xuất bản */}
                                         <td className="p-4 text-slate-700 font-bold text-xs select-none">
                                             {isPostScheduled ? (
                                                 <div className="flex flex-col gap-0.5">
-                                                    <span>{formatDate(item.publishedAt)}</span>
+                                                    <span>{formatAdminTableTemporal(item.publishedAt)}</span>
                                                     <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-amber-50 border border-amber-200 text-amber-600 rounded-full text-[9px] font-black w-max uppercase tracking-wider">
                                                         <Clock size={8} />
                                                         {t("table.scheduled")}
                                                     </span>
                                                 </div>
                                             ) : (
-                                                <span>{formatDate(item.publishedAt)}</span>
+                                                <span>{formatAdminTableTemporal(item.publishedAt)}</span>
                                             )}
                                         </td>
 

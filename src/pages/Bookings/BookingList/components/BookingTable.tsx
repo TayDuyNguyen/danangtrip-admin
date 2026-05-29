@@ -11,6 +11,7 @@ import BookingStatusBadge from './BookingStatusBadge';
 import PaymentStatusBadge from './PaymentStatusBadge';
 import LoadingReact from '@/components/loading';
 import CustomSelect, { type Option } from '@/components/ui/CustomSelect';
+import { formatAdminTableDate, formatAdminTableDateTime } from '@/utils';
 
 interface BookingTableProps {
     data: BookingItem[];
@@ -45,39 +46,7 @@ export const BookingTable = ({
 }: BookingTableProps) => {
     const { t, i18n } = useTranslation(['booking', 'tour', 'common']);
     const navigate = useNavigate();
-    const locale = i18n.language === 'vi' ? 'vi-VN' : 'en-US';
     const lastPage = Math.max(1, Math.ceil(total / limit));
-
-    const formatDateTime = (dateStr: string) => {
-        if (!dateStr) return '';
-        try {
-            const date = new Date(dateStr);
-            return new Intl.DateTimeFormat(locale, {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: false
-            }).format(date);
-        } catch {
-            return dateStr;
-        }
-    };
-
-    const formatDate = (dateStr: string) => {
-        if (!dateStr) return '';
-        try {
-            const date = new Date(dateStr);
-            return new Intl.DateTimeFormat(locale, {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric'
-            }).format(date);
-        } catch {
-            return dateStr;
-        }
-    };
 
     const handleSortClick = (field: string) => {
         onSort(field);
@@ -250,12 +219,12 @@ export const BookingTable = ({
                                             <div className="flex items-center gap-1.5 text-slate-400">
                                                 <Calendar size={12} className="shrink-0" />
                                                 <span>{t('labels.booked_at')}:</span>
-                                                <span className="text-slate-700">{formatDateTime(booking.bookedAt)}</span>
+                                                <span className="text-slate-700">{formatAdminTableDateTime(booking.bookedAt)}</span>
                                             </div>
                                             <div className="flex items-center gap-1.5 text-slate-400">
                                                 <Clock size={12} className="shrink-0" />
                                                 <span>{t('labels.departure_date')}:</span>
-                                                <span className="text-slate-700">{formatDate(booking.departureDate)}</span>
+                                                <span className="text-slate-700">{formatAdminTableDate(booking.departureDate)}</span>
                                             </div>
                                         </div>
                                     </td>
@@ -263,7 +232,7 @@ export const BookingTable = ({
                                     {/* Amount */}
                                     <td className="px-6 py-4">
                                         <span className="text-sm font-black text-[#14b8a6] tracking-tight">
-                                            {booking.amount.toLocaleString(locale)} {t('common:currency')}
+                                            {booking.amount.toLocaleString(i18n.language === 'vi' ? 'vi-VN' : 'en-US')} {t('common:currency')}
                                         </span>
                                     </td>
 

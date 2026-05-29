@@ -8,7 +8,7 @@
     "refunded_amount": "Refunded Amount"
   },
   "filter": {
-    "search_placeholder": "Search transaction or booking code...",
+    "search_placeholder": "Search transaction, booking code, customer name or email...",
     "all_statuses": "All Statuses",
     "all_gateways": "All Gateways",
     "reset": "Reset",

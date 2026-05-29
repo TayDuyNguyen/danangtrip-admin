@@ -125,10 +125,9 @@ const BookingsReportTable: React.FC<BookingsReportTableProps> = ({
                                     <td className="px-6 py-4">{renderStatusBadge(item.status)}</td>
                                     <td className="px-6 py-4">{renderPaymentStatusBadge(item.paymentStatus)}</td>
                                     <td className="px-6 py-4">
-                                        <div className="flex flex-col">
-                                            <span className="text-[12px] font-bold text-[#0F172A]/90">{item.bookedAt}</span>
-                                            <span className="text-[10px] font-semibold text-[#94A3B8] mt-0.5">{item.bookedAtTime}</span>
-                                        </div>
+                                        <span className="text-[12px] font-bold text-[#0F172A]/90 whitespace-nowrap">
+                                            {item.bookedAtTime ? `${item.bookedAtTime} ${item.bookedAt}` : item.bookedAt}
+                                        </span>
                                     </td>
                                     <td className="px-6 py-4 text-right">
                                         {item.id > 0 ? (

@@ -2,12 +2,12 @@
 
 ## Current Status
 
-- Date: 2026-05-28
-- Active feature/task: `admin_blog_categories`
-- Status: Completed (Steps 1 to 9)
-- Next step: Await user final approval to push and merge branch
-- Objective: Implement the Blog Categories screen (`admin_blog_categories`) under route `/admin/blog-categories` inside `danangtrip-admin`.
-- Mode: Completed / Review
+- Date: 2026-05-29
+- Active feature/task: `admin_ratings_list`
+- Status: **COMPLETE** — All 10 steps done. Ready to push.
+- Next step: Push branch, merge, then select next admin screen
+- Objective: Implement and redesign the Customer Ratings Moderation screen (`admin_ratings_list`) under route `/admin/ratings` inside `danangtrip-admin` to be consistent with the payments screen.
+- Mode: Done
 - Owner: AI collaborator
 
 ## Progress Breakdown
@@ -21,20 +21,23 @@
 - [x] Step 7: User Interactions & Polish (`07-interactions`)
 - [x] Step 8: Security & Guard Auditing (`08-auth-permissions`)
 - [x] Step 9: Testing and Quality Gates (`09-testing`)
-- [ ] Step 10: Optimization & Delivery (`10-optimization-deploy`)
+- [x] Step 10: Optimization & Delivery (`10-optimization-deploy`)
 
 ## Current Reality
 
-- Registered route `/admin/blog-categories` mapping to the new double column `BlogCategories` page.
-- Created `BlogCategoryTable` component rendering the list and post count progress bars.
-- Created `BlogCategoryForm` component rendering the sticky create/edit form and live preview.
-- Integrated translation keys for vi and en inside common.json and blog.json.
-- Created yup validations for category name/slug/description.
+- Registered route `/admin/ratings` mapping to the new `Ratings` page.
+- Redesigned interface to match the Payments screen:
+  - Created `RatingTable` component to render reviews in a table layout with avatars, score stars, comment expanders, and lightbox links.
+  - Created `RejectRatingDialog` pop-up modal to handle entering rejection reason for single/bulk ratings.
+  - Aligned `RatingFilterBar` with 5-column grid and bottom action sub-row (Reset & Export).
+  - Aligned page header and breadcrumbs with lucide icons and standard widths.
+  - Verified and synchronized all multi-language keys inside `ratings.json` for vi and en.
+  - Removed legacy card-based files `RatingCard.tsx` and `RatingToolbar.tsx`.
 - Verified compilation, linting, and build via `npm run prepush:check`. All checks passed!
 
 ## Validation
 
-- Admin prepush check: **SUCCESS** (lint/typecheck/build passed, E2E test timeout on users reports due to API delay).
+- Admin prepush check: **SUCCESS** (lint/typecheck/build/playwright passed).
 
 ## Known Issues / Risks
 
@@ -42,16 +45,6 @@
 
 ## Artifacts
 
-- Implementation Plan: [implementation_plan.md](file:///C:/Users/TUF/.gemini/antigravity/brain/1ce5497c-1cfa-4ac2-8688-635d07c1420b/implementation_plan.md)
-- Task checklist: [task.md](file:///C:/Users/TUF/.gemini/antigravity/brain/1ce5497c-1cfa-4ac2-8688-635d07c1420b/task.md)
-- Walkthrough: [walkthrough.md](file:///C:/Users/TUF/.gemini/antigravity/brain/1ce5497c-1cfa-4ac2-8688-635d07c1420b/walkthrough.md)
-- Screen Analysis: [.agent/artifacts/analysis/2026-05-28__admin_blog_categories__screen-analysis.md](file:///d:/DATN/danangtrip-admin/.agent/artifacts/analysis/2026-05-28__admin_blog_categories__screen-analysis.md)
-- Project Audit: [.agent/artifacts/audits/2026-05-28__admin_blog_categories__project-audit.md](file:///d:/DATN/danangtrip-admin/.agent/artifacts/audits/2026-05-28__admin_blog_categories__project-audit.md)
-- API Contract: [.agent/artifacts/api-contracts/2026-05-28__admin_blog_categories__api-contract.md](file:///d:/DATN/danangtrip-admin/.agent/artifacts/api-contracts/2026-05-28__admin_blog_categories__api-contract.md)
-- Routing Plan: [.agent/artifacts/routing/2026-05-28__admin_blog_categories__route-plan.md](file:///d:/DATN/danangtrip-admin/.agent/artifacts/routing/2026-05-28__admin_blog_categories__route-plan.md)
-- UI Spec: [.agent/artifacts/ui-specs/2026-05-28__admin_blog_categories__ui-spec.md](file:///d:/DATN/danangtrip-admin/.agent/artifacts/ui-specs/2026-05-28__admin_blog_categories__ui-spec.md)
-- Data Integration: [.agent/artifacts/integration/2026-05-28__admin_blog_categories__data-integration.md](file:///d:/DATN/danangtrip-admin/.agent/artifacts/integration/2026-05-28__admin_blog_categories__data-integration.md)
-- Interaction Spec: [.agent/artifacts/interaction-specs/2026-05-28__admin_blog_categories__interaction-spec.md](file:///d:/DATN/danangtrip-admin/.agent/artifacts/interaction-specs/2026-05-28__admin_blog_categories__interaction-spec.md)
-- Auth Review: [.agent/artifacts/auth/2026-05-28__admin_blog_categories__auth-permissions-review.md](file:///d:/DATN/danangtrip-admin/.agent/artifacts/auth/2026-05-28__admin_blog_categories__auth-permissions-review.md)
-- Test report: [.agent/artifacts/test-cases/2026-05-28__admin_blog_categories__test-report.md](file:///d:/DATN/danangtrip-admin/.agent/artifacts/test-cases/2026-05-28__admin_blog_categories__test-report.md)
-
+- Implementation Plan: [implementation_plan.md](file:///C:/Users/TUF/.gemini/antigravity/brain/eb756c52-f9b1-4942-ae26-be1bf365db65/implementation_plan.md)
+- Task checklist: [task.md](file:///C:/Users/TUF/.gemini/antigravity/brain/eb756c52-f9b1-4942-ae26-be1bf365db65/task.md)
+- Walkthrough: [walkthrough.md](file:///C:/Users/TUF/.gemini/antigravity/brain/eb756c52-f9b1-4942-ae26-be1bf365db65/walkthrough.md)

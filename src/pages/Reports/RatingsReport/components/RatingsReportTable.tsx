@@ -181,10 +181,9 @@ const RatingsReportTable: React.FC<RatingsReportTableProps> = ({
                                         </td>
                                         <td className="px-6 py-4">{renderStatusBadge(item.status)}</td>
                                         <td className="px-6 py-4">
-                                            <div className="flex flex-col">
-                                                <span className="text-[12px] font-bold text-[#0F172A]/90">{item.createdAt}</span>
-                                                <span className="text-[10px] font-semibold text-[#94A3B8] mt-0.5">{item.createdAtTime}</span>
-                                            </div>
+                                            <span className="text-[12px] font-bold text-[#0F172A]/90 whitespace-nowrap">
+                                                {item.createdAtTime ? `${item.createdAtTime} ${item.createdAt}` : item.createdAt}
+                                            </span>
                                         </td>
                                         <td className="px-6 py-4 text-right">
                                             <div className="flex items-center justify-end gap-1.5 opacity-85 group-hover/row:opacity-100 transition-opacity">

@@ -10,6 +10,7 @@ import { clsx } from "clsx";
 import type { UserItem } from "@/dataHelper";
 import LoadingReact from "@/components/loading";
 import CustomSelect, { type Option } from "@/components/ui/CustomSelect";
+import { formatAdminTableDateTime } from "@/utils";
 
 interface UserTableProps {
     data: UserItem[];
@@ -60,7 +61,7 @@ export const UserTable = ({
     onBulkDelete,
     isBulkMutating = false,
 }: UserTableProps) => {
-    const { t, i18n } = useTranslation(["user", "tour", "common"]);
+    const { t } = useTranslation(["user", "tour", "common"]);
     const navigate = useNavigate();
     const [activeRoleDropdownId, setActiveRoleDropdownId] = useState<number | null>(null);
     const dropdownRef = useRef<HTMLDivElement | null>(null);
@@ -343,14 +344,9 @@ export const UserTable = ({
                                             </span>
                                         </td>
                                         <td className="px-6 py-4">
-                                            <div className="flex flex-col">
-                                                <span className="text-xs font-bold text-slate-700 leading-tight">
-                                                    {userItem.joinedDate}
-                                                </span>
-                                                <span className="text-[10px] font-bold text-slate-400 mt-0.5">
-                                                    {userItem.createdAt ? new Date(userItem.createdAt).toLocaleDateString(i18n.language === "vi" ? "vi-VN" : "en-US", { month: "short", year: "numeric" }) : ""}
-                                                </span>
-                                            </div>
+                                            <span className="text-xs font-bold text-slate-700 leading-tight whitespace-nowrap">
+                                                {formatAdminTableDateTime(userItem.createdAt)}
+                                            </span>
                                         </td>
 
                                         {/* Status Column */}
