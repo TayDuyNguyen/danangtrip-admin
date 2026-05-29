@@ -9,6 +9,7 @@ import { RefreshCw, ExternalLink, ChevronLeft, ChevronRight } from "lucide-react
 import clsx from "clsx";
 import LoadingReact from "@/components/loading";
 import CustomSelect, { type Option } from "@/components/ui/CustomSelect";
+import { formatAdminTableDateTime } from "@/utils";
 
 interface PaymentTableProps {
     payments: PaymentItem[];
@@ -45,18 +46,6 @@ export const PaymentTable = ({
             style: "currency",
             currency: "VND",
         }).format(val);
-    };
-
-    const formatDate = (dateString: string) => {
-        try {
-            const date = new Date(dateString);
-            return new Intl.DateTimeFormat("vi-VN", {
-                dateStyle: "medium",
-                timeStyle: "short",
-            }).format(date);
-        } catch {
-            return dateString;
-        }
     };
 
     return (
@@ -212,7 +201,7 @@ export const PaymentTable = ({
 
                                         {/* Date */}
                                         <td className="py-4 px-6 text-xs text-slate-400">
-                                            {formatDate(payment.transactionDate)}
+                                            {formatAdminTableDateTime(payment.transactionDate)}
                                         </td>
 
                                         {/* Actions */}

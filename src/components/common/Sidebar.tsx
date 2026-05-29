@@ -15,7 +15,8 @@ import {
     MapPin,
     ChevronLeft,
     ChevronRight,
-    Mail
+    Mail,
+    Star
 } from 'lucide-react';
 import { ROUTES } from '@/routes/routes';
 import { useTranslation } from 'react-i18next';
@@ -48,6 +49,7 @@ const navItems = [
     { icon: Hotel, label: 'sidebar.hotels', path: '/admin/hotels' },
     { icon: ShoppingCart, label: 'sidebar.orders', path: ROUTES.BOOKINGS_LIST },
     { icon: CreditCard, label: 'sidebar.payments', path: ROUTES.PAYMENTS_LIST },
+    { icon: Star, label: 'sidebar.ratings', path: ROUTES.RATINGS },
     {
         icon: FileText, label: 'sidebar.reports', path: '/admin/reports',
         matchPaths: ['/admin/reports'],

@@ -15,7 +15,8 @@ import type {
     UsersReportFilters,
     UsersExportFilters
 } from '@/dataHelper/report.dataHelper';
-import type { ApiResponse, RawLocation } from '@/types';
+import type { ApiResponse, RawLocation, Paginator } from '@/types';
+import type { RawRating, RatingsListFilters } from '@/dataHelper/rating.dataHelper';
 import type { AxiosResponse } from 'axios';
 
 type RatingsReportRequestParams<T> = T & Pick<RatingsReportFilters, 'status' | 'type'>;
@@ -104,11 +105,14 @@ export const reportApi = {
         }) as Promise<AxiosResponse<Blob>>;
     },
 
+    getRatingsList: (params: RatingsListFilters): Promise<ApiResponse<Paginator<RawRating>>> =>
+        axiosClient.get(API_ENDPOINTS.RATINGS.LIST, { params: sanitizeRatingsReportParams(params) }),
+
     approveRating: (id: string | number): Promise<ApiResponse<unknown>> =>
         axiosClient.patch(API_ENDPOINTS.RATINGS.APPROVE(id)),
 
-    rejectRating: (id: string | number): Promise<ApiResponse<unknown>> =>
-        axiosClient.patch(API_ENDPOINTS.RATINGS.REJECT(id)),
+    rejectRating: (id: string | number, data?: { rejected_reason: string }): Promise<ApiResponse<unknown>> =>
+        axiosClient.patch(API_ENDPOINTS.RATINGS.REJECT(id), data),
 
     deleteRating: (id: string | number): Promise<ApiResponse<unknown>> =>
         axiosClient.delete(API_ENDPOINTS.RATINGS.DELETE(id)),

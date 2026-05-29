@@ -63,6 +63,23 @@
         "unit_thousand": "K",
         "refresh_chart": "Làm mới biểu đồ"
     },
+    "search_trends": {
+        "title": "Xu hướng tìm kiếm",
+        "subtitle": "Từ khóa và địa điểm được quan tâm trong {{days}} ngày gần đây",
+        "keywords": "Từ khóa nổi bật",
+        "clicked_keywords": "Từ khóa được click nhiều",
+        "zero_result_keywords": "Từ khóa không có kết quả",
+        "locations": "Địa điểm được xem nhiều",
+        "searches": "lượt tìm",
+        "clicks": "lượt click",
+        "views": "lượt xem",
+        "empty": "Chưa có dữ liệu xu hướng tìm kiếm",
+        "empty_keywords": "Chưa có từ khóa nổi bật",
+        "empty_clicked_keywords": "Chưa có dữ liệu click tìm kiếm",
+        "empty_zero_result_keywords": "Chưa có từ khóa rỗng",
+        "empty_locations": "Chưa có địa điểm nổi bật",
+        "no_district": "Chưa có quận/huyện"
+    },
     "tables": {
         "top_tours": "Top 5 Tour bán chạy",
         "recent_orders": "Đơn hàng gần đây",
@@ -85,6 +102,7 @@
         "header_amount": "Số tiền",
         "header_status": "Trạng thái",
         "header_date": "Ngày đặt",
+        "manage_locations": "Quản lý địa điểm",
         "export_success": "Xuất báo cáo thành công!",
         "export_failed": "Xuất báo cáo thất bại. Vui lòng thử lại.",
         "export_bookings_default_filename": "Báo cáo đặt tour {{from}}–{{to}}.xlsx"

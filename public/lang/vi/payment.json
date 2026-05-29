@@ -8,7 +8,7 @@
     "refunded_amount": "Số tiền Hoàn trả"
   },
   "filter": {
-    "search_placeholder": "Tìm kiếm mã giao dịch hoặc mã đơn...",
+    "search_placeholder": "Tìm kiếm mã giao dịch, mã đơn, tên hoặc email khách hàng...",
     "all_statuses": "Tất cả Trạng thái",
     "all_gateways": "Tất cả Cổng thanh toán",
     "reset": "Làm mới",

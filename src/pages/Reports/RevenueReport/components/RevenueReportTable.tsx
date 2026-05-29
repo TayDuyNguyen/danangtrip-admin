@@ -140,10 +140,9 @@ const RevenueReportTable: React.FC<RevenueReportTableProps> = ({
                                     </td>
                                     <td className="px-6 py-4">{renderGatewayBadge(item.gateway)}</td>
                                     <td className="px-6 py-4">
-                                        <div className="flex flex-col">
-                                            <span className="text-[12px] font-bold text-slate-700 leading-none">{item.date}</span>
-                                            <span className="text-[10px] font-semibold text-slate-400 mt-1 leading-none">{item.time}</span>
-                                        </div>
+                                        <span className="text-[12px] font-bold text-slate-700 leading-none whitespace-nowrap">
+                                            {item.time ? `${item.time} ${item.date}` : item.date}
+                                        </span>
                                     </td>
                                     <td className="px-6 py-4">{renderStatusBadge(item.status)}</td>
                                     <td className="px-6 py-4 text-right">

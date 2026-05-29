@@ -14,7 +14,9 @@ import type {
     Booking,
     RawBookingItem,
     RawBookingStatusCounts,
-    BookingStatusCounts
+    BookingStatusCounts,
+    RawSearchTrendsResponse,
+    SearchTrendsData,
 } from "./dashboard.dataHelper";
 /**
  * Universal helpers for safe data conversion
@@ -262,5 +264,40 @@ export const mapBookingStatusCounts = (raw: RawBookingStatusCounts | unknown): B
         confirmed: toNumberSafe(data?.confirmed),
         completed: toNumberSafe(data?.completed),
         cancelled: toNumberSafe(data?.cancelled),
+    };
+};
+
+export const mapSearchTrends = (raw: RawSearchTrendsResponse | unknown): SearchTrendsData => {
+    const data = raw && typeof raw === 'object' && 'data' in (raw as Record<string, unknown>)
+        ? ((raw as { data?: RawSearchTrendsResponse }).data ?? raw as RawSearchTrendsResponse)
+        : raw as RawSearchTrendsResponse;
+
+    const keywords = Array.isArray(data?.keywords) ? data.keywords : [];
+    const clickedQueries = Array.isArray(data?.clicked_queries) ? data.clicked_queries : [];
+    const zeroResultKeywords = Array.isArray(data?.zero_result_keywords) ? data.zero_result_keywords : [];
+    const locations = Array.isArray(data?.locations) ? data.locations : [];
+
+    return {
+        days: toNumberSafe(data?.days, 7),
+        keywords: keywords.map((item) => ({
+            query: String(item.query || ''),
+            count: toNumberSafe(item.count),
+        })),
+        clicked_queries: clickedQueries.map((item) => ({
+            query: String(item.query || ''),
+            count: toNumberSafe(item.count),
+        })),
+        zero_result_keywords: zeroResultKeywords.map((item) => ({
+            query: String(item.query || ''),
+            count: toNumberSafe(item.count),
+        })),
+        locations: locations.map((item) => ({
+            id: String(item.id ?? ''),
+            name: String(item.name || ''),
+            slug: item.slug || '',
+            district: item.district || '',
+            view_count: toNumberSafe(item.view_count),
+            favorite_count: toNumberSafe(item.favorite_count),
+        })),
     };
 };

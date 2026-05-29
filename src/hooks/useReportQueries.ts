@@ -20,11 +20,16 @@ export const reportKeys = {
 /**
  * Query hook to fetch processed Ratings Report ViewModel
  */
-export const useRatingsReportQuery = (params: RatingsReportFilters) => {
+export const useRatingsReportQuery = (params: RatingsReportFilters & { date_from?: string; date_to?: string }) => {
+    const reportParams = {
+        ...params,
+        from: params.from || params.date_from,
+        to: params.to || params.date_to,
+    };
     return useQuery({
-        queryKey: reportKeys.ratingsReport(params),
+        queryKey: reportKeys.ratingsReport(reportParams),
         queryFn: async () => {
-            const response = await reportApi.getRatingsReport(params);
+            const response = await reportApi.getRatingsReport(reportParams);
             return mapRatingsReport(response.data);
         },
         staleTime: 1000 * 30, // 30 seconds

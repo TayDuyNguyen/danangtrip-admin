@@ -1,6 +1,6 @@
 {
     "title": "Ratings Report",
-    "subtitle": "Statistics, analysis and moderation of customer reviews",
+    "subtitle": "Statistics, analysis and customer feedback management",
     "toast": {
         "exporting_excel": "Preparing and exporting Excel file...",
         "export_success": "Excel report exported successfully!",
@@ -22,11 +22,15 @@
         },
         "from_date": "From date",
         "to_date": "To date",
-        "moderation_status": "Moderation status",
+        "moderation_status": "Visibility status",
         "status_all": "All statuses",
+        "status_all_management": "All statuses",
         "status_pending": "Pending",
+        "status_pending_legacy": "Unprocessed",
         "status_approved": "Approved",
+        "status_visible": "Visible",
         "status_rejected": "Rejected",
+        "status_hidden": "Hidden",
         "category": "Category",
         "type_all": "All types",
         "type_location": "Location",
@@ -40,7 +44,10 @@
     "stats": {
         "total_ratings": "Total Ratings",
         "average_score": "Average Rating",
-        "ratings": "Ratings"
+        "ratings": "Ratings",
+        "visible_ratings": "Visible",
+        "hidden_ratings": "Hidden",
+        "pending_legacy": "Unprocessed"
     },
     "charts": {
         "trend_title": "Ratings Trend",
@@ -48,15 +55,15 @@
         "no_trend_data": "No trend data available for this range",
         "stars_distribution": "Stars Distribution",
         "stars_subtitle": "Frequency and percentage",
-        "status_subtitle": "Approved vs pending distribution",
+        "status_subtitle": "Visible vs hidden distribution",
         "type_title": "By Service Type",
         "type_subtitle": "Count and average score",
         "count_label": "Quantity",
         "avg_label": "Average Score (★)"
     },
     "table": {
-        "details_title": "Review Details",
-        "details_subtitle": "List for review moderation and feedback management",
+        "details_title": "Ratings Management",
+        "details_subtitle": "Review, hide, and remove customer feedback",
         "total_ratings_count": "{{total}} reviews",
         "header_user": "User",
         "header_target": "Location / Tour",
@@ -67,11 +74,40 @@
         "no_comment": "No comment",
         "attachment_alt": "attachment",
         "tooltip_view": "View full review",
-        "tooltip_approve": "Approve review",
-        "tooltip_reject": "Reject review",
+        "tooltip_approve": "Show review",
+        "tooltip_reject": "Hide review",
         "tooltip_delete": "Delete permanently",
         "confirm_delete": "Are you sure you want to delete this rating permanently? This action cannot be undone.",
-        "pagination_showing": "Showing {{from}}–{{to}} of {{total}} reviews"
+        "pagination_showing": "Showing {{from}}–{{to}} of {{total}} reviews",
+        "status_pending_legacy": "Unprocessed",
+        "status_visible": "Visible",
+        "status_hidden": "Hidden",
+        "rejected_reason_label": "Hide reason",
+        "reject_reason_input_label": "Hide reason *",
+        "reject_reason_placeholder": "Enter an internal reason for hiding this rating",
+        "warning_title": "IMPORTANT WARNING:",
+        "warning_bulk_desc": "This action will update the status of all selected ratings to 'Rejected' (Hidden) and recalculate the corresponding average ratings of their Locations/Tours.",
+        "warning_single_desc": "Upon rejection, the review will be hidden from public details. The system will automatically notify the customer with the provided explanation."
+    },
+    "actions": {
+        "hide_bulk": "Hide selected",
+        "hide_rating": "Hide rating",
+        "confirm_hide": "Confirm hide",
+        "approve": "Approve",
+        "reject": "Reject",
+        "cancel_approve": "Cancel Approve",
+        "cancel": "Cancel",
+        "delete": "Delete",
+        "processing": "Processing...",
+        "reject_bulk_title": "Reject selected reviews ({{count}})",
+        "reject_single_title": "Confirm Review Rejection",
+        "reject_bulk_desc": "You are hiding the selected reviews from public display. Please enter the reason for hiding them.",
+        "reject_single_desc": "You are hiding this review from public display. Please enter a rejection reason to notify the customer.",
+        "export_excel": "Export Excel Report",
+        "exporting": "Exporting..."
+    },
+    "success": {
+        "hide_bulk_success": "Successfully hid {{count}} ratings."
     },
     "modal": {
         "title": "Review Detail",
