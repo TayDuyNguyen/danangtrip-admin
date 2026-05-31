@@ -7,3 +7,4 @@ export * from "./location.schema";
 export * from "./booking.schema";
 export * from "./user.schema";
 export * from "./blog.schema";
+export * from "./settings.schema";

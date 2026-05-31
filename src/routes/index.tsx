@@ -42,6 +42,8 @@ const BlogPostEdit = React.lazy(() => import('@/pages/Blog/BlogPostEdit'));
 const BlogPostDetail = React.lazy(() => import('@/pages/Blog/BlogPostDetail'));
 const BlogCategories = React.lazy(() => import('@/pages/Blog/BlogCategories'));
 const Ratings = React.lazy(() => import('@/pages/Ratings'));
+const Settings = React.lazy(() => import('@/pages/Settings'));
+const Promotions = React.lazy(() => import('@/pages/Promotions'));
 import ErrorPage from '@/pages/ErrorPage';
 
 
@@ -124,6 +126,8 @@ const router = createBrowserRouter([
                     { path: ROUTES.BLOG_POSTS_DETAIL, element: withSuspense(BlogPostDetail) },
                     { path: ROUTES.BLOG_CATEGORIES, element: withSuspense(BlogCategories) },
                     { path: ROUTES.RATINGS, element: withSuspense(Ratings) },
+                    { path: ROUTES.SETTINGS, element: withSuspense(Settings) },
+                    { path: ROUTES.PROMOTIONS, element: withSuspense(Promotions) },
                 ]
             }
 

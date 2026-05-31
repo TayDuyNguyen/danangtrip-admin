@@ -2,17 +2,17 @@
 
 ## Current Status
 
-- Date: 2026-05-29
-- Active feature/task: `admin_ratings_list`
-- Status: **COMPLETE** — All 10 steps done. Ready to push.
-- Next step: Push branch, merge, then select next admin screen
-- Objective: Implement and redesign the Customer Ratings Moderation screen (`admin_ratings_list`) under route `/admin/ratings` inside `danangtrip-admin` to be consistent with the payments screen.
-- Mode: Done
+- Date: 2026-05-30
+- Active feature/task: `admin_promotions`
+- Status: **NOT STARTED** — `admin_site_settings` fully completed and verified.
+- Next step: Begin Step 01 (Screen Analysis) for `admin_promotions`.
+- Objective: Implement promotion/coupon management screen under route `/admin/promotions`.
+- Mode: Ready to execute
 - Owner: AI collaborator
 
-## Progress Breakdown
+## Progress Breakdown — admin_site_settings (COMPLETED ✅)
 
-- [x] Step 1: Screen Analysis & Spec Document (`01-screen-analysis`)
+- [x] Step 1: Screen Analysis (`01-screen-analysis`)
 - [x] Step 2: Project Setup Verification (`02-project-setup`)
 - [x] Step 3: Types & API Alignment (`03-types-api-contract`)
 - [x] Step 4: Routing & Page Scaffolding (`04-layout-routing`)
@@ -25,26 +25,24 @@
 
 ## Current Reality
 
-- Registered route `/admin/ratings` mapping to the new `Ratings` page.
-- Redesigned interface to match the Payments screen:
-  - Created `RatingTable` component to render reviews in a table layout with avatars, score stars, comment expanders, and lightbox links.
-  - Created `RejectRatingDialog` pop-up modal to handle entering rejection reason for single/bulk ratings.
-  - Aligned `RatingFilterBar` with 5-column grid and bottom action sub-row (Reset & Export).
-  - Aligned page header and breadcrumbs with lucide icons and standard widths.
-  - Verified and synchronized all multi-language keys inside `ratings.json` for vi and en.
-  - Removed legacy card-based files `RatingCard.tsx` and `RatingToolbar.tsx`.
-- Verified compilation, linting, and build via `npm run prepush:check`. All checks passed!
+- `admin_site_settings` is 100% complete:
+  - Route `/admin/settings` wired and lazy-loaded.
+  - 6 tabbed settings sections: General, Brand, Social, Payment, Policy, SEO.
+  - Backend: settings table, repository, service, Redis cache, API endpoints.
+  - Deploy report at `.agent/artifacts/deploy/2026-05-30__admin_site_settings__deploy-report.md`.
+  - Review at `.agent/artifacts/review/2026-05-30__admin_site_settings__review.md`.
+- Next feature: `admin_promotions` at `/admin/promotions`.
 
 ## Validation
 
-- Admin prepush check: **SUCCESS** (lint/typecheck/build/playwright passed).
+- `npm run prepush:check` → ✅ ALL PASSED (7/7 Playwright tests including `/admin/settings`).
 
 ## Known Issues / Risks
 
-- None. All compile-time and runtime checks are perfectly clean.
+- None for `admin_site_settings`.
+- `admin_promotions` requires full backend implementation (no existing API in `routes/api.php`).
 
 ## Artifacts
 
-- Implementation Plan: [implementation_plan.md](file:///C:/Users/TUF/.gemini/antigravity/brain/eb756c52-f9b1-4942-ae26-be1bf365db65/implementation_plan.md)
-- Task checklist: [task.md](file:///C:/Users/TUF/.gemini/antigravity/brain/eb756c52-f9b1-4942-ae26-be1bf365db65/task.md)
-- Walkthrough: [walkthrough.md](file:///C:/Users/TUF/.gemini/antigravity/brain/eb756c52-f9b1-4942-ae26-be1bf365db65/walkthrough.md)
+- Deploy Report: [2026-05-30__admin_site_settings__deploy-report.md](file:///d:/DATN/danangtrip-admin/.agent/artifacts/deploy/2026-05-30__admin_site_settings__deploy-report.md)
+- Review: [2026-05-30__admin_site_settings__review.md](file:///d:/DATN/danangtrip-admin/.agent/artifacts/review/2026-05-30__admin_site_settings__review.md)

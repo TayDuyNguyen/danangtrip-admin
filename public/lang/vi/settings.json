@@ -1,0 +1,103 @@
+{
+    "title": "Cấu hình Website",
+    "subtitle": "Quản lý các thông số cấu hình hệ thống, thương hiệu, mạng xã hội, cổng thanh toán, chính sách pháp lý và SEO mặc định.",
+    "tabs": {
+        "general": "Thông tin chung",
+        "brand": "Thương hiệu",
+        "social": "Mạng xã hội",
+        "payment": "Cổng thanh toán",
+        "policy": "Chính sách",
+        "seo": "SEO mặc định"
+    },
+    "sections": {
+        "general": {
+            "title": "Thông tin liên hệ hỗ trợ",
+            "subtitle": "Cung cấp các thông tin liên hệ được hiển thị ở Header/Footer của trang người dùng.",
+            "hotline": "Hotline Hỗ trợ",
+            "hotline_help": "Ví dụ: 1900 1800 hoặc số điện thoại di động Việt Nam hợp lệ.",
+            "email": "Email Hỗ trợ",
+            "email_help": "Địa chỉ email tiếp nhận các câu hỏi và đề xuất kinh doanh.",
+            "address": "Địa chỉ Trụ sở",
+            "address_help": "Địa chỉ văn phòng giao dịch chính của công ty.",
+            "support_hours": "Giờ Hỗ trợ",
+            "support_hours_help": "Ví dụ: 08:00 - 22:00 hoặc 24/7."
+        },
+        "brand": {
+            "title": "Tài nguyên thương hiệu & Nhận diện",
+            "subtitle": "Tải lên logo và favicon định nghĩa giao diện hiển thị của website.",
+            "website_name": "Tên Website",
+            "website_name_help": "Tên thương hiệu hiển thị chính (ví dụ: DaNangTrip).",
+            "logo": "Logo Thương hiệu",
+            "logo_help": "Tải lên ảnh logo hiển thị trên menu chính.",
+            "favicon": "Favicon Trình duyệt",
+            "favicon_help": "Tải lên icon hiển thị trên các tab của trình duyệt."
+        },
+        "social": {
+            "title": "Kênh truyền thông & Mạng xã hội",
+            "subtitle": "Bổ sung liên kết mạng xã hội hiển thị tại chân trang footer.",
+            "facebook": "Liên kết Facebook",
+            "instagram": "Liên kết Instagram",
+            "youtube": "Liên kết YouTube",
+            "tiktok": "Liên kết TikTok",
+            "zalo": "Liên kết Zalo OA"
+        },
+        "payment": {
+            "title": "Tích hợp cổng thanh toán",
+            "subtitle": "Bật hoặc tắt tức thì các phương thức thanh toán trong luồng đặt tour.",
+            "payos": "Cổng payOS",
+            "payos_help": "Cổng thanh toán tự động qua link chuyển khoản nhanh (Khuyên dùng).",
+            "cod": "Chuyển khoản / Tiền mặt (COD)",
+            "cod_help": "Phương thức xác nhận thủ công hoặc chuyển khoản ngân hàng trực tiếp.",
+            "vnpay": "Cổng VNPay",
+            "vnpay_help": "Cổng thanh toán thẻ nội địa và QR của VNPay (Dự phòng).",
+            "momo": "Ví điện tử MoMo",
+            "momo_help": "Thanh toán trực tiếp qua ví MoMo (Dự phòng).",
+            "zalopay": "Ví điện tử ZaloPay",
+            "zalopay_help": "Tích hợp thanh toán qua ví ZaloPay (Dự phòng)."
+        },
+        "policy": {
+            "title": "Chính sách & Điều khoản pháp lý",
+            "subtitle": "Xác định các liên kết đến trang chính sách bảo mật và điều khoản dịch vụ.",
+            "terms": "Điều khoản Dịch vụ",
+            "privacy": "Chính sách Bảo mật",
+            "data_protection": "Bảo vệ dữ liệu cá nhân"
+        },
+        "seo": {
+            "title": "Tối ưu hóa công cụ tìm kiếm (SEO)",
+            "subtitle": "Các thuộc tính meta mặc định được tải khi các trang cụ thể thiếu thông tin SEO riêng biệt.",
+            "meta_title": "Meta Title Mặc định",
+            "meta_title_help": "Độ dài khuyến nghị: 30-70 ký tự.",
+            "meta_description": "Meta Description Mặc định",
+            "meta_description_help": "Độ dài khuyến nghị: 120-160 ký tự.",
+            "og_image": "Ảnh OpenGraph Mặc định",
+            "og_image_help": "Ảnh mặc định đính kèm khi chia sẻ liên kết trang trên mạng xã hội."
+        }
+    },
+    "validation": {
+        "hotline_required": "Hotline hỗ trợ bắt buộc nhập.",
+        "hotline_invalid": "Hotline hoặc số điện thoại Việt Nam không hợp lệ.",
+        "email_required": "Email hỗ trợ bắt buộc nhập.",
+        "email_invalid": "Địa chỉ email không đúng định dạng.",
+        "address_required": "Địa chỉ trụ sở bắt buộc nhập.",
+        "support_hours_required": "Giờ hỗ trợ bắt buộc nhập.",
+        "website_name_required": "Tên website thương hiệu bắt buộc nhập.",
+        "logo_required": "Logo thương hiệu bắt buộc phải có.",
+        "favicon_required": "Favicon trình duyệt bắt buộc phải có.",
+        "payment_required": "Phải có ít nhất một cổng thanh toán được kích hoạt.",
+        "meta_title_min": "Meta title phải chứa ít nhất 10 ký tự.",
+        "meta_title_max": "Meta title không được vượt quá 100 ký tự.",
+        "meta_description_min": "Meta description phải chứa ít nhất 20 ký tự.",
+        "meta_description_max": "Meta description không được vượt quá 200 ký tự."
+    },
+    "actions": {
+        "save_success": "Cấu hình website đã được lưu thành công.",
+        "save_failed": "Lỗi cập nhật cấu hình website.",
+        "discard": "Hủy bỏ",
+        "save": "Lưu thay đổi",
+        "saving": "Đang lưu cấu hình...",
+        "upload": "Tải ảnh lên",
+        "uploading": "Đang tải...",
+        "unsaved_title": "Thay đổi chưa lưu",
+        "unsaved_desc": "Bạn đang có các thay đổi cấu hình chưa được lưu. Bạn có chắc muốn hủy bỏ các thay đổi này?"
+    }
+}

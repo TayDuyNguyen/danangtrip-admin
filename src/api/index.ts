@@ -13,6 +13,7 @@ export * from './userApi';
 export * from './contactApi';
 export * from './notificationApi';
 export * from './blogApi';
+export * from './settingsApi';
 
 
 

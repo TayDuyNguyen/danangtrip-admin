@@ -7,6 +7,7 @@ const ROUTES = [
   '/admin/tours/list',
   '/admin/reports/users',
   '/admin/users',
+  '/admin/settings',
 ];
 
 const BASE_URL = process.env.BASE_URL || 'http://localhost:5173';

@@ -1,0 +1,77 @@
+{
+    "title": "Promotions & Discounts Management",
+    "subtitle": "Manage discount codes and promotional campaigns to drive bookings.",
+    "actions": {
+        "create_success": "Promotion created successfully.",
+        "create_failed": "Failed to create promotion. Please check details.",
+        "update_success": "Promotion updated successfully.",
+        "update_failed": "Failed to update promotion.",
+        "status_updated": "Status updated successfully.",
+        "status_failed": "Failed to update status.",
+        "delete_success": "Promotion deleted successfully.",
+        "delete_failed": "Failed to delete promotion.",
+        "delete_confirm": "Are you sure you want to delete the promotion code {{code}}?",
+        "add_new": "Add New Promotion",
+        "edit": "Edit Code",
+        "save": "Save Changes",
+        "cancel": "Cancel",
+        "search_placeholder": "Search by code or name..."
+    },
+    "fields": {
+        "code": "Discount Code",
+        "code_help": "No spaces, e.g. DANANG2026, SUMMER50k",
+        "name": "Campaign Name",
+        "name_help": "Display name or purpose of the promotion",
+        "description": "Detailed Description",
+        "description_help": "Detailed conditions for applying the code",
+        "discount_type": "Discount Type",
+        "discount_value": "Discount Value",
+        "discount_value_percent_help": "Enter value from 1 to 100 (%)",
+        "discount_value_fixed_help": "Enter fixed discount amount (VND)",
+        "max_discount_amount": "Max Discount Amount (VND)",
+        "max_discount_amount_help": "Cap maximum discount for percentage type (leave empty if unlimited)",
+        "min_order_amount": "Min Order Amount (VND)",
+        "min_order_amount_help": "Booking value must reach this to apply (0 = no limit)",
+        "usage_limit": "Total Usage Limit",
+        "usage_limit_help": "Total times this code can be used in the system (leave empty if unlimited)",
+        "usage_per_user": "Usage Limit Per User",
+        "usage_per_user_help": "Max times a single customer/account can use this code",
+        "used_count": "Times Used",
+        "starts_at": "Start Date",
+        "ends_at": "End Date",
+        "status": "Status",
+        "created_at": "Created At"
+    },
+    "types": {
+        "percent": "Percentage (%)",
+        "fixed": "Fixed Amount (đ)"
+    },
+    "status": {
+        "active": "Active",
+        "inactive": "Suspended",
+        "expired": "Expired",
+        "all": "All Statuses"
+    },
+    "validation": {
+        "code_required": "Discount code is required.",
+        "code_min": "Discount code must be at least 3 characters.",
+        "code_pattern": "Discount code can only contain letters, numbers, dashes, and underscores.",
+        "name_required": "Campaign name is required.",
+        "discount_value_required": "Discount value is required.",
+        "discount_value_min": "Discount value must be greater than 0.",
+        "discount_value_percent_max": "Percentage discount value cannot exceed 100%.",
+        "min_order_amount_min": "Minimum order amount must be at least 0.",
+        "usage_limit_min": "Total usage limit must be at least 1.",
+        "usage_per_user_min": "Usage limit per user must be at least 1.",
+        "starts_at_invalid": "Invalid start date.",
+        "ends_at_invalid": "Invalid end date.",
+        "ends_at_after_starts_at": "End date must be after start date."
+    },
+    "labels": {
+        "active_now": "Currently Active",
+        "expired_or_inactive": "Expired/Inactive",
+        "unlimited": "Unlimited",
+        "filter_valid_now": "Valid Right Now",
+        "no_data": "No promotion codes found."
+    }
+}

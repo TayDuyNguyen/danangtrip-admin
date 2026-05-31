@@ -16,7 +16,8 @@ import {
     ChevronLeft,
     ChevronRight,
     Mail,
-    Star
+    Star,
+    Tag
 } from 'lucide-react';
 import { ROUTES } from '@/routes/routes';
 import { useTranslation } from 'react-i18next';
@@ -74,6 +75,7 @@ const navItems = [
     { icon: Mail, label: 'sidebar.contacts', path: ROUTES.CONTACTS },
 
     { icon: Settings, label: 'sidebar.settings', path: '/admin/settings' },
+    { icon: Tag, label: 'sidebar.promotions', path: ROUTES.PROMOTIONS },
 ];
 
 const Sidebar = () => {

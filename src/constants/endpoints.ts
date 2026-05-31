@@ -152,6 +152,18 @@ export const API_ENDPOINTS = {
         DELETE_CATEGORY: (id: string | number) => `/admin/blog-categories/${id}`,
         PATCH_STATUS: (id: string | number) => `/admin/blog-posts/${id}/status`,
         DELETE: (id: string | number) => `/admin/blog-posts/${id}`,
-    }
+    },
+    SETTINGS: {
+        GET: '/admin/settings',
+        UPDATE: '/admin/settings',
+    },
+    PROMOTIONS: {
+        LIST: '/admin/promotions',
+        DETAIL: (id: string | number) => `/admin/promotions/${id}`,
+        CREATE: '/admin/promotions',
+        UPDATE: (id: string | number) => `/admin/promotions/${id}`,
+        DELETE: (id: string | number) => `/admin/promotions/${id}`,
+        PATCH_STATUS: (id: string | number) => `/admin/promotions/${id}/status`,
+    },
 } as const;
 
