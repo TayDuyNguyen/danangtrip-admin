@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useForm, Controller } from "react-hook-form";
+import { useForm, Controller, useWatch } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -56,7 +56,6 @@ export const UserEditForm = ({ user }: UserEditFormProps) => {
         handleSubmit,
         setError,
         reset,
-        watch,
         getValues,
         formState: { errors, isDirty }
     } = useForm<EditUserInput>({
@@ -140,7 +139,11 @@ export const UserEditForm = ({ user }: UserEditFormProps) => {
     };
 
     // Watch email changes to show warning
-    const watchedEmail = watch("email");
+    const watchedEmail = useWatch({
+        control,
+        name: "email",
+        defaultValue: user.email || "",
+    });
     const showEmailWarning = watchedEmail && watchedEmail !== user.email;
 
     // Quick Action handlers

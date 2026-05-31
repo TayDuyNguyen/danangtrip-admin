@@ -74,19 +74,17 @@ const MapPicker = ({ lat, lng, onChange, address }: MapPickerProps) => {
 
     useEffect(() => {
         if (lat && lng) {
-            // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional prop-to-state sync
+            // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional prop-to-state sync for map viewport
             setPosition([lat, lng]);
         } else {
-            // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional prop-to-state sync
             setPosition(DANANG_CENTER);
         }
     }, [lat, lng]);
 
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- guard clause before async side-effect
     useEffect(() => {
         const query = normalizeAddressQuery(address || '');
         if (query.length < MIN_ADDRESS_LENGTH) {
-            // eslint-disable-next-line react-hooks/set-state-in-effect
+            // eslint-disable-next-line react-hooks/set-state-in-effect -- resets transient geocode UI state when input is too short
             setGeocodeStatus('idle');
             return;
         }

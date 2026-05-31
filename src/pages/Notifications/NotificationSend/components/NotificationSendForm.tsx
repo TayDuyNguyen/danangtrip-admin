@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useForm, Controller } from "react-hook-form";
+import { useForm, Controller, useWatch } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useTranslation } from "react-i18next";
@@ -70,7 +70,6 @@ export const NotificationSendForm = ({
         register,
         control,
         handleSubmit,
-        watch,
         reset,
         formState: { errors },
     } = useForm<NotificationFormValues>({
@@ -86,10 +85,10 @@ export const NotificationSendForm = ({
     } as any);
 
     // Watch fields for live preview updates
-    const watchedType = watch("type");
-    const watchedTitle = watch("title");
-    const watchedContent = watch("content");
-    const watchedData = watch("data");
+    const watchedType = useWatch({ control, name: "type" });
+    const watchedTitle = useWatch({ control, name: "title", defaultValue: "" });
+    const watchedContent = useWatch({ control, name: "content", defaultValue: "" });
+    const watchedData = useWatch({ control, name: "data", defaultValue: "" });
 
     useEffect(() => {
         onValuesChange({
@@ -111,6 +110,7 @@ export const NotificationSendForm = ({
             content: "",
             data: "",
         });
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- resetSignal intentionally resets local UI state with the form
         setRecipientError(null);
         setIsDataCollapsed(true);
     }, [reset, resetSignal]);

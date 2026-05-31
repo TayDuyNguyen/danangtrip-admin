@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useTranslation } from 'react-i18next';
 import { X, Folder, Loader2 } from 'lucide-react';
@@ -27,7 +27,7 @@ export const BlogCategoryForm = ({
     const {
         register,
         handleSubmit,
-        watch,
+        control,
         setValue,
         reset,
         formState: { errors },
@@ -40,9 +40,9 @@ export const BlogCategoryForm = ({
         },
     });
 
-    const watchName = watch('name');
-    const watchSlug = watch('slug');
-    const watchDescription = watch('description');
+    const watchName = useWatch({ control, name: 'name' });
+    const watchSlug = useWatch({ control, name: 'slug' });
+    const watchDescription = useWatch({ control, name: 'description' });
 
     // Load initial data when editing
     useEffect(() => {

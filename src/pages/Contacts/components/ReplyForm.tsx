@@ -1,4 +1,4 @@
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { Send, Info } from "lucide-react";
@@ -28,7 +28,7 @@ export const ReplyForm = ({
     const {
         register,
         handleSubmit,
-        watch,
+        control,
         formState: { errors },
     } = useForm({
         resolver: yupResolver(replySchema),
@@ -37,7 +37,11 @@ export const ReplyForm = ({
         },
     });
 
-    const replyContent = watch("reply") || "";
+    const replyContent = useWatch({
+        control,
+        name: "reply",
+        defaultValue: "",
+    });
 
     const handleFormSubmit = (data: { reply: string }) => {
         onSubmit(data);
