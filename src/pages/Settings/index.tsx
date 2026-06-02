@@ -119,7 +119,7 @@ const Settings = () => {
                                     icon={SettingsIcon}
                                     items={[
                                         { label: 'sidebar.settings', path: '/admin/settings' },
-                                        { label: 'title' }
+                                        { label: t('title'), isRaw: true }
                                     ]}
                                 />
                             </div>
