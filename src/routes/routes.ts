@@ -37,5 +37,5 @@ export const ROUTES = {
     RATINGS: '/admin/ratings',
     SETTINGS: '/admin/settings',
     PROMOTIONS: '/admin/promotions',
+    LANDING_PAGES: '/admin/landing-pages',
 } as const;
-

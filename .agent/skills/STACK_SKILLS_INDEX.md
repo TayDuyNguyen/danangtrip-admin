@@ -1,68 +1,64 @@
 # STACK SKILLS INDEX - DanangTrip Admin
 
 Master index for the 10 local skills in `.agent/skills/`.
-Current selected admin screen: `admin_promotions`.
+Current selected admin screen: `admin_landing_pages`.
 
 ## Current Decision Snapshot
 
-Date locked: `2026-05-30`
+Date locked: `2026-06-02`
 
 - Repo: `D:\DATN\danangtrip-admin`
 - Supporting repo: `D:\DATN\danangtrip-api`
-- Document repo: `D:\DATN\DATN_Document`
-- Selected screen: `Quan ly khuyen mai`
-- Feature slug: `admin_promotions`
-- Main route: `/admin/promotions`
-- Target page path: create under `src/pages/Promotions` following the established admin naming convention.
-- Target component folder: create under `src/pages/Promotions/components`.
-- Primary doc: `D:\DATN\DATN_Document\docs\page\admin_promotions.md`
+- Document repo: `D:\DATN\DATN_Tài liệu`
+- Selected screen: `Quan ly landing pages`
+- Feature slug: `admin_landing_pages`
+- Main route: `/admin/landing-pages`
+- Target page path: create under `src/pages/LandingPages` following the established admin naming convention.
+- Target component folder: create under `src/pages/LandingPages/components`.
+- Primary doc: `D:\DATN\DATN_Tài liệu\docs\page\admin_landing_pages.md`
 - Related docs:
-  - `D:\DATN\DATN_Document\docs\project_delivery_progress_report.md`
-  - `D:\DATN\DATN_Document\docs\api\api_list.md`
-- Primary APIs:
-  - `GET /admin/promotions`
-  - `POST /admin/promotions`
-  - `GET /admin/promotions/{id}`
-  - `PUT /admin/promotions/{id}`
-  - `PATCH /admin/promotions/{id}/status`
-  - `DELETE /admin/promotions/{id}`
-  - `GET /promotions` (public)
-  - `POST /promotions/validate` (public)
-- Status: selected after `admin_site_settings` completed with full deploy closeout on `2026-05-30`.
+  - `D:\DATN\DATN_Tài liệu\docs\project_delivery_progress_report.md`
+  - API docs under `D:\DATN\DATN_Tài liệu\docs\api` if available.
+- Primary APIs: no landing pages API was found in current codegraph/repo scan. Step 01 must confirm whether this feature needs backend CRUD or can reuse existing content/config APIs.
+- Status: selected after codegraph refresh showed `admin_promotions` already has route/page/API/backend code and `admin_landing_pages` is the remaining admin code-level gap.
 - Cross-project rule: this admin prompt is independent from web; do not use web progress to decide admin steps.
-- Previous completed: `admin_site_settings` → deploy report `2026-05-30__admin_site_settings__deploy-report.md`.
+- Previous codegraph-confirmed improvement: `admin_promotions` exists with frontend page/API hook/types/validation and backend promotion routes/controllers/service/repository/model.
 
 ## Why This Is Next
 
-- `admin_site_settings` was completed on `2026-05-30` with full deploy/closeout artifacts and `prepush:check` PASS (7/7 Playwright).
-- Admin screens still missing real page/route code: `admin_promotions`, `admin_landing_pages`.
-- `admin_promotions` is the highest-value next admin screen:
-  - It has a complete doc spec (`admin_promotions.md`).
-  - No backend API or frontend page exists yet.
-  - Promotions/coupons are a critical e-commerce feature that directly affects booking conversion.
+- The 2026-06-02 progress report section `0.0.20` marks `admin_promotions` as no longer missing.
+- Admin codegraph snapshot:
+  - `D:\DATN\danangtrip-admin\.codegraph\codegraph.db`
+  - Modified: `2026-06-02 10:36:53`
+  - Files: `380`
+  - Nodes: `3789`
+  - Edges: `9282`
+  - Unresolved refs: `0`
+- Current repo/codegraph findings:
+  - Promotions exists: `src/pages/Promotions/index.tsx`, components, `promotionsApi`, `usePromotionQueries`, `promotion.types.ts`, `promotion.schema.ts`.
+  - No `landing-pages`, `landing_pages`, `LandingPages`, or `admin/landing` route/page/API match was found.
+- Therefore `admin_landing_pages` is the only remaining admin screen gap identified by the latest progress report and codegraph scan.
 
 ## Codegraph / Repo Findings
 
 Read `D:\DATN\danangtrip-admin\.codegraph\codegraph.db` and `D:\DATN\danangtrip-api\.codegraph\codegraph.db` before changing this feature, then verify against repo reality.
 
 - Existing admin framework: React 19 + Vite + TypeScript + React Router v7.
-- Existing data pattern: axios client modules in `src/api`, React Query hooks in `src/hooks`, mapped view-model helpers in `src/dataHelper`.
-- No existing promotions-related code found in admin frontend or API routes.
+- Existing data pattern: axios client modules in `src/api`, React Query hooks in `src/hooks`, route constants in `src/routes/routes.ts`, lazy route wiring in `src/routes/index.tsx`.
 - Existing reference patterns to reuse:
-  - Table + filter pattern: `src/pages/Ratings/index.tsx`, `src/pages/Users/UserList`.
-  - Form pattern: `src/pages/Locations/components/LocationForm.tsx`, `src/pages/Blog/BlogPostCreate`.
-  - CRUD + status toggle: `src/pages/Blog/BlogPostList` (status toggle pattern).
+  - Table + filter pattern: `src/pages/Ratings/index.tsx`, `src/pages/Users/UserList`, `src/pages/Promotions/index.tsx`.
+  - Form/drawer pattern: `src/pages/Promotions/components/PromotionFormDrawer.tsx`, `src/pages/Locations/components/LocationForm.tsx`.
+  - CRUD + status toggle: `src/pages/Promotions`, `src/pages/Blog/BlogPostList`.
   - Modal dialogs: `DeleteConfirmDialog`, `BookingCancelDialog`.
-- This task should create the promotions management screen and all required backend. Do not drift into landing pages.
+- This task should implement landing page management only. Do not drift back into promotions, settings, reports, or web tasks.
 
 ## Goals
 
-- Deliver `/admin/promotions` through the 10-step pipeline.
-- Build the promotions list, create/edit form, and status toggle based on `admin_promotions.md`.
-- Add full backend contract: migration, model, repository, service, controller, requests.
-- Cover CRUD, status management, validation, loading/empty/error states.
+- Deliver `/admin/landing-pages` through the 10-step pipeline.
+- Build the landing pages list, create/edit workflow, status/publish controls, preview/link actions, and professional loading/empty/error states based on `admin_landing_pages.md`.
+- Confirm backend requirement in Step 01 and Step 03. If no backend exists, create the minimum required API contract in `danangtrip-api` only after documenting it.
 - Produce artifacts for every step and update memory after each step.
-- Use docs root `D:\DATN\DATN_Document`.
+- Use docs root `D:\DATN\DATN_Tài liệu`.
 
 ## Canonical Read Order
 
@@ -74,13 +70,13 @@ Before every skill step, read in this order:
 4. `.agent/memory/WORKING_STATE.md`
 5. `.agent/memory/HANDOFF.md`
 6. `.agent/memory/SESSION_LOG.md`
-7. Latest relevant settings/config/public-shell artifacts
+7. Latest relevant admin artifacts
 8. `.agent/skills/STACK_SKILLS_INDEX.md`
 9. Current step `SKILL.md`
 10. `D:\DATN\danangtrip-admin\.codegraph\codegraph.db`
 11. `D:\DATN\danangtrip-api\.codegraph\codegraph.db`
-12. `D:\DATN\DATN_Document\docs\project_delivery_progress_report.md`
-13. `D:\DATN\DATN_Document\docs\page\admin_promotions.md`
+12. `D:\DATN\DATN_Tài liệu\docs\project_delivery_progress_report.md`
+13. `D:\DATN\DATN_Tài liệu\docs\page\admin_landing_pages.md`
 14. Real repo sources and backend routes/controllers/services/repositories discovered by Step 01
 
 If sources conflict, follow repo reality and record stale facts in the artifact.
@@ -98,11 +94,11 @@ If sources conflict, follow repo reality and record stale facts in the artifact.
 | --- | --- | --- |
 | `01-screen-analysis` | Analysis only | Do not edit product code; document route/doc/API gaps and implementation plan. |
 | `02-project-setup` | Audit/setup | Verify route constants, lazy route conventions, i18n, artifact paths and package scripts. |
-| `03-types-api-contract` | Contract/code foundation | Confirm settings/config response shapes, validation rules and save/fallback contract. |
-| `04-layout-routing` | Routing/code scaffold | Add route constant, lazy route and page shell for `/admin/promotions`. |
-| `05-ui-components` | Code-producing | Implement grouped settings form, section cards, save states, empty/loading states and responsive layout. |
-| `06-data-integration` | Code-producing | Wire settings query/mutation, form hydration, fallback behavior and cache invalidation. |
-| `07-interactions` | Code-producing | Implement save/reset interactions, validation UX, unsaved-change handling and accessibility/responsive states. |
+| `03-types-api-contract` | Contract/code foundation | Define or confirm landing page request/response types, validation and API endpoints. |
+| `04-layout-routing` | Routing/code scaffold | Add route constant, lazy route, page shell and navigation for `/admin/landing-pages`. |
+| `05-ui-components` | Code-producing | Implement landing page list, filters, editor entry points, preview/status states and responsive layout. |
+| `06-data-integration` | Code-producing | Wire query/mutation, form hydration, create/update/delete/status flows and cache invalidation. |
+| `07-interactions` | Code-producing | Implement publish/unpublish, preview, duplicate/delete confirmation, validation UX and accessibility states. |
 | `08-auth-permissions` | Review/fix | Verify protected admin route, authenticated API calls and forbidden handling. |
 | `09-testing` | Validation/fix loop | Run checks/tests and fix feature-caused failures. |
 | `10-optimization-deploy` | Finalization/fix loop | Final review, deploy readiness artifacts, validation evidence, memory handoff. |
@@ -145,17 +141,17 @@ SYSTEM EXECUTION CONTRACT
 Act as the execution agent for repository: `D:\DATN\danangtrip-admin`
 
 CURRENT SCREEN LOCK
-- Feature slug: `admin_promotions`
-- Screen name: `Quan ly khuyen mai`
-- Main route: `/admin/promotions`
-- Target page area: create under `D:\DATN\danangtrip-admin\src\pages\Promotions`.
-- Feature type: authenticated admin promotion/coupon management screen.
-- Do not switch to settings, blog, users, contacts, notifications, web, landing pages, or backend-only tasks.
+- Feature slug: `admin_landing_pages`
+- Screen name: `Quan ly landing pages`
+- Main route: `/admin/landing-pages`
+- Target page area: create under `D:\DATN\danangtrip-admin\src\pages\LandingPages`.
+- Feature type: authenticated admin landing page/content management screen.
+- Do not switch to promotions, settings, blog, users, contacts, notifications, web, or backend-only tasks.
 
 WHY THIS IS NEXT
-- `admin_site_settings` completed on `2026-05-30` with deploy closeout and prepush PASS.
-- Admin screens still missing real page/route code: `admin_promotions`, `admin_landing_pages`.
-- `admin_promotions` is the next highest-value admin screen with a complete doc spec.
+- Codegraph refresh confirms `admin_promotions` already exists with frontend and backend code.
+- Progress report `0.0.20` identifies `admin_landing_pages` as the only remaining admin code-level gap.
+- No landing page route/page/API/module was found in the current admin/API repo scan.
 
 MANDATORY READ ORDER BEFORE ANY WORK
 1. `D:\DATN\danangtrip-admin\AGENTS.md`
@@ -169,33 +165,26 @@ MANDATORY READ ORDER BEFORE ANY WORK
 9. Current step `SKILL.md`
 10. `D:\DATN\danangtrip-admin\.codegraph\codegraph.db`
 11. `D:\DATN\danangtrip-api\.codegraph\codegraph.db`
-12. `D:\DATN\DATN_Document\docs\project_delivery_progress_report.md`
-13. `D:\DATN\DATN_Document\docs\page\admin_promotions.md`
+12. `D:\DATN\DATN_Tài liệu\docs\project_delivery_progress_report.md`
+13. `D:\DATN\DATN_Tài liệu\docs\page\admin_landing_pages.md`
 
 SCREEN AND API REFERENCES
-- Progress report: `D:\DATN\DATN_Document\docs\project_delivery_progress_report.md`
-- Existing admin patterns: `src/pages/Ratings/index.tsx`, `src/pages/Users/UserList`, `src/pages/Blog/BlogPostCreate`
+- Progress report: `D:\DATN\DATN_Tài liệu\docs\project_delivery_progress_report.md`
+- Existing admin patterns: `src/pages/Promotions`, `src/pages/Blog`, `src/pages/Users/UserList`
 - Endpoint constants: `src/constants/endpoints.ts`
 - Backend routes: `D:\DATN\danangtrip-api\routes\api.php`
-- Backend contract: No existing promotions API — must be created from scratch.
+- Backend contract: no landing pages API found yet; Step 01/03 must define it if the doc requires persistence.
 
 CONTRACT DETAILS
-- Promotions APIs:
-  - `GET /admin/promotions` (list with search/filter/pagination)
-  - `POST /admin/promotions` (create)
-  - `GET /admin/promotions/{id}` (detail)
-  - `PUT /admin/promotions/{id}` (update)
-  - `PATCH /admin/promotions/{id}/status` (toggle active/inactive)
-  - `DELETE /admin/promotions/{id}` (delete)
-  - `GET /promotions` (public — list active promotions)
-  - `POST /promotions/validate` (public — validate coupon code)
-- Verify backend route registration before coding frontend.
-- Keep scope centered on promotions unless Step 01 proves a shared dependency is required.
+- Expected admin route: `/admin/landing-pages`
+- Expected frontend area: `src/pages/LandingPages`
+- Expected feature capabilities must be confirmed from `admin_landing_pages.md`.
+- Keep scope centered on landing page management unless Step 01 proves a shared dependency is required.
 
 EXECUTION RULES
 - Follow the 10-step pipeline strictly.
 - Do not mark a step complete without artifact and memory updates.
-- Keep all edits scoped to `admin_promotions` except shared types/endpoints/hooks.
+- Keep all edits scoped to `admin_landing_pages` except shared types/endpoints/hooks.
 - Prefer existing admin CRUD patterns over inventing new architecture.
 - Run validation in Step 09 and Step 10.
 ```
@@ -205,83 +194,83 @@ EXECUTION RULES
 ### Step 01
 
 ```text
-Activate `01-screen-analysis` for `admin_promotions`.
-Read mandatory context, codegraph, progress report, `admin_promotions.md`, existing admin route/form/table patterns and backend API inventory.
+Activate `01-screen-analysis` for `admin_landing_pages`.
+Read mandatory context, codegraph, progress report, `admin_landing_pages.md`, existing admin route/form/table patterns and backend API inventory.
 Work: document purpose, route, API contract, missing code, reusable patterns, backend/doc mismatches, risks and implementation plan.
-Output: `.agent/artifacts/analysis/2026-05-30__admin_promotions__screen-analysis.md`
+Output: `.agent/artifacts/analysis/2026-06-02__admin_landing_pages__screen-analysis.md`
 ```
 
 ### Step 02
 
 ```text
-Activate `02-project-setup` for `admin_promotions`.
+Activate `02-project-setup` for `admin_landing_pages`.
 Inspect route conventions, i18n loader, API/hook/type patterns, artifact/memory paths and package scripts.
 Work: verify setup readiness and note blocking config/script issues only.
-Output: `.agent/artifacts/audits/2026-05-30__admin_promotions__project-audit.md`
+Output: `.agent/artifacts/audits/2026-06-02__admin_landing_pages__project-audit.md`
 ```
 
 ### Step 03
 
 ```text
-Activate `03-types-api-contract` for `admin_promotions`.
-Inspect backend promotions API (must create), existing admin API modules, hooks and form patterns.
-Work: define promotion types, create query/mutation hooks and validation schema.
-Output: `.agent/artifacts/api-contracts/2026-05-30__admin_promotions__api-contract.md`
+Activate `03-types-api-contract` for `admin_landing_pages`.
+Inspect backend landing pages API availability, existing admin API modules, hooks and form patterns.
+Work: define landing page types, endpoint contract, query/mutation hooks and validation schema.
+Output: `.agent/artifacts/api-contracts/2026-06-02__admin_landing_pages__api-contract.md`
 ```
 
 ### Step 04
 
 ```text
-Activate `04-layout-routing` for `admin_promotions`.
-Target route: `/admin/promotions`.
+Activate `04-layout-routing` for `admin_landing_pages`.
+Target route: `/admin/landing-pages`.
 Work: add route constant, lazy route, page shell, sidebar link, breadcrumb/nav path and i18n namespace/files.
-Output: `.agent/artifacts/routing/2026-05-30__admin_promotions__route-plan.md`
+Output: `.agent/artifacts/routing/2026-06-02__admin_landing_pages__route-plan.md`
 ```
 
 ### Step 05
 
 ```text
-Activate `05-ui-components` for `admin_promotions`.
-Work: implement promotions list with search/filter/status toggle, create/edit modal or dedicated form page, delete dialog, stats row, loading/empty/error states.
-Output: `.agent/artifacts/ui-specs/2026-05-30__admin_promotions__ui-spec.md`
+Activate `05-ui-components` for `admin_landing_pages`.
+Work: implement landing pages list with search/filter/status, create/edit entry, preview action, delete dialog, loading/empty/error states.
+Output: `.agent/artifacts/ui-specs/2026-06-02__admin_landing_pages__ui-spec.md`
 ```
 
 ### Step 06
 
 ```text
-Activate `06-data-integration` for `admin_promotions`.
-Work: wire promotions query/mutation, form hydration, save/create/update/delete flows and cache invalidation.
-Output: `.agent/artifacts/integration/2026-05-30__admin_promotions__data-integration.md`
+Activate `06-data-integration` for `admin_landing_pages`.
+Work: wire landing page query/mutation, form hydration, save/create/update/delete flows and cache invalidation.
+Output: `.agent/artifacts/integration/2026-06-02__admin_landing_pages__data-integration.md`
 ```
 
 ### Step 07
 
 ```text
-Activate `07-interactions` for `admin_promotions`.
-Work: implement filter interactions, form validation UX, status toggle, delete confirmation and unsaved-change handling.
-Output: `.agent/artifacts/interaction-specs/2026-05-30__admin_promotions__interaction-spec.md`
+Activate `07-interactions` for `admin_landing_pages`.
+Work: implement filter interactions, form validation UX, publish/status controls, preview, delete confirmation and unsaved-change handling.
+Output: `.agent/artifacts/interaction-specs/2026-06-02__admin_landing_pages__interaction-spec.md`
 ```
 
 ### Step 08
 
 ```text
-Activate `08-auth-permissions` for `admin_promotions`.
+Activate `08-auth-permissions` for `admin_landing_pages`.
 Work: verify protected admin route, authenticated API calls, role assumptions and forbidden handling.
-Output: `.agent/artifacts/auth/2026-05-30__admin_promotions__auth-permissions-review.md`
+Output: `.agent/artifacts/auth/2026-06-02__admin_landing_pages__auth-permissions-review.md`
 ```
 
 ### Step 09
 
 ```text
-Activate `09-testing` for `admin_promotions`.
+Activate `09-testing` for `admin_landing_pages`.
 Run relevant lint/typecheck/build or prepush checks and fix feature-caused failures.
-Output: `.agent/artifacts/test-cases/2026-05-30__admin_promotions__test-report.md`
+Output: `.agent/artifacts/test-cases/2026-06-02__admin_landing_pages__test-report.md`
 ```
 
 ### Step 10
 
 ```text
-Activate `10-optimization-deploy` for `admin_promotions`.
+Activate `10-optimization-deploy` for `admin_landing_pages`.
 Perform final review, deploy readiness check, artifact closeout, memory handoff and prompt/progress update recommendation.
-Output: `.agent/artifacts/deploy/2026-05-30__admin_promotions__deploy-report.md` and `.agent/artifacts/review/2026-05-30__admin_promotions__review.md`
+Output: `.agent/artifacts/deploy/2026-06-02__admin_landing_pages__deploy-report.md` and `.agent/artifacts/review/2026-06-02__admin_landing_pages__review.md`
 ```

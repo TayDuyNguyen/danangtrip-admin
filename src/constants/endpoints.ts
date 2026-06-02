@@ -165,5 +165,13 @@ export const API_ENDPOINTS = {
         DELETE: (id: string | number) => `/admin/promotions/${id}`,
         PATCH_STATUS: (id: string | number) => `/admin/promotions/${id}/status`,
     },
+    LANDING_PAGES: {
+        LIST: '/admin/landing-pages',
+        DETAIL: (id: string | number) => `/admin/landing-pages/${id}`,
+        CREATE: '/admin/landing-pages',
+        UPDATE: (id: string | number) => `/admin/landing-pages/${id}`,
+        DELETE: (id: string | number) => `/admin/landing-pages/${id}`,
+        PATCH_STATUS: (id: string | number) => `/admin/landing-pages/${id}/status`,
+    },
 } as const;
 
