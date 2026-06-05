@@ -1,0 +1,93 @@
+{
+    "title": "Landing Pages Management",
+    "subtitle": "Build SEO optimized landing pages and connect them to automatic tour filters.",
+    "add_new": "Add Landing Page",
+    "edit_landing": "Edit Landing Page",
+    "delete_title": "Delete Landing Page",
+    "delete_confirm": "Are you sure you want to delete this landing page? This action cannot be undone.",
+    
+    "table": {
+        "slug": "Slug/URL",
+        "title": "Title",
+        "type": "Page Type",
+        "status": "Status",
+        "updated_at": "Updated At",
+        "actions": "Actions"
+    },
+    
+    "filter": {
+        "search_placeholder": "Search by title or slug...",
+        "all_types": "All types",
+        "all_statuses": "All statuses"
+    },
+    
+    "status": {
+        "draft": "Draft",
+        "published": "Published"
+    },
+    
+    "types": {
+        "destination": "Destination",
+        "tour_line": "Tour Line",
+        "promotion": "Promotion"
+    },
+    
+    "tabs": {
+        "content": "Main Content",
+        "seo": "SEO Configuration",
+        "settings": "Settings & Blocks"
+    },
+    
+    "form": {
+        "title": "Page Title",
+        "title_placeholder": "Enter page title (e.g. Cheap Da Nang Tours)",
+        "slug": "SEO Slug",
+        "slug_placeholder": "da-nang-tours (lowercase letters, numbers and hyphens)",
+        "page_type": "Page Type",
+        "page_type_placeholder": "Select type...",
+        "status": "Status",
+        "intro": "Short Introduction",
+        "intro_placeholder": "Enter a short description or intro for the banner...",
+        "hero_image": "Banner Image (Hero Image)",
+        "hero_image_placeholder": "Banner image URL or upload...",
+        
+        "seo_title": "SEO Title",
+        "seo_title_placeholder": "Enter SEO title (under 70 characters)",
+        "seo_description": "SEO Description",
+        "seo_description_placeholder": "Enter SEO description (under 160 characters)",
+        "og_image": "Social Share Image (OG:Image)",
+        "og_image_placeholder": "Image URL displayed on social shares...",
+        
+        "filters": "Default Tour Filters (JSON)",
+        "filters_placeholder": "E.g. {\"district\": \"Son Tra\", \"price_max\": 2000000}",
+        "content_blocks": "Content Blocks Builder",
+        "add_block": "Add Content Block",
+        "block_type": "Block Type",
+        "block_title": "Block Title",
+        "block_content": "Content",
+        "faq_question": "Question",
+        "faq_answer": "Answer"
+    },
+    
+    "validation": {
+        "slug_required": "SEO Slug is required",
+        "slug_invalid": "Slug must contain only lowercase letters, numbers, and hyphens (e.g. da-nang-tours)",
+        "title_required": "Page title is required",
+        "title_max": "Title must not exceed 150 characters",
+        "page_type_required": "Please select a landing page type",
+        "status_required": "Please select a status",
+        "invalid_json": "Invalid JSON format for tour filters. Please check your syntax."
+    },
+    
+    "success": {
+        "create": "Landing page created successfully!",
+        "update": "Landing page updated successfully!",
+        "delete": "Landing page deleted successfully!",
+        "status_update": "Landing page status updated successfully!"
+    },
+    
+    "error": {
+        "fetch": "Error loading landing pages list.",
+        "submit": "Could not save. Please check the form fields."
+    }
+}
