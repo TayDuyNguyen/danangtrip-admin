@@ -11,12 +11,14 @@ import {
     useBookingTrendQuery,
     useUserGrowthQuery,
     useTopToursQuery,
+    useSearchTrendsQuery,
     useBookingsQuery,
     useBookingsExportMutation,
     dashboardKeys
 } from '@/hooks/useDashboardQueries';
 import StatsCards from './components/StatsCards';
 import DashboardCharts from './components/DashboardCharts';
+import SearchTrendsPanel from './components/SearchTrendsPanel';
 import TopToursTable from './components/TopToursTable';
 import RecentOrdersTable from './components/RecentOrdersTable';
 import { toast } from 'sonner';
@@ -145,6 +147,7 @@ const Dashboard = () => {
         from: toursRange.from,
         to: toursRange.to
     });
+    const searchTrendsQuery = useSearchTrendsQuery({ limit: 5, days: 7 });
 
     const bookingsQuery = useBookingsQuery({
         page: bookingsPage,
@@ -291,6 +294,13 @@ const Dashboard = () => {
 
                 {/* 3. Tables Section */}
                 <div className="grid grid-cols-1 gap-8">
+                    <SearchTrendsPanel
+                        data={searchTrendsQuery.data}
+                        onRefresh={() => searchTrendsQuery.refetch()}
+                        isRefreshing={searchTrendsQuery.isFetching}
+                        isLoading={searchTrendsQuery.isLoading}
+                        isError={searchTrendsQuery.isError}
+                    />
                     <TopToursTable
                         topTours={topToursQuery.data || []}
                         onRefresh={() => topToursQuery.refetch()}

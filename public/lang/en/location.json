@@ -45,11 +45,11 @@
         "inactive": "INACTIVE"
     },
     "priceLevels": {
-        "free": "Free",
-        "low": "$",
-        "medium": "$$",
-        "high": "$$$",
-        "unknown": "N/A"
+        "free": "$ - Free / Cheap",
+        "low": "$$ - Moderate",
+        "medium": "$$$ - Expensive",
+        "high": "$$$$ - Very Expensive",
+        "unknown": "Not updated"
     },
     "messages": {
         "delete_confirm": "Location <strong>{{name}}</strong> will be permanently deleted.",
@@ -136,7 +136,8 @@
             "price_max": "Max Price",
             "price_level": "Price Level (1-4)",
             "opening_hours": "Opening Hours",
-            "opening_hours_placeholder": "e.g. 07:30 - 21:00 daily",
+            "opening_hours_placeholder": "e.g. 07:30 - 21:00 daily\ne.g. Mon-Fri: 08:00 - 21:00\ne.g. Sat-Sun: 09:00 - 22:00",
+            "opening_hours_helper": "Each line is a time range. e.g. Mon-Fri: 08:00 - 21:00",
             "currency_suffix": "VND"
         },
         "media": {
@@ -202,6 +203,8 @@
             "no_description": "No detailed description available yet.",
             "price_estimate": "Estimated price",
             "no_price": "Contact the operator for updated pricing.",
+            "tags": "Tags",
+            "no_tags": "No tags have been assigned.",
             "no_amenities": "No amenities information available."
         },
         "map": {

@@ -38,6 +38,8 @@ interface LocationTableProps {
     onView: (id: number) => void;
     onEdit: (id: number) => void;
     onDelete: (id: number) => void;
+    onBulkAction?: (action: 'active' | 'inactive' | 'delete') => void;
+    isBulkMutating?: boolean;
 }
 
 const LocationTable = ({
@@ -56,9 +58,11 @@ const LocationTable = ({
     onToggleFeatured,
     onView,
     onEdit,
-    onDelete
+    onDelete,
+    onBulkAction,
+    isBulkMutating,
 }: LocationTableProps) => {
-    const { t } = useTranslation(['location', 'common']);
+    const { t } = useTranslation(['location', 'tour', 'common']);
     const lastPage = Math.max(1, Math.ceil(total / limit));
 
     const isAllSelected = items.length > 0 && selectedIds.length === items.length;
@@ -67,24 +71,58 @@ const LocationTable = ({
         <div className="bg-white border border-[#E2E8F0] rounded-[16px] shadow-sm overflow-hidden flex flex-col group/card min-w-0">
             {/* Table Toolbar (align with tours/list) */}
             <div className="flex flex-col sm:flex-row justify-between items-center px-[24px] py-[16px] border-b border-[#E2E8F0] gap-4">
-                <div className="flex items-center gap-2 w-full sm:w-auto">
-                    <h2 className="text-[14px] font-bold text-[#1E293B] uppercase tracking-wider">
-                        {t('location:table.title', 'Danh sách địa điểm')}
-                    </h2>
-                    {onRefresh && (
-                        <button
-                            type="button"
-                            onClick={onRefresh}
-                            disabled={isRefreshing || isLoading}
-                            className={clsx(
-                                'p-1.5 rounded-md transition-all duration-150',
-                                isRefreshing ? 'text-[#14b8a6]' : 'text-text-secondary hover:text-[#14b8a6] active:scale-95',
+                <div className="flex items-center gap-4 w-full sm:w-auto">
+                    {selectedIds.length > 0 ? (
+                        <div className="flex items-center gap-4 animate-in fade-in slide-in-from-left-2 duration-150">
+                            <span className="text-[13px] font-bold text-[#14b8a6] whitespace-nowrap">
+                                {t('location:actions.selected', { count: selectedIds.length, defaultValue: `Đã chọn ${selectedIds.length}` })}
+                            </span>
+                            <div className="h-4 w-px bg-[#E2E8F0]" />
+                            <div className="flex items-center gap-2 overflow-x-auto py-1 no-scrollbar">
+                                <button
+                                    onClick={() => onBulkAction?.('active')}
+                                    disabled={isBulkMutating}
+                                    className="px-3 py-1.5 bg-[#D1FAE5] text-[#10B981] rounded-md text-[12px] font-bold hover:brightness-95 transition-all duration-150 shadow-sm whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                                >
+                                    {t('location:actions.activate', 'Kích hoạt')}
+                                </button>
+                                <button
+                                    onClick={() => onBulkAction?.('inactive')}
+                                    disabled={isBulkMutating}
+                                    className="px-3 py-1.5 bg-slate-100 border border-slate-200 text-slate-700 rounded-md text-[12px] font-bold hover:brightness-95 transition-all duration-150 shadow-sm whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                                >
+                                    {t('location:actions.deactivate', 'Tạm ẩn')}
+                                </button>
+                                <button
+                                    onClick={() => onBulkAction?.('delete')}
+                                    disabled={isBulkMutating}
+                                    className="px-3 py-1.5 bg-[#FEE2E2] text-[#EF4444] rounded-md text-[12px] font-bold hover:brightness-95 transition-all duration-150 shadow-sm whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                                >
+                                    {t('location:actions.delete', 'Xóa')}
+                                </button>
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="flex items-center gap-2">
+                            <h2 className="text-[14px] font-bold text-[#1E293B] uppercase tracking-wider">
+                                {t('location:table.title', 'Danh sách địa điểm')}
+                            </h2>
+                            {onRefresh && (
+                                <button
+                                    type="button"
+                                    onClick={onRefresh}
+                                    disabled={isRefreshing || isLoading}
+                                    className={clsx(
+                                        'p-1.5 rounded-md transition-all duration-150',
+                                        isRefreshing ? 'text-[#14b8a6]' : 'text-text-secondary hover:text-[#14b8a6] active:scale-95',
+                                    )}
+                                    aria-label={t('common:actions.refresh', 'Làm mới')}
+                                    title={t('common:actions.refresh', 'Làm mới')}
+                                >
+                                    <RefreshCw size={14} className={isRefreshing ? 'animate-spin' : ''} />
+                                </button>
                             )}
-                            aria-label={t('common:actions.refresh', 'Làm mới')}
-                            title={t('common:actions.refresh', 'Làm mới')}
-                        >
-                            <RefreshCw size={14} className={isRefreshing ? 'animate-spin' : ''} />
-                        </button>
+                        </div>
                     )}
                 </div>
 
@@ -99,14 +137,14 @@ const LocationTable = ({
                     <CustomSelect
                         options={[10, 20, 50].map((n) => ({
                             value: n,
-                            label: n,
+                            label: t('table.items_per_page', { count: n, ns: 'tour', defaultValue: `${n} dòng` }),
                         }))}
                         value={{
                             value: limit,
-                            label: limit,
+                            label: t('table.items_per_page', { count: limit, ns: 'tour', defaultValue: `${limit} dòng` }),
                         }}
                         onChange={(opt) => onLimitChange(Number((opt as Option | null)?.value))}
-                        containerClassName="w-[72px] shrink-0"
+                        containerClassName="w-[120px] shrink-0"
                         className="text-[12px]"
                         menuPortalTarget={document.body}
                         size="sm"
@@ -143,7 +181,7 @@ const LocationTable = ({
                                     <LoadingReact />
                                 </td>
                             </tr>
-                        ) : (
+                        ) : items.length > 0 ? (
                             items.map((item) => (
                                 <tr
                                     key={item.id}
@@ -219,42 +257,53 @@ const LocationTable = ({
                                         />
                                     </td>
                                     <td className="px-6 py-4 text-right">
-                                        <div className="flex justify-end gap-1">
+                                        <div className="flex items-center justify-end gap-1.5">
                                             <button 
                                                 onClick={() => onView(item.id)}
-                                                className="p-2 text-slate-400 hover:text-[#14b8a6] hover:bg-[#14b8a6]/5 rounded-lg transition-all"
+                                                title={t('actions.view', { ns: 'common' })}
+                                                className="w-[30px] h-[30px] flex items-center justify-center bg-surface border border-[#E2E8F0] rounded-[6px] text-[#64748B] hover:text-[#14b8a6] hover:border-[#14b8a6] transition-all group/btn cursor-pointer"
                                             >
-                                                <Eye size={18} />
+                                                <Eye size={14} />
                                             </button>
                                             <button 
                                                 onClick={() => onEdit(item.id)}
-                                                className="p-2 text-slate-400 hover:text-[#14b8a6] hover:bg-[#14b8a6]/5 rounded-lg transition-all"
+                                                title={t('actions.edit', { ns: 'common' })}
+                                                className="w-[30px] h-[30px] flex items-center justify-center bg-surface border border-[#E2E8F0] rounded-[6px] text-[#64748B] hover:text-[#F59E0B] hover:border-[#F59E0B] transition-all group/btn cursor-pointer"
                                             >
-                                                <Edit2 size={18} />
+                                                <Edit2 size={14} />
                                             </button>
                                             <button 
                                                 onClick={() => onDelete(item.id)}
-                                                className="p-2 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-all"
+                                                title={t('actions.remove', { ns: 'common' })}
+                                                className="w-[30px] h-[30px] flex items-center justify-center bg-surface border border-[#E2E8F0] rounded-[6px] text-[#64748B] hover:text-[#EF4444] hover:border-[#EF4444] transition-all group/btn cursor-pointer"
                                             >
-                                                <Trash2 size={18} />
+                                                <Trash2 size={14} />
                                             </button>
                                         </div>
                                     </td>
                                 </tr>
                             ))
+                        ) : (
+                            <tr>
+                                <td colSpan={8} className="py-[80px] text-center">
+                                    <div className="flex flex-col items-center gap-3">
+                                        <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center">
+                                            <RefreshCw size={32} className="text-[#E2E8F0]" />
+                                        </div>
+                                        <div className="space-y-1">
+                                            <p className="text-[#1E293B] font-bold text-[16px]">{t('common:labels.not_available', 'Không có dữ liệu')}</p>
+                                            <p className="text-text-secondary text-[14px]">{t('location:no_data.subtitle', 'Không tìm thấy địa điểm nào')}</p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
                         )}
                     </tbody>
                 </table>
             </div>
-            
-            {items.length === 0 && !isLoading && (
-                <div className="p-12 text-center">
-                    <p className="text-slate-400 font-bold">{t('common:labels.not_available')}</p>
-                </div>
-            )}
 
             {/* Pagination Footer */}
-            <div className="px-6 py-4 border-t border-[#E2E8F0] bg-surface flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="px-[24px] py-[16px] border-t border-[#E2E8F0] bg-surface flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div className="text-[13px] font-medium text-[#64748B] font-sans">
                     {t('common:pagination.showing_summary', {
                         start: total > 0 ? (page - 1) * limit + 1 : 0,

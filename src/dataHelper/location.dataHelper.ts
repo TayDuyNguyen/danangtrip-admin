@@ -23,7 +23,7 @@ export interface LocationViewModel {
     phone?: string;
     email?: string;
     website?: string;
-    openingHours?: string | OpeningHours;
+    openingHours?: string | string[] | OpeningHours;
     latitude?: number;
     longitude?: number;
     /** Key for `t(\`priceLevels.${key}\`)` */
@@ -38,6 +38,7 @@ export interface LocationViewModel {
     favoriteCountStr: string;
     images: string[];
     amenities: string[];
+    tags: string[];
 }
 
 /**

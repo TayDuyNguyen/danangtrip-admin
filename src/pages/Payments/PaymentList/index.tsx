@@ -2,18 +2,20 @@ import { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import {
-    useDebounce,
     useAdminPaymentsQuery,
     usePaymentMutations,
 } from "@/hooks";
+import Breadcrumbs from "@/components/common/Breadcrumbs";
+import { CreditCard, Download } from "lucide-react";
 import type { PaymentListFilters, PaymentItem } from "@/dataHelper";
+import { mapApiErrorMessage } from "@/utils";
 import PaymentStatsRow from "./components/PaymentStatsRow";
 import PaymentFilterBar from "./components/PaymentFilterBar";
 import PaymentTable from "./components/PaymentTable";
 import RefundPaymentDialog from "./components/RefundPaymentDialog";
 
 const PaymentList = () => {
-    const { t } = useTranslation("payment");
+    const { t } = useTranslation(["payment", "common"]);
 
     // Filter states
     const [filters, setFilters] = useState<PaymentListFilters>({
@@ -24,14 +26,11 @@ const PaymentList = () => {
         date_to: undefined,
     });
     const [page, setPage] = useState(1);
-    const limit = 10;
-
-    // Debounce filters for API requests
-    const debouncedFilters = useDebounce(filters, 400);
+    const [limit, setLimit] = useState(10);
 
     // Fetch payments list query
-    const { data: listData, isLoading } = useAdminPaymentsQuery(
-        debouncedFilters,
+    const { data: listData, isLoading, isFetching, refetch } = useAdminPaymentsQuery(
+        filters,
         page,
         limit
     );
@@ -97,7 +96,6 @@ const PaymentList = () => {
                     toast.success(
                         t("refund.toast_success", {
                             code: refundPayment.transactionCode,
-                            defaultValue: `Yêu cầu hoàn tiền giao dịch ${refundPayment.transactionCode} đã được thực hiện thành công!`,
                         })
                     );
                     setIsRefundOpen(false);
@@ -106,8 +104,7 @@ const PaymentList = () => {
                 onError: (err: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
                     toast.error(
                         t("refund.toast_error", {
-                            message: err?.message || t("error_occurred", "Đã có lỗi xảy ra"),
-                            defaultValue: `Có lỗi xảy ra khi thực hiện hoàn tiền: ${err?.message}`,
+                            message: mapApiErrorMessage(t("common:error_occurred"), err),
                         })
                     );
                 },
@@ -122,26 +119,45 @@ const PaymentList = () => {
                 fallbackFilename: `payment_report_${new Date().toISOString().slice(0, 10)}.xlsx`,
             }),
             {
-                loading: t("filter.exporting", "Đang xuất báo cáo giao dịch..."),
-                success: t("export.toast_success", "Đã xuất báo cáo giao dịch thành công!"),
+                loading: t("filter.exporting"),
+                success: t("export.toast_success"),
                 error: (err) =>
                     t("export.toast_error", {
-                        message: err?.message || t("error_occurred", "Lỗi chưa xác định"),
-                        defaultValue: `Lỗi xuất dữ liệu: ${err?.message}`,
+                        message: mapApiErrorMessage(t("common:error_occurred"), err),
                     }),
             }
         );
     };
 
     return (
-        <div className="p-6 space-y-6">
+        <main className="p-1 sm:p-2 max-w-[1600px] mx-auto flex flex-col gap-6 font-sans">
             {/* Header Title Section */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                    <h1 className="text-2xl font-black text-slate-900 tracking-tight">{t("title", "Danh sách Giao dịch")}</h1>
-                    <p className="text-slate-400 text-xs font-bold uppercase tracking-wider mt-1">
-                        {t("subtitle", "Quản lý, tìm kiếm và kiểm soát giao dịch thanh toán của khách hàng.")}
-                    </p>
+            <div className="flex flex-col gap-3">
+                <Breadcrumbs
+                    icon={CreditCard}
+                    items={[
+                        { label: 'sidebar.payments' }
+                    ]}
+                />
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <h1 className="text-2xl font-black text-slate-900 tracking-tight">{t("title", "Danh sách Giao dịch")}</h1>
+                        <p className="text-slate-400 text-xs font-bold uppercase tracking-wider mt-1">
+                            {t("subtitle", "Quản lý, tìm kiếm và kiểm soát giao dịch thanh toán của khách hàng.")}
+                        </p>
+                    </div>
+                    <button
+                        onClick={handleExport}
+                        disabled={exportMutation.isPending}
+                        className="flex items-center justify-center gap-2 bg-[#14B8A6] hover:bg-[#0f766e] text-white disabled:opacity-50 rounded-xl py-2.5 px-5 text-sm font-bold shadow-lg shadow-[#14B8A6]/20 hover:shadow-xl hover:shadow-[#14B8A6]/30 transition-all duration-200 cursor-pointer self-start md:self-auto"
+                    >
+                        <Download size={16} className={exportMutation.isPending ? "animate-bounce" : ""} />
+                        <span>
+                            {exportMutation.isPending
+                                ? t("filter.exporting", "Đang xuất...")
+                                : t("filter.export_excel", "Xuất báo cáo Excel")}
+                        </span>
+                    </button>
                 </div>
             </div>
 
@@ -160,8 +176,13 @@ const PaymentList = () => {
             <PaymentTable
                 payments={payments}
                 isLoading={isLoading}
-                meta={meta}
+                isRefreshing={isFetching && !isLoading}
+                page={page}
+                limit={limit}
+                total={meta?.total || 0}
                 onPageChange={handlePageChange}
+                onLimitChange={setLimit}
+                onRefresh={refetch}
                 onRefundClick={handleRefundClick}
             />
 
@@ -176,7 +197,7 @@ const PaymentList = () => {
                 onSubmit={handleRefundSubmit}
                 isSubmitting={refundMutation.isPending}
             />
-        </div>
+        </main>
     );
 };
 

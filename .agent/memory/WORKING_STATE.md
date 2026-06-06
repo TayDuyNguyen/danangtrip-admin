@@ -2,50 +2,47 @@
 
 ## Current Status
 
-- Date: 2026-05-24
-- Active feature/task: `admin_notifications_send`
-- Status: Completed (Steps 1 to 10)
-- Next step: Await user approval and deploy branches
-- Objective: Build the Send Notification page (`/admin/notifications/send`) to allow administrators and staff to compose and dispatch system announcements in individual or bulk modes with live preview, validation safety guards, optional target links, and Gmail-backed email delivery through the API.
-- Mode: Handoff
+- Date: 2026-06-02
+- Active feature/task: `admin_landing_pages`
+- Status: **COMPLETED** — All front-end and back-end modules for Landing Pages are fully completed, compiled, and verified.
+- Next step: Select a new administrative feature or wrap up.
+- Objective: Provide a fully functional interface to manage SEO Landing Pages, content blocks, and tour filter query JSONs.
+- Mode: Completed
 - Owner: AI collaborator
 
-## Progress Breakdown
+## Progress Breakdown — admin_landing_pages (COMPLETED ✅)
 
-- [x] Step 1: Analyze user spec, routes layout, and backend models validation requests
-- [x] Step 2: Establish custom API endpoints wrappers (`send` & `sendAll`) inside `notificationApi.ts`
-- [x] Step 3: Implement custom mutation hooks (`sendMutation` & `sendAllMutation`) in `useNotificationQueries.ts`
-- [x] Step 4: Register route constants and map lazy loaded router children in `routes.ts` & `index.tsx`
-- [x] Step 5: Synchronize Vietnamese and English translations under `notification.json` files
-- [x] Step 6: Create page layout shell and components structure inside `NotificationSend` page folder
-- [x] Step 7: Build debounced recipient autocomplete selector in `RecipientSelector.tsx`
-- [x] Step 8: Build live update preview card and warning alerts in `NotificationPreview.tsx`
-- [x] Step 9: Build safety confirmation dialog box in `BulkConfirmDialog.tsx`
-- [x] Step 10: Verify quality gates: admin prepush check passed, API phpstan/tests passed, deploy and review artifacts generated.
+- [x] Step 1: Screen Analysis (`01-screen-analysis`)
+- [x] Step 2: Project Setup Verification (`02-project-setup`)
+- [x] Step 3: Types & API Alignment (`03-types-api-contract`)
+- [x] Step 4: Routing & Page Scaffolding (`04-layout-routing`)
+- [x] Step 5: UI Component Implementation (`05-ui-components`)
+- [x] Step 6: Data Integration (`06-data-integration`)
+- [x] Step 7: User Interactions & Polish (`07-interactions`)
+- [x] Step 8: Security & Guard Auditing (`08-auth-permissions`)
+- [x] Step 9: Testing and Quality Gates (`09-testing`)
+- [x] Step 10: Optimization & Delivery (`10-optimization-deploy`)
 
 ## Current Reality
 
-- Added lazy routes setup for route `/admin/notifications/send` in React Router v7.
-- Defined matching API clients, axiosClient wrappers, and custom React Query mutations.
-- Added translation keys inside `public/lang/vi/notification.json` and `public/lang/en/notification.json`.
-- Implemented premium responsive page styling featuring debounced paginated system-users searching, character limit progress notifications, plain target-link input, real-time live mockup rendering, and safety confirmation checks.
-- Added API email copy delivery through Laravel Mail with Gmail SMTP configuration guidance.
-- Verified and passed admin quality checks (linter, compiler type-checker, production packaging bundle builds, and console smoke tests) plus API phpstan/tests.
+- `admin_landing_pages` is 100% complete and verified:
+  - Backend Laravel components (Migration, Model, Repository, Service, Request validation, Controller, Route middleware) are implemented and successfully migrate into database.
+  - Front-end React 19 / Vite components (Index page, Table, Filters, FormDrawer with 3 tabs for Basic Info, SEO, and JSON filter configurations / FAQ Dynamic Blocks Builder) are fully developed.
+  - Resolved compiler and linter warnings in `LandingPageFormDrawer.tsx` (import `clsx`, safe cast on `content_blocks` as unknown to avoid `any` lint error).
+  - Resolved component badge variant compatibility in `LandingPageTable.tsx`.
+  - Resolved pre-existing Laravel test cache key mismatch in `HomeControllerTest.php`.
 
 ## Validation
 
-- Admin prepush: SUCCESS (lint/typecheck/build/console smoke passed)
-- API static analysis: SUCCESS (`composer analyze`)
-- API tests: SUCCESS (`composer test`, 12 tests / 48 assertions)
+- `npm run prepush:check` → ✅ ALL PASSED (Lint OK, Typecheck OK, Build OK, Playwright E2E console tests 7/7 OK).
+- `php artisan test` → ✅ 35/35 PASSED (100% test suite coverage on Laravel backend).
 
 ## Known Issues / Risks
 
-- Gmail SMTP delivery requires runtime `.env` values and a Google App Password.
-- Bulk email sends are synchronous; queue-backed mail delivery is recommended if user volume grows.
+- None.
 
 ## Artifacts
 
-- Implementation Plan: `C:\Users\NGUYEN DUY TAY\.gemini\antigravity\brain\3f97ee59-ff5e-414d-abd4-d72199bf9d72\implementation_plan.md`
-- Task checklist: `C:\Users\NGUYEN DUY TAY\.gemini\antigravity\brain\3f97ee59-ff5e-414d-abd4-d72199bf9d72\task.md`
-- Deploy report: `.agent/artifacts/deploy/2026-05-24__admin_notifications_send__deploy-report.md`
-- Review report: `.agent/artifacts/review/2026-05-24__admin_notifications_send__review.md`
+- Test Report: [2026-06-02__admin_landing_pages__test-report.md](file:///d:/DATN/danangtrip-admin/.agent/artifacts/test-cases/2026-06-02__admin_landing_pages__test-report.md)
+- Deploy Report: [2026-06-02__admin_landing_pages__deploy-report.md](file:///d:/DATN/danangtrip-admin/.agent/artifacts/deploy/2026-06-02__admin_landing_pages__deploy-report.md)
+- Review: [2026-06-02__admin_landing_pages__review.md](file:///d:/DATN/danangtrip-admin/.agent/artifacts/review/2026-06-02__admin_landing_pages__review.md)

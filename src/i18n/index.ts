@@ -14,7 +14,7 @@ i18
         fallbackLng: 'vi', // Ngôn ngữ mặc định
         supportedLngs: ['vi', 'en'], // Ngôn ngữ được hỗ trợ
         defaultNS: 'dashboard',
-        ns: ['dashboard', 'tour', 'translation', 'common', 'login', 'register', 'schedules', 'booking', 'payment', 'ratings', 'bookings_report', 'revenue_report', 'location_report', 'user', 'contact', 'notification'], // namespace
+        ns: ['dashboard', 'tour', 'translation', 'common', 'login', 'register', 'schedules', 'booking', 'payment', 'ratings', 'bookings_report', 'revenue_report', 'location_report', 'location', 'user', 'contact', 'notification', 'blog', 'settings', 'promotions', 'landing_pages'], // namespace
 
 
         // Cho phép dùng dấu chấm để phân tách namespace (VD: login.key) thay vì dấu :
@@ -23,10 +23,8 @@ i18
         keySeparator: '.',
 
         backend: {
-            loadPath: '/lang/{{lng}}/{{ns}}.json', // đường dẫn file json
+            loadPath: `/lang/{{lng}}/{{ns}}.json?v=${import.meta.env.DEV ? Date.now() : '1.0.0'}`, // đường dẫn file json
         },
-
-        lng: 'vi', // Mặc định tiếng Việt khi chưa chọn ngôn ngữ
 
         detection: {
             order: ['localStorage', 'cookie', 'querystring', 'navigator'], // thứ tự ưu tiên detect ngôn ngữ

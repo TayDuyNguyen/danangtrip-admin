@@ -38,15 +38,29 @@ function resolveDistrictLabel(raw: RawLocation): string {
 /**
  * Safely parse opening hours from string or object
  */
-export const parseOpeningHours = (val: unknown): string | OpeningHours | undefined => {
+export const parseOpeningHours = (val: unknown): string | string[] | OpeningHours | undefined => {
     if (!val) return undefined;
+    if (Array.isArray(val)) {
+        if (val.length === 1 && typeof val[0] === 'string') {
+            const innerStr = val[0].trim();
+            if (innerStr.startsWith('[') && innerStr.endsWith(']')) {
+                try {
+                    return parseOpeningHours(JSON.parse(innerStr));
+                } catch {
+                    // Fallback
+                }
+            }
+        }
+        const items = val.map((item) => String(item).trim()).filter(Boolean);
+        return items.length > 0 ? items : undefined;
+    }
     if (typeof val === 'object' && !Array.isArray(val)) return val as OpeningHours;
     if (typeof val === 'string') {
         const trimmed = val.trim();
         if (trimmed === '') return undefined;
-        if (trimmed.startsWith('{') && trimmed.endsWith('}')) {
+        if ((trimmed.startsWith('{') && trimmed.endsWith('}')) || (trimmed.startsWith('[') && trimmed.endsWith(']'))) {
             try {
-                return JSON.parse(trimmed) as OpeningHours;
+                return parseOpeningHours(JSON.parse(trimmed));
             } catch {
                 return trimmed;
             }
@@ -54,6 +68,30 @@ export const parseOpeningHours = (val: unknown): string | OpeningHours | undefin
         return trimmed;
     }
     return undefined;
+};
+
+/**
+ * Format raw opening hours to a clean multiline string for form input
+ */
+export const formatOpeningHoursForForm = (val: unknown): string => {
+    const parsed = parseOpeningHours(val);
+    if (!parsed) return '';
+    if (typeof parsed === 'string') return parsed;
+    if (Array.isArray(parsed)) {
+        return parsed.join('\n');
+    }
+    if (typeof parsed === 'object') {
+        const daysOrder = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'] as const;
+        const lines: string[] = [];
+        for (const day of daysOrder) {
+            const time = (parsed as Record<string, string>)[day];
+            if (time) {
+                lines.push(`${day.toUpperCase()}: ${time}`);
+            }
+        }
+        return lines.join('\n');
+    }
+    return '';
 };
 
 /**
@@ -93,6 +131,7 @@ export const mapLocationToViewModel = (raw: RawLocation): LocationViewModel => {
         favoriteCountStr: formatMetric(raw.favorite_count),
         images: (raw.images || []).map((img: unknown) => typeof img === 'string' ? img : (img as { url: string }).url || ''),
         amenities: (raw.amenities || []).map((amenity) => amenity.name),
+        tags: (raw.tags || []).map((tag) => tag.name),
     };
 };
 
@@ -115,7 +154,7 @@ export const mapLocationToFormInput = (raw: RawLocation): CreateLocationInput & 
         phone: raw.phone || null,
         email: raw.email || null,
         website: raw.website || null,
-        opening_hours: typeof raw.opening_hours === 'string' ? raw.opening_hours : (raw.opening_hours ? JSON.stringify(raw.opening_hours) : null),
+        opening_hours: formatOpeningHoursForForm(raw.opening_hours),
         price_min: raw.price_min ? toNumberSafe(raw.price_min) : null,
         price_max: raw.price_max ? toNumberSafe(raw.price_max) : null,
         price_level: raw.price_level ? Number(raw.price_level) : 1,

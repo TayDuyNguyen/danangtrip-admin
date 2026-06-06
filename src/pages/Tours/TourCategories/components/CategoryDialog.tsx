@@ -1,14 +1,13 @@
-import { useEffect, useState, type ComponentType } from 'react';
+import { useEffect, useState, createElement } from 'react';
 import { useForm, Controller, useWatch } from 'react-hook-form';
 import CustomSelect from '@/components/ui/CustomSelect';
 import Drawer from '@/components/ui/Drawer';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useTranslation } from 'react-i18next';
-import * as Icons from 'lucide-react';
 import { Save, AlertCircle, Plus, XCircle, Search } from 'lucide-react';
 import { tourCategorySchema } from '@/validations/tourCategory.schema';
 import type { TourCategory } from '@/dataHelper/tourCategory.dataHelper';
-import { resolveCategoryIconName } from '@/utils/categoryIcon';
+import { getCategoryIconComponent, resolveCategoryIconName } from '@/utils/categoryIcon';
 import { slugifyVietnamese } from '@/utils/slug';
 import { cn } from '@/utils/cn';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -188,10 +187,10 @@ const CategoryDialog = ({ isOpen, onClose, onSubmit, initialData, nextSortOrder 
                             style={{ backgroundColor: selectedColor + (isIconBrowserOpen ? '10' : '20'), color: selectedColor === '#000000' ? '#000000' : selectedColor }}
                             onClick={() => setIsIconBrowserOpen(!isIconBrowserOpen)}
                         >
-                            {(() => {
-                                const IconComp = (Icons as unknown as Record<string, ComponentType<{ size?: number; className?: string }>>)[selectedIcon] || Icons.Map;
-                                return <IconComp size={32} className={cn("transition-transform", isIconBrowserOpen ? "scale-110" : "group-hover:scale-110")} />;
-                            })()}
+                            {createElement(getCategoryIconComponent(selectedIcon, 'Map'), {
+                                size: 32,
+                                className: cn("transition-transform", isIconBrowserOpen ? "scale-110" : "group-hover:scale-110")
+                            })}
                             {!isIconBrowserOpen && (
                                 <div className="absolute inset-0 bg-[#14b8a6]/0 group-hover:bg-[#14b8a6]/5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all">
                                     <Plus size={16} className="text-[#14b8a6]" />
@@ -245,7 +244,7 @@ const CategoryDialog = ({ isOpen, onClose, onSubmit, initialData, nextSortOrder 
                                     {iconSuggestions
                                         .filter(name => name.toLowerCase().includes(iconSearch.toLowerCase()))
                                         .map((name) => {
-                                            const IconComp = (Icons as unknown as Record<string, ComponentType<{ size?: number; className?: string }>>)[name] || Icons.HelpCircle;
+                                            const IconComp = getCategoryIconComponent(name, 'HelpCircle');
                                             const isSelected = selectedIcon === name;
                                             return (
                                                 <button

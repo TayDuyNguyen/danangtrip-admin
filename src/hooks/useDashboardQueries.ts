@@ -9,6 +9,7 @@ import {
     mapTopTours,
     mapBookings,
     mapBookingStatusCounts,
+    mapSearchTrends,
     toNumberSafe
 } from '@/dataHelper/dashboard.mapper';
 import type {
@@ -20,6 +21,7 @@ import type {
     BookingsParams,
     BookingsExportParams,
     BookingStatusCountsParams,
+    SearchTrendsParams,
 } from '@/dataHelper/dashboard.dataHelper';
 
 /**
@@ -34,6 +36,7 @@ export const dashboardKeys = {
     bookingTrend: (params: BookingTrendParams) => [...dashboardKeys.all, 'bookingTrend', params] as const,
     userGrowth: (params: UserGrowthParams) => [...dashboardKeys.all, 'userGrowth', params] as const,
     topTours: (params: TopToursParams) => [...dashboardKeys.all, 'topTours', params] as const,
+    searchTrends: (params?: SearchTrendsParams) => [...dashboardKeys.all, 'searchTrends', params ?? {}] as const,
     bookings: (params: BookingsParams) => [...dashboardKeys.all, 'bookings', params] as const,
 };
 
@@ -146,6 +149,18 @@ export const useTopToursQuery = (params: TopToursParams, enabled = true) => {
         queryFn: async () => {
             const response = await dashboardApi.getTopTours(params);
             return mapTopTours(response.data);
+        },
+        staleTime: 1000 * 60 * 5,
+        enabled,
+    });
+};
+
+export const useSearchTrendsQuery = (params?: SearchTrendsParams, enabled = true) => {
+    return useQuery({
+        queryKey: dashboardKeys.searchTrends(params),
+        queryFn: async () => {
+            const response = await dashboardApi.getSearchTrends(params);
+            return mapSearchTrends(response.data);
         },
         staleTime: 1000 * 60 * 5,
         enabled,

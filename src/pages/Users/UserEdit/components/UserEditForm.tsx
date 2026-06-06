@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useForm, Controller } from "react-hook-form";
+import { useForm, Controller, useWatch } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -32,6 +32,7 @@ import { ConfirmDeleteUserDialog } from "../../UserDetail/components/ConfirmDele
 import { editUserSchema, type EditUserInput } from "@/validations/user.schema";
 import { useUserMutations } from "@/hooks/useUserQueries";
 import type { UserItem } from "@/dataHelper";
+import { mapApiErrorMessage } from "@/utils";
 
 interface UserEditFormProps {
     user: UserItem;
@@ -47,6 +48,7 @@ export const UserEditForm = ({ user }: UserEditFormProps) => {
 
     // Quick Actions dialog active states
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+    const [bypassGuard, setBypassGuard] = useState(false);
 
     const {
         register,
@@ -54,7 +56,6 @@ export const UserEditForm = ({ user }: UserEditFormProps) => {
         handleSubmit,
         setError,
         reset,
-        watch,
         getValues,
         formState: { errors, isDirty }
     } = useForm<EditUserInput>({
@@ -122,7 +123,7 @@ export const UserEditForm = ({ user }: UserEditFormProps) => {
                                 message: backendErrors[key][0]
                             });
                         });
-                        toast.error(responseData?.message || t("toast.network_error"));
+                        toast.error(mapApiErrorMessage(t("toast.network_error"), error));
                         
                         const firstErrorKey = Object.keys(backendErrors)[0];
                         const element = document.getElementsByName(firstErrorKey)[0];
@@ -130,7 +131,7 @@ export const UserEditForm = ({ user }: UserEditFormProps) => {
                             element.scrollIntoView({ behavior: "smooth", block: "center" });
                         }
                     } else {
-                        toast.error(responseData?.message || t("toast.network_error"));
+                        toast.error(mapApiErrorMessage(t("toast.network_error"), error));
                     }
                 }
             }
@@ -138,7 +139,11 @@ export const UserEditForm = ({ user }: UserEditFormProps) => {
     };
 
     // Watch email changes to show warning
-    const watchedEmail = watch("email");
+    const watchedEmail = useWatch({
+        control,
+        name: "email",
+        defaultValue: user.email || "",
+    });
     const showEmailWarning = watchedEmail && watchedEmail !== user.email;
 
     // Quick Action handlers
@@ -163,11 +168,7 @@ export const UserEditForm = ({ user }: UserEditFormProps) => {
                     reset({ ...getValues(), status: nextStatus });
                 },
                 onError: (err: unknown) => {
-                    const axiosError = err as Error & { response?: { data?: { message?: string } } };
-                    toast.error(
-                        axiosError?.response?.data?.message ||
-                        t("detail.toast_status_error", "Cập nhật trạng thái thất bại.")
-                    );
+                    toast.error(mapApiErrorMessage(t("detail.toast_status_error"), err));
                 }
             }
         );
@@ -183,16 +184,13 @@ export const UserEditForm = ({ user }: UserEditFormProps) => {
             onSuccess: () => {
                 toast.success(t("edit.toast_delete_success", "Đã xóa tài khoản người dùng thành công."));
                 setIsDeleteDialogOpen(false);
+                setBypassGuard(true);
                 setTimeout(() => {
                     navigate(ROUTES.USERS_LIST);
                 }, 1000);
             },
             onError: (err: unknown) => {
-                const axiosError = err as Error & { response?: { data?: { message?: string } } };
-                toast.error(
-                    axiosError?.response?.data?.message ||
-                    t("detail.toast_delete_error", "Xóa tài khoản thất bại.")
-                );
+                toast.error(mapApiErrorMessage(t("detail.toast_delete_error"), err));
             }
         });
     };
@@ -214,7 +212,7 @@ export const UserEditForm = ({ user }: UserEditFormProps) => {
             className="flex flex-col lg:flex-row gap-8 items-start w-full"
         >
             {/* React Router Unsaved Changes Guard */}
-            <UnsavedChangesGuard isDirty={isDirty} />
+            <UnsavedChangesGuard isDirty={isDirty && !bypassGuard} />
 
             {/* Left Column: Form Fields */}
             <div className="flex-1 space-y-6 w-full lg:max-w-[70%]">

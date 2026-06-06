@@ -1,0 +1,221 @@
+{
+    "breadcrumb": "Bài viết",
+    "title": "Danh sách Bài viết",
+    "subtitle": "Quản lý nội dung bài viết du lịch Đà Nẵng",
+    "stats": {
+        "total": "TỔNG BÀI VIẾT",
+        "published": "ĐÃ XUẤT BẢN",
+        "draft": "BẢN NHÁP",
+        "archived": "LƯU TRỮ"
+    },
+    "filters": {
+        "search_placeholder": "Tìm theo tiêu đề bài viết...",
+        "category": "Danh mục",
+        "status": "Trạng thái",
+        "category_all": "Tất cả danh mục",
+        "status_all": "Tất cả trạng thái",
+        "btn_filter": "Lọc",
+        "btn_reset": "Đặt lại"
+    },
+    "table": {
+        "selected": "Đã chọn {{count}}",
+        "displaying": "Hiển thị {{start}}–{{end}} / {{total}} bài viết",
+        "per_page": "Số dòng",
+        "col_article": "Bài viết",
+        "col_category": "Danh mục",
+        "col_views": "Lượt xem",
+        "col_created": "Ngày tạo",
+        "col_published": "Ngày xuất bản",
+        "col_status": "Trạng thái",
+        "col_actions": "Thao tác",
+        "views": "lượt xem",
+        "no_published_date": "—",
+        "scheduled": "LÊN LỊCH",
+        "views_count": "{{count}} lượt xem"
+    },
+    "actions": {
+        "create": "Thêm bài viết",
+        "view": "Xem",
+        "edit": "Sửa",
+        "delete": "Xóa",
+        "preview_disabled_helper": "Chỉ có thể xem bài viết đã xuất bản",
+        "bulk_publish": "Xuất bản",
+        "bulk_archive": "Lưu trữ",
+        "bulk_delete": "Xóa",
+        "bulk_delete_confirm": "Bạn có chắc chắn muốn xóa {{count}} bài viết đã chọn? Hành động này không thể hoàn tác.",
+        "bulk_delete_confirm_title": "Xóa các bài viết đã chọn?",
+        "bulk_delete_warning": "Hành động này không thể hoàn tác. Các bài viết đã chọn sẽ bị xóa vĩnh viễn.",
+        "confirm_delete_title": "Xóa bài viết này?",
+        "confirm_delete_body": "Bài viết \"{{title}}\" sẽ bị xóa vĩnh viễn.",
+        "confirm_delete_warning": "Tất cả danh mục liên kết sẽ bị gỡ theo.",
+        "cancel": "Hủy",
+        "confirm": "Xác nhận",
+        "status_draft": "Bản nháp",
+        "status_published": "Đã xuất bản",
+        "status_archived": "Lưu trữ"
+    },
+    "status": {
+        "draft": "BẢN NHÁP",
+        "published": "ĐÃ XUẤT BẢN",
+        "archived": "LƯU TRỮ"
+    },
+    "empty": {
+        "title": "Không tìm thấy bài viết nào",
+        "subtitle": "Thử thay đổi bộ lọc hoặc tạo bài viết mới"
+    },
+    "toast": {
+        "delete_success": "Đã xóa bài viết thành công",
+        "status_success": "Cập nhật trạng thái bài viết thành công",
+        "bulk_delete_success": "Đã xóa các bài viết thành công",
+        "bulk_status_success": "Đã cập nhật trạng thái các bài viết thành công",
+        "network_error": "Lỗi mạng hoặc máy chủ không phản hồi",
+        "draft_success": "Đã lưu bản nháp thành công!",
+        "publish_success": "Bài viết đã được xuất bản!",
+        "category_create_success": "Tạo danh mục thành công!",
+        "category_update_success": "Cập nhật danh mục thành công!",
+        "category_delete_success": "Xóa danh mục thành công!",
+        "upload_error": "Lỗi tải ảnh lên!",
+        "update_success": "Cập nhật bài viết thành công!",
+        "update_error": "Cập nhật bài viết thất bại!",
+        "duplicate_success": "Đã nhân bản bài viết thành công!"
+    },
+    "create_title": "Tạo Bài viết mới",
+    "create_subtitle": "Viết và xuất bản bài viết du lịch",
+    "edit_title": "Chỉnh sửa Bài viết",
+    "edit_subtitle": "Chỉnh sửa và cập nhật bài viết",
+    "edit_breadcrumb": "Chỉnh sửa Bài viết",
+    "detail_title": "Chi tiết Bài viết",
+    "detail_breadcrumb": "Chi tiết",
+    "quick_actions": "Thao tác nhanh",
+    "duplicate_confirm_title": "Nhân bản bài viết này?",
+    "duplicate_confirm_body": "Một bài viết mới sẽ được tạo với nội dung được điền sẵn từ bài viết hiện tại.",
+    "info_section": "THÔNG TIN",
+    "info_created": "Ngày tạo",
+    "info_updated": "Cập nhật",
+    "info_author": "Tác giả",
+    "info_views": "Lượt xem",
+    "info_views_val": "{{count}} lượt",
+    "form": {
+        "title": "Tiêu đề bài viết",
+        "title_placeholder": "Nhập tiêu đề bài viết...",
+        "slug": "Slug",
+        "slug_placeholder": "tieu-de-bai-viet",
+        "slug_auto": "Tự động",
+        "slug_warning": "Thay đổi slug sẽ làm thay đổi URL bài viết. Các link cũ sẽ không còn hoạt động.",
+        "excerpt": "Mô tả ngắn (Excerpt)",
+        "excerpt_placeholder": "Mô tả ngắn gọn về bài viết, hiển thị trong danh sách...",
+        "content": "Nội dung",
+        "content_placeholder": "Bắt đầu viết nội dung bài viết...",
+        "required": "Bắt buộc",
+        "sections": {
+            "content": "Nội dung bài viết",
+            "publish": "Xuất bản",
+            "categories": "Danh mục",
+            "featured_image": "Ảnh đại diện",
+            "guidelines": "💡 Lưu ý"
+        },
+        "publish": {
+            "status": "Trạng thái",
+            "draft": "Bản nháp (draft)",
+            "draft_helper": "Chưa hiển thị công khai",
+            "published": "Xuất bản ngay (published)",
+            "published_helper": "Hiển thị ngay sau khi lưu",
+            "scheduled": "Lên lịch (scheduled)",
+            "scheduled_helper": "Xuất bản vào thời điểm đã chọn",
+            "archived": "Lưu trữ (archived)",
+            "archived_helper": "Ẩn bài viết và đưa vào lưu trữ",
+            "date": "Ngày xuất bản",
+            "time": "Giờ",
+            "save_draft": "Lưu bản nháp",
+            "publish_btn": "Xuất bản"
+        },
+        "categories": {
+            "placeholder": "Chọn danh mục...",
+            "add_new": "Thêm danh mục mới",
+            "add_btn": "Thêm",
+            "input_placeholder": "Tên danh mục mới..."
+        },
+        "media": {
+            "upload_drag": "Kéo thả ảnh vào đây hoặc",
+            "select_btn": "Chọn ảnh",
+            "helper": "PNG, JPG, WEBP · Tối đa 5MB · Khuyến nghị 1200x630px",
+            "change": "Thay đổi",
+            "delete": "Xóa",
+            "current_image": "Ảnh hiện tại"
+        },
+        "guidelines": {
+            "item_1": "Tiêu đề nên ngắn gọn, có từ khóa SEO",
+            "item_2": "Ảnh đại diện tỷ lệ 16:9 (1200x630px)",
+            "item_3": "Mô tả ngắn hiển thị trong kết quả tìm kiếm",
+            "item_4": "Lưu nháp trước khi xuất bản để kiểm tra"
+        },
+        "validation": {
+            "title_required": "Tiêu đề bài viết không được để trống",
+            "title_max": "Tiêu đề không được vượt quá 255 ký tự",
+            "content_required": "Nội dung bài viết không được để trống",
+            "categories_required": "Vui lòng chọn ít nhất một danh mục",
+            "excerpt_max": "Tóm tắt không được vượt quá 500 ký tự"
+        }
+    },
+    "category": {
+        "title": "Danh mục bài viết",
+        "subtitle": "Quản lý danh mục phân loại bài viết",
+        "stats": {
+            "total": "TỔNG DANH MỤC",
+            "total_posts": "TỔNG BÀI VIẾT"
+        },
+        "table": {
+            "col_name": "Danh mục",
+            "col_posts_count": "Số bài viết",
+            "col_actions": "Thao tác",
+            "search_placeholder": "Tìm danh mục...",
+            "count_suffix": "danh mục",
+            "drag_helper": "Kéo thả để sắp xếp thứ tự"
+        },
+        "card": {
+            "label": "Danh mục",
+            "posts_count": "Số bài viết",
+            "no_description": "Chưa có mô tả cho danh mục này"
+        },
+        "reorder": {
+            "button_sort": "Sắp xếp thứ tự",
+            "button_sorting": "Đang sắp xếp",
+            "disabled_title": "Không thể sắp xếp khi đang tìm kiếm",
+            "bar_title": "Kéo thả để thay đổi thứ tự hiển thị",
+            "bar_hint": "Thứ tự mới sẽ được lưu khi bạn xác nhận",
+            "cancel": "Hủy",
+            "save": "Lưu thứ tự",
+            "toast_success": "Đã cập nhật thứ tự danh mục thành công!",
+            "toast_error": "Không thể cập nhật thứ tự danh mục"
+        },
+        "form": {
+            "add_title": "Thêm danh mục",
+            "edit_title": "Chỉnh sửa danh mục",
+            "badge_new": "MỚI",
+            "badge_editing": "ĐANG SỬA",
+            "name": "Tên danh mục",
+            "name_placeholder": "Ví dụ: Tham quan & Du lịch",
+            "slug": "Slug",
+            "slug_placeholder": "tham-quan-du-lich",
+            "slug_auto": "Tự động",
+            "slug_helper": "Tự động tạo từ tên",
+            "description": "Mô tả",
+            "description_placeholder": "Mô tả ngắn về danh mục...",
+            "preview": "XEM TRƯỚC",
+            "btn_cancel": "Hủy",
+            "btn_create": "Tạo mới",
+            "btn_save": "Lưu thay đổi"
+        },
+        "delete": {
+            "confirm_title": "Xóa danh mục này?",
+            "confirm_body": "Danh mục \"{{name}}\" sẽ bị xóa vĩnh viễn.",
+            "confirm_warning": "Các bài viết thuộc danh mục này sẽ mất liên kết danh mục.",
+            "btn_delete": "Xóa danh mục"
+        },
+        "validation": {
+            "name_required": "Tên danh mục không được để trống",
+            "name_max": "Tên danh mục không được vượt quá 50 ký tự",
+            "slug_max": "Slug không được vượt quá 60 ký tự"
+        }
+    }
+}

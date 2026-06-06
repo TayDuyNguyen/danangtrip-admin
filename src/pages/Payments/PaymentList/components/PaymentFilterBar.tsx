@@ -1,6 +1,10 @@
-import { Search, Calendar, Download, RefreshCw } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Search, Calendar, RefreshCw } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useDebounce } from "@/hooks/useDebounce";
 import type { PaymentListFilters } from "@/dataHelper";
+import { TextInput } from "@/components/ui/TextInput";
+import CustomSelect, { type Option } from "@/components/ui/CustomSelect";
 
 interface PaymentFilterBarProps {
     filters: PaymentListFilters;
@@ -12,17 +16,34 @@ interface PaymentFilterBarProps {
 export const PaymentFilterBar = ({
     filters,
     onFilterChange,
-    onExport,
-    isExporting,
 }: PaymentFilterBarProps) => {
-    const { t } = useTranslation("payment");
+    const { t } = useTranslation(["payment", "common"]);
 
-    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        onFilterChange({ ...filters, search: e.target.value });
+    // Local search state for debouncing
+    const [prevSearch, setPrevSearch] = useState(filters.search || "");
+    const [searchValue, setSearchValue] = useState(filters.search || "");
+    const debouncedSearch = useDebounce(searchValue, 300);
+
+    // Sync local search state with parent filters
+    if ((filters.search || "") !== prevSearch) {
+        setPrevSearch(filters.search || "");
+        setSearchValue(filters.search || "");
+    }
+
+    // Handle debounced search change
+    useEffect(() => {
+        if (debouncedSearch !== (filters.search || "")) {
+            onFilterChange({ ...filters, search: debouncedSearch });
+        }
+    }, [debouncedSearch, filters, onFilterChange]);
+
+    const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchValue(e.target.value);
     };
 
     const handleSelectChange = (field: keyof PaymentListFilters, val: string) => {
-        onFilterChange({ ...filters, [field]: val || undefined });
+        const finalVal = val === "all" ? undefined : val;
+        onFilterChange({ ...filters, [field]: finalVal });
     };
 
     const handleReset = () => {
@@ -35,63 +56,55 @@ export const PaymentFilterBar = ({
         });
     };
 
+    const statusOptions = [
+        { value: "all", label: t("filter.all_statuses", "Tất cả Trạng thái") },
+        { value: "pending", label: t("status.pending", "Đang chờ") },
+        { value: "success", label: t("status.success", "Thành công") },
+        { value: "failed", label: t("status.failed", "Lỗi") },
+        { value: "refunded", label: t("status.refunded", "Đã hoàn tiền") },
+    ];
+
+    const gatewayOptions = [
+        { value: "all", label: t("filter.all_gateways", "Tất cả Cổng thanh toán") },
+        { value: "momo", label: "MoMo" },
+        { value: "vnpay", label: "VNPay" },
+        { value: "zalopay", label: "ZaloPay" },
+    ];
+
+    const currentStatus = statusOptions.find(opt => opt.value === (filters.payment_status || "all")) || statusOptions[0];
+    const currentGateway = gatewayOptions.find(opt => opt.value === (filters.payment_gateway || "all")) || gatewayOptions[0];
+
     return (
-        <div className="bg-white/80 backdrop-blur-md border border-slate-100 rounded-2xl p-5 shadow-xs space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-                {/* Search Box */}
-                <div className="relative col-span-1 lg:col-span-2">
-                    <Search size={18} className="absolute left-4 top-3.5 text-slate-400" />
-                    <input
-                        type="text"
-                        value={filters.search || ""}
-                        onChange={handleSearchChange}
-                        placeholder={t("filter.search_placeholder", "Tìm kiếm mã giao dịch hoặc mã đơn...")}
-                        className="w-full bg-slate-50 border border-slate-100 rounded-xl py-2.5 pl-11 pr-4 text-sm font-medium text-slate-900 placeholder-slate-400 focus:outline-hidden focus:border-[#14B8A6] focus:bg-white transition-all duration-200"
-                    />
-                </div>
+        <div className="bg-white/80 backdrop-blur-md border border-slate-100 rounded-2xl p-5 shadow-xs space-y-4 font-sans">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {/* Search Box (col-span-2) */}
+                <TextInput
+                    value={searchValue}
+                    onChange={handleSearchInputChange}
+                    placeholder={t("filter.search_placeholder", "Tìm mã GD, mã đơn, tên/email khách...")}
+                    leftIcon={<Search size={18} />}
+                    containerClassName="col-span-1 lg:col-span-2"
+                    className="w-full bg-slate-50 border-slate-100 rounded-xl py-2.5 pr-4 text-sm font-medium text-slate-900 placeholder-slate-400 focus:outline-hidden focus:border-[#14B8A6] focus:bg-white transition-all duration-200"
+                />
 
                 {/* Status Dropdown */}
-                <div>
-                    <select
-                        value={filters.payment_status || ""}
-                        onChange={(e) => handleSelectChange("payment_status", e.target.value)}
-                        className="w-full bg-slate-50 border border-slate-100 rounded-xl py-2.5 px-4 text-sm font-medium text-slate-700 focus:outline-hidden focus:border-[#14B8A6] focus:bg-white transition-all duration-200"
-                    >
-                        <option value="">{t("filter.all_statuses", "Tất cả Trạng thái")}</option>
-                        <option value="pending">{t("status.pending", "Đang chờ")}</option>
-                        <option value="success">{t("status.success", "Thành công")}</option>
-                        <option value="failed">{t("status.failed", "Lỗi")}</option>
-                        <option value="refunded">{t("status.refunded", "Đã hoàn tiền")}</option>
-                    </select>
-                </div>
+                <CustomSelect
+                    options={statusOptions}
+                    value={currentStatus}
+                    onChange={(opt) => handleSelectChange("payment_status", String((opt as Option)?.value))}
+                    size="md"
+                />
 
                 {/* Gateway Dropdown */}
-                <div>
-                    <select
-                        value={filters.payment_gateway || ""}
-                        onChange={(e) => handleSelectChange("payment_gateway", e.target.value)}
-                        className="w-full bg-slate-50 border border-slate-100 rounded-xl py-2.5 px-4 text-sm font-medium text-slate-700 focus:outline-hidden focus:border-[#14B8A6] focus:bg-white transition-all duration-200"
-                    >
-                        <option value="">{t("filter.all_gateways", "Tất cả Cổng thanh toán")}</option>
-                        <option value="momo">MoMo</option>
-                        <option value="vnpay">VNPay</option>
-                        <option value="zalopay">ZaloPay</option>
-                    </select>
-                </div>
-
-                {/* Reset Filters */}
-                <div className="flex items-center justify-end md:justify-start">
-                    <button
-                        onClick={handleReset}
-                        className="flex items-center justify-center gap-2 w-full md:w-auto bg-slate-50 border border-slate-100 hover:bg-slate-100 hover:text-slate-900 rounded-xl py-2.5 px-4 text-sm font-bold text-slate-500 transition-all duration-200"
-                    >
-                        <RefreshCw size={15} />
-                        <span>{t("filter.reset", "Làm mới")}</span>
-                    </button>
-                </div>
+                <CustomSelect
+                    options={gatewayOptions}
+                    value={currentGateway}
+                    onChange={(opt) => handleSelectChange("payment_gateway", String((opt as Option)?.value))}
+                    size="md"
+                />
             </div>
 
-            {/* Sub Filter Row: Dates + Export Action */}
+            {/* Sub Filter Row: Dates + Reset Action */}
             <div className="border-t border-slate-50 pt-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="flex flex-wrap items-center gap-4">
                     {/* Date From */}
@@ -119,19 +132,18 @@ export const PaymentFilterBar = ({
                     </div>
                 </div>
 
-                {/* Export excel */}
-                <button
-                    onClick={onExport}
-                    disabled={isExporting}
-                    className="flex items-center justify-center gap-2 bg-[#14B8A6] hover:bg-[#0f766e] text-white disabled:opacity-50 rounded-xl py-2.5 px-5 text-sm font-bold shadow-lg shadow-[#14B8A6]/20 hover:shadow-xl hover:shadow-[#14B8A6]/30 transition-all duration-200"
-                >
-                    <Download size={16} className={isExporting ? "animate-bounce" : ""} />
-                    <span>
-                        {isExporting
-                            ? t("filter.exporting", "Đang xuất...")
-                            : t("filter.export_excel", "Xuất báo cáo Excel")}
-                    </span>
-                </button>
+                {/* Reset Filters */}
+                <div>
+                    {(filters.search || filters.payment_status || filters.payment_gateway || filters.date_from || filters.date_to) && (
+                        <button
+                            onClick={handleReset}
+                            className="flex items-center justify-center gap-2 bg-slate-50 border border-slate-100 hover:bg-slate-100 hover:text-slate-900 rounded-xl py-2.5 px-4 text-sm font-bold text-slate-500 transition-all duration-200 cursor-pointer"
+                        >
+                            <RefreshCw size={15} />
+                            <span>{t("filter.reset", "Làm mới")}</span>
+                        </button>
+                    )}
+                </div>
             </div>
         </div>
     );

@@ -48,7 +48,10 @@
         "leave": "Leave"
     },
     "breadcrumb": {
-        "home": "Home"
+        "home": "Home",
+        "edit": "Edit",
+        "view": "Detail",
+        "add": "Add New"
     },
     "confirm_delete": "Are you sure you want to delete this item?",
     "error": {
@@ -81,7 +84,11 @@
         "hotels": "Hotels",
         "orders": "Bookings",
         "payments": "Payments",
+        "ratings": "Manage Reviews",
         "posts": "Posts",
+        "blog": "Blog Management",
+        "blog_posts": "Post List",
+        "blog_categories": "Blog Categories",
         "articles": "Article Approval",
         "users": "User Management",
         "locations": "Location Management",
@@ -98,6 +105,8 @@
         "notifications": "Notifications",
         "contacts": "Contacts",
         "settings": "Settings",
+        "promotions": "Promotions",
+        "landing_pages": "Landing Pages",
         "logout": "Logout"
     },
     "header": {

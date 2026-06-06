@@ -55,6 +55,7 @@ export default defineConfig(({ mode }) => {
       strictPort: true,
     },
     build: {
+      emptyOutDir: false,
       cssMinify: 'lightningcss',
       rollupOptions: {
         output: {

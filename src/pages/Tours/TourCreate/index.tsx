@@ -23,6 +23,7 @@ import {
 import { createTourSchema, type CreateTourInput } from '@/validations/tour.schema';
 import { useTourMutations, useTourCategoriesQuery } from '@/hooks/useTourQueries';
 import { ROUTES } from '@/routes/routes';
+import Breadcrumbs from '@/components/common/Breadcrumbs';
 import { extractCreatedTourId, computeDiscountedPrice, slugifyVietnamese, scrollToFirstError, cn } from '@/utils';
 import { getLocalizedApiErrorMessage } from '@/utils/apiError';
 import CustomSelect from '@/components/ui/CustomSelect';
@@ -181,24 +182,21 @@ function AddTour() {
                     )}
                 >
                     <div className="flex-1 min-w-0">
-                        <nav
+                        <div
                             className={cn(
-                                'flex flex-wrap items-center gap-x-1 gap-y-0.5 text-xs font-medium text-[#94A3B8] transition-all duration-300',
+                                'transition-all duration-300',
                                 isScrolled ? 'opacity-0 h-0 overflow-hidden mb-0' : 'opacity-100 h-auto mb-2'
                             )}
                         >
-                            <span>{t('title.breadcrumb_parent')}</span>
-                            <span aria-hidden>/</span>
-                            <button
-                                type="button"
-                                onClick={() => navigate(ROUTES.TOURS_LIST)}
-                                className="hover:text-slate-600 transition-colors"
-                            >
-                                {t('title.breadcrumb_list')}
-                            </button>
-                            <span aria-hidden>/</span>
-                            <span className="text-slate-600">{t('title.breadcrumb_create')}</span>
-                        </nav>
+                            <Breadcrumbs
+                                icon={Map}
+                                items={[
+                                    { label: 'sidebar.tours', path: ROUTES.TOURS_LIST },
+                                    { label: 'sidebar.tour_list', path: ROUTES.TOURS_LIST },
+                                    { label: 'breadcrumb.add' }
+                                ]}
+                            />
+                        </div>
                         <div className="flex items-center gap-3">
                             <h1
                                 className={cn(

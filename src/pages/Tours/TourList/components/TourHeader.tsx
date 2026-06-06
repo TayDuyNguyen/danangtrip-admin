@@ -1,7 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ChevronRight, Download, Plus } from 'lucide-react';
+import { Download, Map, Plus } from 'lucide-react';
 import { ROUTES } from '@/routes/routes';
+import Breadcrumbs from '@/components/common/Breadcrumbs';
 
 interface Props {
     onExport: () => void;
@@ -13,45 +14,43 @@ const TourHeader = ({ onExport, isExporting }: Props) => {
     const navigate = useNavigate();
 
     return (
-        <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-5 mb-[24px]">
-            <div className="space-y-1">
-                {/* Breadcrumb — 12px Inter 500 #94A3B8 */}
-                <nav className="flex items-center gap-2 text-[12px] font-medium text-text-secondary font-sans uppercase tracking-wider">
-                    <span>{t('title.breadcrumb_parent')}</span>
-                    <ChevronRight size={12} strokeWidth={3} className="text-[#CBD5E1]" />
-                    <span className="text-text-secondary">{t('title.list') as string}</span>
-                </nav>
-                
-                {/* Title — 24px Inter 700 #1E293B letter-spacing -0.3px */}
-                <h1 className="text-[24px] font-bold text-[#1E293B] -tracking-[0.3px] leading-tight font-sans">
-                    {t('title.list')}
-                </h1>
-                
-                {/* Subtitle — 14px Inter 400 #64748B */}
-                <p className="text-[14px] font-medium text-[#64748B] font-sans">
-                    {t('title.subtitle')}
-                </p>
-            </div>
+        <div className="flex flex-col gap-3 mb-[24px]">
+            <Breadcrumbs
+                icon={Map}
+                items={[
+                    { label: 'sidebar.tours', path: '/admin/tours/list' },
+                    { label: 'sidebar.tour_list' }
+                ]}
+            />
 
-            <div className="flex items-center gap-3">
-                {/* Xuất Excel — border #E2E8F0 bg white text #64748B radius-10 px-16 py-10 */}
-                <button
-                    onClick={onExport}
-                    disabled={isExporting}
-                    className="flex items-center gap-2 px-[16px] py-[10px] bg-white border border-[#E2E8F0] text-[#64748B] rounded-md text-[14px] font-bold hover:bg-slate-50 hover:border-[#CBD5E1] transition-all disabled:opacity-50 active:scale-95 shadow-sm"
-                >
-                    <Download size={18} className={isExporting ? 'animate-bounce' : ''} />
-                    {t('title.export')}
-                </button>
-                
-                {/* Thêm Tour mới — bg #14B8A6 text white radius-10 px-20 py-10 shadow */}
-                <button
-                    onClick={() => navigate(ROUTES.TOURS_CREATE)}
-                    className="flex items-center gap-2 px-[20px] py-[10px] bg-[#14b8a6] text-white rounded-md text-[14px] font-bold shadow-lg shadow-[#14b8a6]/20 hover:bg-[#0f766e] transition-all active:scale-95"
-                >
-                    <Plus size={20} strokeWidth={3} />
-                    {t('title.add')}
-                </button>
+            {/* Title row */}
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-slate-100 pb-5">
+                <div className="space-y-1">
+                    <h1 className="text-3xl font-black text-slate-900 tracking-tight leading-none font-sans">
+                        {t('title.list')}
+                    </h1>
+                    <p className="text-[14px] font-medium text-[#64748B] font-sans mt-1.5">
+                        {t('title.subtitle')}
+                    </p>
+                </div>
+
+                <div className="flex items-center gap-3">
+                    <button
+                        onClick={onExport}
+                        disabled={isExporting}
+                        className="px-5 py-3 bg-white hover:bg-slate-50 border border-slate-200 text-[#64748B] hover:text-slate-900 rounded-2xl transition-all duration-300 font-bold text-sm flex items-center gap-2 cursor-pointer shadow-sm disabled:opacity-50 h-11 shrink-0"
+                    >
+                        <Download size={16} className={isExporting ? 'animate-bounce' : ''} />
+                        {t('title.export')}
+                    </button>
+                    <button
+                        onClick={() => navigate(ROUTES.TOURS_CREATE)}
+                        className="px-5 py-3 bg-[#14b8a6] hover:bg-[#0f766e] text-white rounded-2xl transition-all duration-300 font-bold text-sm flex items-center gap-2 cursor-pointer shadow-md shadow-[#14b8a6]/20 h-11 shrink-0"
+                    >
+                        <Plus size={16} />
+                        {t('common:breadcrumb.add')}
+                    </button>
+                </div>
             </div>
         </div>
     );

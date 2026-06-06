@@ -29,5 +29,7 @@ export * from './user.mapper';
 export * from './contact.dataHelper';
 export * from './contact.mapper';
 export * from './notification.mapper';
+export * from './blog.mapper';
+export * from './settings.mapper';
 
 

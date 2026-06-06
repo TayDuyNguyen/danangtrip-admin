@@ -48,7 +48,10 @@
         "leave": "Rời đi"
     },
     "breadcrumb": {
-        "home": "Trang chủ"
+        "home": "Trang chủ",
+        "edit": "Chỉnh sửa",
+        "view": "Chi tiết",
+        "add": "Thêm mới"
     },
     "confirm_delete": "Bạn có chắc muốn xóa mục này?",
     "error": {
@@ -84,7 +87,11 @@
         "hotels": "Khách sạn",
         "orders": "Quản lý Đơn hàng",
         "payments": "Quản lý Giao dịch",
+        "ratings": "Quản lý Đánh giá",
         "posts": "Bài viết",
+        "blog": "Quản lý bài viết",
+        "blog_posts": "Danh sách bài viết",
+        "blog_categories": "Danh mục bài viết",
         "articles": "Duyệt bài viết",
         "users": "Người dùng",
         "finance": "Tài chính & Điểm",
@@ -97,6 +104,8 @@
         "notifications": "Thông báo",
         "contacts": "Liên hệ",
         "settings": "Cài đặt",
+        "promotions": "Khuyến mãi",
+        "landing_pages": "Quản lý Landing Pages",
         "logout": "Đăng xuất"
     },
     "header": {

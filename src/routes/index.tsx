@@ -36,6 +36,15 @@ const UserEdit = React.lazy(() => import('@/pages/Users/UserEdit'));
 const Contacts = React.lazy(() => import('@/pages/Contacts'));
 const NotificationList = React.lazy(() => import('@/pages/Notifications/NotificationList'));
 const NotificationSend = React.lazy(() => import('@/pages/Notifications/NotificationSend'));
+const BlogPostList = React.lazy(() => import('@/pages/Blog/BlogPostList'));
+const BlogPostCreate = React.lazy(() => import('@/pages/Blog/BlogPostCreate'));
+const BlogPostEdit = React.lazy(() => import('@/pages/Blog/BlogPostEdit'));
+const BlogPostDetail = React.lazy(() => import('@/pages/Blog/BlogPostDetail'));
+const BlogCategories = React.lazy(() => import('@/pages/Blog/BlogCategories'));
+const Ratings = React.lazy(() => import('@/pages/Ratings'));
+const Settings = React.lazy(() => import('@/pages/Settings'));
+const Promotions = React.lazy(() => import('@/pages/Promotions'));
+const LandingPages = React.lazy(() => import('@/pages/LandingPages'));
 import ErrorPage from '@/pages/ErrorPage';
 
 
@@ -56,6 +65,7 @@ const withSuspense = (Component: React.ComponentType) => (
         <Component />
     </Suspense>
 );
+
 
 /**
  * Router component
@@ -81,6 +91,8 @@ const router = createBrowserRouter([
                 element: <MainLayout />,
                 children: [
                     { path: ROUTES.DASHBOARD, element: withSuspense(Dashboard) },
+                    { path: '/admin/tours/categories', element: <Navigate to={ROUTES.TOURS_CATEGORIES} replace /> },
+                    { path: '/admin/locations/categories', element: <Navigate to={ROUTES.LOCATIONS_CATEGORIES} replace /> },
                     { path: ROUTES.TOURS_LIST, element: withSuspense(TourList) },
                     { path: ROUTES.TOURS_CREATE, element: withSuspense(AddTour) },
                     { path: ROUTES.TOURS_EDIT, element: withSuspense(EditTour) },
@@ -109,6 +121,15 @@ const router = createBrowserRouter([
                     { path: ROUTES.NOTIFICATIONS, element: withSuspense(NotificationList) },
                     { path: ROUTES.NOTIFICATIONS_SEND, element: withSuspense(NotificationSend) },
                     { path: ROUTES.CONTACTS, element: withSuspense(Contacts) },
+                    { path: ROUTES.BLOG_POSTS, element: withSuspense(BlogPostList) },
+                    { path: ROUTES.BLOG_POSTS_CREATE, element: withSuspense(BlogPostCreate) },
+                    { path: ROUTES.BLOG_POSTS_EDIT, element: withSuspense(BlogPostEdit) },
+                    { path: ROUTES.BLOG_POSTS_DETAIL, element: withSuspense(BlogPostDetail) },
+                    { path: ROUTES.BLOG_CATEGORIES, element: withSuspense(BlogCategories) },
+                    { path: ROUTES.RATINGS, element: withSuspense(Ratings) },
+                    { path: ROUTES.SETTINGS, element: withSuspense(Settings) },
+                    { path: ROUTES.PROMOTIONS, element: withSuspense(Promotions) },
+                    { path: ROUTES.LANDING_PAGES, element: withSuspense(LandingPages) },
                 ]
             }
 

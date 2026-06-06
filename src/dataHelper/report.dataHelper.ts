@@ -9,6 +9,10 @@ export interface RatingsReportFilters {
     user_id?: string | number;
     page?: number;
     per_page?: number;
+    score?: number;
+    search?: string;
+    location_id?: number;
+    tour_id?: number;
 }
 
 /**

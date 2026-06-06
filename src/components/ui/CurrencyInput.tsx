@@ -7,6 +7,11 @@ interface CurrencyInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>,
     invalid?: boolean;
 }
 
+const MAX_CURRENCY_VALUE = 999_999_999_999;
+
+const onlyDigits = (value: string) => value.replace(/\D/g, '');
+const NAVIGATION_KEYS = new Set(['Backspace', 'Delete', 'Tab', 'Enter', 'Escape', 'ArrowLeft', 'ArrowRight', 'Home', 'End']);
+
 /**
  * CurrencyInput Component
  * - Displays value formatted with thousand separators (vi-VN)
@@ -19,13 +24,10 @@ export const CurrencyInput = forwardRef<HTMLInputElement, CurrencyInputProps>(
 
         // Sync display value when external value changes
         useEffect(() => {
-            setDisplayValue(formatCurrency(value));
+            setDisplayValue(value == null ? '' : formatCurrency(value));
         }, [value]);
 
-        const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-            // Remove everything except digits
-            const rawValue = e.target.value.replace(/\D/g, '');
-            
+        const emitValue = (rawValue: string) => {
             if (rawValue === '') {
                 setDisplayValue('');
                 onChange?.(null);
@@ -33,12 +35,22 @@ export const CurrencyInput = forwardRef<HTMLInputElement, CurrencyInputProps>(
             }
 
             const numValue = parseInt(rawValue, 10);
-            
-            // Limit to a reasonable number of digits for safety
-            if (numValue > 999_999_999_999) return; 
+            if (numValue > MAX_CURRENCY_VALUE) return;
 
-            setDisplayValue(formatCurrency(numValue));
+            const nextDisplayValue = formatCurrency(numValue);
+            setDisplayValue(nextDisplayValue);
             onChange?.(numValue);
+        };
+
+        const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+            emitValue(onlyDigits(e.target.value));
+        };
+
+        const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+            if (e.ctrlKey || e.metaKey || e.altKey || NAVIGATION_KEYS.has(e.key)) return;
+            if (/^\d$/.test(e.key)) return;
+
+            e.preventDefault();
         };
 
         return (
@@ -46,8 +58,12 @@ export const CurrencyInput = forwardRef<HTMLInputElement, CurrencyInputProps>(
                 {...props}
                 ref={ref}
                 type="text"
+                inputMode="numeric"
+                lang="en"
+                autoCorrect="off"
                 value={displayValue}
                 onChange={handleChange}
+                onKeyDown={handleKeyDown}
                 autoComplete="off"
                 className={cn(
                     'flex h-11 w-full rounded-2xl border border-[#E2E8F0] bg-white px-4 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#14b8a6] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-150',

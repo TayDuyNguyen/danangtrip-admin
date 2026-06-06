@@ -1,8 +1,7 @@
 import { Edit2, Trash2, GripVertical } from 'lucide-react';
-import * as Icons from 'lucide-react';
 import type { CSSProperties } from 'react';
 import { cn } from '@/utils/cn';
-import { resolveCategoryIconName } from '@/utils/categoryIcon';
+import { getCategoryIconComponent } from '@/utils/categoryIcon';
 import type { TourCategory } from '@/dataHelper/tourCategory.dataHelper';
 import { useTranslation } from 'react-i18next';
 
@@ -30,8 +29,7 @@ const CategoryCard = ({ category, displayOrder, onEdit, onDelete, onStatusChange
         return colorOptions[index];
     };
 
-    const iconName = resolveCategoryIconName(category.icon, 'Map');
-    const IconComponent = (Icons as unknown as Record<string, React.ComponentType<{ size?: number; className?: string; style?: CSSProperties }>>)[iconName] || Icons.Map;
+    const IconComponent = getCategoryIconComponent(category.icon, 'Map') as React.ComponentType<{ size?: number; className?: string; style?: CSSProperties }>;
     const backgroundColor = getDeterministicColor();
     const visibleOrder = displayOrder ?? category.sort_order;
     const iconForegroundColor = backgroundColor.toLowerCase() === '#000000' ? '#ffffff' : '#334155';

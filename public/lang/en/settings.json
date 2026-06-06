@@ -1,0 +1,103 @@
+{
+    "title": "Website Configuration",
+    "subtitle": "Manage global site settings, branding, social links, payments, policy documents, and SEO parameters.",
+    "tabs": {
+        "general": "General Info",
+        "brand": "Branding",
+        "social": "Social Media",
+        "payment": "Payment Gateways",
+        "policy": "Policies & Terms",
+        "seo": "SEO Defaults"
+    },
+    "sections": {
+        "general": {
+            "title": "Support Contact Information",
+            "subtitle": "Provide active contact detail parameters displayed in web footer and header layouts.",
+            "hotline": "Support Hotline",
+            "hotline_help": "E.g., 1900 1800 or 09xx xxx xxx (conforms to Vietnamese formats).",
+            "email": "Support Email",
+            "email_help": "Email address for general user inquiries and business proposals.",
+            "address": "Corporate Address",
+            "address_help": "Physical location address of head office.",
+            "support_hours": "Support Hours",
+            "support_hours_help": "E.g., 08:00 - 22:00 or 24/7."
+        },
+        "brand": {
+            "title": "Brand Assets & Visual Identity",
+            "subtitle": "Upload logo and favicon resources defining browser look and feel.",
+            "website_name": "Website Name",
+            "website_name_help": "Primary application title (e.g. DaNangTrip).",
+            "logo": "Brand Logo",
+            "logo_help": "Upload logo image displayed in main menus.",
+            "favicon": "Browser Favicon",
+            "favicon_help": "Upload high resolution icon displayed in browser tabs."
+        },
+        "social": {
+            "title": "Social Networking Channels",
+            "subtitle": "Add links to social networking channels displayed in footer sections.",
+            "facebook": "Facebook Link",
+            "instagram": "Instagram Link",
+            "youtube": "YouTube Link",
+            "tiktok": "TikTok Link",
+            "zalo": "Zalo OA Link"
+        },
+        "payment": {
+            "title": "Integrated Payment Gateways",
+            "subtitle": "Enable or disable individual payment processors instantly across booking flows.",
+            "payos": "payOS Gateway",
+            "payos_help": "Primary checkout portal using link transfers (Recommended).",
+            "cod": "Bank Transfer / Cash (COD)",
+            "cod_help": "Manual verification / local bank transfer method.",
+            "vnpay": "VNPay Portal",
+            "vnpay_help": "VNPay domestic card and banking gateway (Reserved).",
+            "momo": "MoMo E-Wallet",
+            "momo_help": "Direct checkout via MoMo e-wallet app (Reserved).",
+            "zalopay": "ZaloPay Portal",
+            "zalopay_help": "ZaloPay gateway integration (Reserved)."
+        },
+        "policy": {
+            "title": "Policy & Legal Regulations Links",
+            "subtitle": "Define landing paths for privacy and terms regulations.",
+            "terms": "Terms of Service Link",
+            "privacy": "Privacy Policy Link",
+            "data_protection": "Data Protection Regulation Link"
+        },
+        "seo": {
+            "title": "Global Search Engine Optimization",
+            "subtitle": "Standard default meta attributes loaded dynamically when specific pages lack unique SEO values.",
+            "meta_title": "Default Meta Title",
+            "meta_title_help": "Recommended length: 30-70 characters.",
+            "meta_description": "Default Meta Description",
+            "meta_description_help": "Recommended length: 120-160 characters.",
+            "og_image": "Default OpenGraph Image",
+            "og_image_help": "Default image attached when sharing website link on social media."
+        }
+    },
+    "validation": {
+        "hotline_required": "Hotline is required.",
+        "hotline_invalid": "Invalid hotline or Vietnamese phone format.",
+        "email_required": "Email is required.",
+        "email_invalid": "Invalid email address format.",
+        "address_required": "Corporate address is required.",
+        "support_hours_required": "Support hours is required.",
+        "website_name_required": "Website brand name is required.",
+        "logo_required": "Brand logo resource is required.",
+        "favicon_required": "Favicon resource is required.",
+        "payment_required": "At least one payment gateway must be enabled.",
+        "meta_title_min": "Meta title must be at least 10 characters.",
+        "meta_title_max": "Meta title cannot exceed 100 characters.",
+        "meta_description_min": "Meta description must be at least 20 characters.",
+        "meta_description_max": "Meta description cannot exceed 200 characters."
+    },
+    "actions": {
+        "save_success": "Website configurations saved successfully.",
+        "save_failed": "Failed to update website configurations.",
+        "discard": "Discard",
+        "save": "Save Changes",
+        "saving": "Saving configurations...",
+        "upload": "Upload Image",
+        "uploading": "Uploading...",
+        "unsaved_title": "Unsaved Changes",
+        "unsaved_desc": "You have unsaved changes in website settings configuration. Are you sure you want to discard them?"
+    }
+}

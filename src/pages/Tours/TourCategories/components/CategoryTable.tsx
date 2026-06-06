@@ -1,8 +1,8 @@
-import { Edit2, Trash2, ExternalLink, Hash, Power, PowerOff } from 'lucide-react';
+import { Edit2, Trash2, ExternalLink, FolderOpen, Hash, Power, PowerOff } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import * as Icons from 'lucide-react';
 import type { TourCategory } from '@/dataHelper/tourCategory.dataHelper';
 import { cn } from '@/utils/cn';
+import { getCategoryIconComponent } from '@/utils/categoryIcon';
 
 interface CategoryTableProps {
     categories: TourCategory[];
@@ -15,8 +15,7 @@ const CategoryTable = ({ categories, onEdit, onDelete, onStatusChange }: Categor
     const { t } = useTranslation('tour');
 
     const renderIcon = (category: TourCategory) => {
-        const iconName = category.icon || 'Map';
-        const IconComponent = (Icons as unknown as Record<string, React.ElementType>)[iconName] || Icons.Map;
+        const IconComponent = getCategoryIconComponent(category.icon, 'Map') as React.ElementType;
         
         // Use icon_background from category, fallback to default teal if not set
         const bgColor = category.icon_background || '#dff7f4';
@@ -152,7 +151,7 @@ const CategoryTable = ({ categories, onEdit, onDelete, onStatusChange }: Categor
             {categories.length === 0 && (
                 <div className="py-20 flex flex-col items-center justify-center text-center">
                     <div className="w-20 h-20 bg-slate-50 rounded-[32px] flex items-center justify-center mb-4">
-                        <Icons.FolderOpen size={40} className="text-slate-200" />
+                        <FolderOpen size={40} className="text-slate-200" />
                     </div>
                     <h3 className="text-lg font-bold text-slate-900">{t('messages.no_data')}</h3>
                     <p className="text-slate-500 text-sm mt-1">{t('messages.no_data_subtitle')}</p>

@@ -33,6 +33,7 @@
     },
     "payment_status": {
         "pending": "Chờ thanh toán",
+        "unpaid": "Chưa thanh toán",
         "paid": "Đã thanh toán",
         "success": "Thành công",
         "failed": "Thất bại",
@@ -133,5 +134,8 @@
             "cancelled": "Đã hủy đơn"
         },
         "passengers_notice": "Chú ý: Danh sách hành khách chi tiết tạm thời chưa hỗ trợ qua API, số lượng khách hiển thị dựa trên thông tin đăng ký trong đơn đặt."
+    },
+    "table": {
+        "col_actions": "Thao tác"
     }
 }

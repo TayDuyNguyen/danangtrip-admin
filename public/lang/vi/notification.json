@@ -1,5 +1,5 @@
 {
-    "breadcrumb": "Thông báo / Danh sách Thông báo",
+    "breadcrumb": "Thông báo",
     "title": "Danh sách Thông báo",
     "subtitle": "Quản lý thông báo hệ thống gửi đến người dùng",
     "actions": {
@@ -60,7 +60,7 @@
     "send": {
         "title": "Gửi Thông báo",
         "subtitle": "Gửi thông báo đến người dùng hệ thống",
-        "breadcrumb": "Thông báo / Gửi Thông báo",
+        "breadcrumb": "Gửi Thông báo",
         "btn_cancel": "Hủy",
         "btn_submit": "Gửi thông báo",
         "btn_sending": "Đang gửi...",

@@ -63,6 +63,23 @@
         "unit_thousand": "K",
         "refresh_chart": "Refresh chart"
     },
+    "search_trends": {
+        "title": "Search Trends",
+        "subtitle": "Keywords and places gaining attention in the last {{days}} days",
+        "keywords": "Top keywords",
+        "clicked_keywords": "Most clicked keywords",
+        "zero_result_keywords": "Zero-result keywords",
+        "locations": "Most viewed places",
+        "searches": "searches",
+        "clicks": "clicks",
+        "views": "views",
+        "empty": "No search trend data yet",
+        "empty_keywords": "No highlighted keywords yet",
+        "empty_clicked_keywords": "No clicked keyword data yet",
+        "empty_zero_result_keywords": "No zero-result keywords yet",
+        "empty_locations": "No highlighted places yet",
+        "no_district": "No district"
+    },
     "tables": {
         "top_tours": "Top 5 Best Selling Tours",
         "recent_orders": "Recent Orders",
@@ -85,6 +102,7 @@
         "header_amount": "Amount",
         "header_status": "Status",
         "header_date": "Date",
+        "manage_locations": "Manage Locations",
         "export_success": "Report exported successfully!",
         "export_failed": "Export failed. Please try again.",
         "export_bookings_default_filename": "Booking report {{from}}–{{to}}.xlsx"

@@ -1,0 +1,93 @@
+{
+    "title": "Quản lý Landing Pages",
+    "subtitle": "Xây dựng các trang đích tối ưu hóa SEO và hiển thị danh sách tour theo bộ lọc tự động.",
+    "add_new": "Thêm Landing Page",
+    "edit_landing": "Chỉnh sửa Landing Page",
+    "delete_title": "Xóa Landing Page",
+    "delete_confirm": "Bạn có chắc chắn muốn xóa landing page này không? Hành động này không thể hoàn tác.",
+    
+    "table": {
+        "slug": "Slug/URL",
+        "title": "Tiêu đề",
+        "type": "Loại trang",
+        "status": "Trạng thái",
+        "updated_at": "Ngày cập nhật",
+        "actions": "Hành động"
+    },
+    
+    "filter": {
+        "search_placeholder": "Tìm kiếm theo tiêu đề hoặc slug...",
+        "all_types": "Tất cả loại trang",
+        "all_statuses": "Tất cả trạng thái"
+    },
+    
+    "status": {
+        "draft": "Bản nháp",
+        "published": "Đã xuất bản"
+    },
+    
+    "types": {
+        "destination": "Điểm đến",
+        "tour_line": "Dòng tour",
+        "promotion": "Khuyến mãi"
+    },
+    
+    "tabs": {
+        "content": "Nội dung chính",
+        "seo": "Cấu hình SEO",
+        "settings": "Cấu hình & Blocks"
+    },
+    
+    "form": {
+        "title": "Tiêu đề trang",
+        "title_placeholder": "Nhập tiêu đề trang landing (ví dụ: Tour du lịch Đà Nẵng giá rẻ)",
+        "slug": "Đường dẫn SEO (Slug)",
+        "slug_placeholder": "du-lich-da-nang (chữ thường không dấu, gạch ngang)",
+        "page_type": "Loại trang",
+        "page_type_placeholder": "Chọn loại trang...",
+        "status": "Trạng thái",
+        "intro": "Đoạn giới thiệu ngắn",
+        "intro_placeholder": "Nhập đoạn mô tả/giới thiệu ngắn xuất hiện trên banner...",
+        "hero_image": "Ảnh Banner chính (Hero Image)",
+        "hero_image_placeholder": "Đường dẫn ảnh banner hoặc tải lên...",
+        
+        "seo_title": "Tiêu đề SEO (Seo Title)",
+        "seo_title_placeholder": "Nhập tiêu đề tối ưu tìm kiếm (dưới 70 ký tự)",
+        "seo_description": "Mô tả SEO (Seo Description)",
+        "seo_description_placeholder": "Nhập mô tả tối ưu tìm kiếm (dưới 160 ký tự)",
+        "og_image": "Ảnh chia sẻ MXH (OG:Image)",
+        "og_image_placeholder": "Đường dẫn ảnh chia sẻ khi gửi link...",
+        
+        "filters": "Bộ lọc Tour mặc định (JSON)",
+        "filters_placeholder": "Ví dụ: {\"district\": \"Son Tra\", \"price_max\": 2000000}",
+        "content_blocks": "Khối nội dung mở rộng (Content Blocks)",
+        "add_block": "Thêm khối nội dung",
+        "block_type": "Loại khối",
+        "block_title": "Tiêu đề khối",
+        "block_content": "Nội dung",
+        "faq_question": "Câu hỏi",
+        "faq_answer": "Câu trả lời"
+    },
+    
+    "validation": {
+        "slug_required": "Đường dẫn SEO (slug) là bắt buộc",
+        "slug_invalid": "Slug chỉ được phép chứa chữ thường, số và dấu gạch ngang (ví dụ: du-lich-da-nang)",
+        "title_required": "Tiêu đề trang là bắt buộc",
+        "title_max": "Tiêu đề trang không được vượt quá 150 ký tự",
+        "page_type_required": "Vui lòng chọn loại trang landing",
+        "status_required": "Vui lòng chọn trạng thái",
+        "invalid_json": "Định dạng JSON bộ lọc không hợp lệ. Vui lòng kiểm tra lại cú pháp."
+    },
+    
+    "success": {
+        "create": "Đã tạo Landing Page thành công!",
+        "update": "Đã cập nhật Landing Page thành công!",
+        "delete": "Đã xóa Landing Page thành công!",
+        "status_update": "Đã cập nhật trạng thái hiển thị thành công!"
+    },
+    
+    "error": {
+        "fetch": "Lỗi khi tải danh sách Landing Pages.",
+        "submit": "Không thể lưu dữ liệu. Vui lòng kiểm tra lại form."
+    }
+}

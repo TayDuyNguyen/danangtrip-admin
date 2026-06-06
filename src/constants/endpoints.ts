@@ -20,6 +20,7 @@ export const API_ENDPOINTS = {
         TOP_TOURS: '/admin/dashboard/top-tours',
         // Top locations table/report
         TOP_LOCATIONS: '/admin/dashboard/top-locations',
+        SEARCH_TRENDS: '/admin/dashboard/search-trends',
         // Recent orders table
         BOOKINGS: '/admin/bookings',
     },
@@ -136,6 +137,41 @@ export const API_ENDPOINTS = {
         UPDATE_ROLE: (id: string | number) => `/admin/users/${id}/role`,
         UPDATE_STATUS: (id: string | number) => `/admin/users/${id}/status`,
         DELETE: (id: string | number) => `/admin/users/${id}`,
-    }
+    },
+    // Blog Posts management
+    BLOG: {
+        LIST: '/admin/blog-posts',
+        CREATE: '/admin/blog-posts',
+        CHECK_SLUG: '/admin/blog-posts/check-slug',
+        DETAIL: (id: string | number) => `/admin/blog-posts/${id}`,
+        UPDATE: (id: string | number) => `/admin/blog-posts/${id}`,
+        CATEGORIES: '/admin/blog-categories',
+        CREATE_CATEGORY: '/admin/blog-categories',
+        REORDER_CATEGORIES: '/admin/blog-categories/reorder',
+        UPDATE_CATEGORY: (id: string | number) => `/admin/blog-categories/${id}`,
+        DELETE_CATEGORY: (id: string | number) => `/admin/blog-categories/${id}`,
+        PATCH_STATUS: (id: string | number) => `/admin/blog-posts/${id}/status`,
+        DELETE: (id: string | number) => `/admin/blog-posts/${id}`,
+    },
+    SETTINGS: {
+        GET: '/admin/settings',
+        UPDATE: '/admin/settings',
+    },
+    PROMOTIONS: {
+        LIST: '/admin/promotions',
+        DETAIL: (id: string | number) => `/admin/promotions/${id}`,
+        CREATE: '/admin/promotions',
+        UPDATE: (id: string | number) => `/admin/promotions/${id}`,
+        DELETE: (id: string | number) => `/admin/promotions/${id}`,
+        PATCH_STATUS: (id: string | number) => `/admin/promotions/${id}/status`,
+    },
+    LANDING_PAGES: {
+        LIST: '/admin/landing-pages',
+        DETAIL: (id: string | number) => `/admin/landing-pages/${id}`,
+        CREATE: '/admin/landing-pages',
+        UPDATE: (id: string | number) => `/admin/landing-pages/${id}`,
+        DELETE: (id: string | number) => `/admin/landing-pages/${id}`,
+        PATCH_STATUS: (id: string | number) => `/admin/landing-pages/${id}/status`,
+    },
 } as const;
 

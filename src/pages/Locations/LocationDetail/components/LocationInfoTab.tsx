@@ -17,9 +17,29 @@ interface LocationInfoTabProps {
 const LocationInfoTab = ({ location }: LocationInfoTabProps) => {
     const { t } = useTranslation('location');
 
-    const renderOpeningHours = (val: string | OpeningHours | undefined) => {
+    const renderOpeningHours = (val: string | string[] | OpeningHours | undefined) => {
         if (!val) return null;
-        if (typeof val === 'string') return val;
+        if (typeof val === 'string') {
+            return (
+                <p className="text-sm font-bold text-slate-800">
+                    {val}
+                </p>
+            );
+        }
+        if (Array.isArray(val)) {
+            return (
+                <div className="space-y-1 pt-1">
+                    {val.map((timeRange) => (
+                        <div
+                            key={timeRange}
+                            className="text-[13px] font-bold text-slate-700 bg-white px-2.5 py-1 rounded-xl border border-slate-100 shadow-sm w-fit"
+                        >
+                            {timeRange}
+                        </div>
+                    ))}
+                </div>
+            );
+        }
 
         const daysOrder = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
         return (
@@ -78,7 +98,7 @@ const LocationInfoTab = ({ location }: LocationInfoTabProps) => {
                                 <div className="p-2.5 h-fit rounded-xl bg-white text-primary shadow-sm group-hover:scale-110 transition-transform">
                                     <item.icon size={18} />
                                 </div>
-                                <div className="flex-1 space-y-0.5">
+                                <div className="flex-1 space-y-0.5 min-w-0">
                                     <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
                                         {item.label}
                                     </p>
@@ -87,12 +107,13 @@ const LocationInfoTab = ({ location }: LocationInfoTabProps) => {
                                             href={(item.value as string)?.startsWith('http') ? (item.value as string) : `https://${item.value}`}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className="text-sm font-bold text-slate-800 hover:text-primary transition-colors flex items-center gap-1"
+                                            className="text-sm font-bold text-slate-800 hover:text-primary transition-colors block truncate max-w-[240px] sm:max-w-[320px] lg:max-w-[400px]"
+                                            title={item.value as string}
                                         >
                                             {item.value as string}
                                         </a>
                                     ) : item.type === 'hours' ? (
-                                        renderOpeningHours(item.value as string | OpeningHours | undefined)
+                                        renderOpeningHours(item.value as string | string[] | OpeningHours | undefined)
                                     ) : (
                                         <p className="text-sm font-bold text-slate-800">
                                             {item.value as string}
@@ -145,6 +166,28 @@ const LocationInfoTab = ({ location }: LocationInfoTabProps) => {
                                 ))
                             ) : (
                                 <p className="text-sm italic text-slate-400">{t('detail.info.no_amenities')}</p>
+                            )}
+                        </div>
+                    </div>
+
+                    <div className="space-y-4">
+                        <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+                            <span className="w-1.5 h-6 bg-primary rounded-full" />
+                            {t('detail.info.tags', 'Tags')}
+                        </h3>
+                        <div className="flex flex-wrap gap-2">
+                            {location.tags && location.tags.length > 0 ? (
+                                location.tags.map((tag) => (
+                                    <div
+                                        key={tag}
+                                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-100 text-slate-600 text-[13px] font-semibold"
+                                    >
+                                        <span className="text-primary font-bold">#</span>
+                                        {tag}
+                                    </div>
+                                ))
+                            ) : (
+                                <p className="text-sm italic text-slate-400">{t('detail.info.no_tags', 'Không có tag')}</p>
                             )}
                         </div>
                     </div>

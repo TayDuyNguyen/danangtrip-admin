@@ -27,6 +27,8 @@ import PaymentStatusBadge from '../PaymentList/components/PaymentStatusBadge';
 import RefundPaymentDialog from '../PaymentList/components/RefundPaymentDialog';
 import { formatCurrency } from '@/utils/pricing';
 import { formatAdminShortDate } from '@/utils/dateDisplay';
+import { mapApiErrorMessage } from '@/utils';
+import Breadcrumbs from '@/components/common/Breadcrumbs';
 
 /**
  * VirtualTimeline Subcomponent for Payments
@@ -150,8 +152,7 @@ export const PaymentDetail = () => {
                     setIsRefundDialogOpen(false);
                 },
                 onError: (err) => {
-                    const axiosError = err as Error & { response?: { data?: { message?: string } } };
-                    toast.error(t('refund.toast_error', { message: axiosError?.response?.data?.message || axiosError.message }));
+                    toast.error(t('refund.toast_error', { message: mapApiErrorMessage(t('common:error_occurred'), err) }));
                 }
             }
         );
@@ -191,53 +192,44 @@ export const PaymentDetail = () => {
         <div className="space-y-8 animate-in fade-in duration-300">
             {/* Header / Breadcrumb Section */}
             <div className="flex flex-col gap-4">
-                <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider">
-                    <Link to={ROUTES.DASHBOARD} className="hover:text-slate-600 transition-colors">{t('detail.breadcrumb_home', 'Bảng điều khiển')}</Link>
-                    <span className="text-slate-300">/</span>
-                    <Link to={ROUTES.PAYMENTS_LIST} className="hover:text-slate-600 transition-colors">{t('detail.breadcrumb_payments', 'Giao dịch')}</Link>
-                    <span className="text-slate-300">/</span>
-                    <span className="text-slate-600">{t('detail.breadcrumb_detail', 'Chi tiết')}</span>
-                </div>
+                <Breadcrumbs
+                    icon={CreditCard}
+                    items={[
+                        { label: t('detail.breadcrumb_payments'), path: ROUTES.PAYMENTS_LIST },
+                        { label: t('detail.breadcrumb_detail') }
+                    ]}
+                    actions={
+                        isSuccess
+                            ? [
+                                  {
+                                      label: t('action.refund'),
+                                      onClick: () => setIsRefundDialogOpen(true),
+                                      disabled: !isAdmin || refundMutation.isPending,
+                                      icon: RefreshCw,
+                                      variant: 'outline',
+                                  },
+                              ]
+                            : []
+                    }
+                />
 
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <div className="flex items-start gap-4">
-                        <button
-                            onClick={() => navigate(ROUTES.PAYMENTS_LIST)}
-                            className="p-3 bg-white border border-slate-100 hover:bg-slate-50 text-slate-600 rounded-2xl shadow-xs transition-all duration-200"
-                        >
-                            <ArrowLeft size={20} />
-                        </button>
-                        <div>
-                            <div className="flex items-center gap-3">
-                                <h1 className="text-[26px] font-black text-slate-900 tracking-tight leading-tight">
-                                    {payment.transactionCode}
-                                </h1>
-                                <PaymentStatusBadge status={payment.status} />
-                            </div>
-                            <p className="text-slate-500 text-sm mt-1">
-                                {t('detail.subtitle', 'Xem chi tiết thông tin và lịch sử thanh toán của giao dịch')}
-                            </p>
-                        </div>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-2">
+                    <div className="flex items-center gap-3">
+                        <h1 className="text-[26px] font-black text-slate-900 tracking-tight leading-tight">
+                            {payment.transactionCode}
+                        </h1>
+                        <PaymentStatusBadge status={payment.status} />
                     </div>
-
-                    {/* Refund Actions */}
-                    {isSuccess && (
-                        <div className="relative inline-block">
-                            <button
-                                onClick={() => setIsRefundDialogOpen(true)}
-                                disabled={!isAdmin || refundMutation.isPending}
-                                className="inline-flex items-center gap-2 px-5 py-3 text-sm font-bold rounded-2xl bg-rose-50 border border-rose-100 text-rose-600 disabled:opacity-50 disabled:bg-slate-50 disabled:border-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed hover:bg-rose-600 hover:text-white transition-all duration-200 shadow-md shadow-rose-100/50 hover:shadow-lg hover:shadow-rose-500/20 active:scale-95"
-                            >
-                                <RefreshCw size={14} className={refundMutation.isPending ? "animate-spin" : ""} />
-                                <span>{t('action.refund', 'Hoàn tiền')}</span>
-                            </button>
-                            {!isAdmin && (
-                                <p className="text-[11px] text-rose-500/80 font-bold mt-1 text-center">
-                                    {t('action.refund_tooltip_staff', 'Chỉ người quản trị mới có quyền thực hiện hoàn tiền')}
-                                </p>
-                            )}
-                        </div>
-                    )}
+                    <div className="flex flex-col items-end gap-1">
+                        <p className="text-slate-500 text-sm">
+                            {t('detail.subtitle', 'Xem chi tiết thông tin và lịch sử thanh toán của giao dịch')}
+                        </p>
+                        {isSuccess && !isAdmin && (
+                            <p className="text-[11px] text-rose-500/80 font-bold">
+                                {t('action.refund_tooltip_staff', 'Chỉ người quản trị mới có quyền thực hiện hoàn tiền')}
+                            </p>
+                        )}
+                    </div>
                 </div>
             </div>
 

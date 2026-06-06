@@ -1,13 +1,16 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, MapPin, Sparkles } from 'lucide-react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import { ROUTES } from '@/routes/routes';
 import LocationForm from '../components/LocationForm';
+import Breadcrumbs from '@/components/common/Breadcrumbs';
 
 const LocationCreate = () => {
     const { t } = useTranslation('location');
     const navigate = useNavigate();
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     return (
         <div className="min-h-screen bg-[#f8fafc] pb-20">
@@ -23,11 +26,15 @@ const LocationCreate = () => {
                             <ArrowLeft className="w-5 h-5 text-slate-600" />
                         </Button>
                         <div>
-                            <div className="flex items-center gap-2 mb-0.5">
-                                <MapPin className="w-4 h-4 text-[#14b8a6]" />
-                                <span className="text-[10px] font-bold uppercase tracking-[0.1em] text-[#14b8a6]">
-                                    Administration
-                                </span>
+                            <div className="mb-1">
+                                <Breadcrumbs
+                                    icon={MapPin}
+                                    items={[
+                                        { label: 'sidebar.locations', path: ROUTES.LOCATIONS_LIST },
+                                        { label: 'sidebar.location_list', path: ROUTES.LOCATIONS_LIST },
+                                        { label: 'breadcrumb.add' }
+                                    ]}
+                                />
                             </div>
                             <h1 className="text-xl font-bold text-slate-900 tracking-tight">
                                 {t('actions.add')}
@@ -46,6 +53,7 @@ const LocationCreate = () => {
                         <Button
                             form="location-form"
                             type="submit"
+                            isLoading={isSubmitting}
                             className="rounded-xl bg-[#14b8a6] hover:bg-[#0d9488] text-white px-8 font-bold shadow-lg shadow-[#14b8a6]/20 transition-all hover:scale-[1.02] active:scale-95"
                         >
                             <Sparkles className="w-4 h-4 mr-2" />
@@ -65,7 +73,7 @@ const LocationCreate = () => {
                     </p>
                 </div>
 
-                <LocationForm />
+                <LocationForm onSubmittingChange={setIsSubmitting} />
             </div>
         </div>
     );

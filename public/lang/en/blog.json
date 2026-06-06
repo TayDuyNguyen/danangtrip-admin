@@ -1,0 +1,221 @@
+{
+    "breadcrumb": "Blog",
+    "title": "Blog Posts",
+    "subtitle": "Manage Da Nang tourism blog content",
+    "stats": {
+        "total": "TOTAL POSTS",
+        "published": "PUBLISHED",
+        "draft": "DRAFTS",
+        "archived": "ARCHIVED"
+    },
+    "filters": {
+        "search_placeholder": "Search by article title...",
+        "category": "Category",
+        "status": "Status",
+        "category_all": "All Categories",
+        "status_all": "All Statuses",
+        "btn_filter": "Filter",
+        "btn_reset": "Reset"
+    },
+    "table": {
+        "selected": "Selected {{count}}",
+        "displaying": "Showing {{start}}–{{end}} of {{total}} articles",
+        "per_page": "Display",
+        "col_article": "Article",
+        "col_category": "Category",
+        "col_views": "Views",
+        "col_created": "Created At",
+        "col_published": "Published At",
+        "col_status": "Status",
+        "col_actions": "Actions",
+        "views": "views",
+        "no_published_date": "—",
+        "scheduled": "SCHEDULED",
+        "views_count": "{{count}} views"
+    },
+    "actions": {
+        "create": "Create post",
+        "view": "View",
+        "edit": "Edit",
+        "delete": "Delete",
+        "preview_disabled_helper": "Only published articles can be viewed",
+        "bulk_publish": "Publish",
+        "bulk_archive": "Archive",
+        "bulk_delete": "Delete",
+        "bulk_delete_confirm": "Are you sure you want to delete {{count}} selected articles? This action cannot be undone.",
+        "bulk_delete_confirm_title": "Delete selected articles?",
+        "bulk_delete_warning": "This action cannot be undone. Selected articles will be permanently deleted.",
+        "confirm_delete_title": "Delete this article?",
+        "confirm_delete_body": "The article \"{{title}}\" will be permanently deleted.",
+        "confirm_delete_warning": "All associated categories will be unlinked.",
+        "cancel": "Cancel",
+        "confirm": "Confirm",
+        "status_draft": "Draft",
+        "status_published": "Published",
+        "status_archived": "Archived"
+    },
+    "status": {
+        "draft": "DRAFT",
+        "published": "PUBLISHED",
+        "archived": "ARCHIVED"
+    },
+    "empty": {
+        "title": "No articles found",
+        "subtitle": "Try changing the filters or create a new article"
+    },
+    "toast": {
+        "delete_success": "Blog post deleted successfully",
+        "status_success": "Blog post status updated successfully",
+        "bulk_delete_success": "Blog posts deleted successfully",
+        "bulk_status_success": "Blog posts status updated successfully",
+        "network_error": "Network error or server failed to respond",
+        "draft_success": "Draft saved successfully!",
+        "publish_success": "Blog post published successfully!",
+        "category_create_success": "Category created successfully!",
+        "category_update_success": "Category updated successfully!",
+        "category_delete_success": "Category deleted successfully!",
+        "upload_error": "Failed to upload image!",
+        "update_success": "Blog post updated successfully!",
+        "update_error": "Failed to update blog post!",
+        "duplicate_success": "Blog post duplicated successfully!"
+    },
+    "create_title": "Create New Post",
+    "create_subtitle": "Write and publish a travel blog post",
+    "edit_title": "Edit Blog Post",
+    "edit_subtitle": "Edit and update blog post content",
+    "edit_breadcrumb": "Edit Post",
+    "detail_title": "Blog Post Details",
+    "detail_breadcrumb": "Details",
+    "quick_actions": "Quick Actions",
+    "duplicate_confirm_title": "Duplicate this post?",
+    "duplicate_confirm_body": "A new blog post will be created with pre-filled content from this post.",
+    "info_section": "INFORMATION",
+    "info_created": "Created At",
+    "info_updated": "Updated At",
+    "info_author": "Author",
+    "info_views": "Views",
+    "info_views_val": "{{count}} views",
+    "form": {
+        "title": "Post Title",
+        "title_placeholder": "Enter post title...",
+        "slug": "Slug",
+        "slug_placeholder": "post-title-slug",
+        "slug_auto": "Auto",
+        "slug_warning": "Changing the slug will change the article URL. Old links will no longer work.",
+        "excerpt": "Short Description (Excerpt)",
+        "excerpt_placeholder": "A brief description of the post, shown in listings...",
+        "content": "Content",
+        "content_placeholder": "Start writing the blog post content...",
+        "required": "Required",
+        "sections": {
+            "content": "Post Content",
+            "publish": "Publish Settings",
+            "categories": "Categories",
+            "featured_image": "Featured Image",
+            "guidelines": "💡 Guidelines"
+        },
+        "publish": {
+            "status": "Status",
+            "draft": "Draft",
+            "draft_helper": "Not visible to the public",
+            "published": "Publish immediately",
+            "published_helper": "Visible immediately after saving",
+            "scheduled": "Schedule",
+            "scheduled_helper": "Publish at selected date/time",
+            "archived": "Archived",
+            "archived_helper": "Hide article and move to archive",
+            "date": "Publish Date",
+            "time": "Time",
+            "save_draft": "Save Draft",
+            "publish_btn": "Publish"
+        },
+        "categories": {
+            "placeholder": "Select category...",
+            "add_new": "Add New Category",
+            "add_btn": "Add",
+            "input_placeholder": "New category name..."
+        },
+        "media": {
+            "upload_drag": "Drag and drop image here or",
+            "select_btn": "Select image",
+            "helper": "PNG, JPG, WEBP · Max 5MB · Recommended 1200x630px",
+            "change": "Change",
+            "delete": "Delete",
+            "current_image": "Current Image"
+        },
+        "guidelines": {
+            "item_1": "Title should be descriptive and SEO friendly",
+            "item_2": "Featured image ratio should be 16:9 (1200x630px)",
+            "item_3": "Excerpt is used for search engine snippets",
+            "item_4": "Save drafts and verify before publishing"
+        },
+        "validation": {
+            "title_required": "Post title is required",
+            "title_max": "Title must not exceed 255 characters",
+            "content_required": "Post content is required",
+            "categories_required": "Please select at least one category",
+            "excerpt_max": "Excerpt must not exceed 500 characters"
+        }
+    },
+    "category": {
+        "title": "Blog Categories",
+        "subtitle": "Manage blog classification categories",
+        "stats": {
+            "total": "TOTAL CATEGORIES",
+            "total_posts": "TOTAL POSTS"
+        },
+        "table": {
+            "col_name": "Category",
+            "col_posts_count": "Posts Count",
+            "col_actions": "Actions",
+            "search_placeholder": "Search categories...",
+            "count_suffix": "categories",
+            "drag_helper": "Drag and drop to sort"
+        },
+        "card": {
+            "label": "Category",
+            "posts_count": "Posts",
+            "no_description": "No description has been added for this category"
+        },
+        "reorder": {
+            "button_sort": "Sort order",
+            "button_sorting": "Sorting",
+            "disabled_title": "Sorting is unavailable while a search filter is active",
+            "bar_title": "Drag and drop to reorder categories",
+            "bar_hint": "The new order will be saved when you confirm",
+            "cancel": "Cancel",
+            "save": "Save order",
+            "toast_success": "Category order updated successfully!",
+            "toast_error": "Could not update category order"
+        },
+        "form": {
+            "add_title": "Add Category",
+            "edit_title": "Edit Category",
+            "badge_new": "NEW",
+            "badge_editing": "EDITING",
+            "name": "Category Name",
+            "name_placeholder": "Example: Sightseeing & Travel",
+            "slug": "Slug",
+            "slug_placeholder": "sightseeing-travel",
+            "slug_auto": "Auto",
+            "slug_helper": "Automatically generated from name",
+            "description": "Description",
+            "description_placeholder": "Brief description about the category...",
+            "preview": "PREVIEW",
+            "btn_cancel": "Cancel",
+            "btn_create": "Create",
+            "btn_save": "Save Changes"
+        },
+        "delete": {
+            "confirm_title": "Delete this category?",
+            "confirm_body": "The category \"{{name}}\" will be permanently deleted.",
+            "confirm_warning": "All associated blog posts will be unlinked from this category.",
+            "btn_delete": "Delete Category"
+        },
+        "validation": {
+            "name_required": "Category name is required",
+            "name_max": "Category name must not exceed 50 characters",
+            "slug_max": "Slug must not exceed 60 characters"
+        }
+    }
+}

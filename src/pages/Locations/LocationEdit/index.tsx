@@ -10,13 +10,15 @@ import { mapLocationToFormInput } from '@/dataHelper/location.mapper';
 import { useState } from 'react';
 import DeleteLocationModal from '../components/DeleteLocationModal';
 import { useAuth } from '@/store/useUserStore';
+import Breadcrumbs from '@/components/common/Breadcrumbs';
 
 const LocationEdit = () => {
-    const { t } = useTranslation('location');
+    const { t } = useTranslation(['location', 'common']);
     const navigate = useNavigate();
     const { user } = useAuth();
     const { id } = useParams<{ id: string }>();
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const isAdmin = user?.role === 'admin';
 
@@ -72,49 +74,61 @@ const LocationEdit = () => {
                             <ArrowLeft className="w-5 h-5 text-slate-600" />
                         </Button>
                         <div>
-                            <div className="flex items-center gap-2 mb-0.5">
-                                <MapPin className="w-4 h-4 text-[#14b8a6]" />
-                                <span className="text-[10px] font-bold uppercase tracking-[0.1em] text-[#14b8a6]">
-                                    Administration
-                                </span>
+                            <div className="mb-1">
+                                <Breadcrumbs
+                                    icon={MapPin}
+                                    items={[
+                                        { label: 'sidebar.locations', path: ROUTES.LOCATIONS_LIST },
+                                        { label: 'sidebar.location_list', path: ROUTES.LOCATIONS_LIST },
+                                        { label: 'breadcrumb.edit' }
+                                    ]}
+                                />
                             </div>
-                            <h1 className="text-xl font-bold text-slate-900 tracking-tight">
-                                {isLoading ? t('common.loading') : t('edit_title')}
+                            <h1 className="text-xl font-bold text-slate-900 tracking-tight leading-none">
+                                {t('edit_title', { defaultValue: 'Chỉnh sửa Địa điểm' })}
                             </h1>
+                            {locationData && (
+                                <p className="text-xs text-slate-400 font-medium truncate max-w-[200px] sm:max-w-[400px] mt-1 select-all">
+                                    {locationData.name}
+                                </p>
+                            )}
                         </div>
                     </div>
 
-                    <div className="hidden md:flex items-center gap-3">
-                        {isAdmin && (
-                            <>
-                                <Button
-                                    variant="ghost"
-                                    onClick={() => setIsDeleteDialogOpen(true)}
-                                    className="rounded-xl text-red-500 hover:bg-red-50 font-semibold"
-                                >
-                                    <Trash2 className="w-4 h-4 mr-2" />
-                                    {t('actions.delete')}
-                                </Button>
-                                <div className="w-px h-6 bg-slate-200 mx-2" />
-                            </>
-                        )}
-                        <Button
-                            variant="outline"
-                            onClick={() => navigate(ROUTES.LOCATIONS_LIST)}
-                            className="rounded-xl border-slate-200 text-slate-600 hover:bg-slate-50 font-semibold"
-                        >
-                            {t('actions.cancel')}
-                        </Button>
-                        <Button
-                            form="location-form"
-                            type="submit"
-                            disabled={isLoading}
-                            className="rounded-xl bg-[#14b8a6] hover:bg-[#0d9488] text-white px-8 font-bold shadow-lg shadow-[#14b8a6]/20 transition-all hover:scale-[1.02] active:scale-95"
-                        >
-                            <Sparkles className="w-4 h-4 mr-2" />
-                            {t('form.actions.update_location')}
-                        </Button>
-                    </div>
+                    {!isLoading && locationData && (
+                        <div className="hidden md:flex items-center gap-3">
+                            {isAdmin && (
+                                <>
+                                    <Button
+                                        variant="ghost"
+                                        onClick={() => setIsDeleteDialogOpen(true)}
+                                        className="rounded-xl text-red-500 hover:bg-red-50 font-semibold"
+                                    >
+                                        <Trash2 className="w-4 h-4 mr-2" />
+                                        {t('actions.delete')}
+                                    </Button>
+                                    <div className="w-px h-6 bg-slate-200 mx-2" />
+                                </>
+                            )}
+                            <Button
+                                variant="outline"
+                                onClick={() => navigate(ROUTES.LOCATIONS_LIST)}
+                                className="rounded-xl border-slate-200 text-slate-600 hover:bg-slate-50 font-semibold h-10"
+                            >
+                                {t('actions.cancel')}
+                            </Button>
+                            <Button
+                                form="location-form"
+                                type="submit"
+                                isLoading={isSubmitting}
+                                disabled={isSubmitting}
+                                className="rounded-xl bg-[#14b8a6] hover:bg-[#0d9488] text-white px-8 font-bold shadow-lg shadow-[#14b8a6]/20 transition-all hover:scale-[1.02] active:scale-95 h-10"
+                            >
+                                <Sparkles className="w-4 h-4 mr-2" />
+                                {t('form.actions.update_location')}
+                            </Button>
+                        </div>
+                    )}
                 </div>
             </div>
 
@@ -123,19 +137,15 @@ const LocationEdit = () => {
                     <LocationFormSkeleton />
                 ) : (
                     <>
-                        <div className="mb-8">
-                            <h2 className="text-2xl font-bold text-slate-900 mb-2">
-                                {t('edit_subtitle', { name: locationData?.name })}
-                            </h2>
-                            <p className="text-slate-500 max-w-2xl">
-                                {t('form.page_subtitle')}
-                            </p>
-                        </div>
 
                         {locationData && (
                             <LocationForm 
                                 isEdit 
                                 initialData={locationData}
+                                onSubmittingChange={setIsSubmitting}
+                                onSuccess={() => {
+                                    navigate(ROUTES.LOCATIONS_DETAIL.replace(':id', id || ''));
+                                }}
                             />
                         )}
                     </>

@@ -15,7 +15,10 @@ import {
     MapPin,
     ChevronLeft,
     ChevronRight,
-    Mail
+    Mail,
+    Star,
+    Tag,
+    Globe
 } from 'lucide-react';
 import { ROUTES } from '@/routes/routes';
 import { useTranslation } from 'react-i18next';
@@ -30,6 +33,7 @@ const navItems = [
     { icon: LayoutDashboard, label: 'sidebar.dashboard', path: ROUTES.DASHBOARD },
     {
         icon: Map, label: 'sidebar.tours', path: '/admin/tours',
+        matchPaths: ['/admin/tours', ROUTES.TOURS_CATEGORIES],
         subItems: [
             { label: 'sidebar.tour_list', path: ROUTES.TOURS_LIST },
             { label: 'sidebar.tour_categories', path: ROUTES.TOURS_CATEGORIES },
@@ -38,6 +42,7 @@ const navItems = [
     },
     {
         icon: MapPin, label: 'sidebar.locations', path: '/admin/locations',
+        matchPaths: ['/admin/locations', ROUTES.LOCATIONS_CATEGORIES],
         subItems: [
             { label: 'sidebar.location_list', path: ROUTES.LOCATIONS_LIST },
             { label: 'sidebar.location_categories', path: ROUTES.LOCATIONS_CATEGORIES },
@@ -46,8 +51,10 @@ const navItems = [
     { icon: Hotel, label: 'sidebar.hotels', path: '/admin/hotels' },
     { icon: ShoppingCart, label: 'sidebar.orders', path: ROUTES.BOOKINGS_LIST },
     { icon: CreditCard, label: 'sidebar.payments', path: ROUTES.PAYMENTS_LIST },
+    { icon: Star, label: 'sidebar.ratings', path: ROUTES.RATINGS },
     {
         icon: FileText, label: 'sidebar.reports', path: '/admin/reports',
+        matchPaths: ['/admin/reports'],
         subItems: [
             { label: 'sidebar.reports_ratings', path: ROUTES.REPORTS_RATINGS },
             { label: 'sidebar.reports_bookings', path: ROUTES.REPORTS_BOOKINGS },
@@ -56,12 +63,21 @@ const navItems = [
             { label: 'sidebar.reports_users', path: ROUTES.REPORTS_USERS },
         ]
     },
-    { icon: FileText, label: 'sidebar.posts', path: '/admin/posts' },
+    {
+        icon: FileText, label: 'sidebar.blog', path: '/admin/blog',
+        matchPaths: ['/admin/blog', ROUTES.BLOG_POSTS, ROUTES.BLOG_CATEGORIES],
+        subItems: [
+            { label: 'sidebar.blog_posts', path: ROUTES.BLOG_POSTS },
+            { label: 'sidebar.blog_categories', path: ROUTES.BLOG_CATEGORIES },
+        ]
+    },
     { icon: Users, label: 'sidebar.users', path: ROUTES.USERS_LIST },
     { icon: Bell, label: 'sidebar.notifications', path: '/admin/notifications' },
     { icon: Mail, label: 'sidebar.contacts', path: ROUTES.CONTACTS },
 
     { icon: Settings, label: 'sidebar.settings', path: '/admin/settings' },
+    { icon: Tag, label: 'sidebar.promotions', path: ROUTES.PROMOTIONS },
+    { icon: Globe, label: 'sidebar.landing_pages', path: ROUTES.LANDING_PAGES },
 ];
 
 const Sidebar = () => {
@@ -87,9 +103,10 @@ const Sidebar = () => {
     
     // State to track which submenus are open
     const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({
-        '/admin/tours': location.pathname.startsWith('/admin/tours'),
-        '/admin/locations': location.pathname.startsWith('/admin/locations'),
-        '/admin/reports': location.pathname.startsWith('/admin/reports')
+        '/admin/tours': location.pathname.startsWith('/admin/tours') || location.pathname.startsWith(ROUTES.TOURS_CATEGORIES),
+        '/admin/locations': location.pathname.startsWith('/admin/locations') || location.pathname.startsWith(ROUTES.LOCATIONS_CATEGORIES),
+        '/admin/reports': location.pathname.startsWith('/admin/reports'),
+        '/admin/blog': location.pathname.startsWith('/admin/blog')
     });
 
     const toggleMenu = (path: string) => {
@@ -129,7 +146,8 @@ const Sidebar = () => {
                 <div className="space-y-1.5">
                     {navItems.map((item) => {
                         const hasSub = !!item.subItems;
-                        const isMainActive = location.pathname.startsWith(item.path) || (item.path === ROUTES.DASHBOARD && location.pathname === '/');
+                        const matchPaths = ('matchPaths' in item && item.matchPaths) ? item.matchPaths : [item.path];
+                        const isMainActive = matchPaths.some((matchPath) => location.pathname.startsWith(matchPath)) || (item.path === ROUTES.DASHBOARD && location.pathname === '/');
                         const isOpen = openMenus[item.path];
 
                         return (
