@@ -4,6 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Sparkles, BookOpen, Trash2, Copy, ExternalLink, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { ROUTES } from '@/routes/routes';
+import { appEnv } from '@/config/env';
 import Breadcrumbs from '@/components/common/Breadcrumbs';
 import BlogPostForm from './components/BlogPostForm';
 import { useAdminBlogPostQuery, useBlogMutations } from '@/hooks/useBlogQueries';
@@ -33,7 +34,7 @@ const BlogPostEdit = () => {
 
     const handlePreview = () => {
         if (blogPost?.slug) {
-            window.open(`http://localhost:3000/blog/${blogPost.slug}`, '_blank', 'noopener,noreferrer');
+            window.open(`${appEnv.publicWebUrl}/blog/${blogPost.slug}`, '_blank', 'noopener,noreferrer');
         }
     };
 

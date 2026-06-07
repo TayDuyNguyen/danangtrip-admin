@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { ArrowLeft, Edit, ExternalLink, Trash2, ChevronDown, Check, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { ROUTES } from '@/routes/routes';
+import { appEnv } from '@/config/env';
 import Breadcrumbs from '@/components/common/Breadcrumbs';
 import type { BlogPostViewModel } from '@/types';
 
@@ -47,7 +48,7 @@ export const BlogPostDetailHeader = ({
 
     const handlePreview = () => {
         if (post?.slug) {
-            window.open(`http://localhost:3000/blog/${post.slug}`, '_blank', 'noopener,noreferrer');
+            window.open(`${appEnv.publicWebUrl}/blog/${post.slug}`, '_blank', 'noopener,noreferrer');
         }
     };
 
