@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Sparkles, ExternalLink, Edit, Copy, Trash2, Calendar, Clock, Eye, Folder } from 'lucide-react';
 import { ROUTES } from '@/routes/routes';
+import { appEnv } from '@/config/env';
 import type { BlogPostViewModel } from '@/types';
 
 export interface BlogPostDetailSidebarProps {
@@ -29,7 +30,7 @@ export const BlogPostDetailSidebar = ({
 
     const handlePreview = () => {
         if (post.slug) {
-            window.open(`http://localhost:3000/blog/${post.slug}`, '_blank', 'noopener,noreferrer');
+            window.open(`${appEnv.publicWebUrl}/blog/${post.slug}`, '_blank', 'noopener,noreferrer');
         }
     };
 

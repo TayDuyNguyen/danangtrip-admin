@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "build:check": "tsc -b && vite build --outDir dist-prepush",
+    "deploy:check": "node scripts/check-deploy-env.mjs",
     "typecheck": "tsc -b",
     "lint": "eslint .",
     "preview": "vite preview",
