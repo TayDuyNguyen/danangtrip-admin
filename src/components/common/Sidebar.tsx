@@ -3,7 +3,6 @@ import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import {
     LayoutDashboard,
     Map,
-    Hotel,
     ShoppingCart,
     CreditCard,
     FileText,
@@ -48,7 +47,6 @@ const navItems = [
             { label: 'sidebar.location_categories', path: ROUTES.LOCATIONS_CATEGORIES },
         ]
     },
-    { icon: Hotel, label: 'sidebar.hotels', path: '/admin/hotels' },
     { icon: ShoppingCart, label: 'sidebar.orders', path: ROUTES.BOOKINGS_LIST },
     { icon: CreditCard, label: 'sidebar.payments', path: ROUTES.PAYMENTS_LIST },
     { icon: Star, label: 'sidebar.ratings', path: ROUTES.RATINGS },

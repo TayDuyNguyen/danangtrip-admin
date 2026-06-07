@@ -1,6 +1,5 @@
-import { useEffect, useId, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
-    Search,
     Bell,
     ClipboardList,
     Mail,
@@ -11,8 +10,8 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import LanguageSwitcher from '../LanguageSwitcher';
 import { useAuth } from '@/store';
-import { TextInput } from '@/components/ui/TextInput';
 import { ROUTES } from '@/routes/routes';
+import GlobalSearch from './GlobalSearch';
 
 const adminNotificationItems = [
     {
@@ -48,7 +47,6 @@ const Header = () => {
     const { user } = useAuth();
     const { t } = useTranslation('common');
     const navigate = useNavigate();
-    const searchId = useId();
     const [isNotificationOpen, setIsNotificationOpen] = useState(false);
     const notificationRef = useRef<HTMLDivElement>(null);
 
@@ -85,21 +83,7 @@ const Header = () => {
         <header className="h-20 border-b border-slate-100 bg-white/95 backdrop-blur-md sticky top-0 z-50 flex items-center justify-between px-8 py-3 transition-all duration-150">
             {/* Search Bar */}
             <div className="flex-1 flex items-center max-w-xl">
-                <div className="relative group w-full">
-                    <label htmlFor={searchId} className="sr-only">
-                        {t('header.search_label')}
-                    </label>
-                    <TextInput
-                        id={searchId}
-                        type="search"
-                        name="admin-quick-search"
-                        autoComplete="off"
-                        placeholder={t('header.search')}
-                        leftIcon={<Search className="h-5 w-5 text-slate-400 group-focus-within:text-[#14b8a6] transition-colors duration-150" />}
-                        containerClassName="group"
-                        className="rounded-full border-slate-100 pl-12 py-3 text-sm font-medium shadow-sm focus:ring-4 focus:ring-[#14b8a6]/10 focus:border-[#14b8a6]/50"
-                    />
-                </div>
+                <GlobalSearch />
             </div>
 
             {/* Actions Bar */}
