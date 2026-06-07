@@ -45,7 +45,7 @@ const Ratings = React.lazy(() => import('@/pages/Ratings'));
 const Settings = React.lazy(() => import('@/pages/Settings'));
 const Promotions = React.lazy(() => import('@/pages/Promotions'));
 const LandingPages = React.lazy(() => import('@/pages/LandingPages'));
-import ErrorPage from '@/pages/ErrorPage';
+const ErrorPage = React.lazy(() => import('@/pages/ErrorPage'));
 
 
 /**
@@ -74,18 +74,18 @@ const router = createBrowserRouter([
     {
         path: '/',
         element: <Navigate to={ROUTES.LOGIN} replace />,
-        errorElement: <ErrorPage />
+        errorElement: withSuspense(ErrorPage)
     },
     {
         element: <PublicRoute />,
-        errorElement: <ErrorPage />,
+        errorElement: withSuspense(ErrorPage),
         children: [
             { path: ROUTES.LOGIN, element: withSuspense(Login) },
         ],
     },
     {
         element: <PrivateRoute />,
-        errorElement: <ErrorPage />,
+        errorElement: withSuspense(ErrorPage),
         children: [
             {
                 element: <MainLayout />,

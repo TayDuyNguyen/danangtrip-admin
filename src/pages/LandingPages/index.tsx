@@ -147,13 +147,15 @@ const LandingPages = () => {
             />
 
             {/* Form Drawer */}
-            <LandingPageFormDrawer
-                isOpen={isDrawerOpen}
-                onClose={() => setIsDrawerOpen(false)}
-                selectedLanding={selectedLanding}
-                onSubmit={handleFormSubmit}
-                isSubmitting={createMutation.isPending || updateMutation.isPending}
-            />
+            {isDrawerOpen && (
+                <LandingPageFormDrawer
+                    isOpen
+                    onClose={() => setIsDrawerOpen(false)}
+                    selectedLanding={selectedLanding}
+                    onSubmit={handleFormSubmit}
+                    isSubmitting={createMutation.isPending || updateMutation.isPending}
+                />
+            )}
         </div>
     );
 };

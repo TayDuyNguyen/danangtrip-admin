@@ -52,3 +52,7 @@ export const apiClientEnv = {
     /** Request timeout; default 60s */
     timeoutMs: parseTimeoutMs(import.meta.env.VITE_API_TIMEOUT_MS, 60_000),
 } as const;
+
+export const appEnv = {
+    publicWebUrl: (import.meta.env.VITE_PUBLIC_WEB_URL || "http://localhost:3000").trim().replace(/\/+$/, ""),
+} as const;

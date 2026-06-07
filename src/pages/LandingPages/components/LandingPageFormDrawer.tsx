@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useForm, useFieldArray, Controller } from 'react-hook-form';
+import { useForm, useFieldArray, useWatch, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useTranslation } from 'react-i18next';
 import { X, Upload, Plus, Trash2, HelpCircle, FileText, Image as ImageIcon, ChevronRight } from 'lucide-react';
@@ -75,7 +75,6 @@ const LandingPageFormDrawer = ({
         handleSubmit,
         reset,
         setValue,
-        watch,
         control,
         formState: { errors, isDirty }
     } = useForm<FormFields>({
@@ -100,10 +99,11 @@ const LandingPageFormDrawer = ({
         control,
         name: 'content_blocks'
     });
-
-    const titleValue = watch('title');
-    const heroImageValue = watch('hero_image');
-    const ogImageValue = watch('og_image');
+    const contentBlocks = useWatch({ control, name: 'content_blocks' });
+    const [titleValue, heroImageValue, ogImageValue, seoTitleValue, seoDescriptionValue] = useWatch({
+        control,
+        name: ['title', 'hero_image', 'og_image', 'seo_title', 'seo_description']
+    });
 
     // Auto-generate slug from title (only when creating, not editing)
     useEffect(() => {
@@ -151,8 +151,7 @@ const LandingPageFormDrawer = ({
                 content_blocks: []
             });
         }
-        setActiveTab('content');
-    }, [selectedLanding, reset, isOpen]);
+    }, [selectedLanding, reset]);
 
     const handleFormSubmit = async (values: FormFields) => {
         let parsedFilters: Record<string, unknown> | null = null;
@@ -460,7 +459,7 @@ const LandingPageFormDrawer = ({
                                             invalid={!!errors.seo_title}
                                         />
                                         <span className="text-[10px] text-slate-400 font-semibold self-end">
-                                            {(watch('seo_title') || '').length}/70 ký tự
+                                            {(seoTitleValue || '').length}/70 ký tự
                                         </span>
                                     </div>
 
@@ -476,7 +475,7 @@ const LandingPageFormDrawer = ({
                                             invalid={!!errors.seo_description}
                                         />
                                         <span className="text-[10px] text-slate-400 font-semibold self-end">
-                                            {(watch('seo_description') || '').length}/160 ký tự
+                                            {(seoDescriptionValue || '').length}/160 ký tự
                                         </span>
                                     </div>
 
@@ -576,7 +575,7 @@ const LandingPageFormDrawer = ({
                                         {/* Blocks List */}
                                         <div className="space-y-4">
                                             {blockFields.map((field, index) => {
-                                                const type = watch(`content_blocks.${index}.type`);
+                                                const type = contentBlocks?.[index]?.type ?? field.type;
 
                                                 return (
                                                     <div 

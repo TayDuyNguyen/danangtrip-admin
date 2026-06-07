@@ -8,6 +8,7 @@ interface ImportMetaEnv {
     /** Optional axios timeout in ms (default 20000). */
     readonly VITE_API_TIMEOUT_MS?: string;
     readonly VITE_APP_NAME: string;
+    readonly VITE_PUBLIC_WEB_URL?: string;
     readonly VITE_STITCH_API_KEY?: string;
     readonly VITE_STITCH_PROJECT_ID?: string;
 }
