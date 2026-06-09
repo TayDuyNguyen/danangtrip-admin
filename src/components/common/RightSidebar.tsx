@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
     X,
     Settings,
@@ -6,19 +6,47 @@ import {
     AtSign,
     Phone,
     Camera,
-    ToggleLeft,
-    Clock
+    Clock,
+    Type,
+    Check
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import {
+    applyAdminFontSize,
+    getAdminPreferences,
+    setAdminPreferences,
+    type AdminFontSize,
+    type AdminPreferences
+} from '@/utils/storage';
 
 interface RightSidebarProps {
     isOpen: boolean;
     onClose: () => void;
 }
 
+const fontSizeOptions: Array<{ value: AdminFontSize; labelKey: string }> = [
+    { value: 'small', labelKey: 'common:right_sidebar.preferences.font_size_small' },
+    { value: 'medium', labelKey: 'common:right_sidebar.preferences.font_size_medium' },
+    { value: 'large', labelKey: 'common:right_sidebar.preferences.font_size_large' },
+];
+
 const RightSidebar = ({ isOpen, onClose }: RightSidebarProps) => {
     const { t } = useTranslation(['common', 'dashboard']);
     const [activeTab, setActiveTab] = useState<'profile' | 'settings'>('profile');
+    const [preferences, setPreferences] = useState<AdminPreferences>(() => getAdminPreferences());
+
+    useEffect(() => {
+        applyAdminFontSize(preferences.fontSize);
+    }, [preferences.fontSize]);
+
+    const updatePreference = <K extends keyof AdminPreferences>(key: K, value: AdminPreferences[K]) => {
+        setPreferences((current) => ({ ...current, [key]: value }));
+    };
+
+    const handleSavePreferences = () => {
+        setAdminPreferences(preferences);
+        applyAdminFontSize(preferences.fontSize);
+    };
 
     return (
         <>
@@ -44,6 +72,7 @@ const RightSidebar = ({ isOpen, onClose }: RightSidebarProps) => {
                     {/* Tab Navigation */}
                     <div className="flex p-2 bg-slate-100/50 mx-6 mt-6 rounded-2xl">
                         <button
+                            type="button"
                             onClick={() => setActiveTab('profile')}
                             className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-bold transition-all ${activeTab === 'profile' ? 'bg-white text-[#14b8a6] shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
                         >
@@ -51,6 +80,7 @@ const RightSidebar = ({ isOpen, onClose }: RightSidebarProps) => {
                             {t('common:right_sidebar.profile')}
                         </button>
                         <button
+                            type="button"
                             onClick={() => setActiveTab('settings')}
                             className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-bold transition-all ${activeTab === 'settings' ? 'bg-white text-[#14b8a6] shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
                         >
@@ -107,30 +137,31 @@ const RightSidebar = ({ isOpen, onClose }: RightSidebarProps) => {
                                 {/* Settings Section */}
                                 <div className="space-y-4">
                                     <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest pl-2">{t('common:right_sidebar.preferences.title')}</h4>
-                                    <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                                        <span className="text-sm font-bold text-slate-700">{t('common:right_sidebar.preferences.dark_mode')}</span>
-                                        <ToggleLeft size={24} className="text-slate-300 cursor-not-allowed" />
-                                    </div>
-                                    <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                                        <span className="text-sm font-bold text-slate-700">{t('common:right_sidebar.preferences.notifications')}</span>
-                                        <div className="w-10 h-5 bg-[#14b8a6] rounded-full relative cursor-pointer shadow-inner">
-                                            <div className="absolute right-0.5 top-0.5 w-4 h-4 bg-white rounded-full shadow-sm"></div>
+                                    <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                                        <div className="flex items-center gap-3 mb-3">
+                                            <Type size={16} className="text-[#14b8a6]" />
+                                            <span className="text-sm font-bold text-slate-700">{t('common:right_sidebar.preferences.font_size')}</span>
                                         </div>
-                                    </div>
-                                </div>
+                                        <div className="grid grid-cols-3 gap-2">
+                                            {fontSizeOptions.map((option) => {
+                                                const isActive = preferences.fontSize === option.value;
 
-                                <div className="space-y-4">
-                                    <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest pl-2">{t('common:right_sidebar.logs.title')}</h4>
-                                    <div className="space-y-3">
-                                        {[1, 2, 3].map((log) => (
-                                            <div key={log} className="flex gap-3 py-2">
-                                                <div className="w-2 h-2 rounded-full bg-[#14b8a6] mt-1.5 shrink-0"></div>
-                                                <div>
-                                                    <p className="text-[13px] font-medium text-slate-700 leading-tight mb-1">{t('common:right_sidebar.logs.login_success', { location: t('dashboard:logs.default_location') })}</p>
-                                                    <span className="text-[11px] text-slate-400">{t('common:right_sidebar.logs.time_ago', { count: 10 })}</span>
-                                                </div>
-                                            </div>
-                                        ))}
+                                                return (
+                                                    <button
+                                                        key={option.value}
+                                                        type="button"
+                                                        onClick={() => updatePreference('fontSize', option.value)}
+                                                        className={`h-10 rounded-xl border text-xs font-black transition-all flex items-center justify-center gap-1.5 ${isActive
+                                                            ? 'border-[#14b8a6] bg-[#dff7f4] text-[#0f766e] shadow-sm'
+                                                            : 'border-slate-200 bg-white text-slate-500 hover:border-[#14b8a6] hover:text-[#0f766e]'
+                                                            }`}
+                                                    >
+                                                        {isActive && <Check size={13} />}
+                                                        {t(option.labelKey)}
+                                                    </button>
+                                                );
+                                            })}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -139,7 +170,11 @@ const RightSidebar = ({ isOpen, onClose }: RightSidebarProps) => {
 
                     {/* Footer */}
                     <div className="p-6 bg-slate-50/50 border-t border-slate-100 text-center">
-                        <button className="w-full py-3.5 bg-slate-900 hover:bg-black text-white font-bold rounded-2xl transition-all shadow-xl shadow-slate-900/20 active:scale-95">
+                        <button
+                            type="button"
+                            onClick={handleSavePreferences}
+                            className="w-full py-3.5 bg-slate-900 hover:bg-black text-white font-bold rounded-2xl transition-all shadow-xl shadow-slate-900/20 active:scale-95"
+                        >
                             {t('right_sidebar.apply_changes')}
                         </button>
                     </div>

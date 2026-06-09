@@ -111,6 +111,24 @@
   --color-yellow-900: #713f12;
 }
 
+@layer base {
+  html {
+    font-size: 16px;
+  }
+
+  html[data-admin-font-size="small"] {
+    font-size: 15px;
+  }
+
+  html[data-admin-font-size="medium"] {
+    font-size: 16px;
+  }
+
+  html[data-admin-font-size="large"] {
+    font-size: 17px;
+  }
+}
+
 @layer components {
   .glow-effect {
     /* Tạo bóng nhiều lớp để có độ sâu */

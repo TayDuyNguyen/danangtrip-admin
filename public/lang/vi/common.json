@@ -142,11 +142,17 @@
         "preferences": {
             "title": "Tùy chỉnh hệ thống",
             "dark_mode": "Chế độ tối",
-            "notifications": "Thông báo"
+            "notifications": "Thông báo",
+            "save_login_location": "Lưu vị trí đăng nhập",
+            "font_size": "Kích thước chữ",
+            "font_size_small": "Nhỏ",
+            "font_size_medium": "Vừa",
+            "font_size_large": "Lớn"
         },
         "logs": {
             "title": "Hoạt động gần đây",
             "login_success": "Đăng nhập thành công từ {{location}}",
+            "login_success_without_location": "Đăng nhập thành công",
             "time_ago": "{{count}} phút trước"
         }
     },
