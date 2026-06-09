@@ -2,10 +2,12 @@ import { memo, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import i18n from 'i18next';
 import { ExternalLink, CheckCircle2, Clock, XCircle, ChevronRight, ChevronLeft, RefreshCw } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { clsx } from 'clsx';
 import type { BookingsResponse } from '@/dataHelper/dashboard.dataHelper';
 import { Skeleton } from '@/components/ui/Skeleton';
 import EmptyState from '@/components/common/EmptyState';
+import { ROUTES } from '@/routes/routes';
 
 type BookingStatus = 'pending' | 'confirmed' | 'completed' | 'cancelled' | '';
 
@@ -41,6 +43,7 @@ const RecentOrdersTable = ({
     isError,
 }: RecentOrdersTableProps) => {
     const { t } = useTranslation(['dashboard', 'common']);
+    const navigate = useNavigate();
     const orders = bookings?.data ?? [];
     const total = bookings?.meta?.total ?? 0;
     const lastPage = bookings?.meta?.last_page ?? 1;
@@ -68,7 +71,10 @@ const RecentOrdersTable = ({
     ];
 
     return (
-        <div className="bg-white rounded-[32px] border border-slate-200/60 shadow-sm overflow-hidden flex flex-col">
+        <div
+            data-testid="recent-orders-card"
+            className="bg-white rounded-[32px] border border-slate-200/60 shadow-sm overflow-hidden flex flex-col"
+        >
             {/* Header */}
             <div className="px-6 py-5 border-b border-slate-100 group/card transition-all duration-300">
                 <div className="flex items-center justify-between mb-4">
@@ -94,7 +100,10 @@ const RecentOrdersTable = ({
                             </button>
                         )}
                     </div>
-                    <button className="flex items-center gap-1 text-xs font-black text-[#14b8a6] hover:underline">
+                    <button
+                        onClick={() => navigate(ROUTES.BOOKINGS_LIST)}
+                        className="flex items-center gap-1 text-xs font-black text-[#14b8a6] hover:underline cursor-pointer"
+                    >
                         {t('tables.view_all')} <ExternalLink size={12} />
                     </button>
                 </div>
@@ -138,7 +147,7 @@ const RecentOrdersTable = ({
                         className="py-16"
                     />
                 ) : (
-                    <table className="w-full min-w-[980px] text-left">
+                    <table data-testid="recent-orders-table" className="w-full min-w-[980px] text-left">
                         <thead className="bg-slate-50/50 border-b border-slate-100">
                             <tr>
                                 <th className="px-6 py-3.5 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('tables.header_order_id')}</th>
@@ -177,9 +186,14 @@ const RecentOrdersTable = ({
                                     const initial = customerName ? customerName.charAt(0).toUpperCase() : '—';
 
                                     return (
-                                        <tr key={item.id} className="hover:bg-slate-50/40 transition-colors group cursor-pointer">
+                                        <tr
+                                            key={item.id}
+                                            data-testid="recent-order-row"
+                                            onClick={() => navigate(ROUTES.BOOKINGS_DETAIL.replace(':id', item.id))}
+                                            className="hover:bg-slate-50/40 transition-colors group cursor-pointer"
+                                        >
                                             <td className="px-6 py-4">
-                                                <span className="text-[12px] font-black text-slate-500 font-mono">{item.id}</span>
+                                                <span className="text-[12px] font-black text-slate-500 font-mono">{item.code}</span>
                                             </td>
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center gap-2.5 min-w-[150px]">
@@ -266,7 +280,10 @@ const RecentOrdersTable = ({
                             </button>
                         </div>
 
-                        <button className="text-[11px] font-black text-[#14b8a6] flex items-center gap-1 hover:underline">
+                        <button
+                            onClick={() => navigate(ROUTES.BOOKINGS_LIST)}
+                            className="text-[11px] font-black text-[#14b8a6] flex items-center gap-1 hover:underline cursor-pointer"
+                        >
                             {t('tables.manage_orders')} <ExternalLink size={10} />
                         </button>
                     </div>

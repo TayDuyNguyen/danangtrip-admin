@@ -11,7 +11,6 @@
     "typecheck": "tsc -b",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test:console": "playwright test tests/console-errors.spec.ts",
     "test": "npm run lint",
     "prepush:check": "node scripts/prepush-check.mjs",
     "prepare": "husky"

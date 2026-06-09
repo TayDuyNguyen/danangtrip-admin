@@ -39,6 +39,7 @@ const getMockRatingsReportData = (filters: {
     type: 'all' | 'location' | 'tour';
     page: number;
     per_page: number;
+    user_id?: string | number;
 }): RatingsReportViewModel => {
     const start = new Date(filters.from);
     const end = new Date(filters.to);
@@ -85,6 +86,8 @@ const getMockRatingsReportData = (filters: {
     const stats = {
         total: 200,
         totalTrend: 12.5,
+        new: 20,
+        viewed: 180,
         pending: 20,
         pendingTrend: -15.2,
         approved: 170,
@@ -148,8 +151,8 @@ const getMockRatingsReportData = (filters: {
     const selectedStatus = filters.status;
     const selectedType = filters.type;
 
-    let targetCount = 50;
-    if (selectedStatus !== 'all') {
+    let targetCount = filters.user_id ? 4 : 50;
+    if (selectedStatus !== 'all' && !filters.user_id) {
         targetCount = selectedStatus === 'approved' ? 35 : selectedStatus === 'pending' ? 10 : 5;
     }
 
@@ -177,7 +180,7 @@ const getMockRatingsReportData = (filters: {
             reviewableType: type,
             reviewableId: 100 + itemIdx,
             reviewableName: targetName,
-            userName: userNames[itemIdx % userNames.length],
+            userName: filters.user_id ? `User ${filters.user_id}` : userNames[itemIdx % userNames.length],
             userAvatar: '',
             createdAt: datePart,
             createdAtTime: timePart
@@ -211,26 +214,47 @@ const RatingsReport: React.FC = () => {
     const [hasAttemptedRealApi, setHasAttemptedRealApi] = useState<boolean>(false);
 
     // 1. Initial filters state synced with URL SearchParams
-    const initialFrom = searchParams.get('from') || getFirstDayOfMonth();
-    const initialTo = searchParams.get('to') || getToday();
+    const initialUserId = searchParams.get('user_id') || undefined;
+    const initialFrom = searchParams.get('from') !== null
+        ? (searchParams.get('from') || '')
+        : (initialUserId ? '' : getFirstDayOfMonth());
+    const initialTo = searchParams.get('to') !== null
+        ? (searchParams.get('to') || '')
+        : (initialUserId ? '' : getToday());
     const initialStatus = (searchParams.get('status') as 'all' | 'pending' | 'approved' | 'rejected') || 'all';
     const initialType = (searchParams.get('type') as 'all' | 'location' | 'tour') || 'all';
     const initialPage = Number(searchParams.get('page')) || 1;
 
-    const [localFilters, setLocalFilters] = useState({
+    const [localFilters, setLocalFilters] = useState<{
+        from: string;
+        to: string;
+        status: 'all' | 'pending' | 'approved' | 'rejected';
+        type: 'all' | 'location' | 'tour';
+        user_id?: string | number;
+    }>({
         from: initialFrom,
         to: initialTo,
         status: initialStatus,
         type: initialType,
+        user_id: initialUserId,
     });
 
-    const [activeFilters, setActiveFilters] = useState({
+    const [activeFilters, setActiveFilters] = useState<{
+        from: string;
+        to: string;
+        status: 'all' | 'pending' | 'approved' | 'rejected';
+        type: 'all' | 'location' | 'tour';
+        page: number;
+        per_page: number;
+        user_id?: string | number;
+    }>({
         from: initialFrom,
         to: initialTo,
         status: initialStatus,
         type: initialType,
         page: initialPage,
         per_page: 10,
+        user_id: initialUserId,
     });
 
     // 2. Synchronize active params with search query strings when they change
@@ -242,6 +266,9 @@ const RatingsReport: React.FC = () => {
             type: activeFilters.type,
             page: String(activeFilters.page),
         };
+        if (activeFilters.user_id) {
+            newParams.user_id = String(activeFilters.user_id);
+        }
         setSearchParams(newParams);
     }, [activeFilters, setSearchParams]);
 
@@ -312,6 +339,7 @@ const RatingsReport: React.FC = () => {
             to: getToday(),
             status: 'all' as const,
             type: 'all' as const,
+            user_id: undefined,
         };
         setLocalFilters(defaultFilters);
         setActiveFilters({

@@ -67,17 +67,21 @@
         "title": "Search Trends",
         "subtitle": "Keywords and places gaining attention in the last {{days}} days",
         "keywords": "Top keywords",
-        "clicked_keywords": "Most clicked keywords",
+        "clicked_keywords": "Most clicked items",
         "zero_result_keywords": "Zero-result keywords",
-        "locations": "Most viewed places",
+        "locations": "Trending Places",
+        "trending_searches": "Search Trends",
+        "location_label": "Location",
         "searches": "searches",
         "clicks": "clicks",
         "views": "views",
+        "bookings": "bookings",
         "empty": "No search trend data yet",
         "empty_keywords": "No highlighted keywords yet",
         "empty_clicked_keywords": "No clicked keyword data yet",
         "empty_zero_result_keywords": "No zero-result keywords yet",
         "empty_locations": "No highlighted places yet",
+        "empty_trending_searches": "No search trend data yet",
         "no_district": "No district"
     },
     "tables": {
@@ -105,7 +109,8 @@
         "manage_locations": "Manage Locations",
         "export_success": "Report exported successfully!",
         "export_failed": "Export failed. Please try again.",
-        "export_bookings_default_filename": "Booking report {{from}}–{{to}}.xlsx"
+        "export_bookings_default_filename": "Booking report {{from}}–{{to}}.xlsx",
+        "export_system_default_filename": "System report {{date}}.xlsx"
     },
     "pagination": {
         "showing": "Showing {{start}}–{{end}} of {{total}}",

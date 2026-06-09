@@ -23,6 +23,7 @@ import { UserActionsCard } from './components/UserActionsCard';
 import { ChangeRoleDialog } from './components/ChangeRoleDialog';
 import { ConfirmDeleteUserDialog } from './components/ConfirmDeleteUserDialog';
 import { mapApiErrorMessage } from '@/utils';
+import { Skeleton } from '@/components/ui/Skeleton';
 
 const UserDetail = () => {
     const { id } = useParams<{ id: string }>();
@@ -128,20 +129,8 @@ const UserDetail = () => {
         });
     };
 
-    // Skeletons during loading
-    if (isUserLoading) {
-        return (
-            <div className="flex flex-col items-center justify-center min-h-[400px] gap-3">
-                <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#14b8a6]"></div>
-                <span className="text-sm font-semibold text-slate-400 font-sans">
-                    {t('common:loading', 'Đang tải dữ liệu...')}
-                </span>
-            </div>
-        );
-    }
-
     // Error states
-    if (userError || !user) {
+    if (userError || (!isUserLoading && !user)) {
         return (
             <div className="p-[1px] rounded-3xl bg-gradient-to-br from-rose-500/20 via-slate-200/25 to-slate-100/10 shadow-xs max-w-lg mx-auto mt-12 animate-in fade-in duration-300">
                 <div className="bg-white rounded-[23px] p-8 text-center flex flex-col items-center justify-center font-sans">
@@ -165,93 +154,182 @@ const UserDetail = () => {
     }
 
     return (
-        <div className="space-y-8 animate-in fade-in duration-300">
-            {/* Header section */}
+        <div className="min-h-screen bg-[#f8fafc] pb-20 font-sans">
+            {/* Sticky Header */}
             <UserDetailHeader
                 user={user}
                 isSelf={isSelf}
                 onLockToggle={handleStatusToggle}
                 onRoleChange={() => setIsRoleDialogOpen(true)}
+                isLoading={isUserLoading}
             />
 
-            {/* Content Layout Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-                {/* Left Columns (Profile + Bookings Table + Ratings List) */}
-                <div className="lg:col-span-2 space-y-8">
-                    {/* Personal Info Card */}
-                    <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-both delay-75">
-                        <PersonalInfoCard user={user} />
-                    </div>
+            {/* Main Content Area */}
+            <div className="max-w-[1600px] mx-auto px-4 md:px-8 mt-8 animate-in fade-in duration-300">
+                {isUserLoading ? (
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+                        {/* Left Columns Skeletons */}
+                        <div className="lg:col-span-2 space-y-8">
+                            {/* Personal Info Card Skeleton */}
+                            <div className="bg-white rounded-3xl p-6 lg:p-8 border border-slate-100 shadow-xs space-y-6">
+                                <div className="flex items-center gap-2">
+                                    <Skeleton className="w-8 h-8 rounded-lg" />
+                                    <Skeleton className="w-48 h-6 rounded-md" />
+                                </div>
+                                <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
+                                    <div className="flex flex-col items-center gap-3 shrink-0">
+                                        <Skeleton className="w-24 h-24 rounded-full animate-pulse" />
+                                        <Skeleton className="w-16 h-5 rounded-full animate-pulse" />
+                                    </div>
+                                    <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 w-full">
+                                        {[...Array(10)].map((_, i) => (
+                                            <div key={i} className="flex flex-col gap-1 border-b border-[#F1F5F9] pb-3">
+                                                <Skeleton className="w-20 h-3 rounded-md" />
+                                                <Skeleton className="w-32 h-5 rounded-md mt-1" />
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            {/* Bookings Table Skeleton */}
+                            <div className="bg-white rounded-3xl p-6 lg:p-8 border border-slate-100 shadow-xs space-y-4">
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-2">
+                                        <Skeleton className="w-8 h-8 rounded-lg" />
+                                        <Skeleton className="w-48 h-6 rounded-md" />
+                                    </div>
+                                    <Skeleton className="w-20 h-4 rounded-md" />
+                                </div>
+                                <div className="space-y-3 mt-4">
+                                    <Skeleton className="w-full h-10 rounded-md" />
+                                    <Skeleton className="w-full h-12 rounded-md" />
+                                    <Skeleton className="w-full h-12 rounded-md" />
+                                    <Skeleton className="w-full h-12 rounded-md" />
+                                </div>
+                            </div>
+                        </div>
 
-                    {/* Recent Bookings Table */}
-                    <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-both delay-150">
-                        <UserBookingsTable
-                            bookings={bookings}
-                            totalCount={bookingsTotal}
-                            isLoading={isBookingsLoading}
-                            userId={user.id}
-                        />
-                    </div>
+                        {/* Right Column Skeletons */}
+                        <div className="space-y-6">
+                            {/* Stats Skeleton */}
+                            <div className="grid grid-cols-2 gap-4">
+                                {[...Array(4)].map((_, i) => (
+                                    <div key={i} className="bg-white rounded-2xl p-4 border border-slate-100 shadow-xs space-y-2">
+                                        <Skeleton className="w-8 h-8 rounded-lg" />
+                                        <Skeleton className="w-16 h-6 rounded-md" />
+                                        <Skeleton className="w-20 h-3 rounded-md" />
+                                    </div>
+                                ))}
+                            </div>
 
-                    {/* Recent Ratings List */}
-                    <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-both delay-200">
-                        <UserRatingsList
-                            ratings={ratings}
-                            totalCount={ratingsTotal}
-                            isLoading={isRatingsLoading}
-                            userId={user.id}
-                        />
-                    </div>
-                </div>
+                            {/* Account Sidebar Skeleton */}
+                            <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-xs space-y-4">
+                                <Skeleton className="w-32 h-5 rounded-md" />
+                                <div className="space-y-3">
+                                    {[...Array(4)].map((_, i) => (
+                                        <div key={i} className="flex justify-between items-center py-2 border-b border-slate-50">
+                                            <Skeleton className="w-20 h-4 rounded-md" />
+                                            <Skeleton className="w-24 h-4 rounded-md" />
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
 
-                {/* Right Columns (Stats + Metadata Card + Actions Card) */}
-                <div className="space-y-6 lg:sticky lg:top-24">
-                    {/* Stats Card */}
-                    <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-both delay-100">
-                        <UserStatsCards
-                            bookingsCount={user.bookingsCount}
-                            ratingsCount={user.reviewsCount} // Note mapper maps raw.reviews_count to user.reviewsCount
-                            favoritesCount={user.favoritesCount}
-                            totalSpend={user.totalSpend}
-                        />
+                            {/* Actions Card Skeleton */}
+                            <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-xs space-y-4">
+                                <Skeleton className="w-32 h-5 rounded-md" />
+                                <Skeleton className="w-full h-11 rounded-xl" />
+                                <Skeleton className="w-full h-11 rounded-xl" />
+                            </div>
+                        </div>
                     </div>
+                ) : (
+                    user && (
+                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+                            {/* Left Columns (Profile + Bookings Table + Ratings List) */}
+                            <div className="lg:col-span-2 space-y-8">
+                                {/* Personal Info Card */}
+                                <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-both delay-75">
+                                    <PersonalInfoCard user={user} />
+                                </div>
 
-                    {/* Account Settings Status Card */}
-                    <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-both delay-200">
-                        <UserAccountSidebar user={user} />
-                    </div>
+                                {/* Recent Bookings Table */}
+                                <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-both delay-150">
+                                    <UserBookingsTable
+                                        bookings={bookings}
+                                        totalCount={bookingsTotal}
+                                        isLoading={isBookingsLoading}
+                                        userId={user.id}
+                                    />
+                                </div>
 
-                    {/* Quick actions panel */}
-                    <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-both delay-300">
-                        <UserActionsCard
-                            user={user}
-                            isSelf={isSelf}
-                            onLockToggle={handleStatusToggle}
-                            onRoleChange={() => setIsRoleDialogOpen(true)}
-                            onDelete={() => setIsDeleteDialogOpen(true)}
-                        />
-                    </div>
-                </div>
+                                {/* Recent Ratings List */}
+                                <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-both delay-200">
+                                    <UserRatingsList
+                                        ratings={ratings}
+                                        totalCount={ratingsTotal}
+                                        isLoading={isRatingsLoading}
+                                        userId={user.id}
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Right Columns (Stats + Metadata Card + Actions Card) */}
+                            <div className="space-y-6 lg:sticky lg:top-24">
+                                {/* Stats Card */}
+                                <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-both delay-100">
+                                    <UserStatsCards
+                                        bookingsCount={user.bookingsCount}
+                                        ratingsCount={user.reviewsCount} // Note mapper maps raw.reviews_count to user.reviewsCount
+                                        favoritesCount={user.favoritesCount}
+                                        totalSpend={user.totalSpend}
+                                    />
+                                </div>
+
+                                {/* Account Settings Status Card */}
+                                <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-both delay-200">
+                                    <UserAccountSidebar user={user} />
+                                </div>
+
+                                {/* Quick actions panel */}
+                                <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-both delay-300">
+                                    <UserActionsCard
+                                        user={user}
+                                        isSelf={isSelf}
+                                        onLockToggle={handleStatusToggle}
+                                        onRoleChange={() => setIsRoleDialogOpen(true)}
+                                        onDelete={() => setIsDeleteDialogOpen(true)}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    )
+                )}
             </div>
 
             {/* Change Role Dialog */}
-            <ChangeRoleDialog
-                key={`${user.id}-${user.role}`}
-                isOpen={isRoleDialogOpen}
-                onClose={() => setIsRoleDialogOpen(false)}
-                onConfirm={handleRoleChangeSubmit}
-                currentRole={user.role}
-                isUpdating={updateRoleMutation.isPending}
-            />
+            {user && (
+                <>
+                    <ChangeRoleDialog
+                        key={`${user.id}-${user.role}`}
+                        isOpen={isRoleDialogOpen}
+                        onClose={() => setIsRoleDialogOpen(false)}
+                        onConfirm={handleRoleChangeSubmit}
+                        currentRole={user.role}
+                        isUpdating={updateRoleMutation.isPending}
+                    />
 
-            {/* Confirm Delete Dialog */}
-            <ConfirmDeleteUserDialog
-                isOpen={isDeleteDialogOpen}
-                onClose={() => setIsDeleteDialogOpen(false)}
-                onConfirm={handleDeleteSubmit}
-                userName={user.fullName}
-                isDeleting={deleteMutation.isPending}
-            />
+                    {/* Confirm Delete Dialog */}
+                    <ConfirmDeleteUserDialog
+                        isOpen={isDeleteDialogOpen}
+                        onClose={() => setIsDeleteDialogOpen(false)}
+                        onConfirm={handleDeleteSubmit}
+                        userName={user.fullName}
+                        isDeleting={deleteMutation.isPending}
+                    />
+                </>
+            )}
         </div>
     );
 };

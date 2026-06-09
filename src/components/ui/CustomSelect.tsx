@@ -27,6 +27,7 @@ const CustomSelect = <IsMulti extends boolean = false>({
     isSearchable = false,
     leftIcon,
     size = 'md',
+    menuPortalTarget = typeof document !== 'undefined' ? document.body : undefined,
     ...props 
 }: CustomSelectProps<IsMulti>) => {
     const { t } = useTranslation('common');
@@ -154,6 +155,10 @@ const CustomSelect = <IsMulti extends boolean = false>({
             color: '#94A3B8',
             fontWeight: '500',
         }),
+        menuPortal: (provided) => ({
+            ...provided,
+            zIndex: 9999,
+        }),
     };
 
     return (
@@ -172,6 +177,7 @@ const CustomSelect = <IsMulti extends boolean = false>({
                 styles={customStyles}
                 className={className}
                 unstyled={false} // We use styles object but can use classNames too
+                menuPortalTarget={menuPortalTarget}
                 {...props}
             />
             <style sx-only="true">{`

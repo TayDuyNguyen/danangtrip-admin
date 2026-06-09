@@ -49,7 +49,8 @@
         "total_revenue": "Tổng doanh thu",
         "daily_average": "TB / Ngày",
         "total_transactions": "Tổng giao dịch",
-        "total_refunded": "Đã hoàn tiền"
+        "total_refunded": "Đã hoàn tiền",
+        "vs_prev_period": "so với kỳ trước"
     },
     "charts": {
         "trend_title": "Xu hướng doanh thu",

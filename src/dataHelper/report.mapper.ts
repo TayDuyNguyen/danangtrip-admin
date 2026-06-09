@@ -110,6 +110,7 @@ export const mapReportRatingItem = (raw: RawRatingsReportItem): RatingsReportIte
 type RawRatingAggregateItem = {
     date: string;
     status: RatingsReportItemViewModel['status'];
+    is_new: boolean;
     count: number | string;
 };
 
@@ -117,6 +118,8 @@ const emptyRatingsReport = (): RatingsReportViewModel => ({
     stats: {
         total: 0,
         totalTrend: 0,
+        new: 0,
+        viewed: 0,
         pending: 0,
         pendingTrend: 0,
         approved: 0,
@@ -156,6 +159,8 @@ const emptyRatingsReport = (): RatingsReportViewModel => ({
 
 const mapAggregateRatingsReport = (rows: RawRatingAggregateItem[]): RatingsReportViewModel => {
     const totalsByDate = new Map<string, { total: number; approved: number }>();
+    let newCount = 0;
+    let viewedCount = 0;
     const statusDist: Record<RatingsReportItemViewModel['status'], number> = {
         pending: 0,
         approved: 0,
@@ -173,6 +178,12 @@ const mapAggregateRatingsReport = (rows: RawRatingAggregateItem[]): RatingsRepor
 
         if (row.status in statusDist) {
             statusDist[row.status] += count;
+        }
+
+        if (row.is_new) {
+            newCount += count;
+        } else {
+            viewedCount += count;
         }
     });
 
@@ -214,6 +225,8 @@ const mapAggregateRatingsReport = (rows: RawRatingAggregateItem[]): RatingsRepor
         stats: {
             total,
             totalTrend: 0,
+            new: newCount,
+            viewed: viewedCount,
             pending: statusDist.pending,
             pendingTrend: 0,
             approved: statusDist.approved,
@@ -255,12 +268,16 @@ export const mapRatingsReport = (raw: RawRatingsReport | RawRatingAggregateItem[
     const statsTotal = summary.total_count || 0;
     const statsPending = summary.pending_count || 0;
     const statsApproved = summary.approved_count || 0;
+    const statsNew = summary.new_count || 0;
+    const statsViewed = summary.viewed_count ?? Math.max(0, statsTotal - statsNew);
     const statsAverage = toNumberSafe(summary.average_score, 0);
 
     // 1. Stats row trends
     const stats = {
         total: statsTotal,
         totalTrend: summary.trends?.total || 0,
+        new: statsNew,
+        viewed: statsViewed,
         pending: statsPending,
         pendingTrend: summary.trends?.pending || 0,
         approved: statsApproved,
@@ -572,7 +589,19 @@ export const mapRevenueReportItem = (raw: RawRevenueReportItem): RevenueReportIt
 };
 
 /**
- * Main mapper transforming raw revenue API responses into RevenueReportViewModel
+ * Calculate percentage change between current and previous value.
+ * Returns 0 if previous is 0 and current is also 0.
+ * Returns 100 if previous is 0 but current > 0.
+ * Returns -100 if previous > 0 but current is 0.
+ */
+const calcTrend = (current: number, prev: number): number => {
+    if (prev === 0) return current > 0 ? 100.0 : 0.0;
+    return Number(((current - prev) / prev * 100).toFixed(1));
+};
+
+/**
+ * Main mapper transforming raw revenue API responses into RevenueReportViewModel.
+ * Accepts an optional previous-period trend response to calculate real % trends.
  */
 export const mapRevenueReport = (
     rawTrend: RawRevenueTrendResponse | undefined | null,
@@ -584,25 +613,41 @@ export const mapRevenueReport = (
         per_page: number;
         total: number;
     } | undefined | null,
-    filters: { from: string; to: string }
+    filters: { from: string; to: string },
+    prevRawTrend?: RawRevenueTrendResponse | null,
 ): RevenueReportViewModel => {
     const trendStats = rawTrend?.stats || [];
-    
-    // Total Revenue is sum of success payments in trend
+    const prevTrendStats = prevRawTrend?.stats || [];
+
+    // ── Current period aggregates ──
     const totalRevenue = trendStats.reduce((sum, item) => sum + toNumberSafe(item.total_revenue, 0), 0);
-    
-    // Count success transactions
     const totalTransactions = trendStats.reduce((sum, item) => sum + toNumberSafe(item.transaction_count, 0), 0);
-    
-    // Compute daily average
+
+    // ── Previous period aggregates (for trend %) ──
+    const prevTotalRevenue = prevTrendStats.reduce((sum, item) => sum + toNumberSafe(item.total_revenue, 0), 0);
+    const prevTotalTransactions = prevTrendStats.reduce((sum, item) => sum + toNumberSafe(item.transaction_count, 0), 0);
+
+    // Compute daily average for current & previous
     const dateFrom = new Date(filters.from);
     const dateTo = new Date(filters.to);
     const daysDiff = Math.max(1, Math.round((dateTo.getTime() - dateFrom.getTime()) / (1000 * 3600 * 24)) + 1);
     const dailyAverage = Number((totalRevenue / daysDiff).toFixed(0));
-    
-    // Total Refunded (from raw payments data or fallback)
+
+    const prevDaysDiff = prevTrendStats.length > 0 ? prevTrendStats.length : daysDiff;
+    const prevDailyAverage = prevDaysDiff > 0 ? Number((prevTotalRevenue / prevDaysDiff).toFixed(0)) : 0;
+
+    // Total Refunded (from raw payments data)
     const refundedPayments = rawPayments?.data.filter(p => p.payment_status === 'refunded') || [];
     const totalRefunded = refundedPayments.reduce((sum, p) => sum + toNumberSafe(p.amount, 0), 0);
+
+    // Previous refunded (approximate: not available directly, so we show 0 change if no prev data)
+    const prevRefunded = 0; // No prev-period payments list fetched — show 0 if unknown
+
+    // ── Trend percentages ──
+    const totalRevenueTrend = calcTrend(totalRevenue, prevTotalRevenue);
+    const dailyAverageTrend = calcTrend(dailyAverage, prevDailyAverage);
+    const totalTransactionsTrend = calcTrend(totalTransactions, prevTotalTransactions);
+    const totalRefundedTrend = prevRefunded === 0 ? 0 : calcTrend(totalRefunded, prevRefunded);
 
     // 2. Charts -> Trend Chart Point mapping
     const trend: RevenueTrendChartPoint[] = trendStats.map(point => ({
@@ -626,7 +671,6 @@ export const mapRevenueReport = (
         zalopay: { revenue: 0, count: 0, color: '#0084FF', labelKey: 'revenue.gateway.zalopay' },
     };
 
-    // Calculate actual gateway metrics from payments data
     let totalGatewayRevenue = 0;
     if (rawPayments?.data) {
         rawPayments.data.forEach(p => {
@@ -667,13 +711,13 @@ export const mapRevenueReport = (
     return {
         stats: {
             totalRevenue,
-            totalRevenueTrend: 12.5,
+            totalRevenueTrend,
             dailyAverage,
-            dailyAverageTrend: 8.3,
+            dailyAverageTrend,
             totalTransactions,
-            totalTransactionsTrend: 15.2,
+            totalTransactionsTrend,
             totalRefunded,
-            totalRefundedTrend: -4.8,
+            totalRefundedTrend,
         },
         charts: {
             trend,

@@ -57,6 +57,7 @@ const CustomTooltip = ({ active, payload, label }: TooltipProps) => {
 interface ChartCardProps {
     title: string;
     subtitle: string;
+    testId?: string;
     badge?: string;
     filter?: ReactNode;
     refreshTooltip?: string;
@@ -69,13 +70,16 @@ interface ChartCardProps {
 }
 
 const ChartCard = ({
-    title, subtitle, badge, filter,
+    title, subtitle, testId, badge, filter,
     refreshTooltip, onRefresh, isRefreshing, isLoading, isError, isEmpty, children,
 }: ChartCardProps) => {
     const { t } = useTranslation('dashboard');
     
     return (
-        <div className="bg-white p-6 rounded-[32px] border border-slate-100 shadow-sm h-[400px] flex flex-col hover:shadow-xl transition-all duration-700 group/card">
+        <div
+            data-testid={testId}
+            className="bg-white p-6 rounded-[32px] border border-slate-100 shadow-sm h-[400px] flex flex-col hover:shadow-xl transition-all duration-700 group/card"
+        >
             <div className="flex items-center justify-between mb-4 shrink-0">
                 <div className="flex items-center gap-3">
                     <div>
@@ -197,6 +201,7 @@ const DashboardCharts = (props: ExtendedDashboardChartsProps) => {
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
             {/* Chart 1: Daily Revenue (Line) */}
             <ChartCard
+                testId="revenue-chart-card"
                 title={t('charts.daily_revenue')}
                 subtitle={t(`revenue.${revenuePeriod}`)}
                 badge={t('charts.badge_total_short', { value: `${fmtInt(revenueSeriesTotal)} ${t('charts.unit_currency')}` })}
@@ -258,6 +263,7 @@ const DashboardCharts = (props: ExtendedDashboardChartsProps) => {
 
             {/* Chart 2: Booking Trend (Bar) */}
             <ChartCard
+                testId="booking-trend-chart-card"
                 title={t('charts.booking_trend')}
                 subtitle={t('charts.total_orders_count', { count: bookingTrendTotal })}
                 badge={t('charts.badge_total_short', { value: fmtInt(bookingTrendTotal) })}
@@ -313,6 +319,7 @@ const DashboardCharts = (props: ExtendedDashboardChartsProps) => {
 
             {/* Chart 3: User Growth (Area) */}
             <ChartCard
+                testId="user-growth-chart-card"
                 title={t('charts.user_growth')}
                 subtitle={t('charts.last_12_months')}
                 badge={t('charts.badge_total_short', { value: fmtInt(userGrowthNewTotal) })}
@@ -366,6 +373,7 @@ const DashboardCharts = (props: ExtendedDashboardChartsProps) => {
 
             {/* Chart 4: Order Status (Vertical Bar) */}
             <ChartCard
+                testId="order-status-chart-card"
                 title={t('charts.order_status')}
                 subtitle={t('charts.allocation')}
                 badge={t('charts.badge_total_short', { value: fmtInt(orderStatusTotal) })}

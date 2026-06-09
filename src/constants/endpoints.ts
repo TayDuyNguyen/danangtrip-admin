@@ -23,12 +23,16 @@ export const API_ENDPOINTS = {
         SEARCH_TRENDS: '/admin/dashboard/search-trends',
         // Recent orders table
         BOOKINGS: '/admin/bookings',
+        EXPORT: '/admin/dashboard/export',
+        // Notification bell - unread counts per category (polled every 30s)
+        NOTIFICATION_COUNTS: '/admin/dashboard/notification-counts',
     },
     // Fallback endpoints for missing stats fields
     RATINGS: {
         LIST: '/admin/ratings',
         APPROVE: (id: string | number) => `/admin/ratings/${id}/approve`,
         REJECT: (id: string | number) => `/admin/ratings/${id}/reject`,
+        MARK_VIEWED: (id: string | number) => `/admin/ratings/${id}/mark-viewed`,
         DELETE: (id: string | number) => `/admin/ratings/${id}`,
     },
     REPORTS: {

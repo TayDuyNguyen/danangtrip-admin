@@ -28,10 +28,16 @@ const BookingFilter = ({ filters, onFilterChange }: Props) => {
     const [localFilters, setLocalFilters] = useState<BookingListFilters>(() => createLocalFilters(filters));
 
     const handleLocalChange = <K extends keyof BookingListFilters>(key: K, value: BookingListFilters[K]) => {
-        setLocalFilters((prev) => ({
-            ...prev,
-            [key]: value,
-        }));
+        setLocalFilters((prev) => {
+            const next = {
+                ...prev,
+                [key]: value,
+            };
+            if (key === 'status' || key === 'payment_status') {
+                applyFilters(next);
+            }
+            return next;
+        });
     };
 
     const applyFilters = (nextFilters = localFilters) => {
@@ -56,7 +62,7 @@ const BookingFilter = ({ filters, onFilterChange }: Props) => {
     const handleReset = () => {
         const resetFilters = createLocalFilters({
             search: '',
-            user_id: filters.user_id,
+            user_id: undefined,
             status: 'all',
             payment_status: 'all',
             date_from: '',
@@ -72,7 +78,7 @@ const BookingFilter = ({ filters, onFilterChange }: Props) => {
     const clearFilter = (key: keyof BookingListFilters) => {
         const nextFilters: BookingListFilters = {
             ...localFilters,
-            [key]: key === 'status' || key === 'payment_status' ? 'all' : '',
+            [key]: key === 'status' || key === 'payment_status' ? 'all' : key === 'user_id' ? undefined : '',
         };
 
         setLocalFilters(nextFilters);
@@ -95,6 +101,10 @@ const BookingFilter = ({ filters, onFilterChange }: Props) => {
         localFilters.date_to && {
             key: 'date_to' as const,
             label: `${t('filters.to_label')}: ${localFilters.date_to}`,
+        },
+        localFilters.user_id && {
+            key: 'user_id' as const,
+            label: `${t('filters.user_id_label', 'Người dùng ID')}: ${localFilters.user_id}`,
         },
     ].filter(Boolean) as { key: keyof BookingListFilters; label: string }[];
 

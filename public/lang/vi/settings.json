@@ -44,8 +44,8 @@
         "payment": {
             "title": "Tích hợp cổng thanh toán",
             "subtitle": "Bật hoặc tắt tức thì các phương thức thanh toán trong luồng đặt tour.",
-            "payos": "Cổng payOS",
-            "payos_help": "Cổng thanh toán tự động qua link chuyển khoản nhanh (Khuyên dùng).",
+            "sepay": "Cổng SePay VietQR",
+            "sepay_help": "Cổng thanh toán QR chuyển khoản tự động qua SePay (Khuyên dùng).",
             "cod": "Chuyển khoản / Tiền mặt (COD)",
             "cod_help": "Phương thức xác nhận thủ công hoặc chuyển khoản ngân hàng trực tiếp.",
             "vnpay": "Cổng VNPay",

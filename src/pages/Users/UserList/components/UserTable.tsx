@@ -356,12 +356,12 @@ export const UserTable = ({
                                                 disabled={isSelf}
                                                 onClick={() => onStatusToggle(userItem.id, userItem.status)}
                                                 className={`
-                                                    inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-extrabold rounded-full border backdrop-blur-xs transition-all duration-200 uppercase cursor-pointer select-none
+                                                    inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-extrabold rounded-full border backdrop-blur-xs transition-colors duration-150 uppercase cursor-pointer select-none
                                                     ${statusBadgeColors[userItem.status] || statusBadgeColors.active}
                                                     hover:brightness-95 disabled:opacity-80 disabled:cursor-not-allowed
                                                 `}
                                             >
-                                                <span className={`w-1.5 h-1.5 rounded-full ${userItem.status === "active" ? "bg-emerald-500 animate-pulse" : "bg-rose-500"}`}></span>
+                                                <span className={`w-1.5 h-1.5 rounded-full ${userItem.status === "active" ? "bg-emerald-500" : "bg-rose-500"}`}></span>
                                                 {t(`status.${userItem.status}`)}
                                             </button>
                                         </td>

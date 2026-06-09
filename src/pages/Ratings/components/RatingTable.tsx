@@ -3,7 +3,7 @@ import type { RatingViewModel } from '@/dataHelper/rating.dataHelper';
 import { 
     Star, MapPin, Map, Clock, Check, X, 
     Trash2, ExternalLink, ChevronLeft, ChevronRight, 
-    RefreshCw, AlertTriangle
+    RefreshCw, AlertTriangle, Eye
 } from 'lucide-react';
 import clsx from 'clsx';
 import CustomSelect, { type Option } from "@/components/ui/CustomSelect";
@@ -18,7 +18,7 @@ interface RatingTableProps {
     onSelectToggle: (id: number, checked: boolean) => void;
     isSelectedAll: boolean;
     onSelectAllChange: (checked: boolean) => void;
-    onApprove: (id: number) => void;
+    onMarkViewed: (id: number) => void;
     onRejectClick: (item: RatingViewModel) => void;
     onDelete: (id: number) => void;
     
@@ -44,7 +44,7 @@ export const RatingTable = ({
     onSelectToggle,
     isSelectedAll,
     onSelectAllChange,
-    onApprove,
+    onMarkViewed,
     onRejectClick,
     onDelete,
     page,
@@ -306,18 +306,20 @@ export const RatingTable = ({
                                         {/* Status */}
                                         <td className="py-4 px-6 text-xs">
                                             <div className="flex flex-col gap-1 items-start">
-                                                {rating.status === 'pending' && (
-                                                    <span className="inline-flex items-center gap-1 bg-amber-50 text-amber-600 text-[10px] font-black px-2 py-0.5 rounded-full border border-amber-100">
+                                                {/* is_new badge: Mới / Đã xem */}
+                                                {rating.isNew ? (
+                                                    <span className="inline-flex items-center gap-1 bg-amber-50 text-amber-600 text-[10px] font-black px-2 py-0.5 rounded-full border border-amber-100 animate-pulse">
                                                         <Clock size={10} />
-                                                        {t('filter.status_pending')}
+                                                        {t('filter.read_status_new', 'Mới')}
                                                     </span>
-                                                )}
-                                                {rating.status === 'approved' && (
-                                                    <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-600 text-[10px] font-black px-2 py-0.5 rounded-full border border-emerald-100">
+                                                ) : (
+                                                    <span className="inline-flex items-center gap-1 bg-slate-100 text-slate-500 text-[10px] font-black px-2 py-0.5 rounded-full border border-slate-200">
                                                         <Check size={10} />
-                                                        {t('filter.status_approved')}
+                                                        {t('filter.read_status_viewed', 'Đã xem')}
                                                     </span>
                                                 )}
+
+                                                {/* Public status badge */}
                                                 {rating.status === 'rejected' && (
                                                     <span className="inline-flex items-center gap-1 bg-rose-50 text-rose-600 text-[10px] font-black px-2 py-0.5 rounded-full border border-rose-100">
                                                         <X size={10} />
@@ -343,42 +345,29 @@ export const RatingTable = ({
                                         {/* Actions */}
                                         <td className="py-4 px-6 text-right">
                                             <div className="flex justify-end items-center gap-1.5">
-                                                {/* PENDING Actions */}
-                                                {rating.status === 'pending' && (
-                                                    <>
-                                                        <button
-                                                            onClick={() => onApprove(rating.id)}
-                                                            disabled={isMutating}
-                                                            className="inline-flex items-center gap-1 px-2.5 py-1.5 text-[11px] font-bold rounded-lg bg-[#14b8a6] hover:bg-[#0f766e] text-white disabled:opacity-50 transition-all cursor-pointer shadow-xs"
-                                                            title={t('table.tooltip_approve')}
-                                                        >
-                                                            <Check size={12} />
-                                                            <span>{t('actions.approve', 'Duyệt')}</span>
-                                                        </button>
-                                                        <button
-                                                            onClick={() => onRejectClick(rating)}
-                                                            disabled={isMutating}
-                                                            className="inline-flex items-center gap-1 px-2.5 py-1.5 text-[11px] font-bold rounded-lg border border-rose-100 bg-rose-50 text-rose-500 hover:bg-rose-600 hover:text-white disabled:opacity-50 transition-all cursor-pointer"
-                                                            title={t('table.tooltip_reject')}
-                                                        >
-                                                            <X size={12} />
-                                                            <span>{t('actions.reject', 'Từ chối')}</span>
-                                                        </button>
-                                                    </>
-                                                )}
-
-                                                {/* APPROVED Actions */}
-                                                {rating.status === 'approved' && (
+                                                {/* Mark as Viewed button - only show when isNew=true */}
+                                                {rating.isNew && (
                                                     <button
-                                                        onClick={() => onRejectClick(rating)}
+                                                        onClick={() => onMarkViewed(rating.id)}
                                                         disabled={isMutating}
-                                                        className="inline-flex items-center gap-1 px-2.5 py-1.5 text-[11px] font-bold rounded-lg border border-amber-100 bg-amber-50 text-amber-600 hover:bg-amber-500 hover:text-white disabled:opacity-50 transition-all cursor-pointer"
-                                                        title={t('actions.cancel_approve', 'Hủy duyệt')}
+                                                        className="inline-flex items-center gap-1 px-2.5 py-1.5 text-[11px] font-bold rounded-lg bg-[#14b8a6] hover:bg-[#0f766e] text-white disabled:opacity-50 transition-all cursor-pointer shadow-xs"
+                                                        title={t('table.tooltip_mark_viewed', 'Đánh dấu đã xem')}
                                                     >
-                                                        <X size={12} />
-                                                        <span>{t('actions.cancel_approve', 'Hủy duyệt')}</span>
+                                                        <Eye size={12} />
+                                                        <span>{t('actions.mark_viewed', 'Đã xem')}</span>
                                                     </button>
                                                 )}
+
+                                                {/* Hide button - always shown */}
+                                                <button
+                                                    onClick={() => onRejectClick(rating)}
+                                                    disabled={isMutating}
+                                                    className="inline-flex items-center gap-1 px-2.5 py-1.5 text-[11px] font-bold rounded-lg border border-rose-100 bg-rose-50 text-rose-500 hover:bg-rose-600 hover:text-white disabled:opacity-50 transition-all cursor-pointer"
+                                                    title={t('table.tooltip_reject', 'Ẩn đánh giá')}
+                                                >
+                                                    <X size={12} />
+                                                    <span>{t('actions.reject', 'Ẩn')}</span>
+                                                </button>
 
                                                 {/* Always Visible: Delete Button */}
                                                 <button

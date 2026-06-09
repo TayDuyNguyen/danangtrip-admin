@@ -38,6 +38,7 @@ export const dashboardKeys = {
     topTours: (params: TopToursParams) => [...dashboardKeys.all, 'topTours', params] as const,
     searchTrends: (params?: SearchTrendsParams) => [...dashboardKeys.all, 'searchTrends', params ?? {}] as const,
     bookings: (params: BookingsParams) => [...dashboardKeys.all, 'bookings', params] as const,
+    notificationCounts: () => [...dashboardKeys.all, 'notificationCounts'] as const,
 };
 
 /**
@@ -90,7 +91,7 @@ export const useDashboardStatsQuery = (enabled = true) => {
             const initialMap = mapStats(response.data as unknown);
             return resolveStatsWithFallback(initialMap);
         },
-        staleTime: 1000 * 60 * 5, // 5 minutes
+        staleTime: 1000 * 30, // 30 seconds
         enabled,
     });
 };
@@ -192,5 +193,30 @@ export const useBookingsExportMutation = () => {
             if (!prepared.ok) throw new Error(prepared.error);
             downloadBlobFile(prepared.blob, prepared.filename);
         },
+    });
+};
+
+export const useSystemExportMutation = () => {
+    return useMutation({
+        mutationFn: async (params: { fallbackFilename: string }) => {
+            const { fallbackFilename } = params;
+            const response = await dashboardApi.getSystemReportExport();
+            const prepared = await prepareSpreadsheetDownload(response, fallbackFilename);
+            if (!prepared.ok) throw new Error(prepared.error);
+            downloadBlobFile(prepared.blob, prepared.filename);
+        },
+    });
+};
+
+export const useNotificationCountsQuery = (enabled = true) => {
+    return useQuery({
+        queryKey: dashboardKeys.notificationCounts(),
+        queryFn: async () => {
+            const response = await dashboardApi.getNotificationCounts();
+            return response.data;
+        },
+        staleTime: 0,
+        refetchInterval: 1000 * 30, // Poll every 30s
+        enabled,
     });
 };

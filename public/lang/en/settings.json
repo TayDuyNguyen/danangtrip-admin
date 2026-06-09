@@ -44,8 +44,8 @@
         "payment": {
             "title": "Integrated Payment Gateways",
             "subtitle": "Enable or disable individual payment processors instantly across booking flows.",
-            "payos": "payOS Gateway",
-            "payos_help": "Primary checkout portal using link transfers (Recommended).",
+            "sepay": "SePay VietQR Gateway",
+            "sepay_help": "Automatic bank transfer QR gateway through SePay (Recommended).",
             "cod": "Bank Transfer / Cash (COD)",
             "cod_help": "Manual verification / local bank transfer method.",
             "vnpay": "VNPay Portal",

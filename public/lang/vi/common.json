@@ -113,6 +113,21 @@
         "search_label": "Tìm kiếm nhanh trong admin",
         "admin_role": "Quản trị viên"
     },
+    "notification_bell": {
+        "admin_center": "Trung tâm quản trị",
+        "quick_notifications": "Thông báo nhanh",
+        "shortcut_desc": "Lối tắt đến các luồng cần theo dõi trong hệ thống.",
+        "contacts_title": "Liên hệ mới",
+        "contacts_desc": "Kiểm tra yêu cầu hỗ trợ từ khách hàng",
+        "bookings_title": "Đơn hàng cần xử lý",
+        "bookings_desc": "Theo dõi booking chờ xác nhận hoặc thanh toán",
+        "ratings_title": "Đánh giá mới",
+        "ratings_desc": "Kiểm tra đánh giá mới từ người dùng",
+        "close_aria": "Đóng thông báo nhanh",
+        "read_status": "Đã đọc",
+        "mark_all_read": "Đọc tất cả",
+        "open_management": "Mở quản lý"
+    },
     "right_sidebar": {
         "title": "Bảng điều khiển",
         "profile": "Hồ sơ",
