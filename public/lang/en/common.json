@@ -143,11 +143,17 @@
         "preferences": {
             "title": "System Preferences",
             "dark_mode": "Dark Mode",
-            "notifications": "Notifications"
+            "notifications": "Notifications",
+            "save_login_location": "Save login location",
+            "font_size": "Font size",
+            "font_size_small": "Small",
+            "font_size_medium": "Medium",
+            "font_size_large": "Large"
         },
         "logs": {
             "title": "Recent Logs",
             "login_success": "Login successfully from {{location}}",
+            "login_success_without_location": "Login successfully",
             "time_ago": "{{count}} mins ago"
         }
     },
