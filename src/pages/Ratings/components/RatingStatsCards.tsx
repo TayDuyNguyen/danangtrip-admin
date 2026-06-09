@@ -6,8 +6,8 @@ import { useTranslation } from 'react-i18next';
 interface RatingStatsCardsProps {
     stats?: {
         total: number;
-        pending: number;
-        approved: number;
+        new: number;
+        viewed: number;
         rejected: number;
     };
     isLoading?: boolean;
@@ -67,10 +67,10 @@ const RatingStatsCards: React.FC<RatingStatsCardsProps> = ({ stats, isLoading = 
                     </div>
                     <div className="pl-1">
                         <h3 className="text-2xl font-black text-emerald-600 leading-tight mb-1 select-all">
-                            {stats.approved.toLocaleString()}
+                            {stats.viewed.toLocaleString()}
                         </h3>
                         <p className="text-xs font-black text-[#94A3B8] uppercase tracking-widest">
-                            {t('stats.visible_ratings', 'Đang hiển thị')}
+                            {t('stats.viewed_ratings', 'Đã xem')}
                         </p>
                     </div>
                 </div>
@@ -96,14 +96,14 @@ const RatingStatsCards: React.FC<RatingStatsCardsProps> = ({ stats, isLoading = 
                 </div>
             </div>
 
-            {/* Legacy Pending Reviews */}
+            {/* New Reviews */}
             <div className="p-[1px] rounded-3xl bg-gradient-to-br from-amber-500/25 via-slate-200/20 to-slate-100/10 shadow-xs hover:shadow-md hover:from-amber-500/35 transition-all duration-300 group h-full">
                 <div className="bg-white rounded-[23px] p-6 relative overflow-hidden h-full border border-slate-100/50">
                     <div className="absolute top-0 left-0 w-1 h-full bg-amber-500"></div>
                     <div className="flex justify-between items-start mb-4 pl-1">
                         <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center text-amber-500 border border-amber-100/50 group-hover:scale-110 transition-transform duration-200 relative">
                             <Clock size={20} />
-                            {stats.pending > 0 && (
+                            {stats.new > 0 && (
                                 <span className="absolute -top-1 -right-1 flex h-3 w-3">
                                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
                                     <span className="relative inline-flex rounded-full h-3 w-3 bg-amber-500"></span>
@@ -113,10 +113,10 @@ const RatingStatsCards: React.FC<RatingStatsCardsProps> = ({ stats, isLoading = 
                     </div>
                     <div className="pl-1">
                         <h3 className="text-2xl font-black text-amber-600 leading-tight mb-1 select-all">
-                            {stats.pending.toLocaleString()}
+                            {stats.new.toLocaleString()}
                         </h3>
                         <p className="text-xs font-black text-[#94A3B8] uppercase tracking-widest">
-                            {t('stats.pending_legacy', 'Chưa xử lý')}
+                            {t('stats.new_ratings', 'Mới')}
                         </p>
                     </div>
                 </div>

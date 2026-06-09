@@ -76,7 +76,10 @@ const RevenueStatsCards: React.FC<RevenueStatsCardsProps> = ({ stats, isLoading 
                         <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-500 border border-emerald-100/50 group-hover:scale-110 transition-transform duration-200">
                             <DollarSign size={20} />
                         </div>
-                        {renderTrendBadge(stats.totalRevenueTrend)}
+                        <div className="flex flex-col items-end gap-0.5">
+                            {renderTrendBadge(stats.totalRevenueTrend)}
+                            <span className="text-[10px] text-[#94A3B8] font-semibold">{t('stats.vs_prev_period')}</span>
+                        </div>
                     </div>
                     <div className="pl-1">
                         <h3 className="text-2xl font-black text-[#0F172A] leading-tight mb-1 select-all truncate">
@@ -97,7 +100,10 @@ const RevenueStatsCards: React.FC<RevenueStatsCardsProps> = ({ stats, isLoading 
                         <div className="w-10 h-10 rounded-xl bg-teal-50 flex items-center justify-center text-[#14b8a6] border border-teal-100/50 group-hover:scale-110 transition-transform duration-200">
                             <BarChart3 size={20} />
                         </div>
-                        {renderTrendBadge(stats.dailyAverageTrend)}
+                        <div className="flex flex-col items-end gap-0.5">
+                            {renderTrendBadge(stats.dailyAverageTrend)}
+                            <span className="text-[10px] text-[#94A3B8] font-semibold">{t('stats.vs_prev_period')}</span>
+                        </div>
                     </div>
                     <div className="pl-1">
                         <h3 className="text-2xl font-black text-[#0F172A] leading-tight mb-1 select-all truncate">
@@ -118,7 +124,10 @@ const RevenueStatsCards: React.FC<RevenueStatsCardsProps> = ({ stats, isLoading 
                         <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-500 border border-blue-100/50 group-hover:scale-110 transition-transform duration-200">
                             <Receipt size={20} />
                         </div>
-                        {renderTrendBadge(stats.totalTransactionsTrend)}
+                        <div className="flex flex-col items-end gap-0.5">
+                            {renderTrendBadge(stats.totalTransactionsTrend)}
+                            <span className="text-[10px] text-[#94A3B8] font-semibold">{t('stats.vs_prev_period')}</span>
+                        </div>
                     </div>
                     <div className="pl-1">
                         <h3 className="text-2xl font-black text-[#0F172A] leading-tight mb-1 select-all truncate">
@@ -139,7 +148,10 @@ const RevenueStatsCards: React.FC<RevenueStatsCardsProps> = ({ stats, isLoading 
                         <div className="w-10 h-10 rounded-xl bg-rose-50 flex items-center justify-center text-rose-500 border border-rose-100/50 group-hover:scale-110 transition-transform duration-200">
                             <RotateCcw size={20} />
                         </div>
-                        {renderTrendBadge(stats.totalRefundedTrend)}
+                        <div className="flex flex-col items-end gap-0.5">
+                            {renderTrendBadge(stats.totalRefundedTrend)}
+                            <span className="text-[10px] text-[#94A3B8] font-semibold">{t('stats.vs_prev_period')}</span>
+                        </div>
                     </div>
                     <div className="pl-1">
                         <h3 className="text-2xl font-black text-rose-600 leading-tight mb-1 select-all truncate">

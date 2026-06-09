@@ -1,6 +1,7 @@
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate, useParams } from "react-router-dom";
-import { Edit, Sparkles } from "lucide-react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { Edit, ArrowLeft, Users } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { ROUTES } from "@/routes/routes";
 import { useAdminUserDetailQuery } from "@/hooks/useUserQueries";
@@ -11,17 +12,22 @@ import { Skeleton } from "@/components/ui/Skeleton";
 export const UserEdit = () => {
     const { t } = useTranslation("user");
     const navigate = useNavigate();
+    const location = useLocation();
     const { id } = useParams<{ id: string }>();
 
     // Query user details
     const { data: user, isLoading, isError } = useAdminUserDetailQuery(id || "");
 
-    const handleBack = () => {
-        if (id) {
-            navigate(ROUTES.USERS_DETAIL.replace(":id", id));
-        } else {
-            navigate(ROUTES.USERS_LIST);
+    useEffect(() => {
+        const listFilterKeys = ["q", "sort_by", "sort_order", "page", "per_page", "role", "status"];
+        const params = new URLSearchParams(location.search);
+        if (listFilterKeys.some((key) => params.has(key))) {
+            navigate(location.pathname, { replace: true });
         }
+    }, [location.pathname, location.search, navigate]);
+
+    const handleBack = () => {
+        navigate(ROUTES.USERS_LIST);
     };
 
     if (isError || (!isLoading && !user)) {
@@ -50,42 +56,38 @@ export const UserEdit = () => {
 
     return (
         <div className="min-h-screen bg-[#f8fafc] pb-20 font-sans">
-            <div className="max-w-[1600px] mx-auto px-4 md:px-8 mt-8">
-                <Breadcrumbs
-                    icon={Edit}
-                    items={[
-                        { label: t("breadcrumb"), path: ROUTES.USERS_LIST },
-                        {
-                            label: isLoading
-                                ? t("edit.loading_user", "ĐANG TẢI TÀI KHOẢN...")
-                                : t("edit.breadcrumb", "Chỉnh sửa Tài khoản"),
-                        },
-                    ]}
-                    actions={
-                        !isLoading && user
-                            ? [
-                                  {
-                                      label: t("edit.quick_action_view_profile"),
-                                      onClick: () => navigate(ROUTES.USERS_DETAIL.replace(":id", String(user.id))),
-                                      variant: "outline",
-                                  },
-                                  {
-                                      label: t("edit.btn_cancel"),
-                                      onClick: handleBack,
-                                      variant: "outline",
-                                  },
-                                  {
-                                      label: t("edit.btn_submit"),
-                                      form: "user-edit-form",
-                                      type: "submit",
-                                      icon: Sparkles,
-                                      variant: "primary",
-                                  },
-                              ]
-                            : []
-                    }
-                />
+            {/* Sticky Header */}
+            <div className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-slate-200/60 shadow-xs">
+                <div className="max-w-[1600px] mx-auto px-4 md:px-8 h-20 flex items-center">
+                    {/* Header Left: Breadcrumb + Title */}
+                    <div className="flex items-center gap-4">
+                        <button
+                            type="button"
+                            className="rounded-full w-10 h-10 p-0 hover:bg-slate-100 cursor-pointer flex items-center justify-center border-0 bg-transparent text-slate-600"
+                            onClick={handleBack}
+                        >
+                            <ArrowLeft className="w-5 h-5 text-slate-600" />
+                        </button>
+                        <div>
+                            <div className="mb-1">
+                                <Breadcrumbs
+                                    icon={Users}
+                                    items={[
+                                        { label: t("breadcrumb"), path: ROUTES.USERS_LIST },
+                                        { label: t("edit.breadcrumb_edit", "Chỉnh sửa") },
+                                    ]}
+                                />
+                            </div>
+                            <h1 className="text-xl font-bold text-slate-900 tracking-tight leading-none">
+                                {t("edit.title", "Chỉnh sửa Người dùng")}
+                            </h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
+            {/* Main Form Content */}
+            <div className="max-w-[1600px] mx-auto px-4 md:px-8 mt-8">
                 {isLoading ? (
                     <div>
                         {/* Skeleton Form Grid */}

@@ -13,7 +13,7 @@ import {
     useTopToursQuery,
     useSearchTrendsQuery,
     useBookingsQuery,
-    useBookingsExportMutation,
+    useSystemExportMutation,
     dashboardKeys
 } from '@/hooks/useDashboardQueries';
 import StatsCards from './components/StatsCards';
@@ -42,7 +42,7 @@ const Dashboard = () => {
     const { t } = useTranslation('dashboard');
     const queryClient = useQueryClient();
     const [refreshing, setRefreshing] = useState(false);
-    const exportMutation = useBookingsExportMutation();
+    const exportMutation = useSystemExportMutation();
     const [searchParams, setSearchParams] = useSearchParams();
 
     // 1. revenuePeriod
@@ -113,15 +113,27 @@ const Dashboard = () => {
         if (typeof period === 'number') {
             fromDate.setDate(today.getDate() - period);
         } else {
-            if (period === 'day') fromDate.setHours(0, 0, 0, 0);
-            else if (period === 'week') fromDate.setDate(today.getDate() - 7);
-            else if (period === 'month') fromDate.setMonth(today.getMonth() - 1);
-            else if (period === 'year') fromDate.setFullYear(today.getFullYear() - 1);
+            if (period === 'day') {
+                // For 'day', keep fromDate as today
+            } else if (period === 'week') {
+                fromDate.setDate(today.getDate() - 7);
+            } else if (period === 'month') {
+                fromDate.setMonth(today.getMonth() - 1);
+            } else if (period === 'year') {
+                fromDate.setFullYear(today.getFullYear() - 1);
+            }
         }
 
+        const formatLocalDate = (date: Date) => {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        };
+
         return {
-            from: fromDate.toISOString().split('T')[0],
-            to: today.toISOString().split('T')[0]
+            from: formatLocalDate(fromDate),
+            to: formatLocalDate(today)
         };
     }, []);
 
@@ -166,13 +178,16 @@ const Dashboard = () => {
 
     // Handle export report
     const handleExport = useCallback(() => {
-        const range = getDateRange(revenuePeriod);
-        const fallbackFilename = t('tables.export_bookings_default_filename', {
-            from: range.from,
-            to: range.to,
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const dateStr = `${day}-${month}-${year}`;
+        const fallbackFilename = t('tables.export_system_default_filename', {
+            date: dateStr,
         });
         exportMutation.mutate(
-            { from_date: range.from, to_date: range.to, fallbackFilename },
+            { fallbackFilename },
             {
                 onSuccess: () => toast.success(t('tables.export_success')),
                 onError: () => {
@@ -180,7 +195,7 @@ const Dashboard = () => {
                 },
             }
         );
-    }, [revenuePeriod, getDateRange, t, exportMutation]);
+    }, [t, exportMutation]);
 
     // Build order status data
     const orderStatusData = useMemo(() => {

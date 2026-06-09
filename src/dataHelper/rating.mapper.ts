@@ -45,6 +45,7 @@ export const mapRatingItem = (raw: RawRating): RatingViewModel => {
         targetThumbnail,
         userName: raw.user?.full_name || 'Anonymous',
         userAvatar: raw.user?.avatar || '',
+        isNew: raw.is_new === true,
     };
 };
 

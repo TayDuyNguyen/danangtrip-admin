@@ -57,21 +57,47 @@ export const useBookingsReportQuery = (params: BookingsReportFilters) => {
 export const useRevenueReportQuery = (params: RevenueReportFilters) => {
     const from = params.from || '';
     const to = params.to || '';
-    
+
+    // Compute the previous period (same duration, shifted back)
+    const prevFrom = (() => {
+        if (!from || !to) return '';
+        const dateFrom = new Date(from);
+        const dateTo = new Date(to);
+        const daysDiff = Math.max(1, Math.round((dateTo.getTime() - dateFrom.getTime()) / (1000 * 3600 * 24)) + 1);
+        const prevTo = new Date(dateFrom);
+        prevTo.setDate(prevTo.getDate() - 1);
+        const prevFrom = new Date(prevTo);
+        prevFrom.setDate(prevFrom.getDate() - (daysDiff - 1));
+        return prevFrom.toISOString().split('T')[0];
+    })();
+
+    const prevTo = (() => {
+        if (!from) return '';
+        const dateFrom = new Date(from);
+        const prevTo = new Date(dateFrom);
+        prevTo.setDate(prevTo.getDate() - 1);
+        return prevTo.toISOString().split('T')[0];
+    })();
+
     return useQuery({
         queryKey: reportKeys.revenueReport(params),
         queryFn: async () => {
-            const [trendRes, detailRes, paymentsRes] = await Promise.all([
+            const [trendRes, detailRes, paymentsRes, prevTrendRes] = await Promise.all([
                 reportApi.getRevenueTrend({ period: 'day', from, to }),
                 reportApi.getRevenueDetail({ from, to }),
                 reportApi.getPaymentsList(params),
+                // Fetch previous period for trend comparison
+                (prevFrom && prevTo)
+                    ? reportApi.getRevenueTrend({ period: 'day', from: prevFrom, to: prevTo })
+                    : Promise.resolve(null),
             ]);
 
             return mapRevenueReport(
                 trendRes.data,
                 detailRes.data,
                 paymentsRes.data,
-                { from, to }
+                { from, to },
+                prevTrendRes?.data ?? null,
             );
         },
         staleTime: 1000 * 30, // 30 seconds
@@ -201,7 +227,7 @@ export const useReportMutations = () => {
     const approveMutation = useMutation({
         mutationFn: (id: string | number) => reportApi.approveRating(id),
         onSuccess: () => {
-            toast.success('Đã phê duyệt đánh giá thành công.');
+            toast.success('Đã đánh dấu là đã xem.');
             queryClient.invalidateQueries({ queryKey: reportKeys.all });
             queryClient.invalidateQueries({ queryKey: ['dashboard'] }); // Sync dashboard pending ratings count
         },

@@ -2,10 +2,12 @@ import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import i18n from 'i18next';
 import { ExternalLink, Star, RefreshCw } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import type { TopTour } from '@/dataHelper/dashboard.dataHelper';
 import { Skeleton } from '@/components/ui/Skeleton';
 import EmptyState from '@/components/common/EmptyState';
 import ErrorWidget from '@/components/common/ErrorWidget';
+import { ROUTES } from '@/routes/routes';
 
 interface Props {
     topTours: TopTour[];
@@ -17,6 +19,7 @@ interface Props {
 
 const TopToursTable = ({ topTours, onRefresh, isRefreshing, isLoading, isError }: Props) => {
     const { t } = useTranslation('dashboard');
+    const navigate = useNavigate();
 
     const isEmpty = !isLoading && !isError && topTours.length === 0;
 
@@ -42,7 +45,10 @@ const TopToursTable = ({ topTours, onRefresh, isRefreshing, isLoading, isError }
                         </button>
                     )}
                 </div>
-                <button className="text-xs font-black text-[#14b8a6] flex items-center gap-1 hover:underline">
+                <button
+                    onClick={() => navigate(ROUTES.TOURS_LIST)}
+                    className="text-xs font-black text-[#14b8a6] flex items-center gap-1 hover:underline cursor-pointer"
+                >
                     {t('tables.view_all')} <ExternalLink size={12} />
                 </button>
             </div>
@@ -93,7 +99,11 @@ const TopToursTable = ({ topTours, onRefresh, isRefreshing, isLoading, isError }
                                 ))
                             ) : (
                                 topTours.map((tour, index) => (
-                                    <tr key={tour.id} className="hover:bg-slate-50/40 transition-colors group">
+                                    <tr
+                                        key={tour.id}
+                                        onClick={() => navigate(`/admin/tours/edit/${tour.id}`)}
+                                        className="hover:bg-slate-50/40 transition-colors group cursor-pointer"
+                                    >
                                         <td className="px-6 py-4">
                                             <span className={`w-7 h-7 flex items-center justify-center rounded-xl text-[12px] font-black 
                                                 ${index === 0 ? 'bg-[#dff7f4] text-[#14b8a6]' : 

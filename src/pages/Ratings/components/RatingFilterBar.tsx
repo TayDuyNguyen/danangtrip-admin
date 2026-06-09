@@ -60,11 +60,11 @@ const RatingFilterBar: React.FC<RatingFilterBarProps> = ({
         { value: 'tour', label: t('filter.type_tour', 'Tour du lịch') },
     ];
 
-    const statusOptions = [
+    const managementStatusOptions = [
         { value: 'all', label: t('filter.status_all_management', 'Tất cả trạng thái') },
-        { value: 'approved', label: t('filter.status_visible', 'Đang hiển thị') },
-        { value: 'rejected', label: t('filter.status_hidden', 'Đã ẩn') },
-        { value: 'pending', label: t('filter.status_pending_legacy', 'Chưa xử lý') },
+        { value: 'new', label: t('filter.read_status_new', 'Mới') },
+        { value: 'viewed', label: t('filter.read_status_viewed', 'Đã xem') },
+        { value: 'hidden', label: t('filter.status_hidden', 'Đã ẩn') },
     ];
 
     const scoreOptions = [
@@ -77,8 +77,16 @@ const RatingFilterBar: React.FC<RatingFilterBarProps> = ({
     ];
 
     const currentType = typeOptions.find(opt => opt.value === (filters.type || 'all')) || typeOptions[0];
-    const currentStatus = statusOptions.find(opt => opt.value === (filters.status || 'all')) || statusOptions[0];
     const currentScore = scoreOptions.find(opt => opt.value === String(filters.score || 'all')) || scoreOptions[0];
+    const managementStatus = filters.status === 'rejected'
+        ? 'hidden'
+        : filters.is_new === true
+            ? 'new'
+            : filters.is_new === false
+                ? 'viewed'
+                : 'all';
+    const currentManagementStatus = managementStatusOptions.find((option) => option.value === managementStatus)
+        || managementStatusOptions[0];
 
     return (
         <div className="bg-white/80 backdrop-blur-md border border-slate-100 rounded-2xl p-5 shadow-xs space-y-4 font-sans">
@@ -103,11 +111,18 @@ const RatingFilterBar: React.FC<RatingFilterBarProps> = ({
                     size="md"
                 />
 
-                {/* Status Dropdown */}
+                {/* Management status */}
                 <CustomSelect
-                    options={statusOptions}
-                    value={currentStatus}
-                    onChange={(opt) => handleSelectChange('status', (opt as Option | null)?.value?.toString())}
+                    options={managementStatusOptions}
+                    value={currentManagementStatus}
+                    onChange={(opt) => {
+                        const value = (opt as Option | null)?.value?.toString();
+                        onFilterChange({
+                            status: value === 'hidden' ? 'rejected' : 'all',
+                            is_new: value === 'new' ? true : value === 'viewed' ? false : undefined,
+                            page: 1,
+                        });
+                    }}
                     isClearable={false}
                     menuPortalTarget={document.body}
                     size="md"
@@ -128,7 +143,7 @@ const RatingFilterBar: React.FC<RatingFilterBarProps> = ({
             <div className="border-t border-slate-50 pt-4 flex flex-col sm:flex-row sm:items-center justify-end gap-4">
                 {/* Reset Filters */}
                 <div>
-                    {(searchValue || filters.type !== 'all' || filters.status !== 'all' || filters.score !== undefined) && (
+                    {(searchValue || filters.type !== 'all' || filters.status !== 'all' || filters.is_new !== undefined || filters.score !== undefined) && (
                         <button
                             onClick={onReset}
                             className="flex items-center justify-center gap-2 bg-slate-50 border border-slate-100 hover:bg-slate-100 hover:text-slate-900 rounded-xl py-2.5 px-4 text-sm font-bold text-slate-500 transition-all duration-200 cursor-pointer"

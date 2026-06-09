@@ -5,6 +5,7 @@ export interface RatingsReportFilters {
     from?: string;
     to?: string;
     status?: 'all' | 'pending' | 'approved' | 'rejected';
+    is_new?: boolean;
     type?: 'all' | 'location' | 'tour';
     user_id?: string | number;
     page?: number;
@@ -43,6 +44,8 @@ export interface RawRatingsReportSummary {
     pending_count: number;
     approved_count: number;
     rejected_count: number;
+    new_count?: number;
+    viewed_count?: number;
     average_score: number | string;
     trends?: {
         total?: number;
@@ -141,6 +144,8 @@ export interface RatingsReportViewModel {
     stats: {
         total: number;
         totalTrend: number; // e.g. +8.3
+        new: number;
+        viewed: number;
         pending: number;
         pendingTrend: number;
         approved: number;

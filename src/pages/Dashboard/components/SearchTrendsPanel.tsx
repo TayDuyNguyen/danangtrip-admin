@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ExternalLink, MapPin, RefreshCw, Search } from 'lucide-react';
+import { ExternalLink, MapPin, RefreshCw, Search, TrendingUp } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import type { SearchTrendsData } from '@/dataHelper/dashboard.dataHelper';
 import { Skeleton } from '@/components/ui/Skeleton';
@@ -21,8 +21,8 @@ const SearchTrendsPanel = ({ data, onRefresh, isRefreshing, isLoading, isError }
     const keywords = data?.keywords ?? [];
     const clickedQueries = data?.clicked_queries ?? [];
     const zeroResultKeywords = data?.zero_result_keywords ?? [];
-    const locations = data?.locations ?? [];
-    const isEmpty = !isLoading && !isError && keywords.length === 0 && clickedQueries.length === 0 && zeroResultKeywords.length === 0 && locations.length === 0;
+    const trendingSearches = data?.trending_searches ?? [];
+    const isEmpty = !isLoading && !isError && keywords.length === 0 && clickedQueries.length === 0 && zeroResultKeywords.length === 0 && trendingSearches.length === 0;
 
     return (
         <div className="bg-white rounded-[32px] border border-slate-200/60 shadow-sm overflow-hidden transition-all duration-300">
@@ -75,6 +75,7 @@ const SearchTrendsPanel = ({ data, onRefresh, isRefreshing, isLoading, isError }
                     />
                 ) : (
                     <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                        {/* Panel 1: Từ khóa nổi bật */}
                         <section className="rounded-3xl border border-slate-100 bg-slate-50/40 p-5">
                             <div className="flex items-center gap-2 mb-4">
                                 <Search size={14} className="text-[#14b8a6]" />
@@ -108,6 +109,7 @@ const SearchTrendsPanel = ({ data, onRefresh, isRefreshing, isLoading, isError }
                             </div>
                         </section>
 
+                        {/* Panel 2: Mục được click nhiều */}
                         <section className="rounded-3xl border border-slate-100 bg-slate-50/40 p-5">
                             <div className="flex items-center gap-2 mb-4">
                                 <Search size={14} className="text-[#14b8a6]" />
@@ -141,6 +143,7 @@ const SearchTrendsPanel = ({ data, onRefresh, isRefreshing, isLoading, isError }
                             </div>
                         </section>
 
+                        {/* Panel 3: Từ khóa không có kết quả */}
                         <section className="rounded-3xl border border-slate-100 bg-slate-50/40 p-5">
                             <div className="flex items-center gap-2 mb-4">
                                 <Search size={14} className="text-amber-500" />
@@ -174,41 +177,52 @@ const SearchTrendsPanel = ({ data, onRefresh, isRefreshing, isLoading, isError }
                             </div>
                         </section>
 
+                        {/* Panel 4: Xu hướng tìm kiếm */}
                         <section className="rounded-3xl border border-slate-100 bg-slate-50/40 p-5">
                             <div className="flex items-center gap-2 mb-4">
-                                <MapPin size={14} className="text-[#14b8a6]" />
+                                <TrendingUp size={14} className="text-[#14b8a6]" />
                                 <h4 className="text-sm font-black text-slate-900">
-                                    {t('search_trends.locations')}
+                                    {t('search_trends.trending_searches')}
                                 </h4>
                             </div>
 
                             <div className="space-y-3">
-                                {isLoading && locations.length === 0 ? (
+                                {isLoading && trendingSearches.length === 0 ? (
                                     Array.from({ length: 5 }).map((_, index) => (
-                                        <div key={index} className="rounded-2xl bg-white px-4 py-3 border border-slate-100">
-                                            <Skeleton className="h-4 w-28 rounded-md mb-2" />
-                                            <Skeleton className="h-3 w-24 rounded-md mb-3" />
-                                            <Skeleton className="h-6 w-20 rounded-full" />
+                                        <div key={index} className="flex items-center justify-between gap-3 rounded-2xl bg-white px-4 py-3 border border-slate-100">
+                                            <div className="flex gap-2">
+                                                <Skeleton className="h-5 w-14 rounded-full" />
+                                                <Skeleton className="h-4 w-28 rounded-md" />
+                                            </div>
+                                            <Skeleton className="h-6 w-16 rounded-full" />
                                         </div>
                                     ))
-                                ) : locations.length > 0 ? (
-                                    locations.map((item) => (
-                                        <div key={item.id} className="rounded-2xl bg-white px-4 py-3 border border-slate-100">
-                                            <div className="flex items-start justify-between gap-3">
-                                                <div className="min-w-0">
-                                                    <p className="text-sm font-bold text-slate-900 truncate">{item.name}</p>
-                                                    <p className="text-xs font-semibold text-slate-400 mt-1 truncate">
-                                                        {item.district || t('search_trends.no_district')}
-                                                    </p>
-                                                </div>
-                                                <span className="shrink-0 inline-flex items-center rounded-full bg-[#dff7f4] px-2.5 py-1 text-[11px] font-black text-[#0f766e]">
-                                                    {item.view_count.toLocaleString('vi-VN')} {t('search_trends.views')}
-                                                </span>
+                                ) : trendingSearches.length > 0 ? (
+                                    trendingSearches.map((item, index) => (
+                                        <div key={`${item.name}-${index}`} className="flex items-center justify-between gap-3 rounded-2xl bg-white px-4 py-3 border border-slate-100">
+                                            <div className="min-w-0 flex items-center gap-2">
+                                                {item.type === 'tour' ? (
+                                                    <span className="shrink-0 inline-flex items-center rounded-full bg-violet-50 px-2 py-0.5 text-[10px] font-black text-violet-700">Tour</span>
+                                                ) : item.type === 'location' ? (
+                                                    <span className="shrink-0 inline-flex items-center gap-0.5 rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-black text-blue-700">
+                                                        <MapPin size={9} />{t('search_trends.location_label')}
+                                                    </span>
+                                                ) : null}
+                                                <p className="text-sm font-bold text-slate-900 truncate">{item.name}</p>
                                             </div>
+                                            <span className="shrink-0 inline-flex items-center rounded-full bg-[#dff7f4] px-2.5 py-1 text-[11px] font-black text-[#0f766e]">
+                                                {item.count.toLocaleString('vi-VN')} {
+                                                    item.type === 'tour'
+                                                        ? t('search_trends.bookings')
+                                                        : item.type === 'location'
+                                                            ? t('search_trends.clicks')
+                                                            : t('search_trends.searches')
+                                                }
+                                            </span>
                                         </div>
                                     ))
                                 ) : (
-                                    <p className="text-sm font-medium text-slate-400">{t('search_trends.empty_locations')}</p>
+                                    <p className="text-sm font-medium text-slate-400">{t('search_trends.empty_trending_searches')}</p>
                                 )}
                             </div>
                         </section>

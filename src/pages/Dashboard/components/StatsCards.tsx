@@ -32,6 +32,7 @@ const StatsCards = ({
 
     const cardData = [
         {
+            id: 'revenue',
             title: t('stats.total_revenue'),
             valueStr: stats ? formatInt(stats.total_revenue ?? 0) : null,
             isLoading: isLoading,
@@ -42,6 +43,7 @@ const StatsCards = ({
             accent: 'teal',
         },
         {
+            id: 'orders',
             title: t('stats.total_orders'),
             valueStr:
                 bookingStatusLoading && !ordersFromStatus
@@ -55,6 +57,7 @@ const StatsCards = ({
             accent: 'tealSoft',
         },
         {
+            id: 'users',
             title: t('stats.total_users'),
             valueStr: stats ? formatInt(stats.total_users ?? 0) : null,
             isLoading: isLoading,
@@ -65,6 +68,7 @@ const StatsCards = ({
             accent: 'slate',
         },
         {
+            id: 'tours-sold',
             title: t('stats.tours_sold'),
             valueStr: stats ? formatInt(stats.total_tours_sold ?? 0) : null,
             isLoading: isLoading,
@@ -75,6 +79,7 @@ const StatsCards = ({
             accent: 'tealSoft',
         },
         {
+            id: 'pending-orders',
             title: t('stats.pending_orders'),
             valueStr:
                 bookingStatusLoading && !bookingStatus
@@ -88,6 +93,7 @@ const StatsCards = ({
             accent: 'slate',
         },
         {
+            id: 'new-contacts',
             title: t('stats.new_contacts'),
             valueStr: stats ? formatInt(stats.new_contacts ?? 0) : null,
             isLoading: isLoading,
@@ -124,6 +130,7 @@ const StatsCards = ({
                 return (
                     <div
                         key={index}
+                        data-testid={`dashboard-stat-${card.id}`}
                         className={`bg-white p-5 rounded-3xl border border-slate-100 shadow-sm hover:shadow-lg ${colors.shadow} hover:-translate-y-0.5 transition-all duration-300 flex flex-col gap-4 min-h-[140px]`}
                     >
                         {card.isLoading ? (

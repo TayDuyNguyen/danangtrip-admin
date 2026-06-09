@@ -19,6 +19,7 @@ export interface RawRating {
     approved_by: number | null;
     approved_at: string | null;
     helpful_count: number;
+    is_new: boolean;
     created_at: string;
     updated_at: string;
     user?: {
@@ -48,6 +49,7 @@ export interface RawRating {
 
 export interface RatingsListFilters {
     status?: 'all' | 'pending' | 'approved' | 'rejected';
+    is_new?: boolean;
     location_id?: number | string;
     tour_id?: number | string;
     date_from?: string;
@@ -75,6 +77,7 @@ export interface RatingViewModel {
     targetThumbnail: string;
     userName: string;
     userAvatar: string;
+    isNew: boolean;
 }
 
 export interface PaginatedRatings {

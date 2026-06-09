@@ -55,10 +55,26 @@ export const dashboardApi = {
             responseType: 'blob',
         }) as Promise<AxiosResponse<Blob>>,
 
-    // Fallback methods for missing stats
+    getSystemReportExport: (): Promise<AxiosResponse<Blob>> =>
+        axiosClient.get(API_ENDPOINTS.DASHBOARD.EXPORT, {
+            responseType: 'blob',
+        }) as Promise<AxiosResponse<Blob>>,
+
+    // Fallback methods for missing stats fields
     getPendingRatingsFallback: (): Promise<ApiResponse> =>
         axiosClient.get(API_ENDPOINTS.RATINGS.LIST, { params: { status: 'pending', per_page: 1 } }),
 
     getNewContactsFallback: (): Promise<ApiResponse> =>
         axiosClient.get(API_ENDPOINTS.CONTACTS.LIST, { params: { status: 'new', per_page: 1 } }),
+
+    // Notification bell counts — unread per category
+    getNotificationCounts: (): Promise<ApiResponse<{
+        total_unread: number;
+        categories: {
+            contacts: { count: number; label: string };
+            bookings: { count: number; label: string };
+            ratings:  { count: number; label: string };
+        };
+    }>> =>
+        axiosClient.get(API_ENDPOINTS.DASHBOARD.NOTIFICATION_COUNTS),
 };

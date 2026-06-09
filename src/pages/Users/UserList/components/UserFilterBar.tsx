@@ -19,15 +19,35 @@ export const UserFilterBar = ({
 }: UserFilterBarProps) => {
     const { t } = useTranslation("user");
     const [searchVal, setSearchVal] = useState(filters.q || "");
+    const [prevQ, setPrevQ] = useState(filters.q || "");
+
+    if ((filters.q || "") !== prevQ) {
+        setPrevQ(filters.q || "");
+        setSearchVal(filters.q || "");
+    }
 
     const debouncedSearch = useDebounce(searchVal, 300);
 
-    // Sync input with debounced changes
     useEffect(() => {
-        if (debouncedSearch !== (filters.q || "")) {
-            onFilterChange({ ...filters, q: debouncedSearch });
+        const normalizedSearch = debouncedSearch.trim();
+        if (normalizedSearch !== (filters.q || "")) {
+            onFilterChange({
+                q: normalizedSearch || undefined,
+                role: filters.role,
+                status: filters.status,
+                sort_by: filters.sort_by,
+                sort_order: filters.sort_order,
+            });
         }
-    }, [debouncedSearch, filters, onFilterChange]);
+    }, [
+        debouncedSearch,
+        filters.q,
+        filters.role,
+        filters.status,
+        filters.sort_by,
+        filters.sort_order,
+        onFilterChange,
+    ]);
 
 
     const roleOptions: Option[] = [

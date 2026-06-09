@@ -11,6 +11,7 @@ export interface RawUserItem {
     status: RawUserStatus;
     orders_count?: number | string;
     reviews_count?: number | string;
+    ratings_count?: number | string;
     phone: string | null;
     birthdate: string | null;
     gender: string | null;
@@ -24,12 +25,20 @@ export interface RawUserItem {
     updated_at: string;
 }
 
+export interface UserStats {
+    total: number;
+    active: number;
+    banned: number;
+    admin: number;
+}
+
 export interface RawUserListResponse {
     data: RawUserItem[];
     current_page: number;
     last_page: number;
     per_page: number;
     total: number;
+    stats?: UserStats;
 }
 
 export type UserRole = 'admin' | 'user';
@@ -67,6 +76,7 @@ export interface UserListResponse {
         per_page: number;
         total: number;
     };
+    stats?: UserStats;
 }
 
 export interface UserListFilters {

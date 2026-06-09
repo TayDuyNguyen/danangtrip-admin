@@ -25,7 +25,7 @@ export const mapRawSettingsToViewModel = (raw: Record<string, Record<string, unk
             zalo: (raw?.social?.zalo as string) || '',
         },
         payment: {
-            payos: raw?.payment?.payos !== false, // default true
+            sepay: ((raw?.payment?.sepay ?? raw?.payment?.payos) as boolean | undefined) !== false, // default true
             cod: raw?.payment?.cod !== false,     // default true
             vnpay: !!raw?.payment?.vnpay,
             momo: !!raw?.payment?.momo,

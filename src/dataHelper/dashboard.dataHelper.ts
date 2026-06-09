@@ -6,7 +6,8 @@ export interface RawDashboardStats {
     total_revenue?: number;
     total_bookings?: number;
     total_users?: number;
-    total_tours?: number; // Maybe this is total_tours_sold?
+    total_tours?: number;          // Tổng số tour trong hệ thống
+    total_tours_sold?: number;     // Tour đã bán (booking completed) trong 30 ngày gần nhất
     booking_status?: {
         completed?: number;
         confirmed?: number;
@@ -16,6 +17,7 @@ export interface RawDashboardStats {
     revenue_trend?: number;
     booking_trend?: number;
     user_trend?: number;
+    tours_sold_trend?: number;     // % thay đổi tour đã bán so với 30 ngày trước
     pending_ratings?: number;
     new_contacts?: number;
 }
@@ -62,6 +64,9 @@ export interface RawTopTour {
     slug?: string;
     booking_count: number;
     total_revenue: string | number;
+    avg_rating?: string | number | null;
+    thumbnail_url?: string | null;
+    thumbnail?: string | null;
 }
 
 export interface RawBookingItem {
@@ -71,6 +76,12 @@ export interface RawBookingItem {
     total_amount: string | number;
     customer_name?: string;
     tour_name?: string;
+    items?: Array<{
+        item_name?: string;
+        tour?: {
+            name?: string;
+        } | null;
+    }>;
     booked_at?: string;
 }
 
@@ -103,12 +114,20 @@ export interface RawSearchTrendLocation {
     favorite_count?: number | string;
 }
 
+export interface RawSearchTrendItem {
+    query?: string;   // from old search_log based approach (fallback)
+    name?: string;    // from new top-tour/location approach
+    slug?: string;
+    count: number | string;
+    type?: string | null; // 'tour' | 'location' | null
+}
+
 export interface RawSearchTrendsResponse {
     days: number | string;
     keywords: RawSearchTrendKeyword[];
     clicked_queries?: RawSearchTrendKeyword[];
     zero_result_keywords?: RawSearchTrendKeyword[];
-    locations: RawSearchTrendLocation[];
+    trending_searches?: RawSearchTrendItem[];
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -211,6 +230,7 @@ export interface TopToursParams {
  */
 export interface Booking {
     id: string;
+    code: string;
     customer: {
         name: string;
         avatar?: string;
@@ -266,12 +286,19 @@ export interface SearchTrendLocation {
     favorite_count: number;
 }
 
+export interface SearchTrendItem {
+    name: string;        // display name (tour title or location name)
+    slug: string;
+    count: number;
+    type: string | null; // 'tour' | 'location' | null
+}
+
 export interface SearchTrendsData {
     days: number;
     keywords: SearchTrendKeyword[];
     clicked_queries: SearchTrendKeyword[];
     zero_result_keywords: SearchTrendKeyword[];
-    locations: SearchTrendLocation[];
+    trending_searches: SearchTrendItem[];
 }
 
 export interface SearchTrendsParams {

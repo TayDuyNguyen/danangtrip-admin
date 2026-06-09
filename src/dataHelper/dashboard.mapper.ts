@@ -18,6 +18,7 @@ import type {
     RawSearchTrendsResponse,
     SearchTrendsData,
 } from "./dashboard.dataHelper";
+import { formatAdminTableTemporal } from '@/utils/dateDisplay';
 /**
  * Universal helpers for safe data conversion
  */
@@ -76,8 +77,10 @@ export const mapStats = (raw: unknown): DashboardStats => {
         total_bookings_trend: src.booking_trend ?? null,
         total_users: toNumberSafe(src.total_users),
         total_users_trend: src.user_trend ?? null,
-        total_tours_sold: toNumberSafe(src.total_tours),
-        total_tours_sold_trend: null,
+        // Tour đã bán: lấy từ total_tours_sold (backend mới), fallback về 0
+        // Không dùng total_tours vì đó là tổng số tour trong hệ thống
+        total_tours_sold: toNumberSafe(src.total_tours_sold),
+        total_tours_sold_trend: src.tours_sold_trend ?? null,
         pending_ratings: src.pending_ratings,
         new_contacts: src.new_contacts,
         booking_status: {
@@ -213,8 +216,10 @@ export const mapTopTours = (raw: unknown): TopTour[] => {
         id: item.id?.toString() || `top-${idx}`,
         rank: idx + 1,
         title: item.name || '',
+        thumbnail: item.thumbnail_url || item.thumbnail || undefined,
         sales_count: toNumberSafe(item.booking_count),
         revenue: toNumberSafe(item.total_revenue),
+        rating: item.avg_rating ? toNumberSafe(item.avg_rating) : undefined,
         status: 'active'
     }));
 };
@@ -224,10 +229,14 @@ export const mapBookings = (raw: RawBookingsResponse | unknown): BookingsRespons
     const items = toArraySafe<RawBookingItem>(rawCast?.data || raw);
     
     const mappedData: Booking[] = items.map(item => ({
-        id: String(item.booking_code || ''),
+        id: String(item.id || ''),
+        code: String(item.booking_code || ''),
         customer: { name: item.customer_name ?? '' },
-        tour_title: item.tour_name ?? '',
-        booked_at: String(item.booked_at || ''),
+        tour_title: item.tour_name
+            ?? item.items?.[0]?.tour?.name
+            ?? item.items?.[0]?.item_name
+            ?? '',
+        booked_at: formatAdminTableTemporal(item.booked_at || ''),
         status: (item.booking_status as Booking['status']) || 'pending',
         total_amount: toNumberSafe(item.total_amount)
     }));
@@ -275,7 +284,7 @@ export const mapSearchTrends = (raw: RawSearchTrendsResponse | unknown): SearchT
     const keywords = Array.isArray(data?.keywords) ? data.keywords : [];
     const clickedQueries = Array.isArray(data?.clicked_queries) ? data.clicked_queries : [];
     const zeroResultKeywords = Array.isArray(data?.zero_result_keywords) ? data.zero_result_keywords : [];
-    const locations = Array.isArray(data?.locations) ? data.locations : [];
+    const trendingSearches = Array.isArray(data?.trending_searches) ? data.trending_searches : [];
 
     return {
         days: toNumberSafe(data?.days, 7),
@@ -291,13 +300,11 @@ export const mapSearchTrends = (raw: RawSearchTrendsResponse | unknown): SearchT
             query: String(item.query || ''),
             count: toNumberSafe(item.count),
         })),
-        locations: locations.map((item) => ({
-            id: String(item.id ?? ''),
-            name: String(item.name || ''),
-            slug: item.slug || '',
-            district: item.district || '',
-            view_count: toNumberSafe(item.view_count),
-            favorite_count: toNumberSafe(item.favorite_count),
+        trending_searches: trendingSearches.map((item) => ({
+            name: String(item.name || item.query || ''),
+            slug: String(item.slug || ''),
+            count: toNumberSafe(item.count),
+            type: item.type ? String(item.type) : null,
         })),
     };
 };

@@ -14,8 +14,8 @@ export const mapUserItem = (raw: RawUserItem): UserItem => {
         avatar: raw.avatar || undefined,
         role: (raw.role as string) === "admin" ? "admin" : "user",
         status: (['active', 'banned', 'pending'].includes(raw.status) ? raw.status : 'active') as UserStatus,
-        ordersCount: toNumberSafe(raw.orders_count, 0),
-        reviewsCount: toNumberSafe(raw.reviews_count, 0),
+        ordersCount: toNumberSafe(raw.orders_count ?? raw.bookings_count, 0),
+        reviewsCount: toNumberSafe(raw.reviews_count ?? raw.ratings_count, 0),
         joinedDate: raw.created_at ? new Date(raw.created_at).toLocaleDateString("vi-VN") : "N/A",
         createdAt: raw.created_at,
         updatedAt: raw.updated_at,
@@ -43,5 +43,11 @@ export const mapUserList = (raw: RawUserListResponse | unknown): UserListRespons
             per_page: toNumberSafe(rawCast?.per_page, 10),
             total: toNumberSafe(rawCast?.total, items.length),
         },
+        stats: rawCast?.stats ? {
+            total: toNumberSafe(rawCast.stats.total, 0),
+            active: toNumberSafe(rawCast.stats.active, 0),
+            banned: toNumberSafe(rawCast.stats.banned, 0),
+            admin: toNumberSafe(rawCast.stats.admin, 0),
+        } : undefined,
     };
 };

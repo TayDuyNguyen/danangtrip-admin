@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { Download, Plus, Users } from "lucide-react";
@@ -30,7 +30,10 @@ export const UserList = () => {
     const sortBy = searchParams.get("sort_by") || "created_at";
     const sortOrder = (searchParams.get("sort_order") as "asc" | "desc") || "desc";
 
-    const filters: UserListFilters = { q, role, status, sort_by: sortBy, sort_order: sortOrder };
+    const filters = useMemo<UserListFilters>(
+        () => ({ q, role, status, sort_by: sortBy, sort_order: sortOrder }),
+        [q, role, status, sortBy, sortOrder]
+    );
 
     // Queries & Mutations
     const { data, isLoading, isFetching, refetch, isError } = useAdminUsersQuery(filters, page, perPage);
@@ -45,9 +48,9 @@ export const UserList = () => {
     const [isBulkMutating, setIsBulkMutating] = useState(false);
 
     // Sync filters to search params helper
-    const updateParams = (newFilters: UserListFilters, newPage = 1, newPerPage = perPage) => {
+    const updateParams = useCallback((newFilters: UserListFilters, newPage = 1, newPerPage = perPage) => {
         const params = new URLSearchParams();
-        if (newFilters.q) params.set("q", newFilters.q);
+        if (newFilters.q?.trim()) params.set("q", newFilters.q.trim());
         if (newFilters.role) params.set("role", newFilters.role);
         if (newFilters.status) params.set("status", newFilters.status);
         if (newFilters.sort_by) params.set("sort_by", newFilters.sort_by);
@@ -56,7 +59,15 @@ export const UserList = () => {
         params.set("per_page", String(newPerPage));
         setSelectedIds([]);
         setSearchParams(params);
-    };
+    }, [perPage, setSearchParams]);
+
+    const handleFilterChange = useCallback((newFilters: UserListFilters) => {
+        updateParams(newFilters, 1);
+    }, [updateParams]);
+
+    const handleResetFilters = useCallback(() => {
+        updateParams({}, 1);
+    }, [updateParams]);
 
     // Handle single row selection
     const handleSelectRow = (id: number) => {
@@ -228,10 +239,11 @@ export const UserList = () => {
     };
 
     // Count summaries for Stats Cards
-    const totalUsersCount = data?.meta.total || 0;
-    const activeUsersCount = data ? data.data.filter((u) => u.status === "active").length : 0;
-    const bannedUsersCount = data ? data.data.filter((u) => u.status === "banned").length : 0;
-    const adminCount = data ? data.data.filter((u) => u.role === "admin").length : 0;
+    const totalUsersCount = data?.stats?.total ?? data?.meta.total ?? 0;
+    const tableTotalCount = data?.meta.total ?? 0;
+    const activeUsersCount = data?.stats?.active ?? 0;
+    const bannedUsersCount = data?.stats?.banned ?? 0;
+    const adminCount = data?.stats?.admin ?? 0;
 
     return (
         <main className="p-1 sm:p-2 max-w-[1600px] mx-auto flex flex-col gap-6 font-sans">
@@ -288,10 +300,9 @@ export const UserList = () => {
 
             {/* Filters Bar */}
             <UserFilterBar
-                key={`${q}-${role}-${status}`}
                 filters={filters}
-                onFilterChange={(newF) => updateParams(newF, 1)}
-                onReset={() => updateParams({}, 1)}
+                onFilterChange={handleFilterChange}
+                onReset={handleResetFilters}
             />
 
             {/* Table component */}
@@ -310,7 +321,7 @@ export const UserList = () => {
                 onSort={handleSort}
                 page={page}
                 limit={perPage}
-                total={totalUsersCount}
+                total={tableTotalCount}
                 onPageChange={(p) => updateParams(filters, p)}
                 onLimitChange={(size) => updateParams(filters, 1, size)}
                 onRefresh={refetch}
