@@ -11,9 +11,9 @@ const PaymentSettings = () => {
 
     const gateways = [
         {
-            key: 'payment.payos',
-            title: t('sections.payment.payos'),
-            description: t('sections.payment.payos_help'),
+            key: 'payment.sepay',
+            title: t('sections.payment.sepay'),
+            description: t('sections.payment.sepay_help'),
             isRecommended: true,
             isReserved: false,
         },
@@ -70,7 +70,7 @@ const PaymentSettings = () => {
                 {gateways.map((gateway) => (
                     <Controller
                         key={gateway.key}
-                        name={gateway.key as "payment.payos" | "payment.cod" | "payment.vnpay" | "payment.momo" | "payment.zalopay"}
+                        name={gateway.key as "payment.sepay" | "payment.cod" | "payment.vnpay" | "payment.momo" | "payment.zalopay"}
                         control={control}
                         render={({ field }) => (
                             <div className={`p-5 rounded-2xl border transition-all duration-200 flex items-center justify-between gap-4 ${

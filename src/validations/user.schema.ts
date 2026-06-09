@@ -33,7 +33,7 @@ export const createUserSchema = (t: TFunction) => yup.object({
         .transform((v) => (v === "" || v === undefined ? null : v))
         .test("phone-format", t("user:validation.phone_format"), (v) => {
             if (!v) return true;
-            return /^\+?[0-9\s\-.(]{9,20}\)?$/.test(v);
+            return /^\+?[0-9\s\-.()]{9,20}$/.test(v);
         }),
 
     birthdate: yup.string()
@@ -84,7 +84,7 @@ export const editUserSchema = (t: TFunction) => yup.object({
         .transform((v) => (v === "" || v === undefined ? null : v))
         .test("phone-format", t("user:validation.phone_format"), (v) => {
             if (!v) return true;
-            return /^\+?[0-9\s\-.(]{9,20}\)?$/.test(v);
+            return /^\+?[0-9\s\-.()]{9,20}$/.test(v);
         }),
 
     birthdate: yup.string()

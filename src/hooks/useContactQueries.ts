@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { contactApi } from "@/api/contactApi";
 import { mapContactList, mapContactItem } from "@/dataHelper/contact.mapper";
-import type { ContactListFilters } from "@/dataHelper";
+import type { ContactListFilters, ContactListResponse, ContactItem } from "@/dataHelper";
 import { prepareSpreadsheetDownload, downloadBlobFile } from "@/utils";
 
 export const contactKeys = {
@@ -38,11 +38,46 @@ export const useContactDetailQuery = (id: number | string) => {
             if (!response.data) throw new Error("Empty response");
             const item = mapContactItem(response.data);
             
-            // Proactive list update if the contact was unread
-            // If it was 'new', it gets marked as 'read' on the server.
-            // We invalidate the list so the badges stay updated.
-            if (response.data.status === 'new') {
-                queryClient.invalidateQueries({ queryKey: contactKeys.lists() });
+            // Check if the contact in list cache was 'new'
+            let wasNewInCache = false;
+            const listsQueries = queryClient.getQueriesData<ContactListResponse>({ queryKey: contactKeys.lists() });
+            for (const [, listData] of listsQueries) {
+                if (listData && listData.data) {
+                    const cachedItem = listData.data.find((x: ContactItem) => String(x.id) === String(id));
+                    if (cachedItem && cachedItem.status === 'new') {
+                        wasNewInCache = true;
+                        break;
+                    }
+                }
+            }
+
+            if (wasNewInCache || response.data.status === 'new') {
+                queryClient.setQueriesData<ContactListResponse>({ queryKey: contactKeys.lists() }, (oldData) => {
+                    if (!oldData || !oldData.data) return oldData;
+                    
+                    let foundAndUpdated = false;
+                    const updatedData = oldData.data.map((x: ContactItem) => {
+                        if (String(x.id) === String(id) && x.status === 'new') {
+                            foundAndUpdated = true;
+                            return { ...x, status: 'read' as const };
+                        }
+                        return x;
+                    });
+                    
+                    if (foundAndUpdated) {
+                        const oldStats = oldData.stats || { total: 0, new: 0, read: 0, replied: 0 };
+                        return {
+                            ...oldData,
+                            data: updatedData,
+                            stats: {
+                                ...oldStats,
+                                new: Math.max(0, oldStats.new - 1),
+                                read: oldStats.read + 1,
+                            }
+                        };
+                    }
+                    return oldData;
+                });
                 queryClient.invalidateQueries({ queryKey: ["dashboard"] });
             }
             

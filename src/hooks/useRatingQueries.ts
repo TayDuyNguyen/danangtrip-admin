@@ -35,7 +35,7 @@ export const useAdminRatingMutations = () => {
     const approveMutation = useMutation({
         mutationFn: (id: string | number) => reportApi.approveRating(id),
         onSuccess: () => {
-            toast.success('Đã phê duyệt đánh giá thành công.');
+            toast.success('Đã duyệt đánh giá.');
             queryClient.invalidateQueries({ queryKey: ['reports'] });
             queryClient.invalidateQueries({ queryKey: ['dashboard'] });
         },
@@ -87,11 +87,25 @@ export const useAdminRatingMutations = () => {
         }
     });
 
+    const markViewedMutation = useMutation({
+        mutationFn: (id: string | number) => reportApi.markRatingViewed(id),
+        onSuccess: () => {
+            toast.success('Đã đánh dấu đánh giá là đã xem.');
+            queryClient.invalidateQueries({ queryKey: ['reports'] });
+            queryClient.invalidateQueries({ queryKey: ['dashboard'] });
+        },
+        onError: (err: unknown) => {
+            const errMsg = getLocalizedApiErrorMessage('Có lỗi xảy ra khi đánh dấu đã xem.', err);
+            toast.error(errMsg);
+        }
+    });
+
     return {
         approveMutation,
         rejectMutation,
         deleteMutation,
         exportMutation,
+        markViewedMutation,
     };
 };
 export default useAdminRatingMutations;

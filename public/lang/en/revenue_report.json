@@ -49,7 +49,8 @@
         "total_revenue": "Total Revenue",
         "daily_average": "Daily Average",
         "total_transactions": "Total Transactions",
-        "total_refunded": "Total Refunded"
+        "total_refunded": "Total Refunded",
+        "vs_prev_period": "vs. previous period"
     },
     "charts": {
         "trend_title": "Revenue Trend",

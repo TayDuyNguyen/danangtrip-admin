@@ -21,11 +21,18 @@ import type { AxiosResponse } from 'axios';
 
 type RatingsReportRequestParams<T> = T & Pick<RatingsReportFilters, 'status' | 'type'>;
 
-const sanitizeRatingsReportParams = <T extends object>(params: RatingsReportRequestParams<T>) => ({
-    ...params,
-    status: params.status !== 'all' ? params.status : undefined,
-    type: params.type !== 'all' ? params.type : undefined,
-});
+const sanitizeRatingsReportParams = <T extends object>(params: RatingsReportRequestParams<T>) => {
+    const isNew = 'is_new' in params
+        ? (params as T & { is_new?: boolean }).is_new
+        : undefined;
+
+    return {
+        ...params,
+        status: params.status !== 'all' ? params.status : undefined,
+        type: params.type !== 'all' ? params.type : undefined,
+        is_new: isNew === undefined ? undefined : Number(isNew),
+    };
+};
 
 type BookingsReportRequestParams<T> = T & Pick<BookingsReportFilters, 'status' | 'payment_status'>;
 
@@ -59,8 +66,8 @@ export const reportApi = {
         const { from, to, status, payment_status } = params;
         return axiosClient.get(API_ENDPOINTS.EXPORT.BOOKINGS, {
             params: sanitizeBookingsReportParams({
-                date_from: from,
-                date_to: to,
+                from_date: from,
+                to_date: to,
                 status,
                 payment_status,
             }),
@@ -113,6 +120,9 @@ export const reportApi = {
 
     rejectRating: (id: string | number, data?: { rejected_reason: string }): Promise<ApiResponse<unknown>> =>
         axiosClient.patch(API_ENDPOINTS.RATINGS.REJECT(id), data),
+
+    markRatingViewed: (id: string | number): Promise<ApiResponse<unknown>> =>
+        axiosClient.patch(API_ENDPOINTS.RATINGS.MARK_VIEWED(id)),
 
     deleteRating: (id: string | number): Promise<ApiResponse<unknown>> =>
         axiosClient.delete(API_ENDPOINTS.RATINGS.DELETE(id)),

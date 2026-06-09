@@ -30,7 +30,7 @@ export const websiteSettingsSchema = (t: TFunction) => yup.object({
         zalo: yup.string().url().nullable().optional().default(""),
     }),
     payment: yup.object({
-        payos: yup.boolean().required(),
+        sepay: yup.boolean().required(),
         cod: yup.boolean().required(),
         vnpay: yup.boolean().required(),
         momo: yup.boolean().required(),
@@ -39,7 +39,7 @@ export const websiteSettingsSchema = (t: TFunction) => yup.object({
         "at-least-one-payment",
         t("settings:validation.payment_required", { defaultValue: "At least one payment gateway must be enabled." }),
         (value) => {
-            return !!(value?.payos || value?.cod || value?.vnpay || value?.momo || value?.zalopay);
+            return !!(value?.sepay || value?.cod || value?.vnpay || value?.momo || value?.zalopay);
         }
     ),
     policy: yup.object({

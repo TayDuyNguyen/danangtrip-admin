@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useForm, Controller, useWatch } from "react-hook-form";
+import { useForm, Controller, useWatch, type Resolver } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -25,7 +25,7 @@ import CustomSelect, { type Option } from "@/components/ui/CustomSelect";
 import ToggleSwitch from "@/components/ui/ToggleSwitch";
 import { Button } from "@/components/ui/Button";
 import { ROUTES } from "@/routes/routes";
-import { useAuth } from "@/store";
+import { useAuth, useUserStore } from "@/store";
 import { UnsavedChangesGuard } from "@/components/common/UnsavedChangesGuard";
 import { ConfirmDeleteUserDialog } from "../../UserDetail/components/ConfirmDeleteUserDialog";
 
@@ -59,8 +59,7 @@ export const UserEditForm = ({ user }: UserEditFormProps) => {
         getValues,
         formState: { errors, isDirty }
     } = useForm<EditUserInput>({
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        resolver: yupResolver(editUserSchema(t)) as any,
+        resolver: yupResolver(editUserSchema(t)) as Resolver<EditUserInput>,
         defaultValues: {
             full_name: user.fullName || "",
             email: user.email || "",
@@ -101,20 +100,39 @@ export const UserEditForm = ({ user }: UserEditFormProps) => {
                     birthdate: data.birthdate || null,
                     gender: data.gender || null,
                     city: data.city || null,
-                    role: data.role,
-                    status: data.status
+                    ...(isSelf ? {} : { role: data.role, status: data.status })
                 }
             },
             {
-                onSuccess: () => {
+                onSuccess: (res: unknown) => {
                     toast.success(t("edit.toast_update_success", "Cập nhật thông tin người dùng thành công!"));
                     // Invalidate and refetch user data to reset isDirty
                     reset(data);
+
+                    const apiRes = res as { data?: { user?: { full_name: string; email: string; phone: string | null; birthdate: string | null; gender: string | null; city: string | null; avatar: string | null } } };
+                    if (isSelf && apiRes?.data?.user) {
+                        const updatedUser = apiRes.data.user;
+                        const currentUser = useUserStore.getState().user;
+                        if (currentUser) {
+                            useUserStore.setState({
+                                user: {
+                                    ...currentUser,
+                                    full_name: updatedUser.full_name,
+                                    email: updatedUser.email,
+                                    phone: updatedUser.phone,
+                                    birthdate: updatedUser.birthdate,
+                                    gender: updatedUser.gender,
+                                    city: updatedUser.city,
+                                    avatar: updatedUser.avatar,
+                                }
+                            });
+                        }
+                    }
                 },
                 onError: (error: unknown) => {
                     const axiosError = error as { response?: { status?: number; data?: { message?: string; errors?: Record<string, string[]> } } };
                     const responseData = axiosError?.response?.data;
-                    
+
                     if (axiosError?.response?.status === 422 && responseData?.errors) {
                         const backendErrors = responseData.errors;
                         Object.keys(backendErrors).forEach((key) => {
@@ -124,7 +142,7 @@ export const UserEditForm = ({ user }: UserEditFormProps) => {
                             });
                         });
                         toast.error(mapApiErrorMessage(t("toast.network_error"), error));
-                        
+
                         const firstErrorKey = Object.keys(backendErrors)[0];
                         const element = document.getElementsByName(firstErrorKey)[0];
                         if (element) {
@@ -154,7 +172,7 @@ export const UserEditForm = ({ user }: UserEditFormProps) => {
         }
 
         const nextStatus = user.status === "active" ? "banned" : "active";
-        
+
         updateStatusMutation.mutate(
             { id: user.id, status: nextStatus },
             {
@@ -406,13 +424,11 @@ export const UserEditForm = ({ user }: UserEditFormProps) => {
                                 <div className="flex flex-col gap-2">
                                     {/* Option User */}
                                     <label
-                                        className={`flex items-start gap-3 p-3 rounded-2xl border transition-all ${
-                                            isSelf ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
-                                        } ${
-                                            field.value === "user"
+                                        className={`flex items-start gap-3 p-3 rounded-2xl border transition-all ${isSelf ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+                                            } ${field.value === "user"
                                                 ? "bg-slate-50 border-slate-300 shadow-2xs"
                                                 : "border-slate-100 hover:bg-slate-50/50"
-                                        }`}
+                                            }`}
                                     >
                                         <input
                                             type="radio"
@@ -437,13 +453,11 @@ export const UserEditForm = ({ user }: UserEditFormProps) => {
 
                                     {/* Option Admin */}
                                     <label
-                                        className={`flex items-start gap-3 p-3 rounded-2xl border transition-all ${
-                                            isSelf ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
-                                        } ${
-                                            field.value === "admin"
+                                        className={`flex items-start gap-3 p-3 rounded-2xl border transition-all ${isSelf ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+                                            } ${field.value === "admin"
                                                 ? "bg-rose-50/30 border-rose-200 shadow-2xs"
                                                 : "border-slate-100 hover:bg-slate-50/50"
-                                        }`}
+                                            }`}
                                     >
                                         <input
                                             type="radio"
@@ -498,7 +512,7 @@ export const UserEditForm = ({ user }: UserEditFormProps) => {
                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
                             THÔNG TIN
                         </span>
-                        
+
                         <div className="flex justify-between items-center text-xs font-semibold">
                             <span className="text-slate-400">{t("edit.joined_date_label", "Ngày tham gia")}</span>
                             <span className="text-slate-600 text-right">{formattedJoinDate}</span>
@@ -589,7 +603,7 @@ export const UserEditForm = ({ user }: UserEditFormProps) => {
                 </div>
 
                 {/* Mobile/Form footer actions */}
-                <div className="flex flex-col gap-3 w-full">
+                <div className="flex flex-col gap-3 w-full md:hidden">
                     <Button
                         form="user-edit-form"
                         type="submit"

@@ -22,16 +22,19 @@ import BookingDetailDialog from './components/BookingDetailDialog';
 
 const BookingList = () => {
     const { t } = useTranslation('booking');
-    const [searchParams] = useSearchParams();
+    const [searchParams, setSearchParams] = useSearchParams();
     const userId = searchParams.get('user_id') || undefined;
+    const initialStatus = (searchParams.get('status') || 'all') as BookingListFilters['status'];
+    const initialPaymentStatus = (searchParams.get('payment_status') || 'all') as BookingListFilters['payment_status'];
     
     // State
     const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(10);
     const [filters, setFilters] = useState<BookingListFilters>({
         search: '',
-        status: 'all',
-        payment_status: 'all',
+        status: initialStatus,
+        payment_status: initialPaymentStatus,
+        user_id: userId,
         date_from: '',
         date_to: '',
         sort: 'booked_at',
@@ -42,6 +45,8 @@ const BookingList = () => {
     const [detailConfig, setDetailConfig] = useState<BookingItem | null>(null);
     const activeFilters: BookingListFilters = {
         ...filters,
+        status: (searchParams.get('status') || filters.status || 'all') as BookingListFilters['status'],
+        payment_status: (searchParams.get('payment_status') || filters.payment_status || 'all') as BookingListFilters['payment_status'],
         user_id: userId,
     };
 
@@ -74,7 +79,19 @@ const BookingList = () => {
     const total = listData?.meta.total || 0;
 
     const handleFilterChange = (newFilters: BookingListFilters) => {
-        setFilters({ ...newFilters, user_id: undefined });
+        const newParams = new URLSearchParams();
+        if (newFilters.status && newFilters.status !== 'all') {
+            newParams.set('status', newFilters.status);
+        }
+        if (newFilters.payment_status && newFilters.payment_status !== 'all') {
+            newParams.set('payment_status', newFilters.payment_status);
+        }
+        if (newFilters.user_id) {
+            newParams.set('user_id', String(newFilters.user_id));
+        }
+        setSearchParams(newParams);
+
+        setFilters(newFilters);
         setPage(1);
     };
 

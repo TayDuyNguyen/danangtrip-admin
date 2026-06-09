@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Star, Trash2, Download } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
@@ -21,10 +22,16 @@ import RatingDeleteDialog from './components/RatingDeleteDialog';
 
 const Ratings: React.FC = () => {
     const { t } = useTranslation(['ratings', 'common']);
+    const [searchParams, setSearchParams] = useSearchParams();
 
     // 1. Manage current filters state
     const [filters, setFilters] = useState<RatingsListFilters>({
         status: 'all',
+        is_new: searchParams.get('is_new') === '1'
+            ? true
+            : searchParams.get('is_new') === '0'
+                ? false
+                : undefined,
         type: 'all',
         search: '',
         page: 1,
@@ -67,22 +74,22 @@ const Ratings: React.FC = () => {
 
     // Mutations
     const { 
-        approveMutation,
         rejectMutation, 
         deleteMutation, 
-        exportMutation 
+        exportMutation,
+        markViewedMutation
     } = useAdminRatingMutations();
 
     // 5. Compute derived counts for stats row
     const statsTotal = reportData?.stats.total || 0;
-    const statsPending = reportData?.stats.pending || 0;
-    const statsApproved = reportData?.stats.approved || 0;
+    const statsNew = reportData?.stats.new || 0;
+    const statsViewed = reportData?.stats.viewed || 0;
     const statsRejected = reportData?.charts.statuses.find(s => s.status === 'rejected')?.count || 0;
 
     const stats = {
         total: statsTotal,
-        pending: statsPending,
-        approved: statsApproved,
+        new: statsNew,
+        viewed: statsViewed,
         rejected: statsRejected,
     };
 
@@ -109,8 +116,8 @@ const Ratings: React.FC = () => {
     };
 
     // 7. Individual Management Actions
-    const handleApprove = (id: number) => {
-        approveMutation.mutate(id, {
+    const handleMarkViewed = (id: number) => {
+        markViewedMutation.mutate(id, {
             onSuccess: () => {
                 refetchReport();
                 refetchList();
@@ -220,7 +227,17 @@ const Ratings: React.FC = () => {
             ...prev,
             ...newFilters,
         }));
-    }, []);
+
+        if (Object.prototype.hasOwnProperty.call(newFilters, 'is_new')) {
+            const nextParams = new URLSearchParams(searchParams);
+            if (newFilters.is_new === undefined) {
+                nextParams.delete('is_new');
+            } else {
+                nextParams.set('is_new', newFilters.is_new ? '1' : '0');
+            }
+            setSearchParams(nextParams, { replace: true });
+        }
+    }, [searchParams, setSearchParams]);
 
     const handleLimitChange = React.useCallback((perPage: number) => {
         setFilters(prev => ({
@@ -233,14 +250,18 @@ const Ratings: React.FC = () => {
     const handleReset = React.useCallback(() => {
         setFilters(prev => ({
             status: 'all',
+            is_new: undefined,
             type: 'all',
             search: '',
             page: 1,
             per_page: prev.per_page || 10,
         }));
+        const nextParams = new URLSearchParams(searchParams);
+        nextParams.delete('is_new');
+        setSearchParams(nextParams, { replace: true });
         setSelectedIds([]);
         toast.success(t('filter.toast.reset_success', 'Đã thiết lập lại bộ lọc.'));
-    }, [t]);
+    }, [searchParams, setSearchParams, t]);
 
     // 10. Excel Export Handler
     const handleExport = () => {
@@ -262,7 +283,7 @@ const Ratings: React.FC = () => {
     };
 
     const isMutating = 
-        approveMutation.isPending || 
+        markViewedMutation.isPending ||
         rejectMutation.isPending || 
         deleteMutation.isPending || 
         isBulkLoading;
@@ -329,7 +350,7 @@ const Ratings: React.FC = () => {
                 onSelectToggle={handleSelectToggle}
                 isSelectedAll={isSelectedAll}
                 onSelectAllChange={handleSelectAllChange}
-                onApprove={handleApprove}
+                onMarkViewed={handleMarkViewed}
                 onRejectClick={handleRejectClick}
                 onDelete={handleDeleteClick}
                 page={filters.page || 1}

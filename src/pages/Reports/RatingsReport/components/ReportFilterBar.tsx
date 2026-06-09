@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Calendar, Filter, RefreshCw } from 'lucide-react';
+import { Calendar, Filter, RefreshCw, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import CustomSelect, { type Option } from '@/components/ui/CustomSelect';
 
@@ -9,6 +9,7 @@ interface ReportFilterBarProps {
         to: string;
         status: 'all' | 'pending' | 'approved' | 'rejected';
         type: 'all' | 'location' | 'tour';
+        user_id?: string | number;
     };
     onFilterChange: (updated: Partial<ReportFilterBarProps['filters']>) => void;
     onApply: () => void;
@@ -211,6 +212,27 @@ const ReportFilterBar: React.FC<ReportFilterBarProps> = ({
                             </button>
                         </div>
                     </div>
+                    {filters.user_id && (
+                        <div className="flex flex-wrap items-center gap-2 border-t border-[#F1F5F9] pt-4 animate-in slide-in-from-top-2 duration-200">
+                            <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#94A3B8] mr-1">
+                                {t('filter.active_filtering', 'Đang lọc theo')}:
+                            </span>
+                            <div className="inline-flex items-center gap-1.5 rounded-full border border-[#14b8a6]/20 bg-[#14b8a6]/10 px-3 py-1 text-xs font-bold text-[#0f766e]">
+                                {t('filter.user_id_label', 'Người dùng ID')}: {filters.user_id}
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        onFilterChange({ user_id: undefined });
+                                        setTimeout(onApply, 0);
+                                    }}
+                                    className="rounded-full p-0.5 hover:bg-[#14b8a6]/15 transition-all cursor-pointer flex items-center justify-center"
+                                    title={t('filter.clear_user_filter', 'Bỏ lọc người dùng')}
+                                >
+                                    <X size={12} strokeWidth={2.5} />
+                                </button>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

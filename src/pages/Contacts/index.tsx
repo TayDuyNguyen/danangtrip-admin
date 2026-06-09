@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useSearchParams } from "react-router-dom";
-import { Download, Search, ChevronLeft, ChevronRight, Mail } from "lucide-react";
+import { Download, Search, ChevronLeft, ChevronRight, Mail, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 
 import ContactStatsRow from "./components/ContactStatsRow";
@@ -9,8 +9,9 @@ import ContactListItem from "./components/ContactListItem";
 import ContactDetailPanel from "./components/ContactDetailPanel";
 import DeleteContactDialog from "./components/DeleteContactDialog";
 
-import { useAdminContactsQuery, useContactDetailQuery, useContactMutations } from "@/hooks/useContactQueries";
-import type { ContactListFilters } from "@/dataHelper";
+import { useQueryClient } from "@tanstack/react-query";
+import { useAdminContactsQuery, useContactDetailQuery, useContactMutations, contactKeys } from "@/hooks/useContactQueries";
+import type { ContactListFilters, ContactListResponse, ContactItem } from "@/dataHelper";
 import Breadcrumbs from "@/components/common/Breadcrumbs";
 
 export const Contacts = () => {
@@ -70,7 +71,14 @@ export const Contacts = () => {
     }, [searchInput, q, status, selectedId, updateParams]);
 
     // 4. Data Queries & Mutations
-    const { data: listData, isLoading: isListLoading, isError: isListError } = useAdminContactsQuery(filters, page, perPage);
+    const queryClient = useQueryClient();
+    const { 
+        data: listData, 
+        isLoading: isListLoading, 
+        isError: isListError,
+        isFetching: isListFetching,
+        refetch: refetchList
+    } = useAdminContactsQuery(filters, page, perPage);
     const { data: detailData, isLoading: isDetailLoading, isError: isDetailError } = useContactDetailQuery(selectedId);
     const { replyMutation, deleteMutation, exportMutation } = useContactMutations();
 
@@ -81,6 +89,38 @@ export const Contacts = () => {
 
     const handleSelectContact = (id: number) => {
         updateParams({ id: String(id) });
+
+        // Optimistically mark contact as read in cached lists to update UI immediately
+        let wasNew = false;
+        queryClient.setQueriesData<ContactListResponse>({ queryKey: contactKeys.lists() }, (oldData) => {
+            if (!oldData || !oldData.data) return oldData;
+            
+            const updatedData = oldData.data.map((item: ContactItem) => {
+                if (item.id === id && item.status === 'new') {
+                    wasNew = true;
+                    return { ...item, status: 'read' as const };
+                }
+                return item;
+            });
+            
+            if (wasNew) {
+                const oldStats = oldData.stats || { total: 0, new: 0, read: 0, replied: 0 };
+                return {
+                    ...oldData,
+                    data: updatedData,
+                    stats: {
+                        ...oldStats,
+                        new: Math.max(0, oldStats.new - 1),
+                        read: oldStats.read + 1,
+                    }
+                };
+            }
+            return oldData;
+        });
+
+        if (wasNew) {
+            queryClient.invalidateQueries({ queryKey: ["dashboard"] });
+        }
     };
 
     const handleReplySubmit = (formData: { reply: string }) => {
@@ -206,15 +246,25 @@ export const Contacts = () => {
                     {/* Search & Filter Toolbar */}
                     <div className="p-4 border-b border-slate-50 flex flex-col gap-3 shrink-0">
                         {/* Search Input bar */}
-                        <div className="relative">
-                            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
-                            <input
-                                type="text"
-                                value={searchInput}
-                                onChange={(e) => setSearchInput(e.target.value)}
-                                placeholder={t("list.search_placeholder")}
-                                className="w-full pl-10 pr-4 py-2.5 rounded-2xl border border-slate-200 text-xs font-semibold focus:outline-hidden focus:border-[#14b8a6] focus:ring-1 focus:ring-[#14b8a6]/20 transition-all"
-                            />
+                        <div className="flex items-center gap-2">
+                            <div className="relative flex-1">
+                                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                                <input
+                                    type="text"
+                                    value={searchInput}
+                                    onChange={(e) => setSearchInput(e.target.value)}
+                                    placeholder={t("list.search_placeholder")}
+                                    className="w-full pl-10 pr-4 py-2.5 rounded-2xl border border-slate-200 text-xs font-semibold focus:outline-hidden focus:border-[#14b8a6] focus:ring-1 focus:ring-[#14b8a6]/20 transition-all"
+                                />
+                            </div>
+                            <button
+                                onClick={() => void refetchList()}
+                                disabled={isListFetching || isListLoading}
+                                className={`h-[38px] w-[38px] rounded-2xl border border-slate-200 bg-white flex items-center justify-center transition-all active:scale-95 cursor-pointer hover:border-[#14b8a6] hover:text-[#14b8a6] disabled:opacity-50 ${isListFetching ? 'text-[#14b8a6]' : 'text-slate-500'}`}
+                                title={t("common:actions.refresh", "Làm mới")}
+                            >
+                                <RefreshCw size={14} className={isListFetching ? 'animate-spin' : ''} />
+                            </button>
                         </div>
 
                         {/* Filter status tabs */}

@@ -114,6 +114,21 @@
         "search_label": "Quick search in admin",
         "admin_role": "Administrator"
     },
+    "notification_bell": {
+        "admin_center": "Admin Center",
+        "quick_notifications": "Quick Notifications",
+        "shortcut_desc": "Shortcuts to key system operations to follow.",
+        "contacts_title": "New Contacts",
+        "contacts_desc": "Check customer support requests",
+        "bookings_title": "Pending Bookings",
+        "bookings_desc": "Manage bookings waiting for confirmation or payment",
+        "ratings_title": "New Reviews",
+        "ratings_desc": "Check new reviews from users",
+        "close_aria": "Close quick notifications",
+        "read_status": "Read",
+        "mark_all_read": "Mark all as read",
+        "open_management": "Open Manager"
+    },
     "right_sidebar": {
         "title": "Control Panel",
         "profile": "Profile",

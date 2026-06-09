@@ -20,7 +20,7 @@ export interface SocialSettings {
 }
 
 export interface PaymentSettings {
-    payos: boolean;
+    sepay: boolean;
     cod: boolean;
     vnpay: boolean;
     momo: boolean;
