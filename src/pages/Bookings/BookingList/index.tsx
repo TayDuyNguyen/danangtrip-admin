@@ -19,6 +19,7 @@ import BookingFilter from './components/BookingFilter';
 import BookingTable from './components/BookingTable';
 import BookingCancelDialog from './components/BookingCancelDialog';
 import BookingDetailDialog from './components/BookingDetailDialog';
+import BookingConfirmPaymentDialog from './components/BookingConfirmPaymentDialog';
 
 const BookingList = () => {
     const { t } = useTranslation('booking');
@@ -42,6 +43,7 @@ const BookingList = () => {
     });
 
     const [cancelConfig, setCancelConfig] = useState<BookingItem | null>(null);
+    const [confirmPaymentConfig, setConfirmPaymentConfig] = useState<BookingItem | null>(null);
     const [detailConfig, setDetailConfig] = useState<BookingItem | null>(null);
     const activeFilters: BookingListFilters = {
         ...filters,
@@ -72,6 +74,7 @@ const BookingList = () => {
     // Mutations
     const { 
         updateStatusMutation, 
+        confirmPaymentMutation,
         exportMutation 
     } = useBookingMutations();
 
@@ -106,6 +109,30 @@ const BookingList = () => {
                 onError: () => toast.error(t('messages.update_error'))
             }
         );
+    };
+
+    const handleConfirmPaymentClick = (booking: BookingItem) => {
+        setDetailConfig(null);
+        setConfirmPaymentConfig(booking);
+    };
+
+    const handleConfirmPaymentSubmit = () => {
+        if (!confirmPaymentConfig) return;
+
+        confirmPaymentMutation.mutate(confirmPaymentConfig.id, {
+            onSuccess: () => {
+                toast.success(t('messages.confirm_payment_success', { defaultValue: 'Đã xác nhận thanh toán thành công' }));
+                setDetailConfig((current) => current?.id === confirmPaymentConfig.id 
+                    ? { ...current, paymentStatus: 'success', status: current.status === 'pending' ? 'confirmed' : current.status } 
+                    : current
+                );
+                setConfirmPaymentConfig(null);
+            },
+            onError: () => {
+                toast.error(t('messages.update_error'));
+                setConfirmPaymentConfig(null);
+            }
+        });
     };
 
     const handleCancelClick = (booking: BookingItem) => {
@@ -170,6 +197,7 @@ const BookingList = () => {
                 onLimitChange={setLimit}
                 onRefresh={refetchList}
                 onConfirm={handleConfirmBooking}
+                onConfirmPayment={handleConfirmPaymentClick}
                 onCancel={handleCancelClick}
                 sorting={{ sortBy: filters.sort || 'booked_at', sortOrder: filters.order || 'desc' }}
                 onSort={(field) => {
@@ -183,7 +211,17 @@ const BookingList = () => {
                 onClose={() => setDetailConfig(null)}
                 booking={detailConfig}
                 onConfirm={handleConfirmBooking}
+                onConfirmPayment={handleConfirmPaymentClick}
                 onCancel={handleCancelClick}
+            />
+
+            <BookingConfirmPaymentDialog
+                isOpen={!!confirmPaymentConfig}
+                onClose={() => setConfirmPaymentConfig(null)}
+                onConfirm={handleConfirmPaymentSubmit}
+                bookingCode={confirmPaymentConfig?.code || ''}
+                customerName={confirmPaymentConfig?.customer.name || ''}
+                isSubmitting={confirmPaymentMutation.isPending}
             />
 
             <BookingCancelDialog

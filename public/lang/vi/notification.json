@@ -26,7 +26,11 @@
         "booking": "ĐẶT TOUR",
         "rating": "ĐÁNH GIÁ",
         "system": "HỆ THỐNG",
-        "promotion": "KHUYẾN MÃI"
+        "promotion": "KHUYẾN MÃI",
+        "point": "ĐIỂM",
+        "voucher": "VOUCHER",
+        "contact": "LIÊN HỆ",
+        "tour_start_reminder": "NHẮC TOUR"
     },
     "statuses": {
         "all": "Tất cả",

@@ -74,6 +74,16 @@ export const useBookingMutations = () => {
         },
     });
 
+    const confirmPaymentMutation = useMutation({
+        mutationFn: (id: number | string) =>
+            bookingApi.confirmPayment(id),
+        onSuccess: (_, id) => {
+            queryClient.invalidateQueries({ queryKey: bookingKeys.all });
+            queryClient.invalidateQueries({ queryKey: bookingKeys.detail(id) });
+            queryClient.invalidateQueries({ queryKey: ['dashboard'] });
+        },
+    });
+
     const exportMutation = useMutation({
         mutationFn: async (params: BookingListFilters & { fallbackFilename: string }) => {
             const { fallbackFilename, ...exportParams } = params;
@@ -100,6 +110,7 @@ export const useBookingMutations = () => {
 
     return {
         updateStatusMutation,
+        confirmPaymentMutation,
         exportMutation,
         getInvoiceMutation,
     };

@@ -26,7 +26,11 @@
         "booking": "BOOKING",
         "rating": "RATING",
         "system": "SYSTEM",
-        "promotion": "PROMOTION"
+        "promotion": "PROMOTION",
+        "point": "POINT",
+        "voucher": "VOUCHER",
+        "contact": "CONTACT",
+        "tour_start_reminder": "TOUR REMINDER"
     },
     "statuses": {
         "all": "All",

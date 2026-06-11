@@ -34,6 +34,9 @@ export const bookingApi = {
     updateStatus: (id: number | string, data: { booking_status: string; cancellation_reason?: string }): Promise<ApiResponse<AdminRawBookingItem>> =>
         axiosClient.patch(API_ENDPOINTS.BOOKINGS.UPDATE_STATUS(id), data),
 
+    confirmPayment: (id: number | string): Promise<ApiResponse<AdminRawBookingItem>> =>
+        axiosClient.patch(API_ENDPOINTS.BOOKINGS.CONFIRM_PAYMENT(id)),
+
     export: (params: BookingListFilters): Promise<AxiosResponse<Blob>> =>
         axiosClient.get(API_ENDPOINTS.EXPORT.BOOKINGS, {
             params: toBookingRequestParams(params),

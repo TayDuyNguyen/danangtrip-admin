@@ -52,7 +52,14 @@ export const NotificationTable = ({
 
     const typeBadges: Record<string, { bg: string; text: string; labelKey: string }> = {
         booking: { bg: "bg-blue-50/80 border-blue-100/50", text: "text-blue-600", labelKey: "types.booking" },
+        booking_payment_confirmed: { bg: "bg-blue-50/80 border-blue-100/50", text: "text-blue-600", labelKey: "types.booking" },
+        tour_start_reminder: { bg: "bg-blue-50/80 border-blue-100/50", text: "text-blue-600", labelKey: "types.tour_start_reminder" },
         rating: { bg: "bg-amber-50/80 border-amber-100/50", text: "text-amber-600", labelKey: "types.rating" },
+        rating_approved: { bg: "bg-amber-50/80 border-amber-100/50", text: "text-amber-600", labelKey: "types.rating" },
+        rating_rejected: { bg: "bg-red-50/80 border-red-100/50", text: "text-red-600", labelKey: "types.rating" },
+        point_earned: { bg: "bg-emerald-50/80 border-emerald-100/50", text: "text-emerald-600", labelKey: "types.point" },
+        point_voucher_redeemed: { bg: "bg-orange-50/80 border-orange-100/50", text: "text-orange-600", labelKey: "types.voucher" },
+        contact_reply: { bg: "bg-cyan-50/80 border-cyan-100/50", text: "text-cyan-600", labelKey: "types.contact" },
         system: { bg: "bg-slate-100/80 border-slate-200/50", text: "text-slate-600", labelKey: "types.system" },
         promotion: { bg: "bg-orange-50/80 border-orange-100/50", text: "text-orange-600", labelKey: "types.promotion" },
     };
