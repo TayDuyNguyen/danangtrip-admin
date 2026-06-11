@@ -1,5 +1,5 @@
 export type BookingStatus = 'pending' | 'confirmed' | 'completed' | 'cancelled';
-export type PaymentStatus = 'pending' | 'paid' | 'refunded' | 'unpaid';
+export type PaymentStatus = 'pending' | 'paid' | 'success' | 'failed' | 'refunded' | 'unpaid';
 
 export interface AdminRawBookingItem {
     id: number;

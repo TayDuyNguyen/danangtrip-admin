@@ -57,6 +57,8 @@
     },
     "actions": {
         "confirm": "Confirm Booking",
+        "confirm_payment": "Confirm Payment",
+        "confirm_payment_warning": "Are you sure you want to confirm that payment has been made for this booking?",
         "cancel": "Cancel Booking"
     },
     "dialog": {
@@ -66,6 +68,10 @@
         "reason_placeholder": "Enter cancellation reason...",
         "cancel_warning": "The customer will receive an automatic cancellation notification via email.",
         "confirm_cancel": "Confirm Cancellation",
+        "confirm_payment_title": "Confirm Payment?",
+        "confirm_payment_description": "Confirm that booking {{code}} for {{name}} has been paid successfully via manual bank transfer.",
+        "confirm_payment_warning": "The system will automatically switch the booking status to \"Confirmed\" and send a payment confirmation email to the customer.",
+        "confirm_payment_action": "Confirm Paid",
         "detail_title": "Booking Details",
         "detail_subtitle": "Review customer details, travel timing, payment state, and follow-up actions in one place."
     },
@@ -80,6 +86,7 @@
     },
     "messages": {
         "confirm_success": "Booking confirmed successfully",
+        "confirm_payment_success": "Payment confirmed successfully",
         "cancel_success": "Booking cancelled successfully",
         "update_error": "An error occurred while updating the booking",
         "export_success": "Excel file is downloading...",

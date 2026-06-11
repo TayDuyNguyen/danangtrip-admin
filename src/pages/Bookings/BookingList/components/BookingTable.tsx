@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '@/routes/routes';
 import { 
     Eye, CheckCircle, XCircle, ArrowUpDown, ChevronUp, ChevronDown, 
-    Calendar, Clock, RefreshCw, ChevronLeft, ChevronRight
+    Calendar, Clock, RefreshCw, ChevronLeft, ChevronRight, DollarSign
 } from 'lucide-react';
 import { clsx } from 'clsx';
 import type { BookingItem } from '@/dataHelper/booking.dataHelper';
@@ -24,6 +24,7 @@ interface BookingTableProps {
     onLimitChange: (limit: number) => void;
     onRefresh?: () => void;
     onConfirm: (id: number) => void;
+    onConfirmPayment: (booking: BookingItem) => void;
     onCancel: (booking: BookingItem) => void;
     sorting: { sortBy: string; sortOrder: 'asc' | 'desc' };
     onSort: (field: string) => void;
@@ -40,6 +41,7 @@ export const BookingTable = ({
     onLimitChange,
     onRefresh,
     onConfirm,
+    onConfirmPayment,
     onCancel,
     sorting,
     onSort,
@@ -266,6 +268,18 @@ export const BookingTable = ({
                                                     title={t('actions.confirm')}
                                                 >
                                                     <CheckCircle size={14} />
+                                                </button>
+                                            )}
+
+                                            {/* Confirm payment button */}
+                                            {(booking.paymentStatus === 'pending' || booking.paymentStatus === 'unpaid') && booking.status !== 'cancelled' && (
+                                                <button
+                                                    type="button"
+                                                    onClick={() => onConfirmPayment(booking)}
+                                                    className="w-8 h-8 rounded-lg border border-[#14B8A6] flex items-center justify-center text-[#14B8A6] hover:bg-[#14B8A6] hover:text-white transition-all cursor-pointer bg-white"
+                                                    title={t('actions.confirm_payment', 'Xác nhận thanh toán')}
+                                                >
+                                                    <DollarSign size={14} />
                                                 </button>
                                             )}
 

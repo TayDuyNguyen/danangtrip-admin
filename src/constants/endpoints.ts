@@ -91,6 +91,7 @@ export const API_ENDPOINTS = {
         LIST: '/admin/bookings',
         STATUS_COUNTS: '/admin/bookings/status-counts',
         UPDATE_STATUS: (id: string | number) => `/admin/bookings/${id}/status`,
+        CONFIRM_PAYMENT: (id: string | number) => `/admin/bookings/${id}/confirm-payment`,
         DETAIL: (id: string | number) => `/admin/bookings/${id}`,
         INVOICE: (id: string | number) => `/admin/bookings/${id}/invoice`,
     },

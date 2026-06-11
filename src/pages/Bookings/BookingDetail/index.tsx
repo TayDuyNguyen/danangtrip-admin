@@ -32,6 +32,7 @@ import Breadcrumbs from '@/components/common/Breadcrumbs';
 import BookingStatusBadge from '../BookingList/components/BookingStatusBadge';
 import PaymentStatusBadge from '../BookingList/components/PaymentStatusBadge';
 import BookingCancelDialog from '../BookingList/components/BookingCancelDialog';
+import BookingConfirmPaymentDialog from '../BookingList/components/BookingConfirmPaymentDialog';
 import { formatCurrency } from '@/utils/pricing';
 import { formatAdminShortDate } from '@/utils/dateDisplay';
 import type { BookingStatus } from '@/dataHelper/booking.dataHelper';
@@ -197,6 +198,7 @@ const BookingDetail = () => {
     const { t, i18n } = useTranslation('booking');
 
     const [isCancelOpen, setIsCancelOpen] = useState(false);
+    const [isConfirmPaymentOpen, setIsConfirmPaymentOpen] = useState(false);
     const [isCompleting, setIsCompleting] = useState(false);
 
     // Queries
@@ -210,6 +212,7 @@ const BookingDetail = () => {
     // Mutations
     const { 
         updateStatusMutation, 
+        confirmPaymentMutation,
         getInvoiceMutation 
     } = useBookingMutations();
 
@@ -230,6 +233,25 @@ const BookingDetail = () => {
                 }
             }
         );
+    };
+
+    const handleConfirmPaymentClick = () => {
+        setIsConfirmPaymentOpen(true);
+    };
+
+    const handleConfirmPaymentSubmit = () => {
+        if (!booking) return;
+        confirmPaymentMutation.mutate(booking.id, {
+            onSuccess: () => {
+                toast.success(t('messages.confirm_payment_success', { defaultValue: 'Đã xác nhận thanh toán thành công' }));
+                setIsConfirmPaymentOpen(false);
+                refetch();
+            },
+            onError: () => {
+                toast.error(t('messages.update_error'));
+                setIsConfirmPaymentOpen(false);
+            }
+        });
     };
 
     const handleComplete = () => {
@@ -292,6 +314,7 @@ const BookingDetail = () => {
     const totalInfants = booking?.items.reduce((sum, item) => sum + item.quantityInfant, 0) || 0;
 
     const isTerminalState = booking ? (booking.bookingStatus === 'completed' || booking.bookingStatus === 'cancelled') : false;
+    const canConfirmPayment = booking ? ((booking.paymentStatus === 'pending' || booking.paymentStatus === 'unpaid') && booking.bookingStatus !== 'cancelled') : false;
 
     return (
         <div className="min-h-screen bg-[#F8FAFC] pb-20 font-sans">
@@ -635,6 +658,22 @@ const BookingDetail = () => {
                                     </button>
                                 )}
 
+                                {/* Confirm Payment Button */}
+                                {canConfirmPayment && (
+                                    <button
+                                        onClick={handleConfirmPaymentClick}
+                                        disabled={confirmPaymentMutation.isPending}
+                                        className="flex items-center justify-center gap-2 w-full px-5 py-3.5 border border-teal-500 text-teal-600 font-bold rounded-2xl hover:bg-teal-500 hover:text-white transition-all active:scale-95 duration-200 cursor-pointer disabled:opacity-50 text-[14px]"
+                                    >
+                                        {confirmPaymentMutation.isPending ? (
+                                            <Loader2 size={16} className="animate-spin" />
+                                        ) : (
+                                            <DollarSign size={16} />
+                                        )}
+                                        {t('actions.confirm_payment', 'Xác nhận thanh toán')}
+                                    </button>
+                                )}
+
                                 {/* Complete Button: confirmed -> completed */}
                                 {booking.bookingStatus === 'confirmed' && (
                                     <button
@@ -678,7 +717,7 @@ const BookingDetail = () => {
             </div>
             )}
 
-            {/* Cancel Action Confirmation Dialog */}
+            {/* Confirm Cancel Dialog */}
             {booking && (
                 <BookingCancelDialog
                     isOpen={isCancelOpen}
@@ -687,6 +726,18 @@ const BookingDetail = () => {
                     bookingCode={booking.code}
                     customerName={booking.customer.name}
                     isSubmitting={updateStatusMutation.isPending}
+                />
+            )}
+
+            {/* Confirm Payment Action Confirmation Dialog */}
+            {booking && (
+                <BookingConfirmPaymentDialog
+                    isOpen={isConfirmPaymentOpen}
+                    onClose={() => setIsConfirmPaymentOpen(false)}
+                    onConfirm={handleConfirmPaymentSubmit}
+                    bookingCode={booking.code}
+                    customerName={booking.customer.name}
+                    isSubmitting={confirmPaymentMutation.isPending}
                 />
             )}
         </div>

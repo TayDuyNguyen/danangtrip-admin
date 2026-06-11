@@ -11,10 +11,11 @@ interface Props {
     onClose: () => void;
     booking: BookingItem | null;
     onConfirm: (id: number) => void;
+    onConfirmPayment: (booking: BookingItem) => void;
     onCancel: (booking: BookingItem) => void;
 }
 
-const BookingDetailDialog = ({ isOpen, onClose, booking, onConfirm, onCancel }: Props) => {
+const BookingDetailDialog = ({ isOpen, onClose, booking, onConfirm, onConfirmPayment, onCancel }: Props) => {
     const { t, i18n } = useTranslation('booking');
 
     const locale = i18n.language === 'vi' ? 'vi-VN' : 'en-US';
@@ -52,6 +53,7 @@ const BookingDetailDialog = ({ isOpen, onClose, booking, onConfirm, onCancel }: 
 
     const canConfirm = booking?.status === 'pending';
     const canCancel = booking?.status === 'pending' || booking?.status === 'confirmed';
+    const canConfirmPayment = (booking?.paymentStatus === 'pending' || booking?.paymentStatus === 'unpaid') && booking?.status !== 'cancelled';
 
     if (!booking) return null;
 
@@ -273,6 +275,16 @@ const BookingDetailDialog = ({ isOpen, onClose, booking, onConfirm, onCancel }: 
                                         >
                                             <BadgeCheck size={16} />
                                             {t('actions.confirm')}
+                                        </button>
+                                    )}
+                                    {canConfirmPayment && (
+                                        <button
+                                            type="button"
+                                            onClick={() => onConfirmPayment(booking)}
+                                            className="inline-flex items-center justify-center gap-2 rounded-2xl border border-teal-200 bg-teal-500 px-5 py-3 text-sm font-black text-white transition-all hover:bg-teal-600"
+                                        >
+                                            <Wallet size={16} />
+                                            {t('actions.confirm_payment', 'Xác nhận thanh toán')}
                                         </button>
                                     )}
                                     {canCancel && (

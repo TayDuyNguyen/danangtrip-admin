@@ -14,6 +14,8 @@ const PaymentStatusBadge = ({ status, className }: Props) => {
         pending: 'bg-[#FEF3C7] text-[#F59E0B] border-[#FDE68A]',
         unpaid: 'bg-[#FEF3C7] text-[#F59E0B] border-[#FDE68A]',
         paid: 'bg-[#D1FAE5] text-[#10B981] border-[#A7F3D0]',
+        success: 'bg-[#D1FAE5] text-[#10B981] border-[#A7F3D0]',
+        failed: 'bg-[#FEE2E2] text-[#EF4444] border-[#FCA5A5]',
         refunded: 'bg-[#EEF2FF] text-[#6366F1] border-[#E0E7FF]',
     };
 
