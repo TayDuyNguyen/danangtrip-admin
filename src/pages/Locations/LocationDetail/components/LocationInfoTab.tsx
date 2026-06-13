@@ -17,6 +17,30 @@ interface LocationInfoTabProps {
 const LocationInfoTab = ({ location }: LocationInfoTabProps) => {
     const { t } = useTranslation('location');
 
+    const formatTimeRange = (timeRange: string) => {
+        const trimmed = timeRange.trim();
+        const match = trimmed.match(/^([^:-]+)[:-](.*)$/);
+        if (!match) return timeRange;
+
+        const rawDay = match[1].trim().toLowerCase();
+        const hours = match[2].trim();
+
+        const dayMap: Record<string, string> = {
+            mon: 'mon', monday: 'mon',
+            tue: 'tue', tuesday: 'tue',
+            wed: 'wed', wednesday: 'wed',
+            thu: 'thu', thursday: 'thu',
+            fri: 'fri', friday: 'fri',
+            sat: 'sat', saturday: 'sat',
+            sun: 'sun', sunday: 'sun',
+        };
+
+        const dayKey = dayMap[rawDay];
+        if (!dayKey) return timeRange;
+
+        return `${t(`detail.days.${dayKey}`)}: ${hours}`;
+    };
+
     const renderOpeningHours = (val: string | string[] | OpeningHours | undefined) => {
         if (!val) return null;
         if (typeof val === 'string') {
@@ -34,7 +58,7 @@ const LocationInfoTab = ({ location }: LocationInfoTabProps) => {
                             key={timeRange}
                             className="text-[13px] font-bold text-slate-700 bg-white px-2.5 py-1 rounded-xl border border-slate-100 shadow-sm w-fit"
                         >
-                            {timeRange}
+                            {formatTimeRange(timeRange)}
                         </div>
                     ))}
                 </div>
