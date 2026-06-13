@@ -40,9 +40,9 @@
         "per_page": "{{count}} / trang"
     },
     "status": {
-        "all": "TẤT CẢ",
-        "active": "ĐANG HOẠT ĐỘNG",
-        "inactive": "TẠM DỪNG"
+        "all": "Tất cả",
+        "active": "Đang hoạt động",
+        "inactive": "Tạm dừng"
     },
     "priceLevels": {
         "free": "$ - Miễn phí / Rẻ",

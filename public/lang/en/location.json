@@ -40,9 +40,9 @@
         "per_page": "{{count}} / page"
     },
     "status": {
-        "all": "ALL",
-        "active": "ACTIVE",
-        "inactive": "INACTIVE"
+        "all": "All",
+        "active": "Active",
+        "inactive": "Inactive"
     },
     "priceLevels": {
         "free": "$ - Free / Cheap",
