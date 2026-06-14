@@ -41,5 +41,14 @@ export const mapRawSettingsToViewModel = (raw: Record<string, Record<string, unk
             meta_description: (raw?.seo?.meta_description as string) || '',
             og_image: (raw?.seo?.og_image as string) || '',
         },
+        chatbot: {
+            enabled: raw?.chatbot?.enabled !== false,
+            clarification_attempt_limit: Number(raw?.chatbot?.clarification_attempt_limit ?? 2),
+            cache_ttl_seconds: Number(raw?.chatbot?.cache_ttl_seconds ?? 86400),
+            cache: {
+                threshold_transactional: Number((raw?.chatbot?.cache as Record<string, unknown> | undefined)?.threshold_transactional ?? 0.97),
+                threshold_faq: Number((raw?.chatbot?.cache as Record<string, unknown> | undefined)?.threshold_faq ?? 0.92),
+            },
+        },
     };
 };

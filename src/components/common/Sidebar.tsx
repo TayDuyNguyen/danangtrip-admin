@@ -17,7 +17,8 @@ import {
     Mail,
     Star,
     Tag,
-    Globe
+    Globe,
+    Bot
 } from 'lucide-react';
 import { ROUTES } from '@/routes/routes';
 import { useTranslation } from 'react-i18next';
@@ -72,6 +73,7 @@ const navItems = [
     { icon: Users, label: 'sidebar.users', path: ROUTES.USERS_LIST },
     { icon: Bell, label: 'sidebar.notifications', path: '/admin/notifications' },
     { icon: Mail, label: 'sidebar.contacts', path: ROUTES.CONTACTS },
+    { icon: Bot, label: 'sidebar.chatbot', path: ROUTES.CHATBOT },
 
     { icon: Settings, label: 'sidebar.settings', path: '/admin/settings' },
     { icon: Tag, label: 'sidebar.promotions', path: ROUTES.PROMOTIONS },

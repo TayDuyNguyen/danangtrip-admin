@@ -40,7 +40,10 @@ const Login = () => {
     const onSubmit = async (data: LoginRequest) => {
         setErr('');
         try {
-            const res = await loginMutation.mutateAsync(data);
+            const res = await loginMutation.mutateAsync({
+                ...data,
+                remember: rememberMe,
+            });
             if (!res.data) throw new Error();
 
             if (hasRole(res.data.user, 'admin')) {

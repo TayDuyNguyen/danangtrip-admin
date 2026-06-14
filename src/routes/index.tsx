@@ -42,6 +42,7 @@ const BlogPostEdit = React.lazy(() => import('@/pages/Blog/BlogPostEdit'));
 const BlogPostDetail = React.lazy(() => import('@/pages/Blog/BlogPostDetail'));
 const BlogCategories = React.lazy(() => import('@/pages/Blog/BlogCategories'));
 const Ratings = React.lazy(() => import('@/pages/Ratings'));
+const Chatbot = React.lazy(() => import('@/pages/Chatbot'));
 const Settings = React.lazy(() => import('@/pages/Settings'));
 const Promotions = React.lazy(() => import('@/pages/Promotions'));
 const LandingPages = React.lazy(() => import('@/pages/LandingPages'));
@@ -127,6 +128,7 @@ const router = createBrowserRouter([
                     { path: ROUTES.BLOG_POSTS_DETAIL, element: withSuspense(BlogPostDetail) },
                     { path: ROUTES.BLOG_CATEGORIES, element: withSuspense(BlogCategories) },
                     { path: ROUTES.RATINGS, element: withSuspense(Ratings) },
+                    { path: ROUTES.CHATBOT, element: withSuspense(Chatbot) },
                     { path: ROUTES.SETTINGS, element: withSuspense(Settings) },
                     { path: ROUTES.PROMOTIONS, element: withSuspense(Promotions) },
                     { path: ROUTES.LANDING_PAGES, element: withSuspense(LandingPages) },

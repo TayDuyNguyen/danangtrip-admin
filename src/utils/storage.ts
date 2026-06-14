@@ -1,3 +1,5 @@
+import Cookies from "js-cookie";
+
 const ACCESS_TOKEN_KEY = "access_token";
 const LANGUAGE_KEY = "language";
 const ADMIN_PREFERENCES_KEY = "danangtrip_admin_preferences";
@@ -17,22 +19,46 @@ const DEFAULT_ADMIN_PREFERENCES: AdminPreferences = {
 };
 
 /**
- * Get access token from localStorage
- * (Hàm để lấy access token từ localStorage)
+ * Get access token from cookies or localStorage
+ * (Hàm để lấy access token từ cookies hoặc localStorage)
  */
-export const getAccessToken = () => localStorage.getItem(ACCESS_TOKEN_KEY);
+export const getAccessToken = () => {
+    if (typeof window === "undefined") return null;
+    return Cookies.get(ACCESS_TOKEN_KEY) || localStorage.getItem(ACCESS_TOKEN_KEY);
+};
 
 /**
- * Set access token to localStorage
- * (Hàm để lưu access token vào localStorage)
+ * Set access token to cookies and/or localStorage based on remember parameter
+ * (Hàm để lưu access token vào cookies và/hoặc localStorage dựa trên tham số remember)
  */
-export const setAccessToken = (token: string) => localStorage.setItem(ACCESS_TOKEN_KEY, token);
+export const setAccessToken = (token: string, remember?: boolean) => {
+    if (typeof window === "undefined") return;
+
+    const shouldRemember = remember !== undefined
+        ? remember
+        : localStorage.getItem("remember_me") === "true";
+
+    if (shouldRemember) {
+        Cookies.set(ACCESS_TOKEN_KEY, token, { expires: 14, path: "/" });
+        localStorage.setItem(ACCESS_TOKEN_KEY, token);
+        localStorage.setItem("remember_me", "true");
+    } else {
+        Cookies.set(ACCESS_TOKEN_KEY, token, { path: "/" }); // Session cookie
+        localStorage.removeItem(ACCESS_TOKEN_KEY);
+        localStorage.setItem("remember_me", "false");
+    }
+};
 
 /**
- * Remove access token from localStorage
- * (Hàm để xóa access token khỏi localStorage)
+ * Remove access token from cookies and localStorage
+ * (Hàm để xóa access token khỏi cookies và localStorage)
  */
-export const clearTokens = () => localStorage.removeItem(ACCESS_TOKEN_KEY);
+export const clearTokens = () => {
+    if (typeof window === "undefined") return;
+    Cookies.remove(ACCESS_TOKEN_KEY, { path: "/" });
+    localStorage.removeItem(ACCESS_TOKEN_KEY);
+    localStorage.removeItem("remember_me");
+};
 
 /**
  * Get language from localStorage

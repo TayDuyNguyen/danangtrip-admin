@@ -58,6 +58,15 @@ export const websiteSettingsSchema = (t: TFunction) => yup.object({
             .max(200, t("settings:validation.meta_description_max", { defaultValue: "Meta description cannot exceed 200 characters." })),
         og_image: yup.string().nullable().optional().default(""),
     }),
+    chatbot: yup.object({
+        enabled: yup.boolean().required(),
+        clarification_attempt_limit: yup.number().integer().min(1).max(5).required(),
+        cache_ttl_seconds: yup.number().integer().min(60).required(),
+        cache: yup.object({
+            threshold_transactional: yup.number().min(0.5).max(1.0).required(),
+            threshold_faq: yup.number().min(0.5).max(1.0).required(),
+        }),
+    }),
 });
 
 export type WebsiteSettingsInput = yup.InferType<ReturnType<typeof websiteSettingsSchema>>;
