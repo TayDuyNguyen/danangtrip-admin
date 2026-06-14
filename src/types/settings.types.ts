@@ -39,6 +39,18 @@ export interface SEOSettings {
     og_image: string;
 }
 
+export interface ChatbotCacheSettings {
+    threshold_transactional: number;
+    threshold_faq: number;
+}
+
+export interface ChatbotSettings {
+    enabled: boolean;
+    clarification_attempt_limit: number;
+    cache_ttl_seconds: number;
+    cache: ChatbotCacheSettings;
+}
+
 export interface WebsiteSettings {
     general: GeneralSettings;
     brand: BrandSettings;
@@ -46,4 +58,5 @@ export interface WebsiteSettings {
     payment: PaymentSettings;
     policy: PolicySettings;
     seo: SEOSettings;
+    chatbot: ChatbotSettings;
 }

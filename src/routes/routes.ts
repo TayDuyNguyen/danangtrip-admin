@@ -35,6 +35,7 @@ export const ROUTES = {
     BLOG_POSTS_DETAIL: '/admin/blog-posts/:id',
     BLOG_CATEGORIES: '/admin/blog-categories',
     RATINGS: '/admin/ratings',
+    CHATBOT: '/admin/chatbot',
     SETTINGS: '/admin/settings',
     PROMOTIONS: '/admin/promotions',
     LANDING_PAGES: '/admin/landing-pages',

@@ -10,11 +10,11 @@ import { useMutation } from '@tanstack/react-query';
  * (Query để đăng nhập)
  */
 export const useLoginQuery = () => {
-    return useMutation<ApiResponse<LoginResponse>, Error, LoginRequest>({
-        mutationFn: authApi.login,
-        onSuccess: (res) => {
+    return useMutation<ApiResponse<LoginResponse>, Error, LoginRequest & { remember?: boolean }>({
+        mutationFn: ({ email, password }) => authApi.login({ email, password }),
+        onSuccess: (res, variables) => {
             if (res.data?.token) {
-                setAccessToken(res.data.token);
+                setAccessToken(res.data.token, variables.remember);
             }
             if (res.data?.user) {
                 useUserStore.setState({ user: res.data.user });

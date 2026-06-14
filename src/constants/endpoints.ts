@@ -158,6 +158,13 @@ export const API_ENDPOINTS = {
         PATCH_STATUS: (id: string | number) => `/admin/blog-posts/${id}/status`,
         DELETE: (id: string | number) => `/admin/blog-posts/${id}`,
     },
+    CHATBOT: {
+        STATS: '/admin/chatbot/stats',
+        LOGS: '/admin/chatbot/logs',
+        CACHE: '/admin/chatbot/cache',
+        DELETE_CACHE: (hash: string | number) => `/admin/chatbot/cache/${hash}`,
+        CLEAR_CACHE: '/admin/chatbot/cache',
+    },
     SETTINGS: {
         GET: '/admin/settings',
         UPDATE: '/admin/settings',

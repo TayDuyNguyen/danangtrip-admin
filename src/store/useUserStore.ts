@@ -10,7 +10,7 @@ import { clearTokens, getAccessToken, setAccessToken } from '@/utils';
 interface UserState {
     user: User | null;
     authReady: boolean;
-    setUser: (user: User, token: string) => void;
+    setUser: (user: User, token: string, remember?: boolean) => void;
     logout: () => void;
     setAuthReady: (ready: boolean) => void;
 }
@@ -26,8 +26,8 @@ export const useUserStore = create<UserState>()(
         (set) => ({
             user: null,
             authReady: false,
-            setUser: (user, token) => {
-                setAccessToken(token);
+            setUser: (user, token, remember) => {
+                setAccessToken(token, remember);
                 set({user});
             },
             logout: () => {
