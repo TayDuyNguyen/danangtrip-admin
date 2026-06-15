@@ -73,9 +73,13 @@
     "delete_warning": "⚠ Tất cả đơn hàng, đánh giá, yêu thích và thông báo của người dùng này sẽ bị xóa theo.",
     "role_title": "Thay đổi quyền hạn?",
     "role_confirm": "Bạn có chắc muốn cấp quyền Admin cho {{name}}? Tài khoản này sẽ có toàn quyền quản trị hệ thống.",
+    "block_title": "Khóa tài khoản này?",
+    "block_confirm": "Tài khoản của {{name}} sẽ bị khóa và không thể đăng nhập.",
+    "block_warning": "⚠ Người dùng sẽ bị chặn truy cập Web client và Admin cho đến khi được mở khóa.",
     "btn_cancel": "Hủy",
     "btn_confirm_delete": "Xóa tài khoản",
-    "btn_confirm_role": "Xác nhận nâng quyền"
+    "btn_confirm_role": "Xác nhận nâng quyền",
+    "btn_confirm_block": "Khóa tài khoản"
   },
   "toast": {
     "update_role_success": "Cập nhật vai trò thành công!",
@@ -179,6 +183,8 @@
     "placeholder_gender": "Chọn giới tính",
     "helper_username": "Chỉ dùng chữ thường, số và dấu gạch dưới",
     "helper_password": "Tối thiểu 8 ký tự, bao gồm chữ và số",
+    "show_password": "Hiện mật khẩu",
+    "hide_password": "Ẩn mật khẩu",
     "settings_title": "Cài đặt tài khoản",
     "settings_role": "Vai trò tài khoản",
     "settings_status": "Kích hoạt ngay",
@@ -213,6 +219,7 @@
     "btn_keep_editing": "Tiếp tục chỉnh sửa",
     "btn_discard_changes": "Bỏ thay đổi",
     "joined_date_label": "Ngày tham gia",
+    "info_section": "THÔNG TIN",
     "last_updated_label": "Cập nhật lần cuối",
     "verification_verified": "ĐÃ XÁC THỰC",
     "verification_unverified": "CHƯA XÁC THỰC",
@@ -230,6 +237,7 @@
     "username_format": "Username chỉ được chứa chữ cái thường, số và dấu gạch dưới.",
     "phone_format": "Số điện thoại không đúng định dạng.",
     "password_mismatch": "Mật khẩu xác nhận không khớp.",
+    "password_complexity": "Mật khẩu phải có ít nhất 8 ký tự, bao gồm cả chữ và số.",
     "create_success": "Tạo người dùng mới thành công!"
   }
 }

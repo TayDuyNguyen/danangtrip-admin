@@ -21,7 +21,11 @@ export const createUserSchema = (t: TFunction) => yup.object({
 
     password: yup.string()
         .required(t("user:validation.required", { field: t("user:create.label_password") }))
-        .min(8, t("user:validation.min_length", { field: t("user:create.label_password"), min: 8 })),
+        .min(8, t("user:validation.min_length", { field: t("user:create.label_password"), min: 8 }))
+        .matches(
+            /^(?=.*[A-Za-z])(?=.*\d).+$/,
+            t("user:validation.password_complexity")
+        ),
 
     password_confirmation: yup.string()
         .required(t("user:validation.required", { field: t("user:create.label_password_confirm") }))

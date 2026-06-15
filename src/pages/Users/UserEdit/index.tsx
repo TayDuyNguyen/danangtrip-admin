@@ -1,7 +1,7 @@
-import { useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { Edit, ArrowLeft, Users } from "lucide-react";
+import { Edit, ArrowLeft, Users, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { ROUTES } from "@/routes/routes";
 import { useAdminUserDetailQuery } from "@/hooks/useUserQueries";
@@ -14,6 +14,10 @@ export const UserEdit = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { id } = useParams<{ id: string }>();
+    const [isSaving, setIsSaving] = useState(false);
+    const handleSavePendingChange = useCallback((pending: boolean) => {
+        setIsSaving(pending);
+    }, []);
 
     // Query user details
     const { data: user, isLoading, isError } = useAdminUserDetailQuery(id || "");
@@ -58,31 +62,54 @@ export const UserEdit = () => {
         <div className="min-h-screen bg-[#f8fafc] pb-20 font-sans">
             {/* Sticky Header */}
             <div className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-slate-200/60 shadow-xs">
-                <div className="max-w-[1600px] mx-auto px-4 md:px-8 h-20 flex items-center">
-                    {/* Header Left: Breadcrumb + Title */}
-                    <div className="flex items-center gap-4">
+                <div className="max-w-[1600px] mx-auto px-4 md:px-8 h-20 flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-4 min-w-0">
                         <button
                             type="button"
-                            className="rounded-full w-10 h-10 p-0 hover:bg-slate-100 cursor-pointer flex items-center justify-center border-0 bg-transparent text-slate-600"
+                            className="rounded-full w-10 h-10 p-0 hover:bg-slate-100 cursor-pointer flex items-center justify-center border-0 bg-transparent text-slate-600 shrink-0"
                             onClick={handleBack}
+                            aria-label={t("detail.back_to_list", "Quay lại danh sách")}
                         >
                             <ArrowLeft className="w-5 h-5 text-slate-600" />
                         </button>
-                        <div>
+                        <div className="min-w-0">
                             <div className="mb-1">
                                 <Breadcrumbs
                                     icon={Users}
                                     items={[
-                                        { label: t("breadcrumb"), path: ROUTES.USERS_LIST },
-                                        { label: t("edit.breadcrumb_edit", "Chỉnh sửa") },
+                                        { label: t("breadcrumb"), path: ROUTES.USERS_LIST, isRaw: true },
+                                        { label: t("edit.breadcrumb_edit", "Chỉnh sửa"), isRaw: true },
                                     ]}
                                 />
                             </div>
-                            <h1 className="text-xl font-bold text-slate-900 tracking-tight leading-none">
+                            <h1 className="text-xl font-bold text-slate-900 tracking-tight leading-none truncate">
                                 {t("edit.title", "Chỉnh sửa Người dùng")}
                             </h1>
                         </div>
                     </div>
+
+                    {user && (
+                        <div className="hidden md:flex items-center gap-3 shrink-0">
+                            <Button
+                                type="button"
+                                variant="outline"
+                                disabled={isSaving}
+                                onClick={() => navigate(ROUTES.USERS_LIST)}
+                                className="rounded-xl border-slate-200 text-slate-600 hover:bg-slate-50 font-semibold h-11 px-5"
+                            >
+                                {t("edit.btn_cancel")}
+                            </Button>
+                            <Button
+                                form="user-edit-form"
+                                type="submit"
+                                isLoading={isSaving}
+                                className="rounded-xl bg-[#14b8a6] hover:bg-[#0d9488] text-white px-8 font-bold shadow-lg shadow-[#14b8a6]/20 h-11"
+                            >
+                                {!isSaving && <Sparkles className="w-4 h-4 mr-2" />}
+                                {isSaving ? t("edit.btn_submitting") : t("edit.btn_submit")}
+                            </Button>
+                        </div>
+                    )}
                 </div>
             </div>
 
@@ -121,7 +148,7 @@ export const UserEdit = () => {
                 ) : (
                     <>
                         {/* Form Component */}
-                        {user && <UserEditForm user={user} />}
+                        {user && <UserEditForm user={user} onSavePendingChange={handleSavePendingChange} />}
                     </>
                 )}
             </div>

@@ -22,6 +22,7 @@ import SearchTrendsPanel from './components/SearchTrendsPanel';
 import TopToursTable from './components/TopToursTable';
 import RecentOrdersTable from './components/RecentOrdersTable';
 import { toast } from 'sonner';
+import { showMutationErrorToast } from '@/utils/mutationErrorToast';
 
 // Separate filter options
 const REVENUE_PERIOD_OPTIONS = [
@@ -190,8 +191,8 @@ const Dashboard = () => {
             { fallbackFilename },
             {
                 onSuccess: () => toast.success(t('tables.export_success')),
-                onError: () => {
-                    toast.error(t('tables.export_failed'));
+                onError: (error) => {
+                    showMutationErrorToast(t('tables.export_failed'), error);
                 },
             }
         );

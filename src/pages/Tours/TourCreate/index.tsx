@@ -149,7 +149,7 @@ function AddTour() {
     );
 
     const onPublish = handleSubmit(
-        (data) => submitWithStatus(data, 'active'),
+        (data) => submitWithStatus(data, (data.status === 'inactive' ? 'inactive' : 'active')),
         (errors) => scrollToFirstError(errors, SCROLL_FIELD_ORDER)
     );
 
@@ -669,7 +669,7 @@ function AddTour() {
                                 title={t('form.sections.media')}
                                 subtitle={t('form.section_descriptions.media')}
                             />
-                            <ImageGallery setValue={setValue} watch={watch} />
+                            <ImageGallery setValue={setValue} watch={watch} errors={errors} />
                         </div>
                     </div>
 

@@ -5,6 +5,24 @@ import type { RawUserItem, RawUserListResponse, UserItem, UserListResponse, User
  * Mappers: Raw Backend User Data -> UI View Models
  */
 
+/** Normalize API date strings for `<input type="date">` (YYYY-MM-DD). */
+export const normalizeDateForInput = (value?: string | null): string | undefined => {
+    if (!value) return undefined;
+    const trimmed = value.trim();
+    if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) return trimmed;
+    const dateOnly = trimmed.split("T")[0];
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dateOnly)) return dateOnly;
+    const parsed = new Date(trimmed);
+    if (Number.isNaN(parsed.getTime())) return undefined;
+    return parsed.toISOString().slice(0, 10);
+};
+
+const normalizeGender = (value?: string | null): string | undefined => {
+    if (!value) return undefined;
+    const normalized = value.trim().toLowerCase();
+    return ["male", "female", "other"].includes(normalized) ? normalized : undefined;
+};
+
 export const mapUserItem = (raw: RawUserItem): UserItem => {
     return {
         id: raw.id,
@@ -20,8 +38,8 @@ export const mapUserItem = (raw: RawUserItem): UserItem => {
         createdAt: raw.created_at,
         updatedAt: raw.updated_at,
         phone: raw.phone || undefined,
-        birthdate: raw.birthdate || undefined,
-        gender: raw.gender || undefined,
+        birthdate: normalizeDateForInput(raw.birthdate),
+        gender: normalizeGender(raw.gender),
         city: raw.city || undefined,
         lastLoginAt: raw.last_login_at || undefined,
         isEmailVerified: !!raw.email_verified_at,
