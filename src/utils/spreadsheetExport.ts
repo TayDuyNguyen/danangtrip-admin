@@ -7,7 +7,8 @@ import {
 
 const XLSX_MIME = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 
-async function blobLooksLikeJsonError(blob: Blob): Promise<string | null> {
+/** Parse JSON error body returned with blob responseType (export endpoints). */
+export async function readSpreadsheetErrorMessage(blob: Blob): Promise<string | null> {
     if (blob.size === 0) return 'Empty response';
     const head = await blob.slice(0, 1).text();
     if (head !== '{') return null;
@@ -47,12 +48,21 @@ export async function prepareSpreadsheetDownload(
     response: AxiosResponse<Blob>,
     fallbackFilename: string
 ): Promise<SpreadsheetDownloadPrepared> {
+    if (response.status >= 400) {
+        const blob = response.data;
+        if (blob instanceof Blob) {
+            const jsonErr = await readSpreadsheetErrorMessage(blob);
+            if (jsonErr) return { ok: false, error: jsonErr };
+        }
+        return { ok: false, error: 'Export failed' };
+    }
+
     const blob = response.data;
     if (!(blob instanceof Blob)) {
         return { ok: false, error: 'Invalid response' };
     }
 
-    const jsonErr = await blobLooksLikeJsonError(blob);
+    const jsonErr = await readSpreadsheetErrorMessage(blob);
     if (jsonErr) {
         return { ok: false, error: jsonErr };
     }

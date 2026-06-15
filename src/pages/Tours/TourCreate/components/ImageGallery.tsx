@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import type { ChangeEvent } from 'react';
-import type { UseFormSetValue, UseFormWatch } from 'react-hook-form';
+import type { UseFormSetValue, UseFormWatch, FieldErrors } from 'react-hook-form';
 import { Plus, X, Image as ImageIcon, Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useTourUploadMutations } from '@/hooks/useTourQueries';
@@ -11,9 +11,10 @@ import { extractPublicIdFromUrl } from '@/utils/cloudinary';
 interface ImageGalleryProps {
     setValue: UseFormSetValue<CreateTourInput>;
     watch: UseFormWatch<CreateTourInput>;
+    errors?: FieldErrors<CreateTourInput>;
 }
 
-const ImageGallery = ({ setValue, watch }: ImageGalleryProps) => {
+const ImageGallery = ({ setValue, watch, errors }: ImageGalleryProps) => {
     const { t } = useTranslation('tour');
     const { uploadThumbnailMutation, uploadGalleryMutation, deleteImageMutation } = useTourUploadMutations();
 
@@ -246,6 +247,11 @@ const ImageGallery = ({ setValue, watch }: ImageGalleryProps) => {
                         className="text-sm"
                     />
                 </div>
+                {errors?.video_url && (
+                    <p className="mt-1 text-xs text-red-500 font-medium">
+                        {errors.video_url.message as string}
+                    </p>
+                )}
             </div>
         </div>
     );

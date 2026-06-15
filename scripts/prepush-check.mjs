@@ -16,7 +16,7 @@ const tempBuildDir = path.resolve(process.cwd(), 'dist-prepush');
 const steps = [
   { name: 'Linting', command: 'npm', args: ['run', 'lint'], fix: 'npm run lint --fix' },
   { name: 'Type Checking', command: 'npm', args: ['run', 'typecheck'], fix: 'Check TypeScript errors in your IDE' },
-  { name: 'Production Build', command: 'npm', args: ['run', 'build:check'], fix: 'Check build errors' }
+  { name: 'Production Build', command: 'npm', args: ['run', 'build:check'], fix: 'Check build errors' },
 ];
 
 async function isServerRunning() {

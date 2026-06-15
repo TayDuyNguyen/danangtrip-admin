@@ -73,9 +73,13 @@
     "delete_warning": "⚠ All orders, reviews, favorites, and notifications of this user will also be deleted.",
     "role_title": "Change Role?",
     "role_confirm": "Are you sure you want to grant Admin role to {{name}}? This account will have full administrative rights.",
+    "block_title": "Block this account?",
+    "block_confirm": "The account of {{name}} will be blocked and unable to sign in.",
+    "block_warning": "⚠ The user will be blocked from Web client and Admin until unblocked.",
     "btn_cancel": "Cancel",
     "btn_confirm_delete": "Delete Account",
-    "btn_confirm_role": "Confirm Promotion"
+    "btn_confirm_role": "Confirm Promotion",
+    "btn_confirm_block": "Block Account"
   },
   "toast": {
     "update_role_success": "Role updated successfully!",
@@ -179,6 +183,8 @@
     "placeholder_gender": "Select gender",
     "helper_username": "Only lowercase letters, numbers, and underscores",
     "helper_password": "Minimum 8 characters, including letters and numbers",
+    "show_password": "Show password",
+    "hide_password": "Hide password",
     "settings_title": "Account Settings",
     "settings_role": "Account Role",
     "settings_status": "Activate Now",
@@ -213,6 +219,7 @@
     "btn_keep_editing": "Keep Editing",
     "btn_discard_changes": "Discard Changes",
     "joined_date_label": "Join Date",
+    "info_section": "INFORMATION",
     "last_updated_label": "Last Updated",
     "verification_verified": "VERIFIED",
     "verification_unverified": "UNVERIFIED",
@@ -230,6 +237,7 @@
     "username_format": "Username can only contain lowercase letters, numbers, and underscores.",
     "phone_format": "Invalid phone number format.",
     "password_mismatch": "Passwords do not match.",
+    "password_complexity": "Password must be at least 8 characters and include both letters and numbers.",
     "create_success": "New user created successfully!"
   }
 }

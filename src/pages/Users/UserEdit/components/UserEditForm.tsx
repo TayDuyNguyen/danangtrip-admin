@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useForm, Controller, useWatch, type Resolver } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useTranslation } from "react-i18next";
@@ -28,6 +28,7 @@ import { ROUTES } from "@/routes/routes";
 import { useAuth, useUserStore } from "@/store";
 import { UnsavedChangesGuard } from "@/components/common/UnsavedChangesGuard";
 import { ConfirmDeleteUserDialog } from "../../UserDetail/components/ConfirmDeleteUserDialog";
+import CreateAdminConfirmDialog from "../../UserCreate/components/CreateAdminConfirmDialog";
 
 import { editUserSchema, type EditUserInput } from "@/validations/user.schema";
 import { useUserMutations } from "@/hooks/useUserQueries";
@@ -36,18 +37,28 @@ import { mapApiErrorMessage } from "@/utils";
 
 interface UserEditFormProps {
     user: UserItem;
+    onSavePendingChange?: (pending: boolean) => void;
 }
 
-export const UserEditForm = ({ user }: UserEditFormProps) => {
+const ActionSpinner = ({ className = "" }: { className?: string }) => (
+    <span
+        className={`inline-block h-3.5 w-3.5 shrink-0 animate-spin rounded-full border-2 border-current border-t-transparent ${className}`}
+        aria-hidden="true"
+    />
+);
+
+export const UserEditForm = ({ user, onSavePendingChange }: UserEditFormProps) => {
     const { t } = useTranslation("user");
     const navigate = useNavigate();
     const { user: currentAdmin } = useAuth();
-    const { updateUserMutation, updateStatusMutation, deleteMutation } = useUserMutations();
+    const { updateUserMutation, updateStatusMutation, updateRoleMutation, deleteMutation } = useUserMutations();
 
     const isSelf = currentAdmin?.id === user.id;
 
     // Quick Actions dialog active states
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+    const [adminConfirmOpen, setAdminConfirmOpen] = useState(false);
+    const [pendingRole, setPendingRole] = useState<"admin" | "user" | null>(null);
     const [bypassGuard, setBypassGuard] = useState(false);
 
     const {
@@ -55,8 +66,9 @@ export const UserEditForm = ({ user }: UserEditFormProps) => {
         control,
         handleSubmit,
         setError,
-        reset,
+        setValue,
         getValues,
+        reset,
         formState: { errors, isDirty }
     } = useForm<EditUserInput>({
         resolver: yupResolver(editUserSchema(t)) as Resolver<EditUserInput>,
@@ -73,23 +85,57 @@ export const UserEditForm = ({ user }: UserEditFormProps) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any);
 
-    // Reset values when user prop changes
-    useEffect(() => {
-        if (user) {
-            reset({
-                full_name: user.fullName || "",
-                email: user.email || "",
-                phone: user.phone || "",
-                birthdate: user.birthdate || "",
-                gender: user.gender || "",
-                city: user.city || "",
-                role: user.role === "admin" ? "admin" : "user",
-                status: user.status === "banned" ? "banned" : "active"
-            });
-        }
-    }, [user, reset]);
+    // Reset values when user prop changes (preserve unsaved edits on same user)
+    const loadedUserIdRef = useRef<number | null>(null);
 
-    const onSubmit = (data: EditUserInput) => {
+    useEffect(() => {
+        if (!user) return;
+
+        const formValues = {
+            full_name: user.fullName || "",
+            email: user.email || "",
+            phone: user.phone || "",
+            birthdate: user.birthdate || "",
+            gender: user.gender || "",
+            city: user.city || "",
+            role: user.role === "admin" ? "admin" : "user",
+            status: user.status === "banned" ? "banned" : "active"
+        } as EditUserInput;
+
+        if (loadedUserIdRef.current !== user.id) {
+            loadedUserIdRef.current = user.id;
+            reset(formValues);
+            return;
+        }
+
+        if (!isDirty) {
+            reset(formValues);
+            return;
+        }
+
+        const serverStatus = user.status === "banned" ? "banned" : "active";
+        if (getValues("status") !== serverStatus) {
+            setValue("status", serverStatus, { shouldDirty: false });
+        }
+
+        const serverRole = user.role === "admin" ? "admin" : "user";
+        if (getValues("role") !== serverRole) {
+            setValue("role", serverRole, { shouldDirty: false });
+        }
+    }, [user, reset, isDirty, setValue, getValues]);
+
+    useEffect(() => {
+        onSavePendingChange?.(
+            updateUserMutation.isPending || updateRoleMutation.isPending || updateStatusMutation.isPending
+        );
+    }, [
+        onSavePendingChange,
+        updateUserMutation.isPending,
+        updateRoleMutation.isPending,
+        updateStatusMutation.isPending,
+    ]);
+
+    const submitUser = (data: EditUserInput) => {
         updateUserMutation.mutate(
             {
                 id: user.id,
@@ -100,13 +146,14 @@ export const UserEditForm = ({ user }: UserEditFormProps) => {
                     birthdate: data.birthdate || null,
                     gender: data.gender || null,
                     city: data.city || null,
-                    ...(isSelf ? {} : { role: data.role, status: data.status })
                 }
             },
             {
                 onSuccess: (res: unknown) => {
+                    setAdminConfirmOpen(false);
+                    setPendingRole(null);
+                    setBypassGuard(true);
                     toast.success(t("edit.toast_update_success", "Cập nhật thông tin người dùng thành công!"));
-                    // Invalidate and refetch user data to reset isDirty
                     reset(data);
 
                     const apiRes = res as { data?: { user?: { full_name: string; email: string; phone: string | null; birthdate: string | null; gender: string | null; city: string | null; avatar: string | null } } };
@@ -128,6 +175,10 @@ export const UserEditForm = ({ user }: UserEditFormProps) => {
                             });
                         }
                     }
+
+                    setTimeout(() => {
+                        navigate(ROUTES.USERS_DETAIL.replace(":id", String(user.id)));
+                    }, 100);
                 },
                 onError: (error: unknown) => {
                     const axiosError = error as { response?: { status?: number; data?: { message?: string; errors?: Record<string, string[]> } } };
@@ -156,6 +207,62 @@ export const UserEditForm = ({ user }: UserEditFormProps) => {
         );
     };
 
+    const onSubmit = (data: EditUserInput) => {
+        submitUser(data);
+    };
+
+    const applyRoleChange = (nextRole: "admin" | "user") => {
+        if (isSelf) {
+            toast.error(t("toast.self_action_error"));
+            return;
+        }
+        if (user.role === nextRole || updateRoleMutation.isPending) return;
+
+        if (nextRole === "admin" && user.role !== "admin") {
+            setPendingRole("admin");
+            setAdminConfirmOpen(true);
+            return;
+        }
+
+        updateRoleMutation.mutate(
+            { id: user.id, role: nextRole },
+            {
+                onSuccess: () => {
+                    toast.success(t("detail.toast_role_success", "Cập nhật vai trò thành công."));
+                    setValue("role", nextRole, { shouldDirty: false });
+                },
+                onError: (err: unknown) => {
+                    toast.error(mapApiErrorMessage(t("detail.toast_role_error"), err));
+                },
+            }
+        );
+    };
+
+    const handleConfirmAdminRole = () => {
+        if (pendingRole === "admin") {
+            updateRoleMutation.mutate(
+                { id: user.id, role: "admin" },
+                {
+                    onSuccess: () => {
+                        toast.success(t("detail.toast_role_success", "Cập nhật vai trò thành công."));
+                        setValue("role", "admin", { shouldDirty: false });
+                        setAdminConfirmOpen(false);
+                        setPendingRole(null);
+                    },
+                    onError: (err: unknown) => {
+                        toast.error(mapApiErrorMessage(t("detail.toast_role_error"), err));
+                    },
+                }
+            );
+        }
+    };
+
+    const handleCloseAdminConfirm = () => {
+        if (updateUserMutation.isPending || updateRoleMutation.isPending) return;
+        setAdminConfirmOpen(false);
+        setPendingRole(null);
+    };
+
     // Watch email changes to show warning
     const watchedEmail = useWatch({
         control,
@@ -165,13 +272,12 @@ export const UserEditForm = ({ user }: UserEditFormProps) => {
     const showEmailWarning = watchedEmail && watchedEmail !== user.email;
 
     // Quick Action handlers
-    const handleStatusToggle = () => {
+    const applyStatusChange = (nextStatus: "active" | "banned") => {
         if (isSelf) {
             toast.error(t("toast.self_action_error"));
             return;
         }
-
-        const nextStatus = user.status === "active" ? "banned" : "active";
+        if (user.status === nextStatus || updateStatusMutation.isPending) return;
 
         updateStatusMutation.mutate(
             { id: user.id, status: nextStatus },
@@ -182,14 +288,17 @@ export const UserEditForm = ({ user }: UserEditFormProps) => {
                             ? t("detail.toast_blocked_success", "Đã khóa tài khoản thành công.")
                             : t("detail.toast_unblocked_success", "Đã mở khóa tài khoản thành công.")
                     );
-                    // Update form value
-                    reset({ ...getValues(), status: nextStatus });
+                    setValue("status", nextStatus, { shouldDirty: false });
                 },
                 onError: (err: unknown) => {
                     toast.error(mapApiErrorMessage(t("detail.toast_status_error"), err));
                 }
             }
         );
+    };
+
+    const handleStatusToggle = () => {
+        applyStatusChange(user.status === "active" ? "banned" : "active");
     };
 
     const handleDeleteSubmit = () => {
@@ -226,6 +335,7 @@ export const UserEditForm = ({ user }: UserEditFormProps) => {
     return (
         <form
             id="user-edit-form"
+            noValidate
             onSubmit={handleSubmit(onSubmit)}
             className="flex flex-col lg:flex-row gap-8 items-start w-full"
         >
@@ -272,7 +382,7 @@ export const UserEditForm = ({ user }: UserEditFormProps) => {
                             <div className="flex items-center gap-2 h-11 px-4 bg-slate-50 border border-slate-200 rounded-xl">
                                 <span className="text-sm font-semibold text-slate-400">@</span>
                                 <span className="text-sm font-mono text-slate-600 font-semibold truncate">
-                                    {user.username.replace("@", "")}
+                                    {(user.username || "@user").replace(/^@/, "") || "—"}
                                 </span>
                                 <span className="ml-auto px-2 py-0.5 text-[10px] font-bold text-slate-400 bg-slate-200/50 rounded-md uppercase tracking-wide shrink-0">
                                     {t("edit.username_readonly_badge", "Không thể thay đổi")}
@@ -412,81 +522,82 @@ export const UserEditForm = ({ user }: UserEditFormProps) => {
                         {t("create.settings_title")}
                     </h4>
 
-                    {/* Role Selection */}
+                    {/* Role Selection — applies immediately via PATCH */}
                     <div className="space-y-3 mb-6">
-                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1">
-                            {t("create.settings_role")}
-                        </label>
-                        <Controller
-                            name="role"
-                            control={control}
-                            render={({ field }) => (
-                                <div className="flex flex-col gap-2">
-                                    {/* Option User */}
-                                    <label
-                                        className={`flex items-start gap-3 p-3 rounded-2xl border transition-all ${isSelf ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
-                                            } ${field.value === "user"
-                                                ? "bg-slate-50 border-slate-300 shadow-2xs"
-                                                : "border-slate-100 hover:bg-slate-50/50"
-                                            }`}
-                                    >
-                                        <input
-                                            type="radio"
-                                            value="user"
-                                            disabled={isSelf}
-                                            checked={field.value === "user"}
-                                            onChange={() => field.onChange("user")}
-                                            className="mt-1 accent-[#14b8a6] cursor-pointer disabled:cursor-not-allowed"
-                                        />
-                                        <div>
-                                            <div className="flex items-center gap-1.5">
-                                                <span className="text-xs font-extrabold text-slate-700">USER</span>
-                                                <span className="px-1.5 py-0.5 text-[8px] font-black uppercase text-slate-400 bg-slate-100 rounded-md">
-                                                    DEFAULT
-                                                </span>
-                                            </div>
-                                            <p className="text-[10px] text-slate-400 font-bold leading-normal mt-0.5">
-                                                {t("detail.role_user_desc")}
-                                            </p>
-                                        </div>
-                                    </label>
-
-                                    {/* Option Admin */}
-                                    <label
-                                        className={`flex items-start gap-3 p-3 rounded-2xl border transition-all ${isSelf ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
-                                            } ${field.value === "admin"
-                                                ? "bg-rose-50/30 border-rose-200 shadow-2xs"
-                                                : "border-slate-100 hover:bg-slate-50/50"
-                                            }`}
-                                    >
-                                        <input
-                                            type="radio"
-                                            value="admin"
-                                            disabled={isSelf}
-                                            checked={field.value === "admin"}
-                                            onChange={() => field.onChange("admin")}
-                                            className="mt-1 accent-rose-500 cursor-pointer disabled:cursor-not-allowed"
-                                        />
-                                        <div>
-                                            <div className="flex items-center gap-1.5">
-                                                <span className="text-xs font-extrabold text-rose-700">ADMIN</span>
-                                                <span className="px-1.5 py-0.5 text-[8px] font-black uppercase text-rose-600 bg-rose-50 rounded-md">
-                                                    FULL POWER
-                                                </span>
-                                            </div>
-                                            <p className="text-[10px] text-rose-500/80 font-bold leading-normal mt-0.5">
-                                                {t("detail.role_admin_desc")}
-                                            </p>
-                                        </div>
-                                    </label>
-                                </div>
+                        <div className="flex items-center justify-between gap-2">
+                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1">
+                                {t("create.settings_role")}
+                            </label>
+                            {updateRoleMutation.isPending && (
+                                <ActionSpinner className="text-[#14b8a6]" />
                             )}
-                        />
+                        </div>
+                        <div className="flex flex-col gap-2" data-testid="user-edit-role-group">
+                            {/* Option User */}
+                            <label
+                                className={`flex items-start gap-3 p-3 rounded-2xl border transition-all ${isSelf || updateRoleMutation.isPending ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+                                    } ${user.role === "user"
+                                        ? "bg-slate-50 border-slate-300 shadow-2xs"
+                                        : "border-slate-100 hover:bg-slate-50/50"
+                                    }`}
+                            >
+                                <input
+                                    type="radio"
+                                    name="user-edit-role"
+                                    value="user"
+                                    disabled={isSelf || updateRoleMutation.isPending}
+                                    checked={user.role === "user"}
+                                    onChange={() => applyRoleChange("user")}
+                                    className="mt-1 accent-[#14b8a6] cursor-pointer disabled:cursor-not-allowed"
+                                />
+                                <div>
+                                    <div className="flex items-center gap-1.5">
+                                        <span className="text-xs font-extrabold text-slate-700">USER</span>
+                                        <span className="px-1.5 py-0.5 text-[8px] font-black uppercase text-slate-400 bg-slate-100 rounded-md">
+                                            DEFAULT
+                                        </span>
+                                    </div>
+                                    <p className="text-[10px] text-slate-400 font-bold leading-normal mt-0.5">
+                                        {t("detail.role_user_desc")}
+                                    </p>
+                                </div>
+                            </label>
+
+                            {/* Option Admin */}
+                            <label
+                                className={`flex items-start gap-3 p-3 rounded-2xl border transition-all ${isSelf || updateRoleMutation.isPending ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+                                    } ${user.role === "admin"
+                                        ? "bg-rose-50/30 border-rose-200 shadow-2xs"
+                                        : "border-slate-100 hover:bg-slate-50/50"
+                                    }`}
+                            >
+                                <input
+                                    type="radio"
+                                    name="user-edit-role"
+                                    value="admin"
+                                    disabled={isSelf || updateRoleMutation.isPending}
+                                    checked={user.role === "admin"}
+                                    onChange={() => applyRoleChange("admin")}
+                                    className="mt-1 accent-rose-500 cursor-pointer disabled:cursor-not-allowed"
+                                />
+                                <div>
+                                    <div className="flex items-center gap-1.5">
+                                        <span className="text-xs font-extrabold text-rose-700">ADMIN</span>
+                                        <span className="px-1.5 py-0.5 text-[8px] font-black uppercase text-rose-600 bg-rose-50 rounded-md">
+                                            FULL POWER
+                                        </span>
+                                    </div>
+                                    <p className="text-[10px] text-rose-500/80 font-bold leading-normal mt-0.5">
+                                        {t("detail.role_admin_desc")}
+                                    </p>
+                                </div>
+                            </label>
+                        </div>
                     </div>
 
-                    {/* Status Toggle Switch */}
-                    <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
-                        <div>
+                    {/* Status Toggle Switch — applies immediately via PATCH (same as quick lock) */}
+                    <div className="pt-4 border-t border-slate-100 flex items-center justify-between gap-3">
+                        <div className="min-w-0">
                             <span className="text-xs font-extrabold text-slate-700 block">
                                 {t("create.settings_status")}
                             </span>
@@ -494,23 +605,24 @@ export const UserEditForm = ({ user }: UserEditFormProps) => {
                                 {t("create.settings_status_desc")}
                             </span>
                         </div>
-                        <Controller
-                            name="status"
-                            control={control}
-                            render={({ field }) => (
-                                <ToggleSwitch
-                                    enabled={field.value === "active"}
-                                    disabled={isSelf}
-                                    onChange={(enabled: boolean) => field.onChange(enabled ? "active" : "banned")}
-                                />
+                        <div className="flex items-center gap-2 shrink-0" data-testid="user-edit-status-toggle">
+                            {updateStatusMutation.isPending && (
+                                <ActionSpinner className="text-[#14b8a6]" />
                             )}
-                        />
+                            <ToggleSwitch
+                                enabled={user.status === "active"}
+                                disabled={isSelf || updateStatusMutation.isPending}
+                                onChange={(enabled: boolean) =>
+                                    applyStatusChange(enabled ? "active" : "banned")
+                                }
+                            />
+                        </div>
                     </div>
 
                     {/* Account Metadata block */}
                     <div className="mt-5 pt-4 border-t border-slate-100 space-y-3 font-sans">
                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
-                            THÔNG TIN
+                            {t("edit.info_section", "THÔNG TIN")}
                         </span>
 
                         <div className="flex justify-between items-center text-xs font-semibold">
@@ -572,19 +684,37 @@ export const UserEditForm = ({ user }: UserEditFormProps) => {
                             <button
                                 type="button"
                                 onClick={handleStatusToggle}
-                                className="w-full flex items-center gap-2 h-10 px-4 border border-rose-100 hover:bg-rose-50 text-rose-600 rounded-xl text-xs font-bold transition-all cursor-pointer"
+                                disabled={updateStatusMutation.isPending}
+                                className="w-full flex items-center gap-2 h-10 px-4 border border-rose-100 hover:bg-rose-50 text-rose-600 rounded-xl text-xs font-bold transition-all cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                             >
-                                <Ban size={13} />
-                                <span>{t("edit.quick_action_lock", "Khóa tài khoản")}</span>
+                                {updateStatusMutation.isPending ? (
+                                    <ActionSpinner className="text-rose-500" />
+                                ) : (
+                                    <Ban size={13} />
+                                )}
+                                <span>
+                                    {updateStatusMutation.isPending
+                                        ? t("edit.btn_submitting")
+                                        : t("edit.quick_action_lock", "Khóa tài khoản")}
+                                </span>
                             </button>
                         ) : (
                             <button
                                 type="button"
                                 onClick={handleStatusToggle}
-                                className="w-full flex items-center gap-2 h-10 px-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all cursor-pointer"
+                                disabled={updateStatusMutation.isPending}
+                                className="w-full flex items-center gap-2 h-10 px-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
                             >
-                                <LockOpen size={13} />
-                                <span>{t("edit.quick_action_unlock", "Mở khóa tài khoản")}</span>
+                                {updateStatusMutation.isPending ? (
+                                    <ActionSpinner className="text-white" />
+                                ) : (
+                                    <LockOpen size={13} />
+                                )}
+                                <span>
+                                    {updateStatusMutation.isPending
+                                        ? t("edit.btn_submitting")
+                                        : t("edit.quick_action_unlock", "Mở khóa tài khoản")}
+                                </span>
                             </button>
                         )
                     )}
@@ -594,10 +724,19 @@ export const UserEditForm = ({ user }: UserEditFormProps) => {
                         <button
                             type="button"
                             onClick={() => setIsDeleteDialogOpen(true)}
-                            className="w-full flex items-center gap-2 h-10 px-4 border border-rose-100 hover:bg-rose-50 text-rose-600 rounded-xl text-xs font-bold transition-all cursor-pointer"
+                            disabled={deleteMutation.isPending}
+                            className="w-full flex items-center gap-2 h-10 px-4 border border-rose-100 hover:bg-rose-50 text-rose-600 rounded-xl text-xs font-bold transition-all cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                         >
-                            <Trash2 size={13} />
-                            <span>{t("edit.quick_action_delete", "Xóa tài khoản")}</span>
+                            {deleteMutation.isPending ? (
+                                <ActionSpinner className="text-rose-500" />
+                            ) : (
+                                <Trash2 size={13} />
+                            )}
+                            <span>
+                                {deleteMutation.isPending
+                                    ? t("edit.btn_submitting")
+                                    : t("edit.quick_action_delete", "Xóa tài khoản")}
+                            </span>
                         </button>
                     )}
                 </div>
@@ -611,12 +750,14 @@ export const UserEditForm = ({ user }: UserEditFormProps) => {
                         className="w-full rounded-2xl bg-[#14b8a6] hover:bg-[#0d9488] text-white h-14 font-bold shadow-lg shadow-[#14b8a6]/20 transition-all hover:scale-[1.01] active:scale-95 cursor-pointer flex items-center justify-center gap-2"
                         isLoading={updateUserMutation.isPending}
                     >
-                        {t("edit.btn_submit")}
+                        {updateUserMutation.isPending
+                            ? t("edit.btn_submitting")
+                            : t("edit.btn_submit")}
                     </Button>
                     <Button
                         variant="ghost"
                         className="w-full text-slate-500 font-bold h-12 cursor-pointer"
-                        onClick={() => navigate(ROUTES.USERS_DETAIL.replace(":id", String(user.id)))}
+                        onClick={() => navigate(ROUTES.USERS_LIST)}
                     >
                         {t("edit.btn_cancel")}
                     </Button>
@@ -630,6 +771,14 @@ export const UserEditForm = ({ user }: UserEditFormProps) => {
                 onConfirm={handleDeleteSubmit}
                 userName={user.fullName}
                 isDeleting={deleteMutation.isPending}
+            />
+
+            <CreateAdminConfirmDialog
+                isOpen={adminConfirmOpen}
+                onClose={handleCloseAdminConfirm}
+                onConfirm={handleConfirmAdminRole}
+                userName={user.fullName}
+                isMutating={updateUserMutation.isPending || updateRoleMutation.isPending}
             />
         </form>
     );

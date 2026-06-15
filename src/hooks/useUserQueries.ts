@@ -1,8 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { isAxiosError } from "axios";
 import { userApi } from "@/api/userApi";
 import { mapUserList, mapUserItem } from "@/dataHelper/user.mapper";
 import type { UserListFilters, UserBookingListResponse, UserRatingListResponse } from "@/dataHelper";
-import { prepareSpreadsheetDownload, downloadBlobFile } from "@/utils";
+import { prepareSpreadsheetDownload, downloadBlobFile, readSpreadsheetErrorMessage } from "@/utils";
 
 export const userKeys = {
     all: ["users"] as const,
@@ -117,16 +118,18 @@ export const useUserMutations = () => {
     const updateRoleMutation = useMutation({
         mutationFn: ({ id, role }: { id: number | string; role: string }) =>
             userApi.updateRole(id, { role }),
-        onSuccess: () => {
+        onSuccess: (_data, variables) => {
             queryClient.invalidateQueries({ queryKey: userKeys.all });
+            queryClient.invalidateQueries({ queryKey: userKeys.detail(variables.id) });
         },
     });
 
     const updateStatusMutation = useMutation({
         mutationFn: ({ id, status }: { id: number | string; status: string }) =>
             userApi.updateStatus(id, { status }),
-        onSuccess: () => {
+        onSuccess: (_data, variables) => {
             queryClient.invalidateQueries({ queryKey: userKeys.all });
+            queryClient.invalidateQueries({ queryKey: userKeys.detail(variables.id) });
             // Invalidate dashboard stats since banned users affect active users count
             queryClient.invalidateQueries({ queryKey: ["dashboard"] });
         },
@@ -144,10 +147,18 @@ export const useUserMutations = () => {
     const exportMutation = useMutation({
         mutationFn: async (params: UserListFilters & { fallbackFilename: string }) => {
             const { fallbackFilename, ...exportParams } = params;
-            const response = await userApi.export(exportParams);
-            const prepared = await prepareSpreadsheetDownload(response, fallbackFilename);
-            if (!prepared.ok) throw new Error(prepared.error);
-            downloadBlobFile(prepared.blob, prepared.filename);
+            try {
+                const response = await userApi.export(exportParams);
+                const prepared = await prepareSpreadsheetDownload(response, fallbackFilename);
+                if (!prepared.ok) throw new Error(prepared.error);
+                downloadBlobFile(prepared.blob, prepared.filename);
+            } catch (error) {
+                if (isAxiosError(error) && error.response?.data instanceof Blob) {
+                    const message = await readSpreadsheetErrorMessage(error.response.data);
+                    if (message) throw new Error(message);
+                }
+                throw error;
+            }
         },
     });
 

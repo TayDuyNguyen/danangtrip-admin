@@ -27,15 +27,18 @@ import { ROUTES } from "@/routes/routes";
 
 import { createUserSchema, type CreateUserInput } from "@/validations/user.schema";
 import { useUserMutations } from "@/hooks/useUserQueries";
+import { showMutationErrorToast } from "@/utils/mutationErrorToast";
+import CreateAdminConfirmDialog from "./CreateAdminConfirmDialog";
 
 export const UserCreateForm = () => {
     const { t } = useTranslation("user");
     const navigate = useNavigate();
     const { createUserMutation } = useUserMutations();
 
-    // Password view toggles
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [adminConfirmOpen, setAdminConfirmOpen] = useState(false);
+    const [pendingCreateData, setPendingCreateData] = useState<CreateUserInput | null>(null);
 
     const {
         register,
@@ -60,7 +63,7 @@ export const UserCreateForm = () => {
         }
     } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
 
-    const onSubmit = (data: CreateUserInput) => {
+    const submitUser = (data: CreateUserInput) => {
         createUserMutation.mutate(
             {
                 username: data.username,
@@ -76,6 +79,8 @@ export const UserCreateForm = () => {
             },
             {
                 onSuccess: (response: unknown) => {
+                    setAdminConfirmOpen(false);
+                    setPendingCreateData(null);
                     toast.success(t("validation.create_success"));
                     const resData = response as { data?: { user?: { id?: number } }; id?: number };
                     const createdUserId = resData?.data?.user?.id || resData?.id;
@@ -88,7 +93,6 @@ export const UserCreateForm = () => {
                 onError: (error: unknown) => {
                     const axiosError = error as { response?: { status?: number; data?: { message?: string; errors?: Record<string, string[]> } } };
                     const responseData = axiosError?.response?.data;
-                    // Handle validation errors from Laravel backend (422)
                     if (axiosError?.response?.status === 422 && responseData?.errors) {
                         const backendErrors = responseData.errors;
                         Object.keys(backendErrors).forEach((key) => {
@@ -97,20 +101,40 @@ export const UserCreateForm = () => {
                                 message: backendErrors[key][0]
                             });
                         });
-                        toast.error(responseData?.message || t("toast.network_error"));
-                        
-                        // Scroll to the first error input field
+
                         const firstErrorKey = Object.keys(backendErrors)[0];
                         const element = document.getElementsByName(firstErrorKey)[0];
                         if (element) {
                             element.scrollIntoView({ behavior: "smooth", block: "center" });
                         }
-                    } else {
-                        toast.error(responseData?.message || t("toast.network_error"));
+                        return;
                     }
+
+                    showMutationErrorToast(t("toast.network_error"), error);
                 }
             }
         );
+    };
+
+    const onSubmit = (data: CreateUserInput) => {
+        if (data.role === "admin") {
+            setPendingCreateData(data);
+            setAdminConfirmOpen(true);
+            return;
+        }
+        submitUser(data);
+    };
+
+    const handleConfirmAdminCreate = () => {
+        if (pendingCreateData) {
+            submitUser(pendingCreateData);
+        }
+    };
+
+    const handleCloseAdminConfirm = () => {
+        if (createUserMutation.isPending) return;
+        setAdminConfirmOpen(false);
+        setPendingCreateData(null);
     };
 
     // Gender selection options
@@ -121,8 +145,10 @@ export const UserCreateForm = () => {
     ];
 
     return (
+        <>
         <form
             id="user-create-form"
+            noValidate
             onSubmit={handleSubmit(onSubmit)}
             className="flex flex-col lg:flex-row gap-8 items-start w-full"
         >
@@ -213,6 +239,7 @@ export const UserCreateForm = () => {
                                 <button
                                     type="button"
                                     onClick={() => setShowPassword((prev) => !prev)}
+                                    aria-label={showPassword ? t("create.hide_password") : t("create.show_password")}
                                     className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 cursor-pointer"
                                 >
                                     {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -243,6 +270,7 @@ export const UserCreateForm = () => {
                                 <button
                                     type="button"
                                     onClick={() => setShowConfirmPassword((prev) => !prev)}
+                                    aria-label={showConfirmPassword ? t("create.hide_password") : t("create.show_password")}
                                     className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 cursor-pointer"
                                 >
                                     {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -489,6 +517,15 @@ export const UserCreateForm = () => {
                 </div>
             </div>
         </form>
+
+        <CreateAdminConfirmDialog
+            isOpen={adminConfirmOpen}
+            onClose={handleCloseAdminConfirm}
+            onConfirm={handleConfirmAdminCreate}
+            userName={pendingCreateData?.full_name || pendingCreateData?.username || ""}
+            isMutating={createUserMutation.isPending}
+        />
+        </>
     );
 };
 

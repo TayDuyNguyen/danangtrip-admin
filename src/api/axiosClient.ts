@@ -266,10 +266,6 @@ axiosClient.interceptors.response.use(
             toast.warning(getLocalizedApiErrorMessage(i18next.t("translation:permission_denied"), error));
         }
 
-        if (status >= 500) {
-            toast.error(getLocalizedApiErrorMessage(i18next.t("translation:server_error"), error));
-        }
-
         return Promise.reject(error);
     }
 );

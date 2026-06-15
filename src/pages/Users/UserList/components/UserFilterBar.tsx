@@ -30,6 +30,13 @@ export const UserFilterBar = ({
 
     useEffect(() => {
         const normalizedSearch = debouncedSearch.trim();
+        const normalizedInput = searchVal.trim();
+
+        // Ignore stale debounced value after reset/clear (prevents q re-applying after filter reset)
+        if (normalizedInput !== normalizedSearch) {
+            return;
+        }
+
         if (normalizedSearch !== (filters.q || "")) {
             onFilterChange({
                 q: normalizedSearch || undefined,
@@ -41,6 +48,7 @@ export const UserFilterBar = ({
         }
     }, [
         debouncedSearch,
+        searchVal,
         filters.q,
         filters.role,
         filters.status,

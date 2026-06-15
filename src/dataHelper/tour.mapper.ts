@@ -88,6 +88,45 @@ function normalizeTourVisibility(raw: RawTour): {
     return { status, booking_availability };
 }
 
+function normalizeItineraryRaw(raw: unknown): Array<{ day: number; title: string; content: string }> {
+    let entries: unknown[] = [];
+
+    if (Array.isArray(raw)) {
+        entries = raw;
+    } else if (typeof raw === 'string' && raw.trim()) {
+        try {
+            const parsed = JSON.parse(raw) as unknown;
+            if (Array.isArray(parsed)) {
+                entries = parsed;
+            }
+        } catch {
+            entries = [];
+        }
+    }
+
+    return entries
+        .map((entry, index) => {
+            if (typeof entry === 'string') {
+                const text = entry.trim();
+                return { day: index + 1, title: '', content: text };
+            }
+
+            if (!entry || typeof entry !== 'object') {
+                return { day: index + 1, title: '', content: '' };
+            }
+
+            const item = entry as Record<string, unknown>;
+            const title = String(item.title ?? item.name ?? item.task ?? '').trim();
+            const content = String(
+                item.content ?? item.description ?? item.activity ?? item.detail ?? ''
+            ).trim();
+            const day = toNumberSafe(item.day) || index + 1;
+
+            return { day, title, content };
+        })
+        .filter((item) => item.title || item.content);
+}
+
 export const tourMapper = {
     /** API → UI */
     mapFromRaw(raw: RawTour): TourViewModel {
@@ -99,12 +138,7 @@ export const tourMapper = {
             tour_category_id: toNumberSafe(raw.tour_category_id),
             description: raw.description || '',
             short_desc: raw.short_desc || '',
-            itinerary: Array.isArray(raw.itinerary) 
-                ? raw.itinerary.map((item: Record<string, unknown>, index) => ({
-                    ...item,
-                    day: toNumberSafe(item.day) || index + 1
-                  })) as Array<{ day: number; title: string; content: string }>
-                : [],
+            itinerary: normalizeItineraryRaw(raw.itinerary),
             inclusions: inclusionsToFormField(raw.inclusions) || '',
             exclusions: inclusionsToFormField(raw.exclusions) || '',
             price_adult: toNumberSafe(raw.price_adult),

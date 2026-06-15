@@ -375,6 +375,7 @@ export const UserTable = ({
                                                     onClick={() => navigate(ROUTES.USERS_DETAIL.replace(":id", String(userItem.id)))}
                                                     className="w-8 h-8 rounded-lg border border-slate-200 flex items-center justify-center text-slate-500 hover:text-[#14B8A6] hover:border-[#14B8A6] hover:bg-slate-50 transition-all cursor-pointer bg-white"
                                                     title={t("actions.view")}
+                                                    aria-label={t("actions.view")}
                                                 >
                                                     <Eye size={14} />
                                                 </button>
@@ -385,6 +386,7 @@ export const UserTable = ({
                                                     onClick={() => navigate(ROUTES.USERS_EDIT.replace(":id", String(userItem.id)))}
                                                     className="w-8 h-8 rounded-lg border border-slate-200 flex items-center justify-center text-slate-500 hover:text-amber-600 hover:border-amber-600 hover:bg-slate-50 transition-all cursor-pointer bg-white"
                                                     title={t("actions.edit")}
+                                                    aria-label={t("actions.edit")}
                                                 >
                                                     <Edit2 size={14} />
                                                 </button>
@@ -402,6 +404,7 @@ export const UserTable = ({
                                                         "disabled:opacity-30 disabled:cursor-not-allowed"
                                                     )}
                                                     title={userItem.status === "active" ? t("actions.block") : t("actions.unblock")}
+                                                    aria-label={userItem.status === "active" ? t("actions.block") : t("actions.unblock")}
                                                 >
                                                     {userItem.status === "active" ? <Ban size={14} /> : <LockOpen size={14} />}
                                                 </button>
@@ -413,6 +416,7 @@ export const UserTable = ({
                                                     onClick={() => onDelete(userItem.id)}
                                                     className="w-8 h-8 rounded-lg border border-slate-200 flex items-center justify-center text-slate-500 hover:text-rose-600 hover:border-rose-600 hover:bg-rose-50/50 disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer bg-white"
                                                     title={t("actions.delete")}
+                                                    aria-label={t("actions.delete")}
                                                 >
                                                     <Trash2 size={14} />
                                                 </button>

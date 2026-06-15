@@ -269,7 +269,7 @@ const RatingsReport: React.FC = () => {
         if (activeFilters.user_id) {
             newParams.user_id = String(activeFilters.user_id);
         }
-        setSearchParams(newParams);
+        setSearchParams(newParams, { replace: true });
     }, [activeFilters, setSearchParams]);
 
     // 3. React Query to load reports data (disabled when Mock Mode is active)

@@ -11,8 +11,10 @@ import UserFilterBar from "./components/UserFilterBar";
 import UserTable from "./components/UserTable";
 import DeleteUserDialog from "./components/DeleteUserDialog";
 import UpdateRoleDialog from "./components/UpdateRoleDialog";
+import BlockUserDialog from "./components/BlockUserDialog";
 
 import { useAdminUsersQuery, useUserMutations } from "@/hooks/useUserQueries";
+import { showMutationErrorToast } from "@/utils/mutationErrorToast";
 import type { UserListFilters } from "@/dataHelper";
 
 export const UserList = () => {
@@ -44,6 +46,7 @@ export const UserList = () => {
     
     // Dialog States
     const [deleteTarget, setDeleteTarget] = useState<{ id: number; name: string } | null>(null);
+    const [blockTarget, setBlockTarget] = useState<{ id: number; name: string } | null>(null);
     const [roleTarget, setRoleTarget] = useState<{ id: number; name: string; role: string } | null>(null);
     const [isBulkMutating, setIsBulkMutating] = useState(false);
 
@@ -96,24 +99,42 @@ export const UserList = () => {
     };
 
     // Inline Status Change (click badge or block/unblock button)
+    const executeStatusChange = (id: number, status: "active" | "banned") => {
+        updateStatusMutation.mutate(
+            { id, status },
+            {
+                onSuccess: () => {
+                    toast.success(t("toast.update_status_success"));
+                    setBlockTarget(null);
+                },
+                onError: (error) => {
+                    showMutationErrorToast(t("toast.network_error"), error);
+                    setBlockTarget(null);
+                },
+            }
+        );
+    };
+
     const handleStatusToggle = (id: number, currentStatus: string) => {
         if (id === currentUser?.id) {
             toast.error(t("toast.self_action_error"));
             return;
         }
 
-        const newStatus = currentStatus === "active" ? "banned" : "active";
-        updateStatusMutation.mutate(
-            { id, status: newStatus },
-            {
-                onSuccess: () => {
-                    toast.success(t("toast.update_status_success"));
-                },
-                onError: () => {
-                    toast.error(t("toast.network_error"));
-                },
+        if (currentStatus === "active") {
+            const targetUser = data?.data.find((u) => u.id === id);
+            if (targetUser) {
+                setBlockTarget({ id, name: targetUser.fullName });
             }
-        );
+            return;
+        }
+
+        executeStatusChange(id, "active");
+    };
+
+    const executeBlock = () => {
+        if (!blockTarget) return;
+        executeStatusChange(blockTarget.id, "banned");
     };
 
     // Inline Role Change (confirm required if upgrading to admin)
@@ -141,8 +162,8 @@ export const UserList = () => {
                     toast.success(t("toast.update_role_success"));
                     setRoleTarget(null);
                 },
-                onError: () => {
-                    toast.error(t("toast.network_error"));
+                onError: (error) => {
+                    showMutationErrorToast(t("toast.network_error"), error);
                     setRoleTarget(null);
                 },
             }
@@ -170,8 +191,8 @@ export const UserList = () => {
                 toast.success(t("toast.delete_success"));
                 setDeleteTarget(null);
             },
-            onError: () => {
-                toast.error(t("toast.network_error"));
+            onError: (error) => {
+                showMutationErrorToast(t("toast.network_error"), error);
                 setDeleteTarget(null);
             },
         });
@@ -191,8 +212,8 @@ export const UserList = () => {
                 toast.success(t("toast.update_status_success"));
                 setSelectedIds([]);
             })
-            .catch(() => {
-                toast.error(t("toast.network_error"));
+            .catch((error) => {
+                showMutationErrorToast(t("toast.network_error"), error);
             })
             .finally(() => {
                 setIsBulkMutating(false);
@@ -215,8 +236,8 @@ export const UserList = () => {
                 toast.success(t("toast.delete_success"));
                 setSelectedIds([]);
             })
-            .catch(() => {
-                toast.error(t("toast.network_error"));
+            .catch((error) => {
+                showMutationErrorToast(t("toast.network_error"), error);
             })
             .finally(() => {
                 setIsBulkMutating(false);
@@ -231,8 +252,8 @@ export const UserList = () => {
                 onSuccess: () => {
                     toast.success(t("toast.export_success"));
                 },
-                onError: () => {
-                    toast.error(t("toast.network_error"));
+                onError: (error) => {
+                    showMutationErrorToast(t("toast.network_error"), error);
                 },
             }
         );
@@ -331,6 +352,14 @@ export const UserList = () => {
             />
 
             {/* Dialog Confirmation Modals */}
+            <BlockUserDialog
+                isOpen={!!blockTarget}
+                onClose={() => setBlockTarget(null)}
+                onConfirm={executeBlock}
+                userName={blockTarget?.name || ""}
+                isMutating={updateStatusMutation.isPending}
+            />
+
             <DeleteUserDialog
                 isOpen={!!deleteTarget}
                 onClose={() => setDeleteTarget(null)}
