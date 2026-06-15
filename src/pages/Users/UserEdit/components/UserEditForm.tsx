@@ -33,7 +33,7 @@ import CreateAdminConfirmDialog from "../../UserCreate/components/CreateAdminCon
 import { editUserSchema, type EditUserInput } from "@/validations/user.schema";
 import { useUserMutations } from "@/hooks/useUserQueries";
 import type { UserItem } from "@/dataHelper";
-import { mapApiErrorMessage } from "@/utils";
+import { showMutationErrorToast } from "@/utils/mutationErrorToast";
 
 interface UserEditFormProps {
     user: UserItem;
@@ -48,7 +48,7 @@ const ActionSpinner = ({ className = "" }: { className?: string }) => (
 );
 
 export const UserEditForm = ({ user, onSavePendingChange }: UserEditFormProps) => {
-    const { t } = useTranslation("user");
+    const { t, i18n } = useTranslation("user");
     const navigate = useNavigate();
     const { user: currentAdmin } = useAuth();
     const { updateUserMutation, updateStatusMutation, updateRoleMutation, deleteMutation } = useUserMutations();
@@ -192,16 +192,16 @@ export const UserEditForm = ({ user, onSavePendingChange }: UserEditFormProps) =
                                 message: backendErrors[key][0]
                             });
                         });
-                        toast.error(mapApiErrorMessage(t("toast.network_error"), error));
 
                         const firstErrorKey = Object.keys(backendErrors)[0];
                         const element = document.getElementsByName(firstErrorKey)[0];
                         if (element) {
                             element.scrollIntoView({ behavior: "smooth", block: "center" });
                         }
-                    } else {
-                        toast.error(mapApiErrorMessage(t("toast.network_error"), error));
+                        return;
                     }
+
+                    showMutationErrorToast(t("toast.network_error"), error);
                 }
             }
         );
@@ -232,7 +232,7 @@ export const UserEditForm = ({ user, onSavePendingChange }: UserEditFormProps) =
                     setValue("role", nextRole, { shouldDirty: false });
                 },
                 onError: (err: unknown) => {
-                    toast.error(mapApiErrorMessage(t("detail.toast_role_error"), err));
+                    showMutationErrorToast(t("detail.toast_role_error"), err);
                 },
             }
         );
@@ -250,7 +250,7 @@ export const UserEditForm = ({ user, onSavePendingChange }: UserEditFormProps) =
                         setPendingRole(null);
                     },
                     onError: (err: unknown) => {
-                        toast.error(mapApiErrorMessage(t("detail.toast_role_error"), err));
+                        showMutationErrorToast(t("detail.toast_role_error"), err);
                     },
                 }
             );
@@ -291,7 +291,7 @@ export const UserEditForm = ({ user, onSavePendingChange }: UserEditFormProps) =
                     setValue("status", nextStatus, { shouldDirty: false });
                 },
                 onError: (err: unknown) => {
-                    toast.error(mapApiErrorMessage(t("detail.toast_status_error"), err));
+                    showMutationErrorToast(t("detail.toast_status_error"), err);
                 }
             }
         );
@@ -314,10 +314,10 @@ export const UserEditForm = ({ user, onSavePendingChange }: UserEditFormProps) =
                 setBypassGuard(true);
                 setTimeout(() => {
                     navigate(ROUTES.USERS_LIST);
-                }, 1000);
+                }, 100);
             },
             onError: (err: unknown) => {
-                toast.error(mapApiErrorMessage(t("detail.toast_delete_error"), err));
+                showMutationErrorToast(t("detail.toast_delete_error"), err);
             }
         });
     };
@@ -329,8 +329,9 @@ export const UserEditForm = ({ user, onSavePendingChange }: UserEditFormProps) =
         { value: "other", label: t("detail.gender_other") }
     ];
 
-    const formattedJoinDate = user.createdAt ? new Date(user.createdAt).toLocaleString("vi-VN") : "N/A";
-    const formattedUpdateDate = user.updatedAt ? new Date(user.updatedAt).toLocaleString("vi-VN") : "N/A";
+    const dateLocale = i18n.language?.startsWith("vi") ? "vi-VN" : "en-US";
+    const formattedJoinDate = user.createdAt ? new Date(user.createdAt).toLocaleString(dateLocale) : "N/A";
+    const formattedUpdateDate = user.updatedAt ? new Date(user.updatedAt).toLocaleString(dateLocale) : "N/A";
 
     return (
         <form
@@ -659,6 +660,7 @@ export const UserEditForm = ({ user, onSavePendingChange }: UserEditFormProps) =
                     {/* Xem hồ sơ */}
                     <button
                         type="button"
+                        aria-label={t("edit.quick_action_view_profile", "Xem hồ sơ")}
                         onClick={() => navigate(ROUTES.USERS_DETAIL.replace(":id", String(user.id)))}
                         className="w-full flex items-center gap-2 h-10 px-4 border border-slate-200 hover:border-[#0066cc] hover:text-[#0066cc] bg-white text-slate-600 rounded-xl text-xs font-bold transition-all cursor-pointer"
                     >
@@ -670,6 +672,7 @@ export const UserEditForm = ({ user, onSavePendingChange }: UserEditFormProps) =
                     {/* Xem đơn hàng */}
                     <button
                         type="button"
+                        aria-label={t("edit.quick_action_view_bookings", "Xem đơn hàng")}
                         onClick={() => navigate(`${ROUTES.BOOKINGS_LIST}?user_id=${user.id}`)}
                         className="w-full flex items-center gap-2 h-10 px-4 border border-slate-200 hover:border-[#0066cc] hover:text-[#0066cc] bg-white text-slate-600 rounded-xl text-xs font-bold transition-all cursor-pointer"
                     >
@@ -683,6 +686,7 @@ export const UserEditForm = ({ user, onSavePendingChange }: UserEditFormProps) =
                         user.status === "active" ? (
                             <button
                                 type="button"
+                                aria-label={t("edit.quick_action_lock", "Khóa tài khoản")}
                                 onClick={handleStatusToggle}
                                 disabled={updateStatusMutation.isPending}
                                 className="w-full flex items-center gap-2 h-10 px-4 border border-rose-100 hover:bg-rose-50 text-rose-600 rounded-xl text-xs font-bold transition-all cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
@@ -701,6 +705,7 @@ export const UserEditForm = ({ user, onSavePendingChange }: UserEditFormProps) =
                         ) : (
                             <button
                                 type="button"
+                                aria-label={t("edit.quick_action_unlock", "Mở khóa tài khoản")}
                                 onClick={handleStatusToggle}
                                 disabled={updateStatusMutation.isPending}
                                 className="w-full flex items-center gap-2 h-10 px-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
@@ -723,6 +728,7 @@ export const UserEditForm = ({ user, onSavePendingChange }: UserEditFormProps) =
                     {!isSelf && (
                         <button
                             type="button"
+                            aria-label={t("edit.quick_action_delete", "Xóa tài khoản")}
                             onClick={() => setIsDeleteDialogOpen(true)}
                             disabled={deleteMutation.isPending}
                             className="w-full flex items-center gap-2 h-10 px-4 border border-rose-100 hover:bg-rose-50 text-rose-600 rounded-xl text-xs font-bold transition-all cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"

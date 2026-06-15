@@ -22,7 +22,7 @@ import { UserAccountSidebar } from './components/UserAccountSidebar';
 import { UserActionsCard } from './components/UserActionsCard';
 import { ChangeRoleDialog } from './components/ChangeRoleDialog';
 import { ConfirmDeleteUserDialog } from './components/ConfirmDeleteUserDialog';
-import { mapApiErrorMessage } from '@/utils';
+import { showMutationErrorToast } from '@/utils/mutationErrorToast';
 import { Skeleton } from '@/components/ui/Skeleton';
 
 const UserDetail = () => {
@@ -88,7 +88,7 @@ const UserDetail = () => {
                     refetchUser();
                 },
                 onError: (err) => {
-                    toast.error(mapApiErrorMessage(t('detail.toast_status_error'), err));
+                    showMutationErrorToast(t('detail.toast_status_error'), err);
                 }
             }
         );
@@ -106,7 +106,7 @@ const UserDetail = () => {
                     refetchUser();
                 },
                 onError: (err) => {
-                    toast.error(mapApiErrorMessage(t('detail.toast_role_error'), err));
+                    showMutationErrorToast(t('detail.toast_role_error'), err);
                 }
             }
         );
@@ -121,10 +121,10 @@ const UserDetail = () => {
                 setIsDeleteDialogOpen(false);
                 setTimeout(() => {
                     navigate(ROUTES.USERS_LIST);
-                }, 1000);
+                }, 100);
             },
             onError: (err) => {
-                toast.error(mapApiErrorMessage(t('detail.toast_delete_error'), err));
+                showMutationErrorToast(t('detail.toast_delete_error'), err);
             }
         });
     };
