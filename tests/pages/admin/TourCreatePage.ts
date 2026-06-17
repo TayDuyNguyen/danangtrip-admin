@@ -36,9 +36,9 @@ const copy = {
 
   changeThumbnail: /Thay đổi ảnh|Change image/i,
 
-  breadcrumbTours: /^Tours$|^Tour$/i,
+  breadcrumbTours: /Quản lý Tour|Tour Management/i,
 
-  breadcrumbTourList: /Danh sách tour|Tour List/i,
+  breadcrumbTourList: /Danh sách [Tt]our|Tour [Ll]ist/i,
 
   scheduleGuideLink: /Xem hướng dẫn|View guide/i,
 
@@ -49,6 +49,30 @@ const copy = {
   maxLengthError: /tối đa|at most/i,
 
   invalidUrlError: /URL|url/i,
+
+  minLengthError: /ít nhất|at least/i,
+
+  positiveError: /số dương|positive number|must be a positive/i,
+
+  maxPercentError: /không được vượt quá|must not exceed/i,
+
+  categoryLoading: /Đang tải danh mục|Loading categories/i,
+
+  categoryError: /Không thể tải danh mục|Could not load categories/i,
+
+  categoryRetry: /Thử lại|Try again/i,
+
+  creatingLabel: /Đang tạo|Creating/i,
+
+  savingLabel: /Đang lưu|Saving/i,
+
+  completionLabel: /% hoàn thành|% complete/i,
+
+  breadcrumbCreateBadge: /Tạo mới|Create new/i,
+
+  priceAfterDiscountLabel: /Giá sau giảm|Price after discount/i,
+
+  checklistInclusions: /Bao gồm \/ Không bao gồm|Inclusions \/ Exclusions/i,
 
 };
 
@@ -83,6 +107,16 @@ export interface TourCreateFormInput {
   maxPeople?: string;
 
   videoUrl?: string;
+
+  discountPercent?: string;
+
+  priceChildDigits?: string;
+
+  priceInfantDigits?: string;
+
+  inclusions?: string;
+
+  exclusions?: string;
 
 }
 
@@ -122,7 +156,7 @@ export class TourCreatePage {
 
   get submitButton() {
 
-    return this.page.getByRole('button', { name: copy.submit }).first();
+    return this.page.locator('form button[type="submit"]').first();
 
   }
 
@@ -130,7 +164,9 @@ export class TourCreatePage {
 
   get sidebarSaveButton() {
 
-    return this.page.getByRole('button', { name: copy.sidebarSave });
+    return this.page.locator('aside').getByRole('button', {
+      name: /Lưu tour|Save Tour|Đang lưu|Saving/i,
+    });
 
   }
 
@@ -203,6 +239,124 @@ export class TourCreatePage {
   get priceAdultInput() {
 
     return this.fieldBlock('price_adult').locator('input').first();
+
+  }
+
+
+
+  get priceChildInput() {
+
+    return this.fieldBlock('price_child').locator('input').first();
+
+  }
+
+
+
+  get priceInfantInput() {
+
+    return this.fieldBlock('price_infant').locator('input').first();
+
+  }
+
+
+
+  get discountInput() {
+
+    return this.fieldBlock('discount_percent').locator('input').first();
+
+  }
+
+
+
+  get inclusionsInput() {
+
+    return this.fieldBlock('inclusions').locator('textarea').first();
+
+  }
+
+
+
+  get exclusionsInput() {
+
+    return this.fieldBlock('exclusions').locator('textarea').first();
+
+  }
+
+
+
+  get priceAfterDiscountDisplay() {
+
+    return this.page
+
+      .locator('label')
+
+      .filter({ hasText: copy.priceAfterDiscountLabel })
+
+      .locator('xpath=following-sibling::div[1]');
+
+  }
+
+
+
+  get categoryLoadingBanner() {
+
+    return this.fieldBlock('tour_category_id').getByText(copy.categoryLoading);
+
+  }
+
+
+
+  get categoryErrorBanner() {
+
+    return this.fieldBlock('tour_category_id').getByText(copy.categoryError);
+
+  }
+
+
+
+  get categoryRetryButton() {
+
+    return this.fieldBlock('tour_category_id').getByRole('button', { name: copy.categoryRetry });
+
+  }
+
+
+
+  get categorySelectControl() {
+
+    return this.fieldBlock('tour_category_id').locator('[class*="-control"]').first();
+
+  }
+
+
+
+  get completionPercentLabel() {
+
+    return this.page.getByText(copy.completionLabel);
+
+  }
+
+
+
+  get stickyCreateBadge() {
+
+    return this.page.locator('.sticky.top-0 span.rounded-full').filter({ hasText: copy.breadcrumbCreateBadge });
+
+  }
+
+
+
+  get mainScrollContainer() {
+
+    return this.page.locator('main');
+
+  }
+
+
+
+  checklistItem(label: RegExp) {
+
+    return this.page.locator('aside').getByText(label);
 
   }
 
@@ -322,7 +476,7 @@ export class TourCreatePage {
 
   itineraryRemoveButton(index: number) {
 
-    return this.itineraryDayBlock(index).locator('button').first();
+    return this.itineraryDayBlock(index).getByRole('button', { name: /Xóa ngày|Remove Day/i });
 
   }
 
@@ -438,6 +592,16 @@ export class TourCreatePage {
 
     if (data.videoUrl !== undefined) await this.videoUrlInput.fill(data.videoUrl);
 
+    if (data.discountPercent !== undefined) await this.discountInput.fill(data.discountPercent);
+
+    if (data.priceChildDigits !== undefined) await this.priceChildInput.fill(data.priceChildDigits);
+
+    if (data.priceInfantDigits !== undefined) await this.priceInfantInput.fill(data.priceInfantDigits);
+
+    if (data.inclusions !== undefined) await this.inclusionsInput.fill(data.inclusions);
+
+    if (data.exclusions !== undefined) await this.exclusionsInput.fill(data.exclusions);
+
     if (data.itineraryTitle !== undefined) {
 
       await this.itineraryTitleInput(0).fill(data.itineraryTitle);
@@ -449,6 +613,28 @@ export class TourCreatePage {
       await this.itineraryContentInput(0).fill(data.itineraryContent);
 
     }
+
+  }
+
+
+
+  async prepareValidSubmitWithoutThumbnail(overrides: TourCreateFormInput = {}) {
+
+    await this.fillForm({ ...validCreateTour, ...overrides });
+
+  }
+
+
+
+  async scrollMainContent(pixels = 200) {
+
+    await this.mainScrollContainer.evaluate((el, y) => {
+
+      el.scrollTop = y;
+
+    }, pixels);
+
+    await this.page.waitForTimeout(350);
 
   }
 
@@ -508,7 +694,7 @@ export class TourCreatePage {
 
     await this.thumbnailDropzone.hover();
 
-    await this.thumbnailDropzone.locator('button[class*="bg-red-500"]').first().click();
+    await this.thumbnailDropzone.getByRole('button', { name: /Xóa ảnh đại diện|Remove cover image/i }).click();
 
     await this.thumbnailPreview.waitFor({ state: 'hidden', timeout: 10_000 });
 

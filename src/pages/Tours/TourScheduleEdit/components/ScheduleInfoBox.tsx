@@ -7,11 +7,22 @@ interface Props {
     schedule: Schedule;
 }
 
+function statusBadgeProps(schedule: Schedule, t: (key: string) => string) {
+    if (schedule.status === 'CANCELLED') {
+        return { variant: 'neutral' as const, label: t('schedules:status.cancelled') };
+    }
+    if (schedule.status === 'FULL') {
+        return { variant: 'warning' as const, label: t('schedules:status.full') };
+    }
+    return { variant: 'success' as const, label: t('schedules:status.available') };
+}
+
 export const ScheduleInfoBox = ({ schedule }: Props) => {
     const { t, i18n } = useTranslation(['schedules', 'common']);
 
     const dateLabel = formatAdminShortDate(schedule.startDate, i18n.language);
     const endDateLabel = formatAdminShortDate(schedule.endDate, i18n.language);
+    const badge = statusBadgeProps(schedule, t);
 
     return (
         <div className="mb-6 rounded-2xl border border-amber-200 bg-amber-50/50 p-6 shadow-sm">
@@ -26,12 +37,10 @@ export const ScheduleInfoBox = ({ schedule }: Props) => {
                                 {dateLabel} - {endDateLabel}
                             </h2>
                             <Badge
-                                variant={schedule.status === 'AVAILABLE' ? 'success' : 'neutral'}
+                                variant={badge.variant}
                                 className="px-3 py-1 text-[11px] font-black uppercase tracking-wider"
                             >
-                                {schedule.status === 'AVAILABLE'
-                                    ? t('schedules:status.available')
-                                    : t('schedules:status.cancelled')}
+                                {badge.label}
                             </Badge>
                         </div>
                         <p className="mt-1 text-[14px] font-medium text-slate-500">

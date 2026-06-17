@@ -1,14 +1,30 @@
-import { useState, useMemo } from 'react';
+/* eslint-disable react-hooks/set-state-in-effect */
+import { useState, useMemo, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, RotateCcw, RefreshCw } from 'lucide-react';
-import { useSchedules } from '@/hooks/useScheduleQueries';
+import { useCalendarSchedules } from '@/hooks/useScheduleQueries';
 import { clsx } from 'clsx';
 import { ScheduleStatus } from '@/types/schedule';
 import { useTranslation } from 'react-i18next';
 
 type Props = {
     tourId?: string | number;
+    searchQuery?: string;
+    statusFilter?: string;
+    bookingAvailabilityFilter?: string;
     selectedDate?: string;
+    selectedEndDate?: string;
     onSelectDate?: (dateStr: string | undefined) => void;
+};
+
+const parseMonthAnchor = (dateStr?: string) => {
+    if (!dateStr) {
+        return new Date();
+    }
+    const [y, m] = dateStr.split('-').map(Number);
+    if (!y || !m) {
+        return new Date();
+    }
+    return new Date(y, m - 1, 1);
 };
 
 const getDaysInMonth = (year: number, month: number) => {
@@ -24,9 +40,23 @@ const formatYMD = (d: Date) => {
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 };
 
-const SchedulesCalendar = ({ tourId, selectedDate, onSelectDate }: Props) => {
-    const [currentDate, setCurrentDate] = useState(new Date());
+const SchedulesCalendar = ({
+    tourId,
+    searchQuery,
+    statusFilter,
+    bookingAvailabilityFilter,
+    selectedDate,
+    selectedEndDate,
+    onSelectDate,
+}: Props) => {
+    const [currentDate, setCurrentDate] = useState(() => parseMonthAnchor(selectedDate));
     const { t } = useTranslation(['schedules', 'common']);
+
+    useEffect(() => {
+        if (selectedDate) {
+            setCurrentDate(parseMonthAnchor(selectedDate));
+        }
+    }, [selectedDate]);
 
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
@@ -74,37 +104,63 @@ const SchedulesCalendar = ({ tourId, selectedDate, onSelectDate }: Props) => {
         return { days: daysArr, startDateStr: start, endDateStr: end };
     }, [year, month]);
 
-    const { data, isFetching, isError } = useSchedules({
-        start_date: startDateStr,
-        end_date: endDateStr,
-        limit: 100, // Fetch up to 100 for the month view
-        tour_id: tourId === 'all' ? undefined : tourId,
-    });
+    const calendarQuery = useMemo(
+        () => ({
+            tour_id: tourId === 'all' ? undefined : tourId,
+            q: searchQuery,
+            status: statusFilter,
+            booking_availability: bookingAvailabilityFilter,
+            start_date: startDateStr,
+            end_date: endDateStr,
+        }),
+        [tourId, searchQuery, statusFilter, bookingAvailabilityFilter, startDateStr, endDateStr],
+    );
+
+    const { data: calendarData, isFetching, isError, refetch } = useCalendarSchedules(calendarQuery);
+    const calendarRows = calendarData?.schedules;
+    const calendarTruncated = calendarData?.truncated ?? false;
 
     // Map schedules by date
     const schedulesByDate = useMemo(() => {
-        const map = new Map<string, { hasAvailable: boolean; hasFullOrCancelled: boolean }>();
-        const rows = data?.data || [];
-        
-        rows.forEach(schedule => {
-            // schedule.startDate might be "2026-04-15" or ISO string
+        const rows = calendarRows ?? [];
+        const map = new Map<
+            string,
+            { hasAvailable: boolean; hasFullOrCancelled: boolean; schedules: { booked: number; max: number }[] }
+        >();
+
+        rows.forEach((schedule) => {
             const dStr = schedule.startDate.substring(0, 10);
-            const current = map.get(dStr) || { hasAvailable: false, hasFullOrCancelled: false };
-            
+            const current = map.get(dStr) || {
+                hasAvailable: false,
+                hasFullOrCancelled: false,
+                schedules: [],
+            };
+
             if (schedule.status === ScheduleStatus.AVAILABLE) {
                 current.hasAvailable = true;
             } else {
                 current.hasFullOrCancelled = true;
             }
-            
+
+            current.schedules.push({ booked: schedule.bookedSlots, max: schedule.totalSlots });
             map.set(dStr, current);
         });
-        
+
         return map;
-    }, [data?.data]);
+    }, [calendarRows]);
 
     const todayStr = formatYMD(new Date());
     const weekdayLabels = t('schedules:calendar.weekdays', { returnObjects: true }) as string[];
+
+    const isDateInSelectedRange = (dateStr: string) => {
+        if (!selectedDate) {
+            return false;
+        }
+        if (!selectedEndDate || selectedEndDate === selectedDate) {
+            return dateStr === selectedDate;
+        }
+        return dateStr >= selectedDate && dateStr <= selectedEndDate;
+    };
 
     return (
         <div className="bg-white border border-[#E2E8F0] rounded-2xl p-5 md:p-6 shadow-sm overflow-hidden">
@@ -135,6 +191,7 @@ const SchedulesCalendar = ({ tourId, selectedDate, onSelectDate }: Props) => {
                 <div className="flex items-center gap-3">
                     {selectedDate && (
                         <button
+                            type="button"
                             onClick={() => onSelectDate?.(undefined)}
                             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[13px] font-bold text-[#EF4444] bg-[#FEE2E2] hover:bg-[#FECACA] transition-colors"
                         >
@@ -144,13 +201,17 @@ const SchedulesCalendar = ({ tourId, selectedDate, onSelectDate }: Props) => {
                     )}
                     <div className="flex items-center gap-1.5 bg-[#F8FAFC] border border-[#E2E8F0] rounded-lg p-1">
                         <button
+                            type="button"
                             onClick={prevMonth}
+                            aria-label={t('schedules:calendar.prev_month')}
                             className="w-7 h-7 flex items-center justify-center rounded-md text-[#64748B] hover:bg-white hover:text-[#14b8a6] hover:shadow-sm transition-all"
                         >
                             <ChevronLeft className="w-4 h-4" />
                         </button>
                         <button
+                            type="button"
                             onClick={nextMonth}
+                            aria-label={t('schedules:calendar.next_month')}
                             className="w-7 h-7 flex items-center justify-center rounded-md text-[#64748B] hover:bg-white hover:text-[#14b8a6] hover:shadow-sm transition-all"
                         >
                             <ChevronRight className="w-4 h-4" />
@@ -159,10 +220,25 @@ const SchedulesCalendar = ({ tourId, selectedDate, onSelectDate }: Props) => {
                 </div>
             </div>
 
+            {calendarTruncated ? (
+                <div className="mb-4 px-4 py-3 text-sm text-[#92400E] bg-[#FFFBEB] border border-[#FDE68A] rounded-xl">
+                    {t('schedules:calendar.truncated_warning')}
+                </div>
+            ) : null}
+
             <div className="border border-[#E2E8F0] rounded-xl overflow-hidden bg-white">
                 {isError ? (
-                    <div className="px-4 py-3 text-sm text-[#B91C1C] bg-[#FEF2F2] border-b border-[#FECACA]">
-                        {t('common:error.fetch')} - {t('common:error.try_again')}
+                    <div className="px-4 py-3 text-sm text-[#B91C1C] bg-[#FEF2F2] border-b border-[#FECACA] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                        <span>
+                            {t('common:error.fetch')} - {t('common:error.try_again')}
+                        </span>
+                        <button
+                            type="button"
+                            onClick={() => void refetch()}
+                            className="px-4 py-2 bg-[#14b8a6] text-white rounded-lg text-[12px] font-bold hover:bg-[#0f766e] transition-colors self-start sm:self-auto"
+                        >
+                            {t('schedules:calendar.retry')}
+                        </button>
                     </div>
                 ) : null}
                 <div className="grid grid-cols-7 border-b border-[#E2E8F0] bg-[#F8FAFC]">
@@ -184,7 +260,7 @@ const SchedulesCalendar = ({ tourId, selectedDate, onSelectDate }: Props) => {
                     {days.map((dayObj, i) => {
                         const dStr = formatYMD(dayObj.date);
                         const isToday = dStr === todayStr;
-                        const isSelected = dStr === selectedDate;
+                        const isSelected = isDateInSelectedRange(dStr);
                         const status = schedulesByDate.get(dStr);
                         const isWeekend = dayObj.date.getDay() === 0 || dayObj.date.getDay() === 6;
 
@@ -210,13 +286,27 @@ const SchedulesCalendar = ({ tourId, selectedDate, onSelectDate }: Props) => {
                                 </span>
 
                                 {status && (
-                                    <div className="mt-auto flex gap-1 items-center justify-center w-full pb-1">
-                                        {status.hasAvailable && (
-                                            <div className="w-1.5 h-1.5 rounded-full bg-[#14b8a6]" title={t('schedules:calendar.available')} />
-                                        )}
-                                        {status.hasFullOrCancelled && (
-                                            <div className="w-1.5 h-1.5 rounded-full bg-[#EF4444]" title={t('schedules:calendar.full_or_cancelled_title')} />
-                                        )}
+                                    <div className="mt-auto flex flex-col gap-1 items-center justify-center w-full pb-1">
+                                        <div className="flex gap-1 items-center justify-center">
+                                            {status.hasAvailable && (
+                                                <div className="w-1.5 h-1.5 rounded-full bg-[#14b8a6]" title={t('schedules:calendar.available')} />
+                                            )}
+                                            {status.hasFullOrCancelled && (
+                                                <div className="w-1.5 h-1.5 rounded-full bg-[#EF4444]" title={t('schedules:calendar.full_or_cancelled_title')} />
+                                            )}
+                                        </div>
+                                        {status.schedules.length === 1 ? (
+                                            <span className="text-[10px] font-semibold text-[#64748B] truncate w-full text-center">
+                                                {t('schedules:calendar.slots_summary', {
+                                                    booked: status.schedules[0].booked,
+                                                    max: status.schedules[0].max,
+                                                })}
+                                            </span>
+                                        ) : status.schedules.length > 1 ? (
+                                            <span className="text-[10px] font-semibold text-[#64748B] truncate w-full text-center">
+                                                {t('schedules:calendar.schedule_count', { count: status.schedules.length })}
+                                            </span>
+                                        ) : null}
                                     </div>
                                 )}
                             </div>

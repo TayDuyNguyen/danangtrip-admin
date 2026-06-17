@@ -40,7 +40,11 @@
         "past_event_desc": "Warning: You are editing a schedule that has already occurred or is currently ongoing. Please proceed with caution to avoid affecting historical customer booking data."
     },
     "notices": {
-        "price_override_help": "If you leave the price fields empty, the system will automatically use the default prices from the base tour for this schedule."
+        "price_override_help": "If you leave the price fields empty, the system will automatically use the default prices from the base tour for this schedule.",
+        "delete_warning_hint": "This action cannot be undone"
+    },
+    "messages": {
+        "fetch_error": "Could not load schedule information"
     },
     "filters": {
         "search_label": "Search",
@@ -55,8 +59,8 @@
     },
     "stats": {
         "total": "Total schedules",
-        "available": "Available",
-        "full": "Full",
+        "available": "Active",
+        "full": "Sold out",
         "cancelled": "Cancelled"
     },
     "actions": {
@@ -65,8 +69,12 @@
         "view_tour": "View tour",
         "edit_tour": "Edit tour",
         "edit_schedule": "Update schedule",
-        "bulk_activate": "Set available",
+        "save_schedule": "Save schedule",
+        "delete_this": "Delete this schedule",
+        "bulk_activate": "Activate schedules",
         "bulk_cancel": "Cancel schedules",
+        "filter_by_tour": "Filter by this tour",
+        "delete_blocked_has_bookings": "Cannot delete — bookings exist",
         "selected_count": "Selected {{count}}",
         "sort_start": "Start date"
     },
@@ -105,6 +113,12 @@
         "available": "Available",
         "full_or_cancelled": "Full/Cancelled",
         "full_or_cancelled_title": "Full / Cancelled",
+        "schedule_count": "{{count}} schedules",
+        "slots_summary": "{{booked}}/{{max}}",
+        "prev_month": "Previous month",
+        "next_month": "Next month",
+        "retry": "Try again",
+        "truncated_warning": "Calendar may be incomplete because this month has too many schedules to load.",
         "weekdays": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
     }
 }

@@ -48,12 +48,16 @@ const UserDetail = () => {
 
     const {
         data: bookingsResponse,
-        isLoading: isBookingsLoading
+        isLoading: isBookingsLoading,
+        isError: isBookingsError,
+        refetch: refetchBookings,
     } = useUserBookingsQuery(id || '', 1, 5);
 
     const {
         data: ratingsResponse,
-        isLoading: isRatingsLoading
+        isLoading: isRatingsLoading,
+        isError: isRatingsError,
+        refetch: refetchRatings,
     } = useUserRatingsQuery(id || '', 1, 3);
 
     // Mutations
@@ -260,6 +264,8 @@ const UserDetail = () => {
                                         bookings={bookings}
                                         totalCount={bookingsTotal}
                                         isLoading={isBookingsLoading}
+                                        isError={isBookingsError}
+                                        onRetry={() => void refetchBookings()}
                                         userId={user.id}
                                     />
                                 </div>
@@ -270,6 +276,8 @@ const UserDetail = () => {
                                         ratings={ratings}
                                         totalCount={ratingsTotal}
                                         isLoading={isRatingsLoading}
+                                        isError={isRatingsError}
+                                        onRetry={() => void refetchRatings()}
                                         userId={user.id}
                                     />
                                 </div>

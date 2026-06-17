@@ -234,6 +234,7 @@ const TourTable = ({
                         checked={info.getValue()} 
                         onChange={(val) => onToggleFeatured(info.row.original.id, val)}
                         color="teal"
+                        ariaLabel={t('table.toggle_featured', { name: info.row.original.name })}
                     />
                 </div>
             ),
@@ -248,6 +249,7 @@ const TourTable = ({
                         checked={info.getValue()} 
                         onChange={(val) => onToggleHot(info.row.original.id, val)}
                         color="orange"
+                        ariaLabel={t('table.toggle_hot', { name: info.row.original.name })}
                     />
                 </div>
             ),
@@ -259,26 +261,29 @@ const TourTable = ({
             header: () => <div className="text-right w-full pr-4">{t('table.header_actions')}</div>,
             cell: info => (
                 <div className="flex items-center justify-end gap-1.5 pr-2">
-                    <button 
+                    <button
+                        type="button"
                         onClick={() => onView(info.row.original)}
-                        title={t('actions.view', { ns: 'common' })}
+                        aria-label={t('actions.view', { ns: 'common' })}
                         className="w-[30px] h-[30px] flex items-center justify-center bg-surface border border-[#E2E8F0] rounded-[6px] text-[#64748B] hover:text-[#14b8a6] hover:border-[#14b8a6] transition-all group/btn"
                     >
-                        <Eye size={14} />
+                        <Eye size={14} aria-hidden />
                     </button>
-                    <button 
+                    <button
+                        type="button"
                         onClick={() => onEdit(info.row.original.id)}
-                        title={t('actions.edit', { ns: 'common' })}
+                        aria-label={t('actions.edit', { ns: 'common' })}
                         className="w-[30px] h-[30px] flex items-center justify-center bg-surface border border-[#E2E8F0] rounded-[6px] text-[#64748B] hover:text-[#F59E0B] hover:border-[#F59E0B] transition-all group/btn"
                     >
-                        <Edit2 size={14} />
+                        <Edit2 size={14} aria-hidden />
                     </button>
-                    <button 
+                    <button
+                        type="button"
                         onClick={() => onDelete(info.row.original.id, info.row.original.name)}
-                        title={t('actions.remove', { ns: 'common' })}
+                        aria-label={t('actions.remove', { ns: 'common' })}
                         className="w-[30px] h-[30px] flex items-center justify-center bg-surface border border-[#E2E8F0] rounded-[6px] text-[#64748B] hover:text-[#EF4444] hover:border-[#EF4444] transition-all group/btn"
                     >
-                        <Trash2 size={14} />
+                        <Trash2 size={14} aria-hidden />
                     </button>
                 </div>
             ),
@@ -292,9 +297,18 @@ const TourTable = ({
         state: { rowSelection },
         onRowSelectionChange,
         getCoreRowModel: getCoreRowModel(),
+        getRowId: (row) => String(row.id),
+        enableRowSelection: true,
     });
 
-    const selectedIds = Object.keys(rowSelection).map(idx => data[Number(idx)]?.id).filter(Boolean) as number[];
+    const selectedIds = useMemo(
+        () =>
+            Object.entries(rowSelection)
+                .filter(([, selected]) => selected)
+                .map(([id]) => Number(id))
+                .filter((id) => !Number.isNaN(id)),
+        [rowSelection]
+    );
 
     return (
         <div className="bg-white border border-[#E2E8F0] rounded-[16px] shadow-sm overflow-hidden flex flex-col group/card min-w-0">
@@ -333,14 +347,16 @@ const TourTable = ({
                             <h2 className="text-[14px] font-bold text-[#1E293B] uppercase tracking-wider">{t('table.title')}</h2>
                             {onRefresh && (
                                 <button
+                                    type="button"
                                     onClick={onRefresh}
                                     disabled={isRefreshing || isLoading}
+                                    aria-label={t('table.refresh')}
                                     className={clsx(
                                         "p-1.5 rounded-md transition-all duration-150",
                                         isRefreshing ? "text-[#14b8a6]" : "text-text-secondary hover:text-[#14b8a6] active:scale-95"
                                     )}
                                 >
-                                    <RefreshCw size={14} className={isRefreshing ? 'animate-spin' : ''} />
+                                    <RefreshCw size={14} className={isRefreshing ? 'animate-spin' : ''} aria-hidden />
                                 </button>
                             )}
                         </div>
@@ -365,7 +381,7 @@ const TourTable = ({
             </div>
 
             <div className="overflow-x-auto custom-scrollbar-horizontal">
-                <table className="w-full text-left border-collapse table-fixed min-w-[1430px]">
+                <table className="w-full text-left border-collapse table-fixed min-w-[1280px]">
                     <thead className="bg-surface border-b border-[#E2E8F0]">
                         {table.getHeaderGroups().map(headerGroup => (
                             <tr key={headerGroup.id}>
@@ -440,11 +456,13 @@ const TourTable = ({
 
                 <div className="flex items-center gap-1.5">
                     <button
+                        type="button"
                         onClick={() => onPageChange(page - 1)}
                         disabled={page === 1}
+                        aria-label={t('table.prev_page')}
                         className="w-[32px] h-[32px] flex items-center justify-center rounded-md bg-white border border-[#E2E8F0] text-[#64748B] hover:border-[#14b8a6] hover:text-[#14b8a6] disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-150 shadow-sm active:scale-90"
                     >
-                        <ChevronLeft size={16} />
+                        <ChevronLeft size={16} aria-hidden />
                     </button>
 
                     <div className="flex items-center gap-1.5">
@@ -454,7 +472,10 @@ const TourTable = ({
                                 <div key={p} className="flex items-center gap-1.5">
                                     {i > 0 && arr[i - 1] !== p - 1 && <span className="text-slate-300 font-bold px-1">...</span>}
                                     <button
+                                        type="button"
                                         onClick={() => onPageChange(p)}
+                                        aria-label={t('table.page_number', { page: p })}
+                                        aria-current={p === page ? 'page' : undefined}
                                         className={clsx(
                                             "w-[32px] h-[32px] flex items-center justify-center rounded-md text-[13px] font-bold transition-all duration-150 shadow-sm",
                                             p === page
@@ -469,11 +490,13 @@ const TourTable = ({
                     </div>
 
                     <button
+                        type="button"
                         onClick={() => onPageChange(page + 1)}
                         disabled={page >= Math.ceil(total / limit)}
+                        aria-label={t('table.next_page')}
                         className="w-[32px] h-[32px] flex items-center justify-center rounded-md bg-white border border-[#E2E8F0] text-[#64748B] hover:border-[#14b8a6] hover:text-[#14b8a6] disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-150 shadow-sm active:scale-90"
                     >
-                        <ChevronRight size={16} />
+                        <ChevronRight size={16} aria-hidden />
                     </button>
                 </div>
             </div>

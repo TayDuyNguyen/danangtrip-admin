@@ -1,4 +1,5 @@
 import { User, CheckCircle, XCircle } from 'lucide-react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { UserItem } from '@/dataHelper';
 
@@ -8,6 +9,7 @@ interface PersonalInfoCardProps {
 
 export const PersonalInfoCard = ({ user }: PersonalInfoCardProps) => {
     const { t } = useTranslation('user');
+    const [avatarFailed, setAvatarFailed] = useState(false);
 
     const formatShortDateWithTime = (dateStr: string) => {
         if (!dateStr) return '—';
@@ -53,8 +55,13 @@ export const PersonalInfoCard = ({ user }: PersonalInfoCardProps) => {
                         {/* Avatar with gradient border shell */}
                         <div className="p-[2px] rounded-full bg-gradient-to-br from-[#14b8a6]/60 via-[#0d9488]/40 to-transparent">
                             <div className="w-24 h-24 rounded-full border-2 border-white flex items-center justify-center font-bold text-3xl bg-gradient-to-br from-[#14b8a6] to-[#0f766e] text-white overflow-hidden select-none">
-                                {user.avatar ? (
-                                    <img src={user.avatar} alt={user.fullName} className="w-full h-full object-cover" />
+                                {user.avatar && !avatarFailed ? (
+                                    <img
+                                        src={user.avatar}
+                                        alt={user.fullName}
+                                        className="w-full h-full object-cover"
+                                        onError={() => setAvatarFailed(true)}
+                                    />
                                 ) : (
                                     <span>{user.fullName.charAt(0).toUpperCase()}</span>
                                 )}
@@ -72,7 +79,7 @@ export const PersonalInfoCard = ({ user }: PersonalInfoCardProps) => {
                             <span className="text-[10px] font-black text-[#94A3B8] uppercase tracking-widest">
                                 {t('detail.label_full_name', 'HỌ VÀ TÊN')}
                             </span>
-                            <span className="text-[#0F172A] font-bold">{user.fullName}</span>
+                            <span className="text-[#0F172A] font-bold break-words">{user.fullName}</span>
                         </div>
 
                         {/* Username */}
@@ -80,7 +87,7 @@ export const PersonalInfoCard = ({ user }: PersonalInfoCardProps) => {
                             <span className="text-[10px] font-black text-[#94A3B8] uppercase tracking-widest">
                                 {t('detail.label_username', 'USERNAME')}
                             </span>
-                            <span className="text-[#0F172A] font-mono font-bold text-xs">{user.username}</span>
+                            <span className="text-[#0F172A] font-mono font-bold text-xs break-all">{user.username}</span>
                         </div>
 
                         {/* Email */}
@@ -88,7 +95,7 @@ export const PersonalInfoCard = ({ user }: PersonalInfoCardProps) => {
                             <span className="text-[10px] font-black text-[#94A3B8] uppercase tracking-widest">
                                 {t('detail.label_email', 'EMAIL')}
                             </span>
-                            <a href={`mailto:${user.email}`} className="text-[#14b8a6] hover:underline font-bold transition-all">
+                            <a href={`mailto:${user.email}`} className="text-[#14b8a6] hover:underline font-bold transition-all break-all">
                                 {user.email}
                             </a>
                         </div>
@@ -98,7 +105,7 @@ export const PersonalInfoCard = ({ user }: PersonalInfoCardProps) => {
                             <span className="text-[10px] font-black text-[#94A3B8] uppercase tracking-widest">
                                 {t('detail.label_phone', 'SỐ ĐIỆN THOẠI')}
                             </span>
-                            <span className="text-[#0F172A] font-bold">{user.phone || '—'}</span>
+                            <span className="text-[#0F172A] font-bold break-words">{user.phone || '—'}</span>
                         </div>
 
                         {/* Birthdate */}
@@ -122,7 +129,7 @@ export const PersonalInfoCard = ({ user }: PersonalInfoCardProps) => {
                             <span className="text-[10px] font-black text-[#94A3B8] uppercase tracking-widest">
                                 {t('detail.label_city', 'THÀNH PHỐ')}
                             </span>
-                            <span className="text-[#0F172A] font-bold">{user.city || '—'}</span>
+                            <span className="text-[#0F172A] font-bold break-words">{user.city || '—'}</span>
                         </div>
 
                         {/* Email Verification */}

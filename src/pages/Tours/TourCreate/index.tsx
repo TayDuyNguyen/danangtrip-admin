@@ -24,6 +24,7 @@ import { createTourSchema, type CreateTourInput } from '@/validations/tour.schem
 import { useTourMutations, useTourCategoriesQuery } from '@/hooks/useTourQueries';
 import { ROUTES } from '@/routes/routes';
 import Breadcrumbs from '@/components/common/Breadcrumbs';
+import { UnsavedChangesGuard } from '@/components/common/UnsavedChangesGuard';
 import { extractCreatedTourId, computeDiscountedPrice, slugifyVietnamese, scrollToFirstError, cn } from '@/utils';
 import { getLocalizedApiErrorMessage } from '@/utils/apiError';
 import CustomSelect from '@/components/ui/CustomSelect';
@@ -95,7 +96,7 @@ function AddTour() {
         handleSubmit,
         setValue,
         watch,
-        formState: { errors, isSubmitting }
+        formState: { errors, isSubmitting, dirtyFields }
     } = useForm<CreateTourInput>({
         resolver: yupResolver(createTourSchema(t)) as Resolver<CreateTourInput>,
         defaultValues: {
@@ -125,7 +126,7 @@ function AddTour() {
     useEffect(() => {
         if (tourName) {
             const slug = slugifyVietnamese(tourName);
-            setValue('slug', slug, { shouldValidate: true });
+            setValue('slug', slug, { shouldValidate: true, shouldDirty: false });
         }
     }, [tourName, setValue]);
 
@@ -172,8 +173,15 @@ function AddTour() {
         returnObjects: true
     }) as string[];
 
+    const hasUnsavedChanges = Object.keys(dirtyFields).length > 0;
+
+    const navigateToList = useCallback(() => {
+        navigate(ROUTES.TOURS_LIST);
+    }, [navigate]);
+
     return (
         <form onSubmit={onPublish} className="min-h-screen bg-[#F8FAFC] pb-20 font-sans" noValidate>
+            <UnsavedChangesGuard isDirty={hasUnsavedChanges && !busy} />
             <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200 transition-all duration-300 shadow-sm rounded-b-2xl">
                 <div
                     className={cn(
@@ -191,9 +199,9 @@ function AddTour() {
                             <Breadcrumbs
                                 icon={Map}
                                 items={[
-                                    { label: 'sidebar.tours', path: ROUTES.TOURS_LIST },
-                                    { label: 'sidebar.tour_list', path: ROUTES.TOURS_LIST },
-                                    { label: 'breadcrumb.add' }
+                                    { label: t('title.breadcrumb_parent'), path: ROUTES.TOURS_LIST, isRaw: true },
+                                    { label: t('title.breadcrumb_list'), path: ROUTES.TOURS_LIST, isRaw: true },
+                                    { label: t('title.breadcrumb_create'), isRaw: true }
                                 ]}
                             />
                         </div>
@@ -225,7 +233,7 @@ function AddTour() {
                     <div className="flex flex-wrap items-center gap-3 shrink-0">
                         <button
                             type="button"
-                            onClick={() => navigate(ROUTES.TOURS_LIST)}
+                            onClick={navigateToList}
                             className="px-5 py-2.5 text-sm font-semibold rounded-md border border-[#E2E8F0] bg-white text-[#64748B] hover:border-[#EF4444] hover:text-[#EF4444] transition-colors"
                         >
                             {t('form.actions.cancel')}
@@ -315,7 +323,10 @@ function AddTour() {
                                 <div className="space-y-2" data-tour-field="tour_category_id">
                                     <label className="text-sm font-semibold text-slate-700">{t('form.basic.category')}</label>
                                     {categoriesError ? (
-                                        <div className="flex flex-col gap-2 rounded-xl border border-red-200 bg-red-50/50 px-4 py-3 text-sm text-red-700">
+                                        <div
+                                            role="alert"
+                                            className="flex flex-col gap-2 rounded-xl border border-red-200 bg-red-50/50 px-4 py-3 text-sm text-red-700"
+                                        >
                                             <span>{t('form.categories.error')}</span>
                                             <button
                                                 type="button"
@@ -381,7 +392,10 @@ function AddTour() {
                                         <label className="text-sm font-semibold text-slate-700">
                                             {t('form.basic.short_desc')}
                                         </label>
-                                        <span className="text-xs text-slate-400">
+                                        <span className={cn(
+                                            'text-xs',
+                                            shortDesc.length > 280 ? 'text-amber-600 font-semibold' : 'text-slate-400'
+                                        )}>
                                             {t('form.basic.short_desc_counter', { current: shortDesc.length })}
                                         </span>
                                     </div>
@@ -461,6 +475,7 @@ function AddTour() {
                                             render={({ field }) => (
                                                 <CurrencyInput
                                                     {...field}
+                                                    invalid={!!errors.price_child}
                                                     className="font-bold text-slate-800"
                                                 />
                                             )}
@@ -469,6 +484,9 @@ function AddTour() {
                                             {t('form.pricing.currency_suffix')}
                                         </span>
                                     </div>
+                                    {errors.price_child && (
+                                        <p className="text-xs text-red-500 font-medium">{errors.price_child.message}</p>
+                                    )}
                                 </div>
                                 <div className="space-y-2" data-tour-field="price_infant">
                                     <label className="text-sm font-semibold text-slate-700">
@@ -482,6 +500,7 @@ function AddTour() {
                                             render={({ field }) => (
                                                 <CurrencyInput
                                                     {...field}
+                                                    invalid={!!errors.price_infant}
                                                     className="font-bold text-slate-800"
                                                 />
                                             )}
@@ -490,14 +509,24 @@ function AddTour() {
                                             {t('form.pricing.currency_suffix')}
                                         </span>
                                     </div>
+                                    {errors.price_infant && (
+                                        <p className="text-xs text-red-500 font-medium">{errors.price_infant.message}</p>
+                                    )}
                                 </div>
 
                                 <div className="space-y-2" data-tour-field="discount_percent">
                                     <label className="text-sm font-semibold text-slate-700">{t('form.pricing.discount')}</label>
                                     <div className="relative">
-                                        <TextInput type="number" {...register('discount_percent')} />
+                                        <TextInput
+                                            type="number"
+                                            {...register('discount_percent')}
+                                            invalid={!!errors.discount_percent}
+                                        />
                                         <span className="absolute right-4 top-3.5 text-slate-400">%</span>
                                     </div>
+                                    {errors.discount_percent && (
+                                        <p className="text-xs text-red-500 font-medium">{errors.discount_percent.message}</p>
+                                    )}
                                 </div>
 
                                 <div className="space-y-2 sm:col-span-2 md:col-span-2">

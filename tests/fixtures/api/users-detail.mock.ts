@@ -1,11 +1,14 @@
 import type { Page, Route } from '@playwright/test';
 import { successEnvelope } from '../../../helpers/apiResponse';
+import { shouldRegisterMockRoutes } from '../../helpers/mockRouteOnce';
 import type { RawUserItem } from '../data/users.data';
 import {
   mockAdminUser,
   mockBannedUser,
   mockCustomerUser,
   mockStaffLikeUser,
+  mockSecondaryAdmin,
+  mockPendingUser,
 } from '../data/users.data';
 import {
   mockBookingsForCustomer,
@@ -17,7 +20,27 @@ const usersById = new Map<number, RawUserItem>([
   [2, structuredClone(mockStaffLikeUser)],
   [3, structuredClone(mockCustomerUser)],
   [4, structuredClone(mockBannedUser)],
+  [5, structuredClone(mockSecondaryAdmin)],
+  [6, structuredClone(mockPendingUser)],
 ]);
+
+export interface MockUserDetailApiOptions {
+  detailDelayMs?: number;
+  bookingsFail?: boolean;
+  ratingsFail?: boolean;
+  roleFail?: boolean;
+  statusFail?: boolean;
+  deleteFail?: boolean;
+}
+
+const flags: Required<MockUserDetailApiOptions> = {
+  detailDelayMs: 0,
+  bookingsFail: false,
+  ratingsFail: false,
+  roleFail: false,
+  statusFail: false,
+  deleteFail: false,
+};
 
 function parseSubResource(pathname: string): { userId: number; resource: 'bookings' | 'ratings' } | null {
   const match = pathname.match(/\/admin\/users\/(\d+)\/(bookings|ratings)\/?$/);
@@ -40,7 +63,26 @@ function getDetailUserId(pathname: string): number | null {
   return match ? Number(match[1]) : null;
 }
 
-export async function mockUserDetailApi(page: Page) {
+function failResponse(message: string, status = 500) {
+  return {
+    status,
+    contentType: 'application/json',
+    body: JSON.stringify({ code: status, message, data: null }),
+  };
+}
+
+export async function mockUserDetailApi(page: Page, options: MockUserDetailApiOptions = {}) {
+  flags.detailDelayMs = options.detailDelayMs ?? 0;
+  flags.bookingsFail = options.bookingsFail ?? false;
+  flags.ratingsFail = options.ratingsFail ?? false;
+  flags.roleFail = options.roleFail ?? false;
+  flags.statusFail = options.statusFail ?? false;
+  flags.deleteFail = options.deleteFail ?? false;
+
+  if (!shouldRegisterMockRoutes(page, 'users-detail')) {
+    return;
+  }
+
   const handler = async (route: Route) => {
     const type = route.request().resourceType();
     if (type === 'document') {
@@ -61,6 +103,10 @@ export async function mockUserDetailApi(page: Page) {
       }
 
       if (sub.resource === 'bookings') {
+        if (flags.bookingsFail) {
+          await route.fulfill(failResponse('Bookings fetch failed'));
+          return;
+        }
         const rows =
           sub.userId === 3 && (user.bookings_count ?? 0) > 0 ? mockBookingsForCustomer : [];
         await route.fulfill({
@@ -79,6 +125,10 @@ export async function mockUserDetailApi(page: Page) {
         return;
       }
 
+      if (flags.ratingsFail) {
+        await route.fulfill(failResponse('Ratings fetch failed'));
+        return;
+      }
       const ratingRows =
         sub.userId === 3 && (user.reviews_count ?? 0) > 0 ? mockRatingsForCustomer : [];
       await route.fulfill({
@@ -99,6 +149,10 @@ export async function mockUserDetailApi(page: Page) {
 
     const roleUserId = method === 'PATCH' ? getRoleUserId(pathname) : null;
     if (roleUserId !== null) {
+      if (flags.roleFail) {
+        await route.fulfill(failResponse('Role update failed'));
+        return;
+      }
       const user = usersById.get(roleUserId);
       if (!user) {
         await route.fulfill({ status: 404, contentType: 'application/json', body: '{}' });
@@ -116,6 +170,10 @@ export async function mockUserDetailApi(page: Page) {
 
     const statusUserId = method === 'PATCH' ? getStatusUserId(pathname) : null;
     if (statusUserId !== null) {
+      if (flags.statusFail) {
+        await route.fulfill(failResponse('Status update failed'));
+        return;
+      }
       const user = usersById.get(statusUserId);
       if (!user) {
         await route.fulfill({ status: 404, contentType: 'application/json', body: '{}' });
@@ -132,6 +190,10 @@ export async function mockUserDetailApi(page: Page) {
     }
 
     if (method === 'DELETE') {
+      if (flags.deleteFail) {
+        await route.fulfill(failResponse('Delete failed'));
+        return;
+      }
       const deleteId = getDetailUserId(pathname);
       if (deleteId && usersById.has(deleteId)) {
         usersById.delete(deleteId);
@@ -154,6 +216,9 @@ export async function mockUserDetailApi(page: Page) {
           body: JSON.stringify({ code: 404, message: 'User not found', data: null }),
         });
         return;
+      }
+      if (flags.detailDelayMs > 0) {
+        await new Promise((r) => setTimeout(r, flags.detailDelayMs));
       }
       await route.fulfill({
         status: 200,
@@ -179,4 +244,6 @@ export function resetMockDetailUsers() {
   usersById.set(2, structuredClone(mockStaffLikeUser));
   usersById.set(3, structuredClone(mockCustomerUser));
   usersById.set(4, structuredClone(mockBannedUser));
+  usersById.set(5, structuredClone(mockSecondaryAdmin));
+  usersById.set(6, structuredClone(mockPendingUser));
 }

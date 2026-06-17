@@ -48,6 +48,7 @@ export interface ScheduleFilters {
     q?: string;
     tour_id?: string | number;
     status?: string;
+    booking_availability?: string;
     start_date?: string;
     end_date?: string;
     page?: number;

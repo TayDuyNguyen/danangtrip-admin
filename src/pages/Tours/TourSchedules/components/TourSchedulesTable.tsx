@@ -37,6 +37,7 @@ type Props = {
     onStatusChange: (id: number, status: string) => void;
     onDelete: (schedule: Schedule) => void;
     onBulkStatusChange?: (ids: number[], status: 'available' | 'cancelled') => void;
+    onFilterByTour?: (tourId: number | string) => void;
     isBulkMutating?: boolean;
 };
 
@@ -58,6 +59,7 @@ const TourSchedulesTable = ({
     onStatusChange,
     onDelete,
     onBulkStatusChange,
+    onFilterByTour,
     isBulkMutating,
 }: Props) => {
     const { t, i18n } = useTranslation(['schedules', 'tour', 'common']);
@@ -82,6 +84,16 @@ const TourSchedulesTable = ({
     };
 
     const lastPage = Math.max(1, Math.ceil(total / limit));
+
+    const scheduleStatusLabel = (status: ScheduleStatus) => {
+        if (status === ScheduleStatus.AVAILABLE) {
+            return t('schedules:status.available');
+        }
+        if (status === ScheduleStatus.FULL) {
+            return t('schedules:status.full');
+        }
+        return t('schedules:status.cancelled');
+    };
 
     const toScheduleCreate = (tourId: number | string) =>
         ROUTES.TOURS_SCHEDULE_CREATE.replace(':id', String(tourId));
@@ -215,7 +227,7 @@ const TourSchedulesTable = ({
                                         </div>
                                         <div className="space-y-1">
                                             <p className="text-[#1E293B] font-bold text-[16px]">{t('schedules:no_data.title', 'Không có dữ liệu')}</p>
-                                            <p className="text-text-secondary text-[14px]">{t('schedules:no_data.subtitle', 'Không tìm thấy lịch trình nào')}</p>
+                                            <p className="text-text-secondary text-[14px]">{t('schedules:no_data.description')}</p>
                                         </div>
                                     </div>
                                 </td>
@@ -224,6 +236,7 @@ const TourSchedulesTable = ({
                             data.map((row, idx) => {
                                 const idNum = Number(row.id);
                                 const selected = selectedIds.includes(idNum);
+                                const isFull = row.status === ScheduleStatus.FULL;
                                 const past = isPastDate(row.startDate);
                                 const soon = !past && isWithinNextDays(row.startDate, 7);
                                 const pctColor = progressColor(row.bookedSlots, row.totalSlots);
@@ -241,8 +254,9 @@ const TourSchedulesTable = ({
                                             <div className="flex justify-center">
                                                 <input
                                                     type="checkbox"
-                                                    className="w-4 h-4 rounded border-[#E2E8F0] text-[#14b8a6] accent-[#14b8a6] cursor-pointer"
+                                                    className="w-4 h-4 rounded border-[#E2E8F0] text-[#14b8a6] accent-[#14b8a6] cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                                                     checked={selected}
+                                                    disabled={isFull}
                                                     onChange={() => onToggleRow(idNum)}
                                                     aria-label={t('schedules:table.select_row', {
                                                         name: row.tourName || t('schedules:card.untitled_tour'),
@@ -269,8 +283,10 @@ const TourSchedulesTable = ({
                                                 <div className="min-w-0">
                                                     <button
                                                         type="button"
-                                                        onClick={() => navigate(toScheduleCreate(row.tourId))}
-                                                    className="text-left text-[14px] font-semibold text-[#1E293B] hover:text-[#14b8a6] line-clamp-2"
+                                                        onClick={() => onFilterByTour?.(row.tourId)}
+                                                        title={t('schedules:actions.filter_by_tour')}
+                                                        aria-label={`${t('schedules:actions.filter_by_tour')}: ${row.tourName || t('schedules:card.untitled_tour')}`}
+                                                        className="text-left text-[14px] font-semibold text-[#1E293B] hover:text-[#14b8a6] line-clamp-2"
                                                     >
                                                         {row.tourName || '—'}
                                                     </button>
@@ -332,23 +348,26 @@ const TourSchedulesTable = ({
                                             </div>
                                         </td>
                                         <td className="px-3 py-3">
-                                            <CustomSelect
-                                                value={{
-                                                    value: row.status,
-                                                    label:
-                                                        row.status === ScheduleStatus.AVAILABLE
-                                                            ? t('schedules:status.available')
-                                                            : t('schedules:status.cancelled'),
-                                                }}
-                                                onChange={(opt: Option | null) => onStatusChange(idNum, String(opt?.value))}
-                                                options={[
-                                                    { value: ScheduleStatus.AVAILABLE, label: t('schedules:status.available') },
-                                                    { value: ScheduleStatus.CANCELLED, label: t('schedules:status.cancelled') },
-                                                ]}
-                                                size="sm"
-                                                containerClassName="w-[130px]"
-                                                isSearchable={false}
-                                            />
+                                            {row.status === ScheduleStatus.FULL ? (
+                                                <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-wide bg-[#FEE2E2] text-[#B91C1C] border border-[#FECACA]">
+                                                    {scheduleStatusLabel(row.status)}
+                                                </span>
+                                            ) : (
+                                                <CustomSelect
+                                                    value={{
+                                                        value: row.status,
+                                                        label: scheduleStatusLabel(row.status),
+                                                    }}
+                                                    onChange={(opt: Option | null) => onStatusChange(idNum, String(opt?.value))}
+                                                    options={[
+                                                        { value: ScheduleStatus.AVAILABLE, label: t('schedules:status.available') },
+                                                        { value: ScheduleStatus.CANCELLED, label: t('schedules:status.cancelled') },
+                                                    ]}
+                                                    size="sm"
+                                                    containerClassName="w-[130px]"
+                                                    isSearchable={false}
+                                                />
+                                            )}
                                         </td>
                                         <td className="px-3 py-3">
                                             <span
@@ -369,6 +388,7 @@ const TourSchedulesTable = ({
                                                 <button
                                                     type="button"
                                                     title={t('schedules:actions.add_new')}
+                                                    aria-label={t('schedules:actions.add_new')}
                                                     onClick={() => navigate(toScheduleCreate(row.tourId))}
                                                     className="w-7 h-7 flex items-center justify-center rounded-md bg-white border border-[#E2E8F0] text-[#64748B] hover:text-[#14b8a6] hover:border-[#14b8a6] transition-colors"
                                                 >
@@ -377,19 +397,39 @@ const TourSchedulesTable = ({
                                                 <button
                                                     type="button"
                                                     title={t('common:actions.edit')}
+                                                    aria-label={t('common:actions.edit')}
                                                     onClick={() => navigate(toScheduleEdit(row.id))}
                                                     className="w-7 h-7 flex items-center justify-center rounded-md bg-white border border-[#E2E8F0] text-[#64748B] hover:text-[#F59E0B] hover:border-[#F59E0B] transition-colors"
                                                 >
                                                     <Pencil className="w-4 h-4" />
                                                 </button>
-                                                <button
-                                                    type="button"
-                                                    title={t('common:actions.remove')}
-                                                    onClick={() => onDelete(row)}
-                                                    className="w-7 h-7 flex items-center justify-center rounded-md bg-white border border-[#E2E8F0] text-[#64748B] hover:text-[#EF4444] hover:border-[#EF4444] transition-colors"
-                                                >
-                                                    <Trash2 className="w-4 h-4" />
-                                                </button>
+                                                {(() => {
+                                                    const hasBookings = row.bookedSlots > 0;
+                                                    const deleteLabel = hasBookings
+                                                        ? t('schedules:actions.delete_blocked_has_bookings')
+                                                        : t('common:actions.remove');
+                                                    return (
+                                                        <button
+                                                            type="button"
+                                                            title={deleteLabel}
+                                                            aria-label={deleteLabel}
+                                                            disabled={hasBookings}
+                                                            onClick={() => {
+                                                                if (!hasBookings) {
+                                                                    onDelete(row);
+                                                                }
+                                                            }}
+                                                            className={clsx(
+                                                                'w-7 h-7 flex items-center justify-center rounded-md bg-white border border-[#E2E8F0] text-[#64748B] transition-colors',
+                                                                hasBookings
+                                                                    ? 'opacity-40 cursor-not-allowed'
+                                                                    : 'hover:text-[#EF4444] hover:border-[#EF4444]',
+                                                            )}
+                                                        >
+                                                            <Trash2 className="w-4 h-4" />
+                                                        </button>
+                                                    );
+                                                })()}
                                             </div>
                                         </td>
                                     </tr>
@@ -413,6 +453,7 @@ const TourSchedulesTable = ({
                         type="button"
                         onClick={() => onPageChange(page - 1)}
                         disabled={page <= 1}
+                        aria-label={t('common:pagination.previous')}
                         className="w-[32px] h-[32px] flex items-center justify-center rounded-md bg-white border border-[#E2E8F0] text-[#64748B] hover:border-[#14b8a6] hover:text-[#14b8a6] disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-150 shadow-sm active:scale-90"
                     >
                         <ChevronLeft size={16} />
@@ -446,6 +487,7 @@ const TourSchedulesTable = ({
                         type="button"
                         onClick={() => onPageChange(page + 1)}
                         disabled={page >= lastPage}
+                        aria-label={t('common:pagination.next')}
                         className="w-[32px] h-[32px] flex items-center justify-center rounded-md bg-white border border-[#E2E8F0] text-[#64748B] hover:border-[#14b8a6] hover:text-[#14b8a6] disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-150 shadow-sm active:scale-90"
                     >
                         <ChevronRight size={16} />

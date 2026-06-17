@@ -199,6 +199,17 @@ export const initialMockTours: RawTourRow[] = [
   buildTour({ id: 12, name: 'Tour dù lượn', status: 'active', price_adult: 0 }),
 ];
 
+export function computeMockTourStats(tours: RawTourRow[] = initialMockTours) {
+  return {
+    total_tours: tours.length,
+    active_tours: tours.filter((t) => t.status === 'active').length,
+    featured_tours: tours.filter((t) => t.is_featured).length,
+    sold_out_tours: tours.filter((t) => t.booking_availability === 'sold_out').length,
+  };
+}
+
+export const expectedMockTourStats = computeMockTourStats();
+
 export interface RawScheduleRow {
   id: number;
   tour_id: number;
@@ -208,9 +219,25 @@ export interface RawScheduleRow {
   booked_people: number;
   status: string;
   booking_availability?: string;
+  departure_code?: string | null;
+  departure_place?: string | null;
+  booking_deadline?: string | null;
+  price_adult?: number | string | null;
+  price_child?: number | string | null;
+  price_infant?: number | string | null;
 }
 
 export const mockSchedulesForTour1: RawScheduleRow[] = [
+  {
+    id: 99,
+    tour_id: 1,
+    start_date: '2026-06-20',
+    end_date: '2026-06-20',
+    max_people: 15,
+    booked_people: 0,
+    status: 'available',
+    booking_availability: 'open',
+  },
   {
     id: 101,
     tour_id: 1,
@@ -241,4 +268,26 @@ export const mockSchedulesForTour1: RawScheduleRow[] = [
     status: 'cancelled',
     booking_availability: 'sold_out',
   },
+  {
+    id: 104,
+    tour_id: 2,
+    start_date: '2026-07-20',
+    end_date: '2026-07-20',
+    max_people: 18,
+    booked_people: 6,
+    status: 'available',
+    booking_availability: 'open',
+  },
 ];
+
+/** Expected stats when all mock schedules are loaded (no filter). */
+export const expectedMockScheduleStats = {
+  total_schedules: mockSchedulesForTour1.length,
+  available_schedules: mockSchedulesForTour1.filter((s) => s.status === 'available').length,
+  full_schedules: mockSchedulesForTour1.filter((s) => s.booking_availability === 'sold_out').length,
+  cancelled_schedules: mockSchedulesForTour1.filter((s) => s.status === 'cancelled').length,
+};
+
+export const scheduleListSearchKeyword = 'Ba Na';
+export const scheduleListFullCapacityText = '25 / 25';
+export const scheduleListAvailableCapacityText = '10 / 30';

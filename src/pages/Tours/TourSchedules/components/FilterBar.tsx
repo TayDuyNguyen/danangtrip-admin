@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 import { useEffect, useMemo, useState } from 'react';
 import { Search, Filter, RotateCcw } from 'lucide-react';
 import CustomSelect from '@/components/ui/CustomSelect';
@@ -27,10 +28,20 @@ const FilterBar = ({ tourOptions, filters, onApply, onReset, hasActiveFilters }:
     const [from, setFrom] = useState(() => filters.start_date ?? '');
     const [to, setTo] = useState(() => filters.end_date ?? '');
 
+    useEffect(() => {
+        setQ(filters.q ?? '');
+    }, [filters.q]);
+
+    useEffect(() => {
+        setFrom(filters.start_date ?? '');
+        setTo(filters.end_date ?? '');
+    }, [filters.start_date, filters.end_date]);
+
     const statusOptions = useMemo<Option[]>(
         () => [
             { value: 'all', label: t('common:labels.all') },
             { value: 'available', label: t('schedules:status.available') },
+            { value: 'sold_out', label: t('schedules:booking_availability.sold_out') },
             { value: 'cancelled', label: t('schedules:status.cancelled') },
         ],
         [t],
@@ -46,9 +57,12 @@ const FilterBar = ({ tourOptions, filters, onApply, onReset, hasActiveFilters }:
     }, [filters.tour_id, tourOptions]);
 
     const statusOption = useMemo(() => {
+        if (filters.booking_availability === 'sold_out') {
+            return statusOptions.find((o) => o.value === 'sold_out') ?? statusOptions[0];
+        }
         const sv = statusValue(filters.status);
         return statusOptions.find((o) => o.value === sv) ?? statusOptions[0];
-    }, [filters.status, statusOptions]);
+    }, [filters.status, filters.booking_availability, statusOptions]);
 
     useEffect(() => {
         const timer = window.setTimeout(() => {
@@ -59,6 +73,19 @@ const FilterBar = ({ tourOptions, filters, onApply, onReset, hasActiveFilters }:
         }, 300);
         return () => window.clearTimeout(timer);
     }, [q, filters.q, onApply]);
+
+    const handleStatusChange = (opt: Option | null) => {
+        const value = opt ? String(opt.value) : 'all';
+        if (value === 'sold_out') {
+            onApply({ status: 'all', booking_availability: 'sold_out', page: 1 });
+            return;
+        }
+        if (value === 'all') {
+            onApply({ status: 'all', booking_availability: undefined, page: 1 });
+            return;
+        }
+        onApply({ status: value, booking_availability: undefined, page: 1 });
+    };
 
     const handleApplyClick = () => {
         onApply({
@@ -108,13 +135,7 @@ const FilterBar = ({ tourOptions, filters, onApply, onReset, hasActiveFilters }:
                     <CustomSelect
                         options={statusOptions}
                         value={statusOption}
-                        onChange={(opt) =>
-                            onApply({
-                                status:
-                                    opt && String(opt.value) !== 'all' ? String(opt.value) : 'all',
-                                page: 1,
-                            })
-                        }
+                        onChange={handleStatusChange}
                         placeholder={t('schedules:filters.status_placeholder')}
                     />
                 </div>

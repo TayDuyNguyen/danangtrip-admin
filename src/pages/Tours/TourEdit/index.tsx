@@ -38,6 +38,7 @@ import { TextInput } from '@/components/ui/TextInput';
 import { CurrencyInput } from '@/components/ui/CurrencyInput';
 import { TextareaField } from '@/components/ui/TextareaField';
 import ErrorWidget from '@/components/common/ErrorWidget';
+import { UnsavedChangesGuard } from '@/components/common/UnsavedChangesGuard';
 import SectionHeader from '../TourCreate/components/SectionHeader';
 import ItineraryBuilder from '../TourCreate/components/ItineraryBuilder';
 import ImageGallery from '../TourCreate/components/ImageGallery';
@@ -75,6 +76,7 @@ function EditTour() {
     const navigate = useNavigate();
     const { id } = useParams<{ id: string }>();
     const [autoSlug, setAutoSlug] = useState(false);
+    const [isScrolled, setIsScrolled] = useState(false);
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     const [schedulePendingDelete, setSchedulePendingDelete] = useState<Schedule | null>(null);
 
@@ -153,6 +155,24 @@ function EditTour() {
         }
     }, [tourName, setValue, autoSlug]);
 
+    useEffect(() => {
+        const handleScroll = (e: Event) => {
+            const target = e.target as HTMLElement;
+            if (target && (target.tagName === 'MAIN' || target.classList.contains('overflow-y-auto'))) {
+                setIsScrolled((prev) => {
+                    const currentScroll = target.scrollTop;
+                    if (!prev && currentScroll > 10) return true;
+                    if (prev && currentScroll < 2) return false;
+                    return prev;
+                });
+            }
+        };
+        window.addEventListener('scroll', handleScroll, true);
+        return () => window.removeEventListener('scroll', handleScroll, true);
+    }, []);
+
+    const hasUnsavedChanges = Object.keys(dirtyFields).length > 0;
+
     const onSubmit = handleSubmit(
         async (data) => {
             if (!id) return;
@@ -229,43 +249,74 @@ function EditTour() {
     }) as string[];
 
     return (
-        <form onSubmit={onSubmit} className="min-h-screen bg-surface pb-20 font-sans" noValidate>
-            <div className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-slate-200/60 shadow-xs">
-                <div className="max-w-[1600px] mx-auto px-4 md:px-8 h-20 flex items-center justify-between">
-                    {/* Header Left: Breadcrumb + Title */}
-                    <div className="flex items-center gap-4">
+        <form
+            id="tour-edit-form"
+            onSubmit={onSubmit}
+            className="min-h-screen bg-surface pb-32 md:pb-20 font-sans"
+            noValidate
+        >
+            <UnsavedChangesGuard isDirty={hasUnsavedChanges && !busy} />
+            <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200 transition-all duration-300 shadow-sm rounded-b-2xl">
+                <div
+                    className={cn(
+                        'w-full px-4 sm:px-6 lg:px-10 flex items-center justify-between gap-4 transition-all duration-300',
+                        isScrolled ? 'py-3' : 'py-5 lg:py-6'
+                    )}
+                >
+                    <div className="flex items-center gap-4 min-w-0 flex-1">
                         <button
                             type="button"
-                            className="rounded-full w-10 h-10 p-0 hover:bg-slate-100 cursor-pointer flex items-center justify-center border-0 bg-transparent text-slate-600"
+                            className="rounded-full w-10 h-10 p-0 hover:bg-slate-100 cursor-pointer flex items-center justify-center border-0 bg-transparent text-slate-600 shrink-0"
                             onClick={() => navigate(ROUTES.TOURS_LIST)}
                         >
                             <ArrowLeft className="w-5 h-5 text-slate-600" />
                         </button>
-                        <div>
-                            <div className="mb-1">
+                        <div className="min-w-0">
+                            <div
+                                className={cn(
+                                    'transition-all duration-300',
+                                    isScrolled ? 'opacity-0 h-0 overflow-hidden mb-0' : 'opacity-100 h-auto mb-1'
+                                )}
+                            >
                                 <Breadcrumbs
                                     icon={Map}
                                     items={[
-                                        { label: 'sidebar.tours', path: ROUTES.TOURS_LIST },
-                                        { label: 'sidebar.tour_list', path: ROUTES.TOURS_LIST },
-                                        { label: 'breadcrumb.edit' }
+                                        { label: t('title.breadcrumb_parent'), path: ROUTES.TOURS_LIST, isRaw: true },
+                                        { label: t('title.breadcrumb_list'), path: ROUTES.TOURS_LIST, isRaw: true },
+                                        { label: t('title.breadcrumb_edit'), isRaw: true },
                                     ]}
                                 />
                             </div>
-                            <h1 className="text-xl font-bold text-slate-900 tracking-tight leading-none">
-                                {t('title.edit', { defaultValue: 'Chỉnh sửa Tour' })}
-                            </h1>
+                            <div className="flex items-center gap-3">
+                                <h1
+                                    className={cn(
+                                        'font-bold text-slate-900 tracking-tight leading-none transition-all duration-300 truncate',
+                                        isScrolled ? 'text-lg' : 'text-xl'
+                                    )}
+                                >
+                                    {t('title.edit', { defaultValue: 'Chỉnh sửa Tour' })}
+                                </h1>
+                                {isScrolled && (
+                                    <span className="hidden md:inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-[#dff7f4] text-[#0f766e] animate-in fade-in slide-in-from-left-2 duration-300 shrink-0">
+                                        {t('title.breadcrumb_edit')}
+                                    </span>
+                                )}
+                            </div>
                             {!tourLoading && tourName && (
-                                <p className="text-xs text-slate-400 font-medium truncate max-w-[200px] sm:max-w-[400px] mt-1 select-all">
+                                <p
+                                    className={cn(
+                                        'text-xs text-slate-400 font-medium truncate max-w-[200px] sm:max-w-[400px] transition-all duration-300 select-all',
+                                        isScrolled ? 'opacity-0 h-0 overflow-hidden mt-0' : 'mt-1'
+                                    )}
+                                >
                                     {tourName}
                                 </p>
                             )}
                         </div>
                     </div>
 
-                    {/* Header Right: Buttons */}
                     {!tourLoading && (
-                        <div className="hidden md:flex items-center gap-3">
+                        <div className="hidden md:flex items-center gap-3 shrink-0">
                             <button
                                 type="button"
                                 onClick={() => navigate(ROUTES.TOURS_LIST)}
@@ -692,9 +743,12 @@ function EditTour() {
                                     type="button"
                                     onClick={() =>
                                         id &&
-                                        navigate(ROUTES.TOURS_SCHEDULE_CREATE.replace(':id', String(id)), {
-                                            state: { fromTourEdit: true },
-                                        })
+                                        navigate(
+                                            `${ROUTES.TOURS_SCHEDULE_CREATE.replace(':id', String(id))}?from=edit`,
+                                            {
+                                                state: { fromTourEdit: true },
+                                            }
+                                        )
                                     }
                                     className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#dff7f4] text-sm font-bold text-[#0f766e] border border-[#ccfbf1] hover:bg-[#ccfbf1] transition-colors"
                                 >
@@ -828,7 +882,7 @@ function EditTour() {
                                 title={t('form.sections.media')}
                                 subtitle={t('form.section_descriptions.media')}
                             />
-                            <ImageGallery setValue={setValue} watch={watch} />
+                            <ImageGallery setValue={setValue} watch={watch} errors={errors} />
                         </div>
 
                         {/* Danger Zone */}
@@ -876,6 +930,34 @@ function EditTour() {
                 </div>
                 )}
             </div>
+
+            {!tourLoading && (
+                <div
+                    className="fixed bottom-0 inset-x-0 z-30 flex flex-col gap-3 w-full p-4 pt-3 bg-white/95 backdrop-blur-md border-t border-slate-200 md:hidden"
+                    data-tour-mobile-footer
+                >
+                    <button
+                        type="submit"
+                        disabled={busy}
+                        className="flex items-center justify-center gap-2 w-full h-14 rounded-2xl bg-[#14b8a6] hover:bg-[#0f766e] disabled:bg-[#5dd4c7] disabled:cursor-not-allowed text-white text-sm font-bold shadow-lg shadow-[#14b8a6]/20 transition-all active:scale-[0.98]"
+                    >
+                        {busy ? (
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : (
+                            <Save className="w-4 h-4" />
+                        )}
+                        {busy ? t('common:actions.saving') : t('form.actions.save_changes')}
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => navigate(ROUTES.TOURS_LIST)}
+                        className="w-full h-12 rounded-2xl text-slate-500 font-bold hover:bg-slate-50 transition-colors"
+                    >
+                        {t('form.actions.cancel')}
+                    </button>
+                </div>
+            )}
+
             <TourDeleteDialog
                 isOpen={isDeleteDialogOpen}
                 tourName={tourName || ''}

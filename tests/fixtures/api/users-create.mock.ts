@@ -1,5 +1,6 @@
 import type { Page, Route } from '@playwright/test';
 import { successEnvelope } from '../../../helpers/apiResponse';
+import { shouldRegisterMockRoutes } from '../../helpers/mockRouteOnce';
 import { duplicateEmail, duplicateUsername } from '../data/user-create.data';
 
 const knownEmails = new Set<string>([duplicateEmail]);
@@ -11,11 +12,25 @@ export interface UserCreateMockOptions {
   passwordComplexity422?: boolean;
 }
 
+const createFlags: Required<UserCreateMockOptions> = {
+  omitUserId: false,
+  fail500: false,
+  passwordComplexity422: false,
+};
+
 function isCreateUserPost(url: string, method: string): boolean {
   return method === 'POST' && /\/admin\/users\/?$/.test(new URL(url).pathname);
 }
 
 export async function mockUserCreateApi(page: Page, options: UserCreateMockOptions = {}) {
+  createFlags.omitUserId = options.omitUserId ?? false;
+  createFlags.fail500 = options.fail500 ?? false;
+  createFlags.passwordComplexity422 = options.passwordComplexity422 ?? false;
+
+  if (!shouldRegisterMockRoutes(page, 'users-create')) {
+    return;
+  }
+
   const handler = async (route: Route) => {
     const type = route.request().resourceType();
     if (type === 'document') {
@@ -40,7 +55,7 @@ export async function mockUserCreateApi(page: Page, options: UserCreateMockOptio
       password?: string;
     };
 
-    if (options.fail500) {
+    if (createFlags.fail500) {
       await route.fulfill({
         status: 500,
         contentType: 'application/json',
@@ -52,7 +67,7 @@ export async function mockUserCreateApi(page: Page, options: UserCreateMockOptio
       return;
     }
 
-    if (options.passwordComplexity422) {
+    if (createFlags.passwordComplexity422) {
       await route.fulfill({
         status: 422,
         contentType: 'application/json',
@@ -101,7 +116,7 @@ export async function mockUserCreateApi(page: Page, options: UserCreateMockOptio
     if (body.email) knownEmails.add(body.email);
     if (body.username) knownUsernames.add(body.username);
 
-    const userPayload = options.omitUserId
+    const userPayload = createFlags.omitUserId
       ? {
           full_name: body.full_name,
           email: body.email,

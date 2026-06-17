@@ -49,6 +49,7 @@ export const UserDetailHeader = ({
                         type="button"
                         className="rounded-full w-10 h-10 p-0 hover:bg-slate-100 cursor-pointer flex items-center justify-center border-0 bg-transparent text-slate-600 shrink-0"
                         onClick={handleBack}
+                        aria-label={t('detail.back_button_label', 'Quay lại danh sách người dùng')}
                     >
                         <ArrowLeft className="w-5 h-5 text-slate-600" />
                     </button>
@@ -75,7 +76,7 @@ export const UserDetailHeader = ({
                                     </div>
                                 ) : (
                                     <>
-                                        <h1 className="text-xl font-bold text-slate-900 tracking-tight leading-none flex items-center gap-2">
+                                        <h1 className="text-xl font-bold text-slate-900 tracking-tight leading-none flex items-center gap-2 break-words min-w-0">
                                             {user.fullName}
                                             {isSelf && (
                                                 <span className="text-[9px] bg-[#14b8a6]/10 text-[#14b8a6] font-extrabold px-1.5 py-0.5 rounded-full uppercase tracking-wider">
@@ -86,6 +87,7 @@ export const UserDetailHeader = ({
                                         <div className="flex items-center gap-1">
                                             {/* Role Badge */}
                                             <button
+                                                type="button"
                                                 disabled={isSelf}
                                                 onClick={onRoleChange}
                                                 className={`
@@ -94,6 +96,7 @@ export const UserDetailHeader = ({
                                                     ${isSelf ? '' : 'cursor-pointer hover:scale-105 active:scale-95'}
                                                 `}
                                                 title={isSelf ? '' : t('actions.change_role')}
+                                                aria-label={isSelf ? undefined : t('actions.change_role')}
                                             >
                                                 {user.role === 'admin' && <ShieldAlert size={9} />}
                                                 {t(`roles.${user.role}`)}
@@ -101,6 +104,7 @@ export const UserDetailHeader = ({
 
                                             {/* Status Badge */}
                                             <button
+                                                type="button"
                                                 disabled={isSelf}
                                                 onClick={onLockToggle}
                                                 className={`
@@ -109,6 +113,9 @@ export const UserDetailHeader = ({
                                                     ${isSelf ? '' : 'cursor-pointer hover:scale-105 active:scale-95'}
                                                 `}
                                                 title={isSelf ? '' : user.status === 'active' ? t('actions.block') : t('actions.unblock')}
+                                                aria-label={
+                                                    isSelf ? undefined : t('detail.toggle_status_label', 'Nhấn để đổi trạng thái tài khoản')
+                                                }
                                             >
                                                 <span className={`w-1.5 h-1.5 rounded-full ${
                                                     user.status === 'active' ? 'bg-emerald-500'

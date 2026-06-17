@@ -43,7 +43,7 @@ const TourList = () => {
 
     // Queries
     const { data: listData, isLoading: isListLoading, refetch: refetchTours, isFetching: isToursFetching } = useToursQuery(filters, page, limit);
-    const { data: statsData, isLoading: isStatsLoading, refetch: refetchStats } = useTourStatsQuery();
+    const { data: statsData, isLoading: isStatsLoading, isFetching: isStatsFetching, refetch: refetchStats } = useTourStatsQuery();
     const { data: categoriesData } = useTourCategoriesQuery();
 
     // Mutations
@@ -122,7 +122,7 @@ const TourList = () => {
 
             <TourStats
                 stats={statsData}
-                isLoading={isStatsLoading}
+                isLoading={isStatsLoading || isStatsFetching}
             />
 
             <TourFilter

@@ -98,6 +98,7 @@ test.describe('Admin User Edit — Profile extended @P1', () => {
 });
 
 test.describe('Admin User Edit — Role & status extended @P1', () => {
+  test.describe.configure({ mode: 'serial' });
   /** TC_AD_UEDIT_017 */
   test('TC_AD_UEDIT_017 demotes admin to user without confirmation dialog', async ({
     adminPage,
@@ -207,6 +208,7 @@ test.describe('Admin User Edit — Self extended @P1', () => {
 });
 
 test.describe('Admin User Edit — Delete & navigation @P2', () => {
+  test.describe.configure({ mode: 'serial' });
   /** TC_AD_UEDIT_015 */
   test('TC_AD_UEDIT_015 deletes user via dialog and navigates to list', async ({ adminPage }) => {
     resetMockEditUsers();
@@ -252,6 +254,7 @@ test.describe('Admin User Edit — Delete & navigation @P2', () => {
 });
 
 test.describe('Admin User Edit — UX extended @P2', () => {
+  test.describe.configure({ mode: 'serial' });
   let editPage: UserEditPage;
 
   test.beforeEach(async ({ adminPage }) => {

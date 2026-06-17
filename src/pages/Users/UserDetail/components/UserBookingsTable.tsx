@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { ROUTES } from '@/routes/routes';
 import { Skeleton } from '@/components/ui/Skeleton';
 import EmptyState from '@/components/common/EmptyState';
+import ErrorWidget from '@/components/common/ErrorWidget';
 import { formatCurrency } from '@/utils/pricing';
 import { formatAdminShortDate } from '@/utils/dateDisplay';
 
@@ -24,6 +25,8 @@ interface UserBookingsTableProps {
     bookings: BookingItem[];
     totalCount: number;
     isLoading: boolean;
+    isError?: boolean;
+    onRetry?: () => void;
     userId: number | string;
 }
 
@@ -31,6 +34,8 @@ export const UserBookingsTable = ({
     bookings,
     totalCount,
     isLoading,
+    isError = false,
+    onRetry,
     userId,
 }: UserBookingsTableProps) => {
     const { t, i18n } = useTranslation('user');
@@ -74,22 +79,34 @@ export const UserBookingsTable = ({
                         {t('detail.section_bookings', 'Lịch sử đặt tour')}
                     </h3>
                     <div className="flex items-center gap-3">
-                        <span className="bg-[#14b8a6]/10 text-[#14b8a6] text-xs font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider border border-[#14b8a6]/20">
-                            {totalCount} {t('detail.orders_count', 'đơn')}
-                        </span>
-                        {totalCount > 0 && (
-                            <Link
-                                to={`${ROUTES.BOOKINGS_LIST}?user_id=${userId}`}
-                                className="text-xs font-black text-[#14b8a6] hover:underline transition-all"
-                            >
-                                {t('detail.view_all_bookings', 'Xem tất cả →')}
-                            </Link>
+                        {!isError && (
+                            <>
+                                <span className="bg-[#14b8a6]/10 text-[#14b8a6] text-xs font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider border border-[#14b8a6]/20">
+                                    {totalCount} {t('detail.orders_count', 'đơn')}
+                                </span>
+                                {totalCount > 0 && (
+                                    <Link
+                                        to={`${ROUTES.BOOKINGS_LIST}?user_id=${userId}`}
+                                        className="text-xs font-black text-[#14b8a6] hover:underline transition-all"
+                                    >
+                                        {t('detail.view_all_bookings', 'Xem tất cả →')}
+                                    </Link>
+                                )}
+                            </>
                         )}
                     </div>
                 </div>
 
                 {/* Content / Table */}
-                {bookings.length === 0 ? (
+                {isError ? (
+                    <div className="p-6">
+                        <ErrorWidget
+                            title={t('detail.bookings_load_error', 'Không tải được lịch sử đặt tour')}
+                            message={t('detail.bookings_load_error_desc', 'Dữ liệu đơn đặt tour tạm thời không khả dụng. Vui lòng thử lại.')}
+                            onRetry={onRetry}
+                        />
+                    </div>
+                ) : bookings.length === 0 ? (
                     <div className="p-8 flex flex-col items-center justify-center text-center">
                         <EmptyState
                             title={t('detail.no_bookings', 'Chưa có đơn đặt tour nào')}

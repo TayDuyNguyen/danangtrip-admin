@@ -17,6 +17,7 @@ export interface MockUserRatingRow {
   status: 'approved' | 'pending' | 'rejected';
   created_at: string;
   tour?: { id: number; name: string; image_path?: string | null } | null;
+  location?: { id: number; name: string; image_path?: string | null } | null;
 }
 
 export const mockBookingsForCustomer: MockUserBookingRow[] = [
@@ -86,5 +87,14 @@ export const mockRatingsForCustomer: MockUserRatingRow[] = [
     status: 'pending',
     created_at: '2026-04-11T08:00:00.000Z',
     tour: { id: 13, name: 'Marble Mountains' },
+  },
+  {
+    id: 604,
+    score: 4,
+    comment: 'Địa điểm rất đẹp',
+    status: 'approved',
+    created_at: '2026-03-20T08:00:00.000Z',
+    tour: null,
+    location: { id: 21, name: 'Cầu Rồng Đà Nẵng' },
   },
 ];

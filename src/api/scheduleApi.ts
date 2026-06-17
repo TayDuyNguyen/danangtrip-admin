@@ -7,7 +7,10 @@ import type { Schedule, ScheduleFilters } from '@/types/schedule';
 import { toNumberSafe } from '@/utils/safeConverters';
 import { AxiosError } from 'axios';
 
-export type ScheduleStatsQuery = Pick<ScheduleFilters, 'tour_id' | 'start_date' | 'end_date' | 'q'>;
+export type ScheduleStatsQuery = Pick<
+    ScheduleFilters,
+    'tour_id' | 'start_date' | 'end_date' | 'q' | 'status' | 'booking_availability'
+>;
 
 function apiStatusFromUi(status: string): string {
     const normalized = String(status).trim().toLowerCase();
@@ -32,6 +35,22 @@ function unwrapApiData<T>(payload: unknown): T {
     return obj as T;
 }
 
+const CALENDAR_FETCH_PAGE_SIZE = 100;
+const CALENDAR_MAX_PAGES = 50;
+
+export type ScheduleCalendarQuery = Pick<
+    ScheduleFilters,
+    'tour_id' | 'q' | 'status' | 'booking_availability'
+> & {
+    start_date: string;
+    end_date: string;
+};
+
+export type CalendarSchedulesResult = {
+    schedules: Schedule[];
+    truncated: boolean;
+};
+
 /**
  * API Service for Schedule module
  */
@@ -50,6 +69,9 @@ export const scheduleApi = {
         }
         if (filters.status && filters.status !== 'all') {
             params.status = apiStatusFromUi(filters.status);
+        }
+        if (filters.booking_availability && filters.booking_availability !== 'all') {
+            params.booking_availability = filters.booking_availability;
         }
         if (filters.start_date) {
             params.from = filters.start_date;
@@ -77,6 +99,36 @@ export const scheduleApi = {
         };
     },
 
+    /** Paginate through all pages so calendar day counts match stats. */
+    getSchedulesForCalendarRange: async (query: ScheduleCalendarQuery): Promise<CalendarSchedulesResult> => {
+        const all: Schedule[] = [];
+        let page = 1;
+        let lastPage = 1;
+
+        do {
+            const result = await scheduleApi.getSchedules({
+                tour_id: query.tour_id,
+                q: query.q,
+                status: query.status,
+                booking_availability: query.booking_availability,
+                start_date: query.start_date,
+                end_date: query.end_date,
+                page,
+                limit: CALENDAR_FETCH_PAGE_SIZE,
+                sort: 'start_date',
+                order: 'asc',
+            });
+            all.push(...result.data);
+            lastPage = result.last_page;
+            page += 1;
+        } while (page <= lastPage && page <= CALENDAR_MAX_PAGES);
+
+        return {
+            schedules: all,
+            truncated: lastPage > CALENDAR_MAX_PAGES,
+        };
+    },
+
     getSchedule: async (id: string | number): Promise<Schedule> => {
         const response = await axiosClient.get(API_ENDPOINTS.SCHEDULES.DETAIL(id));
         const rawData = unwrapApiData<RawSchedule>(response);
@@ -96,6 +148,12 @@ export const scheduleApi = {
         }
         if (query?.end_date) {
             params.to = query.end_date;
+        }
+        if (query?.status && query.status !== 'all') {
+            params.status = apiStatusFromUi(query.status);
+        }
+        if (query?.booking_availability && query.booking_availability !== 'all') {
+            params.booking_availability = query.booking_availability;
         }
 
         const response = await axiosClient.get(API_ENDPOINTS.SCHEDULES.STATUS_COUNTS, { params });

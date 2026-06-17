@@ -61,7 +61,13 @@ export const createTourSchema = (t: TFunction) => yup.object({
 
     discount_percent: yup.number()
         .min(0, t("tour:validation.positive", { field: t("tour:form.pricing.discount") }))
-        .max(100, t("tour:validation.number", { field: t("tour:form.pricing.discount") }))
+        .max(
+            100,
+            t("tour:validation.max_percent", {
+                field: t("tour:form.pricing.discount"),
+                max: 100
+            })
+        )
         .typeError(t("tour:validation.number", { field: t("tour:form.pricing.discount") })),
 
     inclusions: yup.string().nullable(),
@@ -113,7 +119,10 @@ export const createTourSchema = (t: TFunction) => yup.object({
     start_time: yup.string().nullable(),
     meeting_point: yup.string().nullable(),
 
-    itinerary: yup.array().of(
+    itinerary: yup
+        .array()
+        .min(1, t("tour:validation.itinerary_min_one"))
+        .of(
         yup.object({
             day: yup.number().required(),
             title: yup.string().required(t("tour:validation.required", { field: t("tour:form.itinerary.title") })),

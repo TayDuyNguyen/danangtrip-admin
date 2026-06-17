@@ -1,5 +1,6 @@
 import type { Page, Route } from '@playwright/test';
 import { successEnvelope } from '../../../helpers/apiResponse';
+import { shouldRegisterMockRoutes } from '../../helpers/mockRouteOnce';
 import type { RawUserItem } from '../data/users.data';
 import {
   mockAdminUser,
@@ -73,6 +74,10 @@ export async function mockUserEditApi(page: Page, options: MockUserEditApiOption
   flags.statusFail = options.statusFail ?? false;
   flags.deleteFail = options.deleteFail ?? false;
   flags.putFail = options.putFail ?? false;
+
+  if (!shouldRegisterMockRoutes(page, 'users-edit')) {
+    return;
+  }
 
   const handler = async (route: Route) => {
     const type = route.request().resourceType();

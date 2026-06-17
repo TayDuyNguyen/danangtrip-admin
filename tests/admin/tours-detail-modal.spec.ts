@@ -210,6 +210,7 @@ test.describe('Admin Tour Detail Modal @P1', () => {
     await expect(scheduleItems.nth(1).getByText('25/25')).toBeVisible();
     await expect(scheduleItems.nth(2).getByText('5/20')).toBeVisible();
     await expect(scheduleItems.nth(0).getByText(/Đang hoạt động|Active/i)).toBeVisible();
+    await expect(scheduleItems.nth(1).getByText(tourDetailModalCopy.scheduleFull)).toBeVisible();
     await expect(scheduleItems.nth(2).getByText(/Đã hủy|Cancelled/i)).toBeVisible();
   });
 
@@ -261,5 +262,72 @@ test.describe('Admin Tour Detail Modal @P1', () => {
       el.scrollTop = el.scrollHeight;
     });
     await expect(modalPage.panel.getByRole('heading', { name: 'Vui chơi' })).toBeVisible();
+  });
+
+  /** TC_AD_TMOD_028 */
+  test('TC_AD_TMOD_028 closes modal via Escape and backdrop click', async () => {
+    await modalPage.open(mockFeaturedTour.name);
+    await modalPage.closeByEscape();
+    await expect(modalPage.panel).toBeHidden();
+
+    await modalPage.open(mockFeaturedTour.name);
+    await modalPage.closeByBackdrop();
+    await expect(modalPage.panel).toBeHidden();
+  });
+
+  /** TC_AD_TMOD_030 */
+  test('TC_AD_TMOD_030 fetches schedules only after modal opens', async ({ adminPage }) => {
+    let scheduleGetCount = 0;
+    adminPage.on('request', (req) => {
+      if (req.method() === 'GET' && req.url().includes('/admin/tour-schedules')) {
+        scheduleGetCount += 1;
+      }
+    });
+
+    await listPage.goto();
+    await listPage.waitForTableLoaded();
+    await adminPage.waitForTimeout(400);
+    expect(scheduleGetCount).toBe(0);
+
+    await modalPage.open(mockFeaturedTour.name);
+    await expect(modalPage.panel.getByText('10/30').first()).toBeVisible({ timeout: 10_000 });
+    expect(scheduleGetCount).toBeGreaterThan(0);
+  });
+
+  /** TC_AD_TMOD_026 */
+  test('TC_AD_TMOD_026 shows open booking availability badge', async () => {
+    await modalPage.open(mockFeaturedTour.name);
+    await expect(modalPage.panel.getByText(tourDetailModalCopy.openBooking).first()).toBeVisible();
+  });
+
+  /** TC_AD_TMOD_027 */
+  test('TC_AD_TMOD_027 shows inactive status badge', async () => {
+    await modalPage.open('Tour Mỹ Sơn thánh địa');
+    await expect(modalPage.panel.getByText(tourDetailModalCopy.inactive).first()).toBeVisible();
+  });
+
+  /** TC_AD_TMOD_031 — legacy status=full maps to FULL → Đầy chỗ / Full label */
+  test('TC_AD_TMOD_031 shows Full for legacy full schedule row', async () => {
+    await modalPage.open(mockFeaturedTour.name);
+    const fullRow = modalPage.scheduleItems().nth(1);
+    await expect(fullRow.getByText('25/25')).toBeVisible({ timeout: 10_000 });
+    await expect(fullRow.getByText(tourDetailModalCopy.scheduleFull)).toBeVisible();
+    await expect(fullRow.getByText(tourDetailModalCopy.active)).toHaveCount(0);
+  });
+
+  /** TC_AD_TMOD_032 */
+  test('TC_AD_TMOD_032 does not display min_people field in modal scope', async () => {
+    await modalPage.open(mockFeaturedTour.name);
+    await expect(modalPage.panel.getByText(tourDetailModalCopy.minPeopleLabel)).toHaveCount(0);
+  });
+
+  /** TC_AD_TMOD_029 */
+  test('TC_AD_TMOD_029 shows thumbnail only when images array is empty', async () => {
+    patchMockTour(mockFeaturedTour.id, { images: [] });
+    await listPage.goto();
+    await listPage.waitForTableLoaded();
+    await modalPage.open(mockFeaturedTour.name);
+    await expect(modalPage.thumbnailArea.locator('img')).toBeVisible();
+    await expect(modalPage.galleryImages).toHaveCount(0);
   });
 });

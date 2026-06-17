@@ -5,10 +5,21 @@ import { useTranslation } from 'react-i18next';
 interface StatsSummaryProps {
     stats?: ScheduleStats;
     loading?: boolean;
+    isError?: boolean;
 }
 
-const StatsSummary = ({ stats, loading }: StatsSummaryProps) => {
+const StatsSummary = ({ stats, loading, isError }: StatsSummaryProps) => {
     const { t } = useTranslation(['schedules', 'common']);
+
+    const displayValue = (value: number) => {
+        if (loading) {
+            return '...';
+        }
+        if (isError) {
+            return '—';
+        }
+        return value;
+    };
 
     const items = [
         {
@@ -51,6 +62,7 @@ const StatsSummary = ({ stats, loading }: StatsSummaryProps) => {
                 <div 
                     key={index}
                     className={`p-4 rounded-2xl border ${item.border} ${item.bg} flex items-center gap-4`}
+                    title={isError ? t('common:error.fetch') : undefined}
                 >
                     <div className={`w-12 h-12 rounded-xl bg-white shadow-sm flex items-center justify-center ${item.color}`}>
                         <item.icon className="w-6 h-6" />
@@ -60,7 +72,7 @@ const StatsSummary = ({ stats, loading }: StatsSummaryProps) => {
                             {item.label}
                         </p>
                         <p className={`text-2xl font-bold ${item.color}`}>
-                            {loading ? '...' : item.value}
+                            {displayValue(item.value)}
                         </p>
                     </div>
                 </div>

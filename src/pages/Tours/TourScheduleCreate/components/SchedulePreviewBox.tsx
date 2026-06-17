@@ -15,7 +15,7 @@ export const SchedulePreviewBox = ({ control }: SchedulePreviewBoxProps) => {
         control,
     });
 
-    const formatDate = (dateStr: string | undefined) => {
+    const formatDate = (dateStr: string | null | undefined) => {
         if (!dateStr) return '-';
         try {
             const date = new Date(dateStr);
@@ -119,6 +119,31 @@ export const SchedulePreviewBox = ({ control }: SchedulePreviewBoxProps) => {
                         <div className="mt-1 flex items-baseline gap-1">
                             <span className="text-xl font-black text-slate-800">{values.totalSlots || '0'}</span>
                             <span className="text-[11px] font-bold text-slate-400 uppercase">{t('common:units.people')}</span>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Operational */}
+                <div className="rounded-xl bg-white p-4 shadow-sm space-y-3">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                        {t('schedules:fields.operational_info', 'Thông tin vận hành')}
+                    </span>
+                    <div className="space-y-2 text-[13px]">
+                        <div className="flex items-center justify-between gap-2">
+                            <span className="font-medium text-slate-500">{t('schedules:fields.departure_code')}</span>
+                            <span className="font-bold text-slate-700 truncate max-w-[55%] text-right">
+                                {values.departureCode?.trim() || '-'}
+                            </span>
+                        </div>
+                        <div className="flex items-center justify-between gap-2">
+                            <span className="font-medium text-slate-500">{t('schedules:fields.departure_place')}</span>
+                            <span className="font-bold text-slate-700 truncate max-w-[55%] text-right">
+                                {values.departurePlace?.trim() || '-'}
+                            </span>
+                        </div>
+                        <div className="flex items-center justify-between gap-2">
+                            <span className="font-medium text-slate-500">{t('schedules:fields.booking_deadline')}</span>
+                            <span className="font-bold text-slate-700">{formatDate(values.bookingDeadline)}</span>
                         </div>
                     </div>
                 </div>

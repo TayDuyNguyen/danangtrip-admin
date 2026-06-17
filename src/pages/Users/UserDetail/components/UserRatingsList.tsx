@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { ROUTES } from '@/routes/routes';
 import { Skeleton } from '@/components/ui/Skeleton';
 import EmptyState from '@/components/common/EmptyState';
+import ErrorWidget from '@/components/common/ErrorWidget';
 import { formatAdminShortDate } from '@/utils/dateDisplay';
 
 interface RatingItem {
@@ -28,6 +29,8 @@ interface UserRatingsListProps {
     ratings: RatingItem[];
     totalCount: number;
     isLoading: boolean;
+    isError?: boolean;
+    onRetry?: () => void;
     userId: number | string;
 }
 
@@ -35,6 +38,8 @@ export const UserRatingsList = ({
     ratings,
     totalCount,
     isLoading,
+    isError = false,
+    onRetry,
     userId,
 }: UserRatingsListProps) => {
     const { t, i18n } = useTranslation('user');
@@ -96,22 +101,34 @@ export const UserRatingsList = ({
                         {t('detail.section_ratings', 'Đánh giá đã viết')}
                     </h3>
                     <div className="flex items-center gap-3">
-                        <span className="bg-[#14b8a6]/10 text-[#14b8a6] text-xs font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider border border-[#14b8a6]/20">
-                            {totalCount} {t('detail.ratings_count', 'đánh giá')}
-                        </span>
-                        {totalCount > 0 && (
-                            <Link
-                                to={`${ROUTES.REPORTS_RATINGS}?user_id=${userId}`}
-                                className="text-xs font-black text-[#14b8a6] hover:underline transition-all"
-                            >
-                                {t('detail.view_all_ratings', 'Xem tất cả →')}
-                            </Link>
+                        {!isError && (
+                            <>
+                                <span className="bg-[#14b8a6]/10 text-[#14b8a6] text-xs font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider border border-[#14b8a6]/20">
+                                    {totalCount} {t('detail.ratings_count', 'đánh giá')}
+                                </span>
+                                {totalCount > 0 && (
+                                    <Link
+                                        to={`${ROUTES.REPORTS_RATINGS}?user_id=${userId}`}
+                                        className="text-xs font-black text-[#14b8a6] hover:underline transition-all"
+                                    >
+                                        {t('detail.view_all_ratings', 'Xem tất cả →')}
+                                    </Link>
+                                )}
+                            </>
                         )}
                     </div>
                 </div>
 
                 {/* List Content */}
-                {ratings.length === 0 ? (
+                {isError ? (
+                    <div className="p-6">
+                        <ErrorWidget
+                            title={t('detail.ratings_load_error', 'Không tải được danh sách đánh giá')}
+                            message={t('detail.ratings_load_error_desc', 'Dữ liệu đánh giá tạm thời không khả dụng. Vui lòng thử lại.')}
+                            onRetry={onRetry}
+                        />
+                    </div>
+                ) : ratings.length === 0 ? (
                     <div className="p-8 flex flex-col items-center justify-center text-center">
                         <EmptyState
                             title={t('detail.no_ratings', 'Chưa có đánh giá nào')}
