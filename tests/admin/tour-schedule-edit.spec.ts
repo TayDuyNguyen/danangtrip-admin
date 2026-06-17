@@ -8,10 +8,8 @@ import {
 } from '../pages/admin/TourScheduleEditPage';
 import { TourEditPage } from '../pages/admin/TourEditPage';
 import {
-  getLastScheduleUpdateBody,
   getMockSchedule,
   mockToursApi,
-  patchMockSchedule,
   resetMockTours,
   setScheduleDeleteFail,
   setScheduleDetailDelay,

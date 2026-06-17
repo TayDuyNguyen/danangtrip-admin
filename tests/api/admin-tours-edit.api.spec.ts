@@ -6,10 +6,7 @@ import { testEnv } from '../../config/env.test';
 import { buildValidApiCreatePayload } from '../fixtures/data/tour-create.data';
 
 let adminToken = '';
-let userToken = '';
 let apiAvailable = false;
-let userApiAvailable = false;
-let createdTourId: number | null = null;
 
 test.beforeAll(async ({ request }) => {
   try {
@@ -21,17 +18,11 @@ test.beforeAll(async ({ request }) => {
     adminToken = body.data?.token ?? body.token ?? '';
     apiAvailable = !!adminToken;
 
-    const userLoginRes = await request.post(`${testEnv.apiBaseUrl}/auth/login`, {
+    await request.post(`${testEnv.apiBaseUrl}/auth/login`, {
       data: { email: 'customer@test.com', password: 'Customer123!' },
     });
-    if (userLoginRes.ok()) {
-      const userBody = await userLoginRes.json();
-      userToken = userBody.data?.token ?? userBody.token ?? '';
-      userApiAvailable = !!userToken;
-    }
   } catch {
     apiAvailable = false;
-    userApiAvailable = false;
   }
 });
 
@@ -69,7 +60,6 @@ test.describe('GET/PUT/DELETE /admin/tours/:id @P1', () => {
     test.skip(!createRes.ok(), 'Could not seed tour');
     const created = await createRes.json();
     const tourId = created.data?.tour?.id ?? created.data?.id;
-    createdTourId = Number(tourId);
 
     const res = await request.put(`${testEnv.apiBaseUrl}/admin/tours/${tourId}`, {
       headers: authHeaders(),

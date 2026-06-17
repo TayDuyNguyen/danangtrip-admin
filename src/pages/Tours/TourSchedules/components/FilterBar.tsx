@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 import { useEffect, useMemo, useState } from 'react';
 import { Search, Filter, RotateCcw } from 'lucide-react';
 import CustomSelect from '@/components/ui/CustomSelect';

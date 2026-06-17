@@ -1,4 +1,4 @@
-import type { Locator, Page, Response } from '@playwright/test';
+import type { Page } from '@playwright/test';
 
 import { TourCreatePage, tourCreateCopy } from './TourCreatePage';
 

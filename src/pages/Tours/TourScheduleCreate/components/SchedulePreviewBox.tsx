@@ -15,7 +15,7 @@ export const SchedulePreviewBox = ({ control }: SchedulePreviewBoxProps) => {
         control,
     });
 
-    const formatDate = (dateStr: string | undefined) => {
+    const formatDate = (dateStr: string | null | undefined) => {
         if (!dateStr) return '-';
         try {
             const date = new Date(dateStr);

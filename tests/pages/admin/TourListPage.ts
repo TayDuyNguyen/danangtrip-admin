@@ -87,7 +87,7 @@ export class TourListPage {
       .click();
   }
 
-  async openSelect(_currentLabel: RegExp) {
+  async openSelect() {
     /* legacy */
   }
 

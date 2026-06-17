@@ -74,7 +74,7 @@ test.describe('Admin Tour Schedule List @P1', () => {
   });
 
   /** TC_AD_SCHEDLIST_005 */
-  test('TC_AD_SCHEDLIST_005 calendar day click filters table by date', async ({ adminPage }) => {
+  test('TC_AD_SCHEDLIST_005 calendar day click filters table by date', async () => {
     const listReq = listPage.waitForScheduleListResponse();
     await listPage.calendarDayCell(20).first().click();
     await listReq;

@@ -389,12 +389,6 @@ function parseScheduleCreateTourId(pathname: string): number | null {
   return match ? Number(match[1]) : null;
 }
 
-function schedulesForTour(tourId: number) {
-  if (scheduleEmptyTourIds.has(tourId)) {
-    return [];
-  }
-  return schedulesStore.filter((s) => s.tour_id === tourId);
-}
 
 function isUploadImageUrl(url: string, method: string): boolean {
   const { pathname } = new URL(url);

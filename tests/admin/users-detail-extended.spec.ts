@@ -11,10 +11,7 @@ import {
   resetMockDetailUsers,
 } from '../fixtures/api/users-detail.mock';
 import {
-  mockAdminUser,
   mockCustomerUser,
-  mockSecondaryAdmin,
-  mockPendingUser,
 } from '../fixtures/data/users.data';
 import { mockBookingsForCustomer } from '../fixtures/data/users-detail.data';
 
@@ -61,10 +58,7 @@ test.describe('Admin User Detail — Profile & stats extended @P1', () => {
     await expect(detailPage.avatarInitial('T')).toBeVisible();
   });
 
-  /** TC_AD_UDET_029 */
-  test('TC_AD_UDET_029 shows gender city birthdate and email verified fields', async ({
-    adminPage,
-  }) => {
+  test('TC_AD_UDET_029 shows gender city birthdate and email verified fields', async () => {
     await expect(detailPage.personalInfoPanel.getByText(userDetailCopy.genderFemale)).toBeVisible();
     await expect(detailPage.personalInfoPanel.getByText(mockCustomerUser.city ?? '')).toBeVisible();
     await expect(detailPage.personalInfoPanel.getByText(/20\/08\/1995|08\/20\/1995|1995/)).toBeVisible();
@@ -382,8 +376,7 @@ test.describe('Admin User Detail — UX & error extended @P2', () => {
     await expect(adminPage.getByText(userDetailCopy.deleteError)).toBeVisible();
   });
 
-  /** TC_AD_UDET_044 */
-  test('TC_AD_UDET_044 formats booking dates via formatAdminShortDate', async ({ adminPage }) => {
+  test('TC_AD_UDET_044 formats booking dates via formatAdminShortDate', async () => {
     await expect(
       detailPage.bookingCodeLink(mockBookingsForCustomer[0].booking_code).locator('..').locator('..')
     ).toContainText(/01\/05\/2026|05\/01\/2026|2026/);

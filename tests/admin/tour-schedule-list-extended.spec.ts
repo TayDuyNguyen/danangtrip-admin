@@ -41,7 +41,7 @@ test.describe('Admin Tour Schedule List extended @P2', () => {
   });
 
   /** TC_AD_SCHEDLIST_019 */
-  test('TC_AD_SCHEDLIST_019 toggles sort by start date', async ({ adminPage }) => {
+  test('TC_AD_SCHEDLIST_019 toggles sort by start date', async () => {
     const sortReq = listPage.waitForScheduleListResponse();
     await listPage.sortStartDateButton().click();
     await sortReq;

@@ -21,7 +21,6 @@ import {
   sampleExclusions,
   sampleInclusions,
   shortTourName,
-  tinyPngBuffer,
   validCreateTour,
 } from '../fixtures/data/tour-create.data';
 

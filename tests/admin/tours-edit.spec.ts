@@ -14,7 +14,6 @@ import {
   defaultEditTourId,
   deleteTourId,
   emptyScheduleTourId,
-  notFoundTourId,
   mockEditTour,
   updatedTourName,
   updatedPriceAdultDigits,
