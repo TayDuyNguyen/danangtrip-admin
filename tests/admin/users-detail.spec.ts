@@ -21,6 +21,7 @@ const SELF_USER_ID = 1;
 const NOT_FOUND_USER_ID = 999;
 
 test.describe('Admin User Detail @P1', () => {
+  test.describe.configure({ mode: 'serial' });
   let detailPage: UserDetailPage;
 
   test.beforeEach(async ({ adminPage }) => {

@@ -5,9 +5,11 @@ import { Skeleton } from '@/components/ui/Skeleton';
 interface TourInfoBoxProps {
     tour?: TourViewModel;
     isLoading: boolean;
+    isError?: boolean;
+    onRetry?: () => void;
 }
 
-export const TourInfoBox = ({ tour, isLoading }: TourInfoBoxProps) => {
+export const TourInfoBox = ({ tour, isLoading, isError, onRetry }: TourInfoBoxProps) => {
     const { t } = useTranslation(['schedules', 'common', 'tour']);
 
     if (isLoading) {
@@ -18,6 +20,27 @@ export const TourInfoBox = ({ tour, isLoading }: TourInfoBoxProps) => {
                     <Skeleton className="h-4 w-40" />
                     <Skeleton className="h-3 w-24" />
                 </div>
+            </div>
+        );
+    }
+
+    if (isError) {
+        return (
+            <div
+                className="mt-4 flex flex-col gap-3 rounded-2xl border border-red-100 bg-red-50/50 px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
+                role="alert"
+            >
+                <p className="text-sm font-semibold text-red-700">{t('tour:messages.fetch_error')}</p>
+                {onRetry && (
+                    <button
+                        type="button"
+                        onClick={onRetry}
+                        className="inline-flex items-center gap-1.5 rounded-xl border border-red-200 bg-white px-3 py-1.5 text-xs font-bold text-red-700 hover:bg-red-50 transition-colors"
+                    >
+                        <i className="ri-refresh-line" />
+                        {t('tour:form.departures.retry')}
+                    </button>
+                )}
             </div>
         );
     }

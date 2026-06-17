@@ -40,7 +40,11 @@
         "past_event_desc": "Cảnh báo: Bạn đang chỉnh sửa một lịch trình đã hoặc đang diễn ra. Hãy cẩn trọng để tránh ảnh hưởng đến dữ liệu khách hàng cũ."
     },
     "notices": {
-        "price_override_help": "Nếu bạn để trống các ô giá, hệ thống sẽ tự động sử dụng giá mặc định từ tour gốc cho lịch khởi hành này."
+        "price_override_help": "Nếu bạn để trống các ô giá, hệ thống sẽ tự động sử dụng giá mặc định từ tour gốc cho lịch khởi hành này.",
+        "delete_warning_hint": "Hành động không thể hoàn tác"
+    },
+    "messages": {
+        "fetch_error": "Không thể tải thông tin lịch khởi hành"
     },
     "filters": {
         "search_label": "Tìm kiếm",
@@ -55,8 +59,8 @@
     },
     "stats": {
         "total": "Tổng lịch",
-        "available": "Còn chỗ",
-        "full": "Đầy chỗ",
+        "available": "Đang hoạt động",
+        "full": "Hết chỗ",
         "cancelled": "Đã hủy"
     },
     "actions": {
@@ -65,8 +69,12 @@
         "view_tour": "Xem tour",
         "edit_tour": "Sửa tour",
         "edit_schedule": "Cập nhật lịch trình",
-        "bulk_activate": "Còn chỗ",
+        "save_schedule": "Cập nhật lịch",
+        "delete_this": "Xóa lịch này",
+        "bulk_activate": "Kích hoạt lịch",
         "bulk_cancel": "Hủy lịch",
+        "filter_by_tour": "Lọc theo tour này",
+        "delete_blocked_has_bookings": "Không thể xóa — đã có khách đặt",
         "selected_count": "Đã chọn {{count}}",
         "sort_start": "Ngày khởi hành"
     },
@@ -105,6 +113,12 @@
         "available": "Còn chỗ",
         "full_or_cancelled": "Đầy/Hủy",
         "full_or_cancelled_title": "Đầy chỗ / Đã hủy",
+        "schedule_count": "{{count}} lịch",
+        "slots_summary": "{{booked}}/{{max}}",
+        "prev_month": "Tháng trước",
+        "next_month": "Tháng sau",
+        "retry": "Thử lại",
+        "truncated_warning": "Lịch hiển thị có thể chưa đầy đủ do số lượng lịch trong tháng quá lớn.",
         "weekdays": ["T2", "T3", "T4", "T5", "T6", "T7", "CN"]
     }
 }

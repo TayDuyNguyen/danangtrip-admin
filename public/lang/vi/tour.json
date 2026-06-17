@@ -33,6 +33,7 @@
         "button_reset": "Đặt lại",
         "category_label": "Danh mục",
         "status_label": "Trạng thái",
+        "search_label": "Tìm kiếm",
         "booking_label": "Chỗ",
         "all_booking_availability": "Tất cả (chỗ)",
         "unknown_category": "Chưa phân loại",
@@ -64,6 +65,11 @@
         "showing_summary": "Hiển thị {{start}}–{{end}} / {{total}} tour",
         "items_per_page": "{{count}} / trang",
         "refresh": "Tải lại bảng",
+        "prev_page": "Trang trước",
+        "next_page": "Trang sau",
+        "page_number": "Trang {{page}}",
+        "toggle_featured": "Bật/tắt nổi bật cho {{name}}",
+        "toggle_hot": "Bật/tắt hot cho {{name}}",
         "tour_code_prefix": "TOUR-"
     },
     "status": {
@@ -228,7 +234,10 @@
             "formats_hint": "Hỗ trợ JPG, PNG, WEBP",
             "add_image": "Thêm ảnh",
             "thumbnail_alt": "Ảnh đại diện tour",
-            "gallery_item_alt": "Ảnh gallery {{index}}"
+            "gallery_item_alt": "Ảnh gallery {{index}}",
+            "upload_thumbnail": "Tải ảnh đại diện",
+            "remove_thumbnail": "Xóa ảnh đại diện",
+            "remove_gallery_image": "Xóa ảnh gallery {{index}}"
         },
         "sidebar": {
             "publish_title": "Thiết lập xuất bản",
@@ -287,7 +296,9 @@
         "positive": "{{field}} phải là số dương",
         "url": "Định dạng URL không hợp lệ",
         "max_gte_min": "Số người tối đa phải lớn hơn hoặc bằng số người tối thiểu",
-        "date_after": "Ngày kết thúc phải sau hoặc bằng ngày bắt đầu"
+        "date_after": "Ngày kết thúc phải sau hoặc bằng ngày bắt đầu",
+        "max_percent": "{{field}} không được vượt quá {{max}}%",
+        "itinerary_min_one": "Cần ít nhất một ngày trong lịch trình"
     },
     "categories": {
         "title": "Quản lý Danh mục Tour",

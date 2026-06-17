@@ -33,6 +33,7 @@
         "button_reset": "Reset",
         "category_label": "Category",
         "status_label": "Status",
+        "search_label": "Search",
         "booking_label": "Seats",
         "all_booking_availability": "All (availability)",
         "unknown_category": "Uncategorized",
@@ -64,6 +65,11 @@
         "showing_summary": "Showing {{start}}–{{end}} / {{total}} tours",
         "items_per_page": "{{count}} / page",
         "refresh": "Refresh table",
+        "prev_page": "Previous page",
+        "next_page": "Next page",
+        "page_number": "Page {{page}}",
+        "toggle_featured": "Toggle featured for {{name}}",
+        "toggle_hot": "Toggle hot for {{name}}",
         "tour_code_prefix": "TOUR-"
     },
     "status": {
@@ -228,7 +234,10 @@
             "formats_hint": "JPG, PNG, WEBP supported",
             "add_image": "Add image",
             "thumbnail_alt": "Tour thumbnail",
-            "gallery_item_alt": "Gallery image {{index}}"
+            "gallery_item_alt": "Gallery image {{index}}",
+            "upload_thumbnail": "Upload cover image",
+            "remove_thumbnail": "Remove cover image",
+            "remove_gallery_image": "Remove gallery image {{index}}"
         },
         "sidebar": {
             "publish_title": "Publish Settings",
@@ -287,7 +296,9 @@
         "positive": "{{field}} must be a positive number",
         "url": "Invalid URL format",
         "max_gte_min": "Maximum people must be greater than or equal to minimum people",
-        "date_after": "End date must be after or equal to start date"
+        "date_after": "End date must be after or equal to start date",
+        "max_percent": "{{field}} must not exceed {{max}}%",
+        "itinerary_min_one": "At least one itinerary day is required"
     },
     "categories": {
         "title": "Tour Category Management",

@@ -79,7 +79,7 @@ export const UserActionsCard = ({
                             disabled={isSelf}
                             onClick={onLockToggle}
                             className={`
-                                w-full inline-flex items-center gap-2.5 px-4 py-2.5 border border-rose-200 bg-white text-rose-600 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer select-none hover:bg-rose-50/70 hover:border-rose-300 disabled:opacity-30 disabled:cursor-not-allowed active:scale-97
+                                w-full inline-flex items-center justify-center gap-2.5 px-4 py-2.5 border border-rose-200 bg-white text-rose-600 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer select-none hover:bg-rose-50/70 hover:border-rose-300 disabled:opacity-30 disabled:cursor-not-allowed active:scale-97
                             `}
                         >
                             <Ban size={14} />
@@ -90,7 +90,7 @@ export const UserActionsCard = ({
                             disabled={isSelf}
                             onClick={onLockToggle}
                             className={`
-                                w-full inline-flex items-center gap-2.5 px-4 py-2.5 bg-emerald-600 text-white rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer select-none hover:bg-emerald-700 disabled:opacity-30 disabled:cursor-not-allowed active:scale-97
+                                w-full inline-flex items-center justify-center gap-2.5 px-4 py-2.5 bg-emerald-600 text-white rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer select-none hover:bg-emerald-700 disabled:opacity-30 disabled:cursor-not-allowed active:scale-97
                             `}
                         >
                             <LockOpen size={14} />
@@ -103,7 +103,7 @@ export const UserActionsCard = ({
                         disabled={isSelf}
                         onClick={onDelete}
                         className={`
-                            w-full inline-flex items-center gap-2.5 px-4 py-2.5 border border-rose-200 bg-white text-rose-600 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer select-none hover:bg-rose-50/70 hover:border-rose-300 disabled:opacity-30 disabled:cursor-not-allowed active:scale-97
+                            w-full inline-flex items-center justify-center gap-2.5 px-4 py-2.5 border border-rose-200 bg-white text-rose-600 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer select-none hover:bg-rose-50/70 hover:border-rose-300 disabled:opacity-30 disabled:cursor-not-allowed active:scale-97
                         `}
                     >
                         <Trash2 size={14} />

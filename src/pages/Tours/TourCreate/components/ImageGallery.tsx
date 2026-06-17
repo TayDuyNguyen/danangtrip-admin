@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, type KeyboardEvent } from 'react';
 import type { ChangeEvent } from 'react';
 import type { UseFormSetValue, UseFormWatch, FieldErrors } from 'react-hook-form';
 import { Plus, X, Image as ImageIcon, Loader2 } from 'lucide-react';
@@ -7,6 +7,7 @@ import { useTourUploadMutations } from '@/hooks/useTourQueries';
 import { TextInput } from '@/components/ui/TextInput';
 import type { CreateTourInput } from '@/validations/tour.schema';
 import { extractPublicIdFromUrl } from '@/utils/cloudinary';
+import { cn } from '@/utils';
 
 interface ImageGalleryProps {
     setValue: UseFormSetValue<CreateTourInput>;
@@ -18,7 +19,6 @@ const ImageGallery = ({ setValue, watch, errors }: ImageGalleryProps) => {
     const { t } = useTranslation('tour');
     const { uploadThumbnailMutation, uploadGalleryMutation, deleteImageMutation } = useTourUploadMutations();
 
-    // Mapping of image URL to public_id for deletion support
     const imageMetadataRef = useRef<Record<string, string>>({});
 
     const thumbnail = watch('thumbnail');
@@ -33,7 +33,6 @@ const ImageGallery = ({ setValue, watch, errors }: ImageGalleryProps) => {
         if (!file) return;
 
         try {
-            // Delete old thumbnail if exists (Item 1.2 in checklist)
             if (thumbnail) {
                 const oldPublicId = imageMetadataRef.current[thumbnail] || extractPublicIdFromUrl(thumbnail);
                 if (oldPublicId) {
@@ -48,7 +47,7 @@ const ImageGallery = ({ setValue, watch, errors }: ImageGalleryProps) => {
 
             const data = await uploadThumbnailMutation.mutateAsync(file);
             if (!data?.url) throw new Error('empty url');
-            
+
             if (data.public_id) {
                 imageMetadataRef.current[data.url] = data.public_id;
             }
@@ -68,8 +67,7 @@ const ImageGallery = ({ setValue, watch, errors }: ImageGalleryProps) => {
 
         try {
             const results = await uploadGalleryMutation.mutateAsync(files);
-            
-            // Track public_ids
+
             results.forEach(r => {
                 if (r.url && r.public_id) {
                     imageMetadataRef.current[r.url] = r.public_id;
@@ -88,11 +86,10 @@ const ImageGallery = ({ setValue, watch, errors }: ImageGalleryProps) => {
     const removeImage = async (index: number) => {
         const urlToRemove = images[index];
         if (!urlToRemove) return;
-        
+
         const publicId = imageMetadataRef.current[urlToRemove] || extractPublicIdFromUrl(urlToRemove);
 
         if (publicId) {
-            // Item 1.3: Ensure removal is synced with state update
             await deleteImageMutation.mutateAsync(publicId);
             delete imageMetadataRef.current[urlToRemove];
         }
@@ -104,17 +101,31 @@ const ImageGallery = ({ setValue, watch, errors }: ImageGalleryProps) => {
     const removeThumbnail = async () => {
         if (!thumbnail) return;
         const publicId = imageMetadataRef.current[thumbnail] || extractPublicIdFromUrl(thumbnail);
-        
+
         if (publicId) {
             await deleteImageMutation.mutateAsync(publicId);
             delete imageMetadataRef.current[thumbnail];
         }
-        
-        setValue('thumbnail', '', { shouldDirty: true });
+
+        setValue('thumbnail', '', { shouldValidate: true, shouldDirty: true });
+    };
+
+    const openThumbnailPicker = () => {
+        if (!uploadThumbnailMutation.isPending) {
+            thumbInputRef.current?.click();
+        }
+    };
+
+    const handleThumbnailKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            openThumbnailPicker();
+        }
     };
 
     const thumbPending = uploadThumbnailMutation.isPending;
     const galleryPending = uploadGalleryMutation.isPending;
+    const thumbnailInvalid = !!errors?.thumbnail;
 
     return (
         <div className="space-y-8">
@@ -123,12 +134,20 @@ const ImageGallery = ({ setValue, watch, errors }: ImageGalleryProps) => {
                     {t('form.media.thumbnail')} <span className="text-red-500">*</span>
                 </label>
                 <div
-                    onClick={() => !thumbPending && thumbInputRef.current?.click()}
-                    className={`relative w-full aspect-video md:w-80 rounded-2xl border-2 border-dashed flex flex-col items-center justify-center transition-all overflow-hidden ${
+                    role="button"
+                    tabIndex={thumbPending ? -1 : 0}
+                    aria-label={t('form.media.upload_thumbnail')}
+                    onClick={openThumbnailPicker}
+                    onKeyDown={handleThumbnailKeyDown}
+                    className={cn(
+                        'relative w-full aspect-video md:w-80 rounded-2xl border-2 border-dashed flex flex-col items-center justify-center transition-all overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-[#14b8a6] focus-visible:ring-offset-2',
                         thumbnail
                             ? 'border-transparent cursor-pointer'
-                            : 'border-slate-200 hover:border-[#14b8a6] hover:bg-[#dff7f4] cursor-pointer'
-                    } ${thumbPending ? 'pointer-events-none opacity-70' : ''}`}
+                            : thumbnailInvalid
+                              ? 'border-red-400 bg-red-50/30 cursor-pointer'
+                              : 'border-slate-200 hover:border-[#14b8a6] hover:bg-[#dff7f4] cursor-pointer',
+                        thumbPending && 'pointer-events-none opacity-70'
+                    )}
                 >
                     {thumbnail ? (
                         <>
@@ -147,9 +166,10 @@ const ImageGallery = ({ setValue, watch, errors }: ImageGalleryProps) => {
                                     </button>
                                     <button
                                         type="button"
+                                        aria-label={t('form.media.remove_thumbnail')}
                                         onClick={(e) => {
                                             e.stopPropagation();
-                                            removeThumbnail();
+                                            void removeThumbnail();
                                         }}
                                         className="p-2 bg-red-500/80 text-white rounded-lg backdrop-blur-md hover:bg-red-600 transition-colors"
                                     >
@@ -177,6 +197,11 @@ const ImageGallery = ({ setValue, watch, errors }: ImageGalleryProps) => {
                         onChange={handleThumbnailUpload}
                     />
                 </div>
+                {errors?.thumbnail && (
+                    <p role="alert" className="mt-2 text-xs text-red-500 font-medium">
+                        {errors.thumbnail.message as string}
+                    </p>
+                )}
             </div>
 
             <div>
@@ -194,9 +219,10 @@ const ImageGallery = ({ setValue, watch, errors }: ImageGalleryProps) => {
                                 />
                                 <button
                                     type="button"
+                                    aria-label={t('form.media.remove_gallery_image', { index: index + 1 })}
                                     onClick={(e) => {
                                         e.stopPropagation();
-                                        removeImage(index);
+                                        void removeImage(index);
                                     }}
                                     className="absolute top-2 right-2 p-1.5 bg-black/60 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm"
                                 >

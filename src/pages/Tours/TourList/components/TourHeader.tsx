@@ -18,8 +18,8 @@ const TourHeader = ({ onExport, isExporting }: Props) => {
             <Breadcrumbs
                 icon={Map}
                 items={[
-                    { label: 'sidebar.tours', path: '/admin/tours/list' },
-                    { label: 'sidebar.tour_list' }
+                    { label: t('title.breadcrumb_parent'), path: '/admin/tours/list', isRaw: true },
+                    { label: t('title.breadcrumb_list'), isRaw: true },
                 ]}
             />
 

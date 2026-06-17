@@ -12,6 +12,7 @@ const SELF_EDIT_USER_ID = 1;
 const NOT_FOUND_USER_ID = 999;
 
 test.describe('Admin User Edit @P1', () => {
+  test.describe.configure({ mode: 'serial' });
   let editPage: UserEditPage;
 
   test.beforeEach(async ({ adminPage }) => {

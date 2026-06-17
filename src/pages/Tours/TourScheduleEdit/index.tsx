@@ -1,5 +1,5 @@
-import { useMemo, useEffect, useState } from 'react';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Link, useParams, useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useForm, FormProvider } from 'react-hook-form';
 import type { Resolver } from 'react-hook-form';
@@ -18,6 +18,7 @@ import ScheduleDeleteDialog from '../TourSchedules/components/ScheduleDeleteDial
 import { Button } from '@/components/ui/Button';
 import { ROUTES } from '@/routes/routes';
 import LoadingReact from '@/components/loading';
+import { cn } from '@/utils';
 
 type ScheduleLocationState = { fromTourEdit?: boolean };
 
@@ -29,16 +30,29 @@ const TourScheduleEdit = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const location = useLocation();
+    const [searchParams] = useSearchParams();
+    const [isScrolled, setIsScrolled] = useState(false);
     const fromTourEdit =
-        (location.state as ScheduleLocationState | null)?.fromTourEdit === true;
-    const { t } = useTranslation(['schedules', 'common']);
+        (location.state as ScheduleLocationState | null)?.fromTourEdit === true ||
+        searchParams.get('from') === 'edit';
+    const { t } = useTranslation(['schedules', 'common', 'tour']);
 
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     const [bypassGuard, setBypassGuard] = useState(false);
 
-    const { data: schedule, isLoading: isLoadingSchedule } = useSchedule(id);
-    const { data: tour, isLoading: isLoadingTour } = useTourDetailQuery(schedule?.tourId);
-    
+    const {
+        data: schedule,
+        isLoading: isLoadingSchedule,
+        isError: isScheduleError,
+        refetch: refetchSchedule,
+    } = useSchedule(id);
+    const {
+        data: tour,
+        isLoading: isLoadingTour,
+        isError: isTourError,
+        refetch: refetchTour,
+    } = useTourDetailQuery(schedule?.tourId);
+
     const updateScheduleMutation = useUpdateSchedule();
     const deleteScheduleMutation = useDeleteSchedule();
 
@@ -63,6 +77,24 @@ const TourScheduleEdit = () => {
         },
     });
 
+    const tourId = schedule?.tourId;
+    const schedulesListHref =
+        tourId != null && tourId !== ''
+            ? `${ROUTES.TOURS_SCHEDULES}?tour_id=${tourId}`
+            : ROUTES.TOURS_SCHEDULES;
+
+    const submitDisabled =
+        isLoadingSchedule ||
+        isScheduleError ||
+        !schedule ||
+        isLoadingTour ||
+        isTourError ||
+        !tour;
+
+    const hasBookings = (schedule?.bookedSlots ?? 0) > 0;
+    const deleteDisabled =
+        hasBookings || updateScheduleMutation.isPending || deleteScheduleMutation.isPending;
+
     const isPastSchedule = useMemo(() => {
         if (!schedule?.startDate) return false;
         const today = new Date();
@@ -72,6 +104,22 @@ const TourScheduleEdit = () => {
     }, [schedule]);
 
     const { reset } = methods;
+
+    useEffect(() => {
+        const handleScroll = (e: Event) => {
+            const target = e.target as HTMLElement;
+            if (target && (target.tagName === 'MAIN' || target.classList.contains('overflow-y-auto'))) {
+                setIsScrolled((prev) => {
+                    const currentScroll = target.scrollTop;
+                    if (!prev && currentScroll > 10) return true;
+                    if (prev && currentScroll < 2) return false;
+                    return prev;
+                });
+            }
+        };
+        window.addEventListener('scroll', handleScroll, true);
+        return () => window.removeEventListener('scroll', handleScroll, true);
+    }, []);
 
     useEffect(() => {
         if (schedule) {
@@ -90,8 +138,20 @@ const TourScheduleEdit = () => {
         }
     }, [schedule, reset]);
 
+    const navigateAfterMutation = useCallback(() => {
+        if (fromTourEdit && tourId != null && tourId !== '') {
+            navigate(ROUTES.TOURS_EDIT.replace(':id', String(tourId)));
+            return;
+        }
+        if (tourId != null && tourId !== '') {
+            navigate(`${ROUTES.TOURS_SCHEDULES}?tour_id=${tourId}`);
+            return;
+        }
+        navigate(ROUTES.TOURS_SCHEDULES);
+    }, [fromTourEdit, tourId, navigate]);
+
     const onSubmit = (data: ScheduleFormValues) => {
-        if (!id) return;
+        if (!id || submitDisabled) return;
 
         updateScheduleMutation.mutate(
             {
@@ -112,35 +172,34 @@ const TourScheduleEdit = () => {
             {
                 onSuccess: () => {
                     setBypassGuard(true);
-                    const tourId = schedule?.tourId;
-                    setTimeout(() => {
-                        if (fromTourEdit && tourId != null && tourId !== '') {
-                            navigate(ROUTES.TOURS_EDIT.replace(':id', String(tourId)));
-                            return;
-                        }
-                        navigate(`${ROUTES.TOURS_SCHEDULES}?tour_id=${tourId}`);
-                    }, 0);
+                    setTimeout(() => navigateAfterMutation(), 0);
                 },
             }
         );
     };
 
     const handleDelete = () => {
-        if (!id) return;
+        if (!id || hasBookings) return;
         deleteScheduleMutation.mutate(id, {
             onSuccess: () => {
                 setIsDeleteDialogOpen(false);
                 setBypassGuard(true);
-                setTimeout(() => {
-                    navigate(ROUTES.TOURS_SCHEDULES);
-                }, 0);
-            }
+                setTimeout(() => navigateAfterMutation(), 0);
+            },
         });
     };
 
-    const handleCancel = () => {
-        navigate(-1);
-    };
+    const handleCancel = useCallback(() => {
+        if (fromTourEdit && tourId != null && tourId !== '') {
+            navigate(ROUTES.TOURS_EDIT.replace(':id', String(tourId)));
+            return;
+        }
+        if (tourId != null && tourId !== '') {
+            navigate(`${ROUTES.TOURS_SCHEDULES}?tour_id=${tourId}`);
+            return;
+        }
+        navigate(ROUTES.TOURS_SCHEDULES);
+    }, [fromTourEdit, tourId, navigate]);
 
     if (isLoadingSchedule) {
         return (
@@ -150,152 +209,208 @@ const TourScheduleEdit = () => {
         );
     }
 
-    return (
-        <div className="w-full min-h-screen space-y-8 bg-slate-50 p-6 md:p-10">
-            {/* Header Section */}
-            <div className="flex flex-col justify-between gap-6 md:flex-row md:items-start">
-                <div className="space-y-1">
-                    <div className="flex items-center gap-2 text-[12px] font-medium text-slate-400">
-                        <span>{t('schedules:breadcrumb')}</span>
-                        <i className="ri-arrow-right-s-line" />
-                        <span className="text-[#14b8a6]">{t('common:actions.edit')}</span>
-                    </div>
-                    <h1 className="text-3xl font-bold tracking-tight text-slate-800">
-                        {t('common:actions.edit')}
-                    </h1>
-                    <TourInfoBox tour={tour} isLoading={isLoadingTour} />
-                    {schedule && <ScheduleInfoBox schedule={schedule} />}
-                </div>
+    if (isScheduleError || !schedule) {
+        return (
+            <div className="flex min-h-[400px] w-full flex-col items-center justify-center gap-4 p-6">
+                <p className="text-center text-sm font-semibold text-red-700" role="alert">
+                    {t('schedules:messages.fetch_error')}
+                </p>
+                <Button variant="outline" onClick={() => refetchSchedule()}>
+                    <i className="ri-refresh-line mr-2" aria-hidden />
+                    {t('tour:form.departures.retry')}
+                </Button>
+            </div>
+        );
+    }
 
-                <div className="hidden items-center gap-3 md:flex">
-                    <Button
-                        variant="outline"
-                        onClick={handleCancel}
-                        className="h-11 rounded-xl px-6 font-semibold text-slate-500 hover:border-red-500 hover:text-red-500 transition-all"
-                    >
-                        {t('common:actions.cancel')}
-                    </Button>
-                    <Button
-                        onClick={methods.handleSubmit(onSubmit)}
-                        isLoading={updateScheduleMutation.isPending}
-                        className="h-11 rounded-xl bg-[#F59E0B] px-8 font-bold text-white shadow-lg shadow-[#F59E0B]/20 hover:bg-[#D97706] active:scale-95 transition-all"
-                    >
-                        <i className="ri-save-line mr-2" />
-                        {t('common:actions.edit')}
-                    </Button>
+    const pageTitle = t('schedules:actions.edit_schedule');
+    const saveLabel = t('schedules:actions.save_schedule');
+
+    return (
+        <div className="min-h-screen bg-slate-50 pb-24 font-sans md:pb-10">
+            <div className="sticky top-0 z-30 border-b border-slate-200 bg-white/95 shadow-sm backdrop-blur-md transition-all duration-300 rounded-b-2xl">
+                <div
+                    className={cn(
+                        'flex w-full flex-col gap-4 px-4 sm:px-6 lg:px-10 md:flex-row md:items-start md:justify-between transition-all duration-300',
+                        isScrolled ? 'py-3' : 'py-5 lg:py-6'
+                    )}
+                >
+                    <div className="min-w-0 flex-1 space-y-1">
+                        <div
+                            className={cn(
+                                'flex items-center gap-2 text-[12px] font-medium text-slate-400 transition-all duration-300',
+                                isScrolled ? 'h-0 overflow-hidden opacity-0' : 'h-auto opacity-100'
+                            )}
+                        >
+                            <Link
+                                to={schedulesListHref}
+                                className="transition-colors hover:text-[#14b8a6]"
+                            >
+                                {t('schedules:breadcrumb')}
+                            </Link>
+                            <i className="ri-arrow-right-s-line" aria-hidden />
+                            <span className="text-[#14b8a6]">{pageTitle}</span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                            <h1
+                                className={cn(
+                                    'font-bold tracking-tight text-slate-800 transition-all duration-300',
+                                    isScrolled ? 'text-lg' : 'text-3xl'
+                                )}
+                            >
+                                {pageTitle}
+                            </h1>
+                            {isScrolled && (
+                                <span className="hidden md:inline-flex items-center rounded-full bg-[#fef3c7] px-2.5 py-0.5 text-[11px] font-bold text-[#b45309]">
+                                    {pageTitle}
+                                </span>
+                            )}
+                        </div>
+                        <div
+                            className={cn(
+                                'transition-all duration-300',
+                                isScrolled ? 'h-0 overflow-hidden opacity-0' : 'h-auto opacity-100'
+                            )}
+                        >
+                            <TourInfoBox
+                                tour={tour}
+                                isLoading={isLoadingTour}
+                                isError={isTourError}
+                                onRetry={() => refetchTour()}
+                            />
+                            <ScheduleInfoBox schedule={schedule} />
+                        </div>
+                    </div>
+
+                    <div className="hidden shrink-0 items-center gap-3 md:flex">
+                        <Button
+                            variant="outline"
+                            onClick={handleCancel}
+                            className="h-11 rounded-xl px-6 font-semibold text-slate-500 hover:border-red-500 hover:text-red-500 transition-all"
+                        >
+                            {t('common:actions.cancel')}
+                        </Button>
+                        <Button
+                            onClick={methods.handleSubmit(onSubmit)}
+                            isLoading={updateScheduleMutation.isPending}
+                            disabled={submitDisabled}
+                            aria-label={saveLabel}
+                            className="h-11 rounded-xl bg-[#F59E0B] px-8 font-bold text-white shadow-lg shadow-[#F59E0B]/20 hover:bg-[#D97706] active:scale-95 transition-all disabled:opacity-60"
+                        >
+                            <i className="ri-save-line mr-2" aria-hidden />
+                            {saveLabel}
+                        </Button>
+                    </div>
                 </div>
             </div>
 
-            {/* Main Content Grid */}
-            <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
-                {/* Form Side */}
-                <div className="lg:col-span-7 space-y-6">
-                    {isPastSchedule && (
-                        <div className="rounded-2xl border border-amber-200 bg-amber-50/50 p-5 backdrop-blur-sm shadow-sm transition-all hover:shadow-md">
-                            <div className="flex gap-4">
-                                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-amber-800 animate-bounce">
-                                    <i className="ri-alert-line text-xl" />
-                                </div>
-                                <div className="space-y-1">
-                                    <h4 className="text-[14px] font-bold text-amber-800">
-                                        {t('schedules:validation.past_event_title')}
-                                    </h4>
-                                    <p className="text-[12px] leading-relaxed text-amber-700/90">
-                                        {t('schedules:validation.past_event_desc')}
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    )}
-
-                    <div className="rounded-2xl border border-slate-200 bg-white/70 backdrop-blur-md p-8 shadow-sm transition-all hover:shadow-md flex flex-col justify-between">
-                        <FormProvider {...methods}>
-                            <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-6">
-                                <ScheduleForm />
-                            </form>
-                        </FormProvider>
-                        
-                        {/* Delete Button Area at bottom of form */}
-                        <div className="mt-12 pt-6 border-t border-slate-100 flex justify-between items-center">
-                            <Button
-                                variant="outline"
-                                onClick={() => setIsDeleteDialogOpen(true)}
-                                disabled={updateScheduleMutation.isPending}
-                                className="h-10 rounded-xl px-5 border-red-200 bg-white text-red-500 font-bold hover:bg-red-50 hover:border-red-300 hover:text-red-600 transition-all"
-                            >
-                                <i className="ri-delete-bin-line mr-2" />
-                                {t('schedules:actions.delete_this', 'Xóa lịch này')}
-                            </Button>
-                            
-                            <div className="text-[12px] text-slate-400 italic">
-                                {t('schedules:notices.delete_warning_hint', 'Hành động không thể hoàn tác')}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Preview Side */}
-                <div className="lg:col-span-5">
-                    <div className="sticky top-24 space-y-6">
-                        <div className="rounded-2xl border border-slate-200 bg-white/70 backdrop-blur-md p-6 shadow-sm transition-all hover:shadow-md">
-                            <h4 className="mb-4 flex items-center gap-2 text-[15px] font-bold text-slate-800">
-                                <i className="ri-eye-line text-[#14b8a6]" />
-                                {t('schedules:fields.preview')}
-                            </h4>
-
-                            <SchedulePreviewBox control={methods.control} />
-
-                            {/* Help Notice */}
-                            <div className="mt-6 rounded-xl border border-[#d9f99d] bg-[#f4fce3]/50 p-4">
-                                <div className="flex gap-3">
-                                    <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#d9f99d] text-[#365314]">
-                                        <i className="ri-information-line" />
+            <div className="w-full space-y-8 px-4 py-8 sm:px-6 lg:px-10">
+                <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
+                    <div className="space-y-6 lg:col-span-7">
+                        {isPastSchedule && (
+                            <div className="rounded-2xl border border-amber-200 bg-amber-50/50 p-5 shadow-sm backdrop-blur-sm transition-all hover:shadow-md">
+                                <div className="flex gap-4">
+                                    <div className="flex h-10 w-10 shrink-0 animate-bounce items-center justify-center rounded-xl bg-amber-100 text-amber-800">
+                                        <i className="ri-alert-line text-xl" aria-hidden />
                                     </div>
                                     <div className="space-y-1">
-                                        <p className="text-[13px] font-bold text-[#365314]">
-                                            {t('common:notices.important')}
-                                        </p>
-                                        <p className="text-[12px] leading-relaxed text-[#3f6212]/90">
-                                            {t('schedules:notices.price_override_help')}
+                                        <h4 className="text-[14px] font-bold text-amber-800">
+                                            {t('schedules:validation.past_event_title')}
+                                        </h4>
+                                        <p className="text-[12px] leading-relaxed text-amber-700/90">
+                                            {t('schedules:validation.past_event_desc')}
                                         </p>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-
-                        {schedule && (
-                            <ScheduleStatsBlock 
-                                totalSlots={schedule.totalSlots} 
-                                bookedSlots={schedule.bookedSlots} 
-                            />
                         )}
+
+                        <div className="flex flex-col justify-between rounded-2xl border border-slate-200 bg-white/70 p-8 shadow-sm backdrop-blur-md transition-all hover:shadow-md">
+                            <FormProvider {...methods}>
+                                <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-6">
+                                    <ScheduleForm isEdit originalStartDate={schedule.startDate} />
+                                </form>
+                            </FormProvider>
+
+                            <div className="mt-12 flex items-center justify-between border-t border-slate-100 pt-6">
+                                <Button
+                                    variant="outline"
+                                    onClick={() => setIsDeleteDialogOpen(true)}
+                                    disabled={deleteDisabled}
+                                    title={
+                                        hasBookings
+                                            ? t('schedules:actions.delete_blocked_has_bookings')
+                                            : undefined
+                                    }
+                                    className="h-10 rounded-xl border-red-200 bg-white px-5 font-bold text-red-500 transition-all hover:border-red-300 hover:bg-red-50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50"
+                                >
+                                    <i className="ri-delete-bin-line mr-2" aria-hidden />
+                                    {t('schedules:actions.delete_this')}
+                                </Button>
+
+                                <div className="text-[12px] italic text-slate-400">
+                                    {t('schedules:notices.delete_warning_hint')}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="lg:col-span-5">
+                        <div className="sticky top-24 space-y-6">
+                            <div className="rounded-2xl border border-slate-200 bg-white/70 p-6 shadow-sm backdrop-blur-md transition-all hover:shadow-md">
+                                <h4 className="mb-4 flex items-center gap-2 text-[15px] font-bold text-slate-800">
+                                    <i className="ri-eye-line text-[#14b8a6]" aria-hidden />
+                                    {t('schedules:fields.preview')}
+                                </h4>
+
+                                <SchedulePreviewBox control={methods.control} />
+
+                                <div className="mt-6 rounded-xl border border-[#d9f99d] bg-[#f4fce3]/50 p-4">
+                                    <div className="flex gap-3">
+                                        <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#d9f99d] text-[#365314]">
+                                            <i className="ri-information-line" aria-hidden />
+                                        </div>
+                                        <div className="space-y-1">
+                                            <p className="text-[13px] font-bold text-[#365314]">
+                                                {t('common:notices.important')}
+                                            </p>
+                                            <p className="text-[12px] leading-relaxed text-[#3f6212]/90">
+                                                {t('schedules:notices.price_override_help')}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <ScheduleStatsBlock
+                                totalSlots={schedule.totalSlots}
+                                bookedSlots={schedule.bookedSlots}
+                            />
+                        </div>
                     </div>
                 </div>
             </div>
 
-            {/* Mobile Actions Bar */}
-            <div className="fixed bottom-0 left-0 right-0 z-50 flex items-center justify-between border-t border-slate-200 bg-white/90 backdrop-blur-lg p-4 shadow-[0_-4px_10px_rgba(0,0,0,0.05)] md:hidden">
-                <Button
-                    variant="ghost"
-                    onClick={handleCancel}
-                    className="font-semibold text-slate-500"
-                >
+            <div className="fixed bottom-0 left-0 right-0 z-50 flex items-center justify-between border-t border-slate-200 bg-white/90 p-4 shadow-[0_-4px_10px_rgba(0,0,0,0.05)] backdrop-blur-lg md:hidden">
+                <Button variant="ghost" onClick={handleCancel} className="font-semibold text-slate-500">
                     {t('common:actions.cancel')}
                 </Button>
                 <Button
                     onClick={methods.handleSubmit(onSubmit)}
                     isLoading={updateScheduleMutation.isPending}
-                    className="rounded-xl bg-[#F59E0B] px-6 font-bold text-white shadow-lg shadow-[#F59E0B]/20"
+                    disabled={submitDisabled}
+                    aria-label={saveLabel}
+                    className="rounded-xl bg-[#F59E0B] px-6 font-bold text-white shadow-lg shadow-[#F59E0B]/20 disabled:opacity-60"
                 >
-                    {t('common:actions.edit')}
+                    {saveLabel}
                 </Button>
             </div>
 
-            <ScheduleDeleteDialog 
+            <ScheduleDeleteDialog
                 isOpen={isDeleteDialogOpen}
                 onClose={() => setIsDeleteDialogOpen(false)}
                 onConfirm={handleDelete}
-                schedule={schedule ?? null}
+                schedule={schedule}
                 isDeleting={deleteScheduleMutation.isPending}
             />
 

@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { scheduleApi, type ScheduleStatsQuery } from '@/api/scheduleApi';
+import { scheduleApi, type ScheduleCalendarQuery, type ScheduleStatsQuery } from '@/api/scheduleApi';
 import type { ScheduleFilters, Schedule } from '@/types/schedule';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
@@ -9,6 +9,7 @@ export const SCHEDULE_QUERY_KEYS = {
     all: ['schedules'] as const,
     lists: () => [...SCHEDULE_QUERY_KEYS.all, 'list'] as const,
     list: (filters: ScheduleFilters) => [...SCHEDULE_QUERY_KEYS.lists(), { filters }] as const,
+    calendar: (query: ScheduleCalendarQuery) => [...SCHEDULE_QUERY_KEYS.all, 'calendar', query] as const,
     stats: (params?: ScheduleStatsQuery) => [...SCHEDULE_QUERY_KEYS.all, 'stats', params ?? {}] as const,
     details: () => [...SCHEDULE_QUERY_KEYS.all, 'detail'] as const,
     detail: (id: string | number) => [...SCHEDULE_QUERY_KEYS.details(), id] as const,
@@ -34,6 +35,14 @@ export const useScheduleStats = (params?: ScheduleStatsQuery) => {
     return useQuery({
         queryKey: SCHEDULE_QUERY_KEYS.stats(params),
         queryFn: () => scheduleApi.getScheduleStats(params),
+    });
+};
+
+export const useCalendarSchedules = (query: ScheduleCalendarQuery) => {
+    return useQuery({
+        queryKey: SCHEDULE_QUERY_KEYS.calendar(query),
+        queryFn: () => scheduleApi.getSchedulesForCalendarRange(query),
+        enabled: Boolean(query.start_date && query.end_date),
     });
 };
 

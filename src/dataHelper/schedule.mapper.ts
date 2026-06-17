@@ -8,10 +8,13 @@ function toYmd(value: string): string {
 
 function normalizeStatus(raw: string): ScheduleStatus {
     const u = (raw || '').toLowerCase();
-    if (u === 'available') {
+    if (u === 'available' || u === 'active' || u === 'open') {
         return 'AVAILABLE';
     }
-    if (u === 'cancelled') {
+    if (u === 'full' || u === 'sold_out' || u === 'closed') {
+        return 'FULL';
+    }
+    if (u === 'cancelled' || u === 'canceled' || u === 'inactive') {
         return 'CANCELLED';
     }
     return 'AVAILABLE';

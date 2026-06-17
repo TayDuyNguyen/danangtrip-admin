@@ -141,6 +141,29 @@ export const mockSecondaryAdmin: RawUserItem = {
   updated_at: now,
 };
 
+export const mockPendingUser: RawUserItem = {
+  id: 6,
+  full_name: 'Vo Thi Pending',
+  email: 'pending@test.com',
+  username: 'pending_user',
+  avatar: null,
+  role: 'user',
+  status: 'pending',
+  phone: '0905111222',
+  birthdate: null,
+  gender: null,
+  city: 'Da Nang',
+  last_login_at: null,
+  email_verified_at: null,
+  orders_count: 0,
+  reviews_count: 0,
+  bookings_count: 0,
+  favorites_count: 0,
+  total_spend: 0,
+  created_at: '2026-05-10T08:00:00.000Z',
+  updated_at: now,
+};
+
 export const mockUserStats: UserStats = {
   total: 4,
   active: 3,

@@ -44,18 +44,35 @@ const TourFilter = ({ filters, onFilterChange, categories }: Props) => {
     };
 
     const activeFilters = [
+        filters.q && {
+            key: 'q' as const,
+            label: `${t('filters.search_label')}: "${filters.q}"`,
+        },
         filters.tour_category_id !== 'all' && {
-            key: 'tour_category_id',
+            key: 'tour_category_id' as const,
             label: `${t('filters.category_label')}: ${categories.find(c => c.id.toString() === filters.tour_category_id.toString())?.name || filters.tour_category_id}`
         },
         filters.status !== 'all' && {
-            key: 'status',
+            key: 'status' as const,
             label: `${t('filters.status_label')}: ${t(`status.${filters.status}`, filters.status)}`
         },
-        filters.type !== 'all' && { key: 'type', label: `${t('filters.all_types')}: ${t(`filters.${filters.type}`)}` },
+        filters.booking_availability !== 'all' && {
+            key: 'booking_availability' as const,
+            label: `${t('filters.booking_label')}: ${t(`booking_availability.${filters.booking_availability}`)}`,
+        },
+        filters.type !== 'all' && { key: 'type' as const, label: `${t('filters.all_types')}: ${t(`filters.${filters.type}`)}` },
     ].filter(Boolean) as { key: keyof TourFilters; label: string }[];
 
     const hasActiveFilters = activeFilters.length > 0 || localSearch !== '';
+
+    const clearFilterTag = (key: keyof TourFilters) => {
+        if (key === 'q') {
+            setLocalSearch('');
+            onFilterChange({ ...filters, q: '' });
+            return;
+        }
+        handleChange(key, 'all');
+    };
 
     return (
         <div className="bg-white border border-[#E2E8F0] rounded-[16px] p-[24px] mb-[24px]">
@@ -144,14 +161,6 @@ const TourFilter = ({ filters, onFilterChange, categories }: Props) => {
                     className="w-[160px]"
                 />
 
-                {/* Button Lọc */}
-                <button
-                    className="h-[48px] px-6 bg-[#14b8a6] text-white rounded-md text-[14px] font-bold hover:bg-[#0f766e] transition-all active:scale-95 shadow-sm"
-                >
-                    {t('filters.button_apply')}
-                </button>
-
-                {/* Button Đặt lại — Chỉ hiện khi có filter active */}
                 {hasActiveFilters && (
                     <button
                         onClick={handleReset}
@@ -174,9 +183,10 @@ const TourFilter = ({ filters, onFilterChange, categories }: Props) => {
                         >
                             {tag.label}
                             <button
-                                onClick={() => handleChange(tag.key, 'all')}
+                                type="button"
+                                onClick={() => clearFilterTag(tag.key)}
                                 className="hover:bg-[#14b8a6]/10 rounded-full transition-colors p-0.5"
-                                title={t('common:actions.remove')}
+                                aria-label={t('common:actions.remove')}
                             >
                                 <X size={13} strokeWidth={3} />
                             </button>

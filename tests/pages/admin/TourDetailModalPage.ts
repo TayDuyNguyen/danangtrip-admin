@@ -13,7 +13,11 @@ const copy = {
   hot: /Tour Hot|Hot/i,
   loadError: /Không tải được lịch|Could not load schedules/i,
   soldOut: /Hết chỗ|Sold out/i,
+  openBooking: /Còn chỗ|Open|Available/i,
+  inactive: /Tạm ẩn|Hidden|Inactive/i,
+  minPeopleLabel: /Số người tối thiểu|Min(imum)? people/i,
   active: /^Active$|^Đang hoạt động$/i,
+  scheduleFull: /Đầy chỗ|Full/i,
 };
 
 export class TourDetailModalPage {
@@ -53,6 +57,29 @@ export class TourDetailModalPage {
 
   get scrollBody(): Locator {
     return this.panel.locator('.max-h-\\[85vh\\].overflow-y-auto');
+  }
+
+  get backdrop(): Locator {
+    return this.listPage.page.locator('.fixed.inset-0.bg-slate-900\\/40').first();
+  }
+
+  scheduleItems() {
+    return this.panel.locator('ul[aria-label] li');
+  }
+
+  async closeByEscape() {
+    await this.listPage.page.keyboard.press('Escape');
+    await this.panel.waitFor({ state: 'hidden', timeout: 10_000 });
+  }
+
+  async closeByBackdrop() {
+    const box = await this.panel.boundingBox();
+    if (box) {
+      await this.listPage.page.mouse.click(8, 8);
+    } else {
+      await this.backdrop.click({ position: { x: 10, y: 10 }, force: true });
+    }
+    await this.panel.waitFor({ state: 'hidden', timeout: 10_000 });
   }
 
   async open(tourName: string) {

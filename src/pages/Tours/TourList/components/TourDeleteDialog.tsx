@@ -14,7 +14,7 @@ interface Props {
 }
 
 const TourDeleteDialog = ({ isOpen, onClose, onConfirm, tourName, isDeleting, isBulk, count }: Props) => {
-    const { t } = useTranslation('tour');
+    const { t } = useTranslation(['tour', 'common']);
 
     return (
         <Transition appear show={isOpen} as={Fragment}>
@@ -47,8 +47,10 @@ const TourDeleteDialog = ({ isOpen, onClose, onConfirm, tourName, isDeleting, is
                                     <div className="w-[64px] h-[64px] rounded-full bg-red-50 flex items-center justify-center shrink-0">
                                         <AlertTriangle className="text-[#EF4444]" size={32} />
                                     </div>
-                                    <button 
+                                    <button
+                                        type="button"
                                         onClick={onClose}
+                                        aria-label={t('common:actions.close')}
                                         className="w-[40px] h-[40px] flex items-center justify-center text-slate-400 hover:text-[#1E293B] hover:bg-slate-50 rounded-full transition-all"
                                     >
                                         <X size={20} />
