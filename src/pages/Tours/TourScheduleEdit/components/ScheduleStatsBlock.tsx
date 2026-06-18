@@ -26,21 +26,21 @@ export const ScheduleStatsBlock = ({ totalSlots, bookedSlots }: Props) => {
     return (
         <div className="mt-6 rounded-2xl border border-slate-200 bg-white/70 backdrop-blur-md p-6 shadow-sm hover:shadow-md transition-all">
             <h4 className="mb-4 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                {t('schedules:stats.title', 'THỐNG KÊ LỊCH')}
+                {t('schedules:stats.title')}
             </h4>
 
             <div className="grid grid-cols-3 gap-3">
                 <div className="rounded-xl border border-slate-100 bg-slate-50 p-3 text-center">
                     <div className="text-[18px] font-black text-slate-800">{booked}</div>
-                    <div className="mt-1 text-[11px] font-bold text-slate-400 uppercase">{t('schedules:stats.booked', 'ĐÃ ĐẶT')}</div>
+                    <div className="mt-1 text-[11px] font-bold text-slate-400 uppercase">{t('schedules:stats.booked')}</div>
                 </div>
                 <div className="rounded-xl border border-slate-100 bg-slate-50 p-3 text-center">
                     <div className="text-[18px] font-black text-slate-800">{available}</div>
-                    <div className="mt-1 text-[11px] font-bold text-slate-400 uppercase">{t('schedules:stats.available', 'CÒN TRỐNG')}</div>
+                    <div className="mt-1 text-[11px] font-bold text-slate-400 uppercase">{t('schedules:stats.slots_available')}</div>
                 </div>
                 <div className="rounded-xl border border-slate-100 bg-slate-50 p-3 text-center">
                     <div className="text-[18px] font-black text-slate-800">{max}</div>
-                    <div className="mt-1 text-[11px] font-bold text-slate-400 uppercase">{t('schedules:stats.max', 'TỐI ĐA')}</div>
+                    <div className="mt-1 text-[11px] font-bold text-slate-400 uppercase">{t('schedules:stats.max')}</div>
                 </div>
             </div>
 

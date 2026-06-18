@@ -46,8 +46,15 @@ export const usePaymentMutations = () => {
     const queryClient = useQueryClient();
 
     const refundMutation = useMutation({
-        mutationFn: ({ id, refund_reason }: { id: number | string; refund_reason: string }) =>
-            paymentApi.refund(id, { refund_reason }),
+        mutationFn: ({ id, ...data }: {
+            id: number | string;
+            refund_reason: string;
+            refund_bank_code: string;
+            refund_account_no: string;
+            refund_account_name: string;
+            transfer_reference: string;
+            approved_amount?: number;
+        }) => paymentApi.refund(id, data),
         onSuccess: () => {
             // Invalidate payments list and details
             queryClient.invalidateQueries({ queryKey: paymentKeys.all });

@@ -141,11 +141,18 @@ export const PaymentDetail = () => {
     const { data: payment, isLoading, error } = useAdminPaymentDetailQuery(id || '');
     const { refundMutation } = usePaymentMutations();
 
-    const handleRefundSubmit = (data: { refund_reason: string }) => {
+    const handleRefundSubmit = (data: {
+        refund_reason: string;
+        refund_bank_code: string;
+        refund_account_no: string;
+        refund_account_name: string;
+        transfer_reference: string;
+        approved_amount?: number;
+    }) => {
         if (!id) return;
         
         refundMutation.mutate(
-            { id, refund_reason: data.refund_reason },
+            { id, ...data },
             {
                 onSuccess: () => {
                     toast.success(t('refund.toast_success', { code: payment?.transactionCode }));

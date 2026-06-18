@@ -22,6 +22,7 @@ const PaymentList = () => {
         search: "",
         payment_status: undefined,
         payment_gateway: undefined,
+        refund_status: undefined,
         date_from: undefined,
         date_to: undefined,
     });
@@ -86,11 +87,18 @@ const PaymentList = () => {
         setIsRefundOpen(true);
     };
 
-    const handleRefundSubmit = (data: { refund_reason: string }) => {
+    const handleRefundSubmit = (data: {
+        refund_reason: string;
+        refund_bank_code: string;
+        refund_account_no: string;
+        refund_account_name: string;
+        transfer_reference: string;
+        approved_amount?: number;
+    }) => {
         if (!refundPayment) return;
 
         refundMutation.mutate(
-            { id: refundPayment.id, refund_reason: data.refund_reason },
+            { id: refundPayment.id, ...data },
             {
                 onSuccess: () => {
                     toast.success(

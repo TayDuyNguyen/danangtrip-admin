@@ -94,6 +94,7 @@ export const API_ENDPOINTS = {
         CONFIRM_PAYMENT: (id: string | number) => `/admin/bookings/${id}/confirm-payment`,
         DETAIL: (id: string | number) => `/admin/bookings/${id}`,
         INVOICE: (id: string | number) => `/admin/bookings/${id}/invoice`,
+        REFUND_PREVIEW: (id: string | number) => `/admin/bookings/${id}/refund-preview`,
     },
     // Payments management
     PAYMENTS: {

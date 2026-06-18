@@ -13,6 +13,7 @@ interface Props {
 
 const createLocalFilters = (filters: BookingListFilters): BookingListFilters => ({
     user_id: filters.user_id,
+    tour_schedule_id: filters.tour_schedule_id,
     search: filters.search || '',
     status: filters.status || 'all',
     payment_status: filters.payment_status || 'all',
@@ -21,6 +22,15 @@ const createLocalFilters = (filters: BookingListFilters): BookingListFilters => 
     sort: filters.sort || 'booked_at',
     order: filters.order || 'desc',
 });
+
+const paymentFilterLabel = (
+    status: BookingListFilters['payment_status'],
+    t: (key: string) => string
+) => {
+    if (!status || status === 'all') return t('filters.all_payment');
+    if (status === 'success' || status === 'paid') return t('payment_status.paid');
+    return t(`payment_status.${status}`);
+};
 
 const BookingFilter = ({ filters, onFilterChange }: Props) => {
     const { t } = useTranslation('booking');
@@ -43,7 +53,8 @@ const BookingFilter = ({ filters, onFilterChange }: Props) => {
     const applyFilters = (nextFilters = localFilters) => {
         onFilterChange({
             ...nextFilters,
-            user_id: nextFilters.user_id || filters.user_id,
+            user_id: 'user_id' in nextFilters ? nextFilters.user_id : filters.user_id,
+            tour_schedule_id: 'tour_schedule_id' in nextFilters ? nextFilters.tour_schedule_id : filters.tour_schedule_id,
             search: nextFilters.search?.trim() || '',
             status: nextFilters.status || 'all',
             payment_status: nextFilters.payment_status || 'all',
@@ -63,6 +74,7 @@ const BookingFilter = ({ filters, onFilterChange }: Props) => {
         const resetFilters = createLocalFilters({
             search: '',
             user_id: undefined,
+            tour_schedule_id: undefined,
             status: 'all',
             payment_status: 'all',
             date_from: '',
@@ -78,7 +90,12 @@ const BookingFilter = ({ filters, onFilterChange }: Props) => {
     const clearFilter = (key: keyof BookingListFilters) => {
         const nextFilters: BookingListFilters = {
             ...localFilters,
-            [key]: key === 'status' || key === 'payment_status' ? 'all' : key === 'user_id' ? undefined : '',
+            [key]:
+                key === 'status' || key === 'payment_status'
+                    ? 'all'
+                    : key === 'user_id' || key === 'tour_schedule_id'
+                      ? undefined
+                      : '',
         };
 
         setLocalFilters(nextFilters);
@@ -92,7 +109,7 @@ const BookingFilter = ({ filters, onFilterChange }: Props) => {
         },
         localFilters.payment_status && localFilters.payment_status !== 'all' && {
             key: 'payment_status' as const,
-            label: `${t('filters.payment_label')}: ${t(`payment_status.${localFilters.payment_status}`)}`,
+            label: `${t('filters.payment_label')}: ${paymentFilterLabel(localFilters.payment_status, t)}`,
         },
         localFilters.date_from && {
             key: 'date_from' as const,
@@ -105,6 +122,10 @@ const BookingFilter = ({ filters, onFilterChange }: Props) => {
         localFilters.user_id && {
             key: 'user_id' as const,
             label: `${t('filters.user_id_label', 'Người dùng ID')}: ${localFilters.user_id}`,
+        },
+        filters.tour_schedule_id && {
+            key: 'tour_schedule_id' as const,
+            label: `${t('filters.schedule_id_label')}: ${filters.tour_schedule_id}`,
         },
     ].filter(Boolean) as { key: keyof BookingListFilters; label: string }[];
 
@@ -146,15 +167,12 @@ const BookingFilter = ({ filters, onFilterChange }: Props) => {
                     options={[
                         { value: 'all', label: t('filters.all_payment') },
                         { value: 'pending', label: t('payment_status.pending') },
-                        { value: 'paid', label: t('payment_status.paid') },
+                        { value: 'success', label: t('payment_status.paid') },
                         { value: 'refunded', label: t('payment_status.refunded') },
                     ]}
                     value={{
-                        value: localFilters.payment_status || 'all',
-                        label:
-                            localFilters.payment_status === 'all'
-                                ? t('filters.all_payment')
-                                : t(`payment_status.${localFilters.payment_status}`),
+                        value: localFilters.payment_status === 'paid' ? 'success' : localFilters.payment_status || 'all',
+                        label: paymentFilterLabel(localFilters.payment_status, t),
                     } as Option}
                     onChange={(opt) =>
                         handleLocalChange('payment_status', (opt as Option)?.value as BookingListFilters['payment_status'])
@@ -204,6 +222,7 @@ const BookingFilter = ({ filters, onFilterChange }: Props) => {
                     {activeFilters.map((tag) => (
                         <div
                             key={tag.key}
+                            data-testid={`booking-filter-chip-${tag.key}`}
                             className="inline-flex items-center gap-1.5 rounded-full border border-[#14b8a6]/20 bg-[#14b8a6]/10 px-3 py-1.5 text-[12px] font-bold text-[#0f766e] transition-all hover:bg-[#14b8a6]/20"
                         >
                             {tag.label}

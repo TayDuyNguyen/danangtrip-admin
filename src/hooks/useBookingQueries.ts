@@ -25,7 +25,12 @@ export const bookingKeys = {
     detail: (id: string | number) => [...bookingKeys.all, 'detail', id] as const,
 };
 
-export const useAdminBookingsQuery = (filters: BookingListFilters, page: number, limit: number) => {
+export const useAdminBookingsQuery = (
+    filters: BookingListFilters,
+    page: number,
+    limit: number,
+    options?: { enabled?: boolean }
+) => {
     return useQuery({
         queryKey: bookingKeys.list(filters, page, limit),
         queryFn: async () => {
@@ -33,6 +38,7 @@ export const useAdminBookingsQuery = (filters: BookingListFilters, page: number,
             return mapBookingList(response.data);
         },
         staleTime: 1000 * 30, // 30 seconds
+        enabled: options?.enabled ?? true,
     });
 };
 
@@ -56,6 +62,18 @@ export const useAdminBookingDetailQuery = (id: number | string) => {
         },
         enabled: !!id,
         staleTime: 1000 * 30, // 30 seconds
+    });
+};
+
+export const useAdminRefundPreviewQuery = (id: number | string, enabled = true) => {
+    return useQuery({
+        queryKey: [...bookingKeys.detail(id), 'refund-preview'],
+        queryFn: async () => {
+            const response = await bookingApi.getRefundPreview(id);
+            return response.data;
+        },
+        enabled: Boolean(id) && enabled,
+        staleTime: 15 * 1000,
     });
 };
 
@@ -115,4 +133,3 @@ export const useBookingMutations = () => {
         getInvoiceMutation,
     };
 };
-

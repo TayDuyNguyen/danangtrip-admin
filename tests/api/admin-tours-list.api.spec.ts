@@ -75,6 +75,23 @@ test.describe('GET /admin/tours @P1', () => {
     }
   });
 
+  test('API_TLIST_019 search is case-insensitive', async ({ request }) => {
+    test.skip(!apiAvailable, 'API not available');
+    const baseline = await request.get(`${testEnv.apiBaseUrl}/admin/tours?search=Ba%20Na&per_page=50`, {
+      headers: authHeaders(),
+    });
+    expect(baseline.ok()).toBeTruthy();
+    const baselineIds = ((await baseline.json()).data?.data ?? []).map((r: { id: number }) => r.id).sort();
+
+    const lower = await request.get(`${testEnv.apiBaseUrl}/admin/tours?search=ba%20na&per_page=50`, {
+      headers: authHeaders(),
+    });
+    expect(lower.ok()).toBeTruthy();
+    const lowerIds = ((await lower.json()).data?.data ?? []).map((r: { id: number }) => r.id).sort();
+
+    expect(lowerIds).toEqual(baselineIds);
+  });
+
   test('API_TLIST_004 filters by tour_category_id', async ({ request }) => {
     test.skip(!apiAvailable, 'API not available');
     const res = await request.get(`${testEnv.apiBaseUrl}/admin/tours?tour_category_id=1&per_page=50`, {

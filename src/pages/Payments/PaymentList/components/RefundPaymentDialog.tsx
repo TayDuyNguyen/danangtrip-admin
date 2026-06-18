@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -9,7 +10,14 @@ interface RefundPaymentDialogProps {
     payment: PaymentItem | null;
     isOpen: boolean;
     onClose: () => void;
-    onSubmit: (data: { refund_reason: string }) => void;
+    onSubmit: (data: {
+        refund_reason: string;
+        refund_bank_code: string;
+        refund_account_no: string;
+        refund_account_name: string;
+        transfer_reference: string;
+        approved_amount?: number;
+    }) => void;
     isSubmitting?: boolean;
 }
 
@@ -28,6 +36,11 @@ export const RefundPaymentDialog = ({
             .required(t("validation.reason_required", "Lý do hoàn tiền là bắt buộc"))
             .min(10, t("validation.reason_min", "Lý do hoàn tiền phải từ 10 ký tự trở lên"))
             .max(255, t("validation.reason_max", "Lý do hoàn tiền tối đa 255 ký tự")),
+        refund_bank_code: yup.string().required("Vui lòng chọn ngân hàng"),
+        refund_account_no: yup.string().matches(/^[0-9]{6,30}$/, "Số tài khoản không hợp lệ").required("Vui lòng nhập số tài khoản"),
+        refund_account_name: yup.string().min(2).required("Vui lòng nhập tên chủ tài khoản"),
+        transfer_reference: yup.string().min(4, "Mã giao dịch phải có ít nhất 4 ký tự").required("Vui lòng nhập mã giao dịch sau khi chuyển tiền"),
+        approved_amount: yup.number().positive().optional(),
     });
 
     const {
@@ -39,12 +52,36 @@ export const RefundPaymentDialog = ({
         resolver: yupResolver(schema),
         defaultValues: {
             refund_reason: "",
+            refund_bank_code: "",
+            refund_account_no: "",
+            refund_account_name: "",
+            transfer_reference: "",
+            approved_amount: undefined,
         },
     });
 
-    const handleFormSubmit = (data: { refund_reason: string }) => {
+    useEffect(() => {
+        if (!isOpen || !payment) return;
+        const request = payment.latestRefundRequest;
+        reset({
+            refund_reason: request?.reason || "",
+            refund_bank_code: request?.bank_code || "",
+            refund_account_no: request?.account_no || "",
+            refund_account_name: request?.account_name || "",
+            transfer_reference: "",
+            approved_amount: request?.approved_amount || payment.amount,
+        });
+    }, [isOpen, payment, reset]);
+
+    const handleFormSubmit = (data: {
+        refund_reason: string;
+        refund_bank_code: string;
+        refund_account_no: string;
+        refund_account_name: string;
+        transfer_reference: string;
+        approved_amount?: number;
+    }) => {
         onSubmit(data);
-        reset();
     };
 
     const formatCurrency = (val: number) => {
@@ -55,6 +92,15 @@ export const RefundPaymentDialog = ({
     };
 
     if (!isOpen || !payment) return null;
+    const refundRequest = payment.latestRefundRequest;
+    const refundAmount = refundRequest?.approved_amount || payment.amount;
+    const bankCode = refundRequest?.bank_code;
+    const accountNo = refundRequest?.account_no;
+    const accountName = refundRequest?.account_name;
+    const needsBankDetails = !bankCode || !accountNo || !accountName;
+    const qrUrl = bankCode && accountNo && accountName
+        ? `https://img.vietqr.io/image/${encodeURIComponent(bankCode)}-${encodeURIComponent(accountNo)}-compact2.png?amount=${refundAmount}&addInfo=${encodeURIComponent(`Hoan tien DaNangTrip ${payment.bookingCode}`)}&accountName=${encodeURIComponent(accountName)}`
+        : null;
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -65,7 +111,7 @@ export const RefundPaymentDialog = ({
             ></div>
 
             {/* Modal Box */}
-            <div className="relative w-full max-w-lg bg-white border border-slate-100 rounded-3xl p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200 overflow-hidden z-10">
+            <div className="relative max-h-[92vh] w-full max-w-2xl overflow-y-auto bg-white border border-slate-100 rounded-3xl p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200 z-10">
                 {/* Close Button */}
                 <button
                     onClick={onClose}
@@ -109,9 +155,22 @@ export const RefundPaymentDialog = ({
                     </div>
                     <div className="flex justify-between border-t border-slate-200/50 pt-2.5">
                         <span>{t("refund.amount", "Số tiền hoàn:")}</span>
-                        <span className="text-[#14B8A6] text-sm font-black">{formatCurrency(payment.amount)}</span>
+                        <span className="text-[#14B8A6] text-sm font-black">{formatCurrency(refundAmount)}</span>
                     </div>
                 </div>
+
+                {qrUrl && (
+                    <div className="mb-5 grid grid-cols-[150px_1fr] gap-4 rounded-2xl border border-teal-100 bg-teal-50/40 p-4">
+                        <img src={qrUrl} alt="VietQR hoàn tiền" className="h-[150px] w-[150px] rounded-xl bg-white object-contain" />
+                        <div className="space-y-2 text-xs">
+                            <p><strong>Ngân hàng:</strong> {bankCode}</p>
+                            <p><strong>Số tài khoản:</strong> {accountNo}</p>
+                            <p><strong>Chủ tài khoản:</strong> {accountName}</p>
+                            <p className="text-rose-600"><strong>Số tiền:</strong> {formatCurrency(refundAmount)}</p>
+                            <p>Quét QR và chỉ xác nhận sau khi ứng dụng ngân hàng báo chuyển thành công.</p>
+                        </div>
+                    </div>
+                )}
 
                 {/* Form inputs */}
                 <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
@@ -130,6 +189,30 @@ export const RefundPaymentDialog = ({
                                 {errors.refund_reason.message}
                             </p>
                         )}
+                    </div>
+
+                    {needsBankDetails && (
+                        <div className="grid grid-cols-2 gap-3">
+                            <input {...register("refund_bank_code")} placeholder="Mã ngân hàng, ví dụ MB" className="rounded-xl border border-slate-200 px-3 py-2.5 text-sm" />
+                            <input {...register("refund_account_no")} placeholder="Số tài khoản" className="rounded-xl border border-slate-200 px-3 py-2.5 text-sm" />
+                            <input {...register("refund_account_name")} placeholder="Tên chủ tài khoản" className="col-span-2 rounded-xl border border-slate-200 px-3 py-2.5 text-sm uppercase" />
+                        </div>
+                    )}
+                    {!needsBankDetails && (
+                        <>
+                            <input type="hidden" {...register("refund_bank_code")} />
+                            <input type="hidden" {...register("refund_account_no")} />
+                            <input type="hidden" {...register("refund_account_name")} />
+                        </>
+                    )}
+                    <div>
+                        <label className="mb-2 block text-xs font-black uppercase tracking-wider text-slate-400">Mã giao dịch ngân hàng *</label>
+                        <input
+                            {...register("transfer_reference")}
+                            placeholder="Nhập mã giao dịch sau khi chuyển khoản thành công"
+                            className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm"
+                        />
+                        {errors.transfer_reference && <p className="mt-1 text-xs font-bold text-rose-500">{errors.transfer_reference.message}</p>}
                     </div>
 
                     {/* Dialog Actions */}

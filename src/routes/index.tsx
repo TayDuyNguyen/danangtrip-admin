@@ -15,6 +15,7 @@ const TourCategories = React.lazy(() => import('@/pages/Tours/TourCategories'));
 const Schedules = React.lazy(() => import('@/pages/Tours/TourSchedules'));
 const TourScheduleCreate = React.lazy(() => import('@/pages/Tours/TourScheduleCreate'));
 const TourScheduleEdit = React.lazy(() => import('@/pages/Tours/TourScheduleEdit'));
+const TourScheduleDetail = React.lazy(() => import('@/pages/Tours/TourScheduleDetail'));
 const LocationList = React.lazy(() => import('@/pages/Locations/LocationList'));
 const LocationCreate = React.lazy(() => import('@/pages/Locations/LocationCreate'));
 const LocationEdit = React.lazy(() => import('@/pages/Locations/LocationEdit'));
@@ -101,6 +102,7 @@ const router = createBrowserRouter([
                     { path: ROUTES.TOURS_SCHEDULES, element: withSuspense(Schedules) },
                     { path: ROUTES.TOURS_SCHEDULE_CREATE, element: withSuspense(TourScheduleCreate) },
                     { path: ROUTES.TOURS_SCHEDULE_EDIT, element: withSuspense(TourScheduleEdit) },
+                    { path: ROUTES.TOURS_SCHEDULE_DETAIL, element: withSuspense(TourScheduleDetail) },
                     { path: ROUTES.LOCATIONS_LIST, element: withSuspense(LocationList) },
                     { path: ROUTES.LOCATIONS_CREATE, element: withSuspense(LocationCreate) },
                     { path: ROUTES.LOCATIONS_EDIT, element: withSuspense(LocationEdit) },

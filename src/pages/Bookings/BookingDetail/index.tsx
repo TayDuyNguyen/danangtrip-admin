@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { 
@@ -35,6 +35,7 @@ import BookingCancelDialog from '../BookingList/components/BookingCancelDialog';
 import BookingConfirmPaymentDialog from '../BookingList/components/BookingConfirmPaymentDialog';
 import { formatCurrency } from '@/utils/pricing';
 import { formatAdminShortDate } from '@/utils/dateDisplay';
+import { cn } from '@/utils';
 import type { BookingStatus } from '@/dataHelper/booking.dataHelper';
 
 /**
@@ -200,6 +201,23 @@ const BookingDetail = () => {
     const [isCancelOpen, setIsCancelOpen] = useState(false);
     const [isConfirmPaymentOpen, setIsConfirmPaymentOpen] = useState(false);
     const [isCompleting, setIsCompleting] = useState(false);
+    const [isScrolled, setIsScrolled] = useState(false);
+
+    useEffect(() => {
+        const handleScroll = (e: Event) => {
+            const target = e.target as HTMLElement;
+            if (target && (target.tagName === 'MAIN' || target.classList.contains('overflow-y-auto'))) {
+                setIsScrolled((prev) => {
+                    const currentScroll = target.scrollTop;
+                    if (!prev && currentScroll > 10) return true;
+                    if (prev && currentScroll < 2) return false;
+                    return prev;
+                });
+            }
+        };
+        window.addEventListener('scroll', handleScroll, true);
+        return () => window.removeEventListener('scroll', handleScroll, true);
+    }, []);
 
     // Queries
     const { 
@@ -319,17 +337,29 @@ const BookingDetail = () => {
     return (
         <div className="min-h-screen bg-[#F8FAFC] pb-20 font-sans">
             {/* Sticky Header */}
-            <div className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-slate-200/60 shadow-xs">
-                <div className="max-w-[1600px] mx-auto px-4 md:px-8 h-20 flex items-center justify-between">
-                    <div className="flex items-center gap-4">
+            <div className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-slate-200/60 shadow-xs transition-all duration-300">
+                <div
+                    className={cn(
+                        'max-w-[1600px] mx-auto px-4 md:px-8 flex items-center justify-between gap-4 transition-all duration-300',
+                        isScrolled ? 'py-2' : 'min-h-20 py-3'
+                    )}
+                >
+                    <div className="flex min-w-0 flex-1 items-center gap-4">
                         <button
+                            type="button"
                             onClick={handleBack}
-                            className="rounded-full w-10 h-10 p-0 hover:bg-slate-100 cursor-pointer flex items-center justify-center border-0 bg-transparent text-slate-600"
+                            aria-label={t('detail.back_button')}
+                            className="shrink-0 rounded-full w-10 h-10 p-0 hover:bg-slate-100 cursor-pointer flex items-center justify-center border-0 bg-transparent text-slate-600"
                         >
                             <ArrowLeft className="w-5 h-5" />
                         </button>
-                        <div>
-                            <div className="mb-1">
+                        <div className="min-w-0 flex-1">
+                            <div
+                                className={cn(
+                                    'transition-all duration-300',
+                                    isScrolled ? 'opacity-0 h-0 overflow-hidden mb-0' : 'opacity-100 h-auto mb-1'
+                                )}
+                            >
                                 <Breadcrumbs
                                     icon={ShoppingCart}
                                     items={[
@@ -338,18 +368,33 @@ const BookingDetail = () => {
                                     ]}
                                 />
                             </div>
-                            <h1 className="text-xl font-bold text-slate-900 tracking-tight leading-none flex items-center gap-2">
-                                {t('detail.page_title', { defaultValue: 'Chi tiết Đơn đặt' })}
+                            <h1
+                                className={cn(
+                                    'font-bold text-slate-900 tracking-tight leading-tight flex flex-wrap items-center gap-x-2 gap-y-1 transition-all duration-300',
+                                    isScrolled ? 'text-base' : 'text-xl'
+                                )}
+                            >
+                                <span className="whitespace-nowrap">{t('detail.page_title', { defaultValue: 'Chi tiết Đơn đặt' })}</span>
+                                {isScrolled && (
+                                    <span className="hidden md:inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-teal-50 text-teal-700 animate-in fade-in slide-in-from-left-2 duration-300">
+                                        {t('breadcrumb.view', { ns: 'common', defaultValue: 'Chi tiết' })}
+                                    </span>
+                                )}
                                 {!isLoading && booking && (
                                     <>
-                                        <span className="text-slate-350 font-light">#</span>{booking.code}
-                                        <BookingStatusBadge status={booking.bookingStatus} className="h-5" />
-                                        <PaymentStatusBadge status={booking.paymentStatus} className="h-5" />
+                                        <span className="text-slate-350 font-light whitespace-nowrap">#{booking.code}</span>
+                                        <BookingStatusBadge status={booking.bookingStatus} className="h-5 shrink-0" />
+                                        <PaymentStatusBadge status={booking.paymentStatus} className="h-5 shrink-0" />
                                     </>
                                 )}
                             </h1>
                             {!isLoading && booking && (
-                                <p className="text-xs text-slate-400 font-medium truncate max-w-[200px] sm:max-w-[400px] mt-1 select-all">
+                                <p
+                                    className={cn(
+                                        'text-xs text-slate-400 font-medium truncate select-all transition-all duration-300',
+                                        isScrolled ? 'opacity-0 h-0 overflow-hidden mt-0' : 'opacity-100 h-auto mt-1'
+                                    )}
+                                >
                                     {booking.customer.name} ({booking.customer.email})
                                 </p>
                             )}
@@ -357,18 +402,12 @@ const BookingDetail = () => {
                     </div>
 
                     {!isLoading && booking && (
-                        <div className="hidden md:flex items-center gap-3">
+                        <div className="hidden md:flex shrink-0 items-center">
                             <button
-                                onClick={handleBack}
-                                className="flex items-center gap-2 px-5 py-2.5 bg-white border border-slate-200 rounded-2xl text-slate-600 font-semibold text-[13px] hover:border-[#14b8a6] hover:text-[#14b8a6] transition-all h-10 shadow-xs active:scale-95 cursor-pointer duration-200"
-                            >
-                                <ArrowLeft size={16} />
-                                {t('detail.back_button')}
-                            </button>
-                            <button
+                                type="button"
                                 onClick={handleDownloadInvoice}
                                 disabled={getInvoiceMutation.isPending}
-                                className={`flex items-center gap-2 px-5 py-2.5 bg-white border border-slate-200 rounded-2xl text-slate-700 font-semibold text-[13px] hover:border-[#14b8a6] hover:text-[#14b8a6] hover:bg-teal-50/10 transition-all h-10 shadow-xs active:scale-95 cursor-pointer duration-200 ${getInvoiceMutation.isPending ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                className={`flex items-center gap-2 px-5 py-2.5 bg-white border border-slate-200 rounded-2xl text-slate-700 font-semibold text-[13px] hover:border-[#14b8a6] hover:text-[#14b8a6] hover:bg-teal-50/10 transition-all h-10 shadow-xs active:scale-95 cursor-pointer duration-200 whitespace-nowrap ${getInvoiceMutation.isPending ? 'opacity-50 cursor-not-allowed' : ''}`}
                             >
                                 {getInvoiceMutation.isPending ? (
                                     <Loader2 size={16} className="animate-spin text-[#14b8a6]" />
@@ -724,6 +763,7 @@ const BookingDetail = () => {
                     onClose={() => setIsCancelOpen(false)}
                     onConfirm={handleCancelSubmit}
                     bookingCode={booking.code}
+                    bookingId={booking.id}
                     customerName={booking.customer.name}
                     isSubmitting={updateStatusMutation.isPending}
                 />

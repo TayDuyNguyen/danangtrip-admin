@@ -219,21 +219,64 @@ function emptySearchPage() {
   return { data: [], current_page: 1, last_page: 1, total: 0 };
 }
 
-function fulfillGlobalSearch(route: Route, path: string) {
+function normalizeGlobalSearchText(value: string): string {
+  return value
+    .normalize('NFD')
+    .replace(/\p{M}/gu, '')
+    .toLowerCase();
+}
+
+function matchesGlobalTourSearch(tour: { name: string; slug: string }, search: string): boolean {
+  if (!search) return true;
+  const haystack = normalizeGlobalSearchText(`${tour.name} ${tour.slug}`);
+  const needle = normalizeGlobalSearchText(search);
+  if (haystack.includes(needle)) return true;
+  const words = needle.split(/\s+/).filter(Boolean);
+  return words.length > 0 && words.every((word) => haystack.includes(word));
+}
+
+function fulfillGlobalSearch(route: Route, path: string, params: URLSearchParams) {
   if (flags.globalSearchFail) {
     return fulfillError(route);
   }
   if (flags.globalSearchEmpty) {
     return fulfillJson(route, emptySearchPage());
   }
+
+  const search = (params.get('search') || params.get('q') || '').trim().toLowerCase();
+  const perPage = Number(params.get('per_page')) || 3;
+
   if (path === '/admin/tours') {
+    const matches = matchesGlobalTourSearch(mockGlobalSearchTourHit, search);
+    const hits = matches ? [mockGlobalSearchTourHit] : [];
     return fulfillJson(route, {
-      data: [mockGlobalSearchTourHit],
+      data: hits,
       current_page: 1,
       last_page: 1,
-      total: 1,
+      total: hits.length,
     });
   }
+
+  if (path === '/admin/bookings') {
+    const source = [...mockBookingRows, ...mockBookingRowsPage2];
+    const hits = source
+      .filter((row) => {
+        if (!search) return true;
+        return (
+          row.booking_code.toLowerCase().includes(search) ||
+          row.customer_name.toLowerCase().includes(search) ||
+          (row.tour_name || '').toLowerCase().includes(search)
+        );
+      })
+      .slice(0, perPage);
+    return fulfillJson(route, {
+      data: hits,
+      current_page: 1,
+      last_page: 1,
+      total: hits.length,
+    });
+  }
+
   return fulfillJson(route, emptySearchPage());
 }
 
@@ -261,7 +304,7 @@ export async function mockDashboardApi(page: Page) {
     }
 
     if (isGlobalSearchRequest(path, params)) {
-      await fulfillGlobalSearch(route, path);
+      await fulfillGlobalSearch(route, path, params);
       return;
     }
 

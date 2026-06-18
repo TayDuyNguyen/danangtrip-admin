@@ -20,14 +20,19 @@ export const mapPaymentItem = (raw: AdminRawPaymentItem): PaymentItem => {
         customerEmail: raw.booking?.customer_email || "N/A",
         customerAvatar: raw.booking?.customer_avatar || undefined,
         amount: toNumberSafe(raw.amount),
+        receivedAmount: toNumberSafe(raw.received_amount),
+        shortAmount: toNumberSafe(raw.short_amount),
+        excessAmount: toNumberSafe(raw.excess_amount),
+        reconciliationStatus: raw.reconciliation_status,
         gateway: raw.payment_method,
-        status: raw.payment_status,
+        status: raw.reconciliation_status === "partial" ? "partially_paid" : raw.payment_status,
         refundedAt: raw.refunded_at,
         refundReason: raw.refund_reason,
         paidAt: raw.paid_at,
         transactionDate: raw.created_at,
         tourName: raw.booking?.tour_name || "N/A",
         tourThumbnail: raw.booking?.tour_thumbnail || undefined,
+        latestRefundRequest: raw.latest_refund_request,
     };
 };
 

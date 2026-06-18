@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { ShoppingCart, Clock, CheckCircle2, XCircle } from 'lucide-react';
+import { ShoppingCart, Clock, CheckCircle2, BadgeCheck, XCircle } from 'lucide-react';
 import type { AdminBookingStatusCounts } from '@/dataHelper/booking.dataHelper';
 
 interface Props {
@@ -35,6 +35,13 @@ const BookingStats = ({ stats, isLoading }: Props) => {
             color: 'text-[#10B981]',
         },
         {
+            label: t('stats.completed_label'),
+            value: stats?.completed || 0,
+            icon: <BadgeCheck size={20} className="text-[#6366F1]" />,
+            iconBg: 'bg-[#EEF2FF]',
+            color: 'text-[#6366F1]',
+        },
+        {
             label: t('stats.cancelled_label'),
             value: stats?.cancelled || 0,
             icon: <XCircle size={20} className="text-[#EF4444]" />,
@@ -44,7 +51,7 @@ const BookingStats = ({ stats, isLoading }: Props) => {
     ];
 
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-24">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 mb-24">
             {statCards.map((card, idx) => (
                 <div 
                     key={idx}

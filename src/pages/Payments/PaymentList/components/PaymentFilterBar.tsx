@@ -51,6 +51,7 @@ export const PaymentFilterBar = ({
             search: "",
             payment_status: undefined,
             payment_gateway: undefined,
+            refund_status: undefined,
             date_from: undefined,
             date_to: undefined,
         });
@@ -66,6 +67,8 @@ export const PaymentFilterBar = ({
 
     const gatewayOptions = [
         { value: "all", label: t("filter.all_gateways", "Tất cả Cổng thanh toán") },
+        { value: "sepay", label: "SePay" },
+        { value: "bank_transfer", label: "Chuyển khoản" },
         { value: "momo", label: "MoMo" },
         { value: "vnpay", label: "VNPay" },
         { value: "zalopay", label: "ZaloPay" },
@@ -73,10 +76,19 @@ export const PaymentFilterBar = ({
 
     const currentStatus = statusOptions.find(opt => opt.value === (filters.payment_status || "all")) || statusOptions[0];
     const currentGateway = gatewayOptions.find(opt => opt.value === (filters.payment_gateway || "all")) || gatewayOptions[0];
+    const refundOptions = [
+        { value: "all", label: "Tất cả yêu cầu hoàn" },
+        { value: "pending", label: "Chờ hoàn tiền" },
+        { value: "processing", label: "Đang xử lý hoàn" },
+        { value: "completed", label: "Đã hoàn tiền" },
+        { value: "failed", label: "Hoàn tiền thất bại" },
+        { value: "rejected", label: "Từ chối hoàn" },
+    ];
+    const currentRefund = refundOptions.find(opt => opt.value === (filters.refund_status || "all")) || refundOptions[0];
 
     return (
         <div className="bg-white/80 backdrop-blur-md border border-slate-100 rounded-2xl p-5 shadow-xs space-y-4 font-sans">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
                 {/* Search Box (col-span-2) */}
                 <TextInput
                     value={searchValue}
@@ -100,6 +112,13 @@ export const PaymentFilterBar = ({
                     options={gatewayOptions}
                     value={currentGateway}
                     onChange={(opt) => handleSelectChange("payment_gateway", String((opt as Option)?.value))}
+                    size="md"
+                />
+
+                <CustomSelect
+                    options={refundOptions}
+                    value={currentRefund}
+                    onChange={(opt) => handleSelectChange("refund_status", String((opt as Option)?.value))}
                     size="md"
                 />
             </div>
@@ -134,7 +153,7 @@ export const PaymentFilterBar = ({
 
                 {/* Reset Filters */}
                 <div>
-                    {(filters.search || filters.payment_status || filters.payment_gateway || filters.date_from || filters.date_to) && (
+                    {(filters.search || filters.payment_status || filters.payment_gateway || filters.refund_status || filters.date_from || filters.date_to) && (
                         <button
                             onClick={handleReset}
                             className="flex items-center justify-center gap-2 bg-slate-50 border border-slate-100 hover:bg-slate-100 hover:text-slate-900 rounded-xl py-2.5 px-4 text-sm font-bold text-slate-500 transition-all duration-200 cursor-pointer"

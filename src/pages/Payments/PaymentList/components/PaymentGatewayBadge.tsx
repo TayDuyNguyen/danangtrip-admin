@@ -1,11 +1,12 @@
 import type { PaymentGateway } from "@/dataHelper";
+import type { ReactNode } from "react";
 
 interface PaymentGatewayBadgeProps {
     gateway: PaymentGateway;
 }
 
 export const PaymentGatewayBadge = ({ gateway }: PaymentGatewayBadgeProps) => {
-    const config = {
+    const config: Partial<Record<PaymentGateway, { bg: string; logo: ReactNode; name: string }>> = {
         momo: {
             bg: "bg-pink-50 border-pink-100 text-pink-700",
             logo: (
@@ -35,6 +36,36 @@ export const PaymentGatewayBadge = ({ gateway }: PaymentGatewayBadgeProps) => {
                 </svg>
             ),
             name: "ZaloPay",
+        },
+        sepay: {
+            bg: "bg-teal-50 border-teal-100 text-teal-700",
+            logo: (
+                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
+                    <circle cx="12" cy="12" r="12" fill="#14B8A6" />
+                    <text x="12" y="15" fill="white" fontSize="8" fontWeight="900" textAnchor="middle">SP</text>
+                </svg>
+            ),
+            name: "SePay",
+        },
+        payos: {
+            bg: "bg-teal-50 border-teal-100 text-teal-700",
+            logo: (
+                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
+                    <circle cx="12" cy="12" r="12" fill="#14B8A6" />
+                    <text x="12" y="15" fill="white" fontSize="8" fontWeight="900" textAnchor="middle">SP</text>
+                </svg>
+            ),
+            name: "SePay",
+        },
+        bank_transfer: {
+            bg: "bg-amber-50 border-amber-100 text-amber-700",
+            logo: (
+                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
+                    <circle cx="12" cy="12" r="12" fill="#F59E0B" />
+                    <text x="12" y="15" fill="white" fontSize="8" fontWeight="900" textAnchor="middle">QR</text>
+                </svg>
+            ),
+            name: "CK ngân hàng",
         },
     };
 

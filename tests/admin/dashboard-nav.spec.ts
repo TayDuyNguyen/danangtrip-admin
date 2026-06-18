@@ -393,6 +393,40 @@ test.describe('Admin Dashboard — Global search @P2', () => {
 
   });
 
+
+
+  /** TC_AD_DASH_092 */
+
+  test('TC_AD_DASH_092 global search tour keyword is case-insensitive', async ({ adminPage }) => {
+
+    await dash.globalSearchInput.fill('BA NA');
+
+    await adminPage.waitForResponse((res) => res.url().includes('/admin/tours') && res.url().includes('search='));
+
+    await adminPage.waitForTimeout(400);
+
+    await expect(dash.globalSearchPanel).toContainText(mockGlobalSearchTourHit.name);
+
+  });
+
+
+
+  /** TC_AD_DASH_093 */
+
+  test('TC_AD_DASH_093 global search booking code is case-insensitive', async ({ adminPage }) => {
+
+    await dash.globalSearchInput.fill('bk-2026-0101');
+
+    await adminPage.waitForResponse((res) => res.url().includes('/admin/bookings') && res.url().includes('search='));
+
+    await adminPage.waitForTimeout(400);
+
+    await expect(dash.globalSearchPanel).toContainText('BK-2026-0101');
+
+    await expect(dash.globalSearchPanel.getByText(/Đơn hàng|Bookings/i)).toBeVisible();
+
+  });
+
 });
 
 
@@ -495,9 +529,9 @@ test.describe('Admin Dashboard — Layout @P2', () => {
 
 
 
-  /** TC_AD_DASH_092 */
+  /** TC_AD_DASH_094 */
 
-  test('TC_AD_DASH_092 recent orders table has horizontal min-width on mobile', async ({ adminPage }) => {
+  test('TC_AD_DASH_094 recent orders table has horizontal min-width on mobile', async ({ adminPage }) => {
 
     await adminPage.setViewportSize({ width: 375, height: 812 });
 

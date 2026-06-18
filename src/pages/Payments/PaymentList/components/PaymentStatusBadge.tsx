@@ -14,6 +14,11 @@ export const PaymentStatusBadge = ({ status }: PaymentStatusBadgeProps) => {
             dot: "bg-amber-500 shadow-xs shadow-amber-500/50",
             label: t("status.pending", "Đang chờ"),
         },
+        partially_paid: {
+            bg: "bg-orange-50/70 border-orange-200/50 text-orange-700",
+            dot: "bg-orange-500 shadow-xs shadow-orange-500/50",
+            label: t("status.partially_paid", "Thanh toán một phần"),
+        },
         success: {
             bg: "bg-emerald-50/70 border-emerald-200/50 text-emerald-700",
             dot: "bg-emerald-500 shadow-xs shadow-emerald-500/50 animate-pulse",

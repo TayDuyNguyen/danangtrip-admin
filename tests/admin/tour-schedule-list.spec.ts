@@ -89,6 +89,15 @@ test.describe('Admin Tour Schedule List @P1', () => {
     await expect(listPage.rowByTourName('Tour Hội An cổ kính')).toHaveCount(0);
   });
 
+  /** TC_AD_SCHEDLIST_031 */
+  test('TC_AD_SCHEDLIST_031 search is case-insensitive', async () => {
+    await listPage.search('ba na');
+    await expect(listPage.rowByTourName(mockFeaturedTour.name).first()).toBeVisible({ timeout: 10_000 });
+    await listPage.searchInput.fill('');
+    await listPage.search('BA NA');
+    await expect(listPage.rowByTourName(mockFeaturedTour.name).first()).toBeVisible({ timeout: 10_000 });
+  });
+
   /** TC_AD_SCHEDLIST_007 */
   test('TC_AD_SCHEDLIST_007 filters by tour dropdown', async () => {
     await listPage.selectTourFilter(mockFeaturedTour.name);

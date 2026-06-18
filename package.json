@@ -25,7 +25,10 @@
     "test:admin:tour-schedule-list": "playwright test tests/admin/tour-schedule-list.spec.ts tests/admin/tour-schedule-list-extended.spec.ts tests/api/admin-tour-schedule-list.api.spec.ts --workers=1",
     "test:admin:tour-schedule-create": "playwright test tests/admin/tour-schedule-create.spec.ts tests/admin/tour-schedule-create-extended.spec.ts tests/api/admin-tour-schedule-create.api.spec.ts --workers=1",
     "test:admin:tour-schedule-edit": "playwright test tests/admin/tour-schedule-edit.spec.ts tests/admin/tour-schedule-edit-extended.spec.ts tests/api/admin-tour-schedule-edit.api.spec.ts --workers=1",
+    "test:admin:tour-schedule-detail": "playwright test tests/admin/tour-schedule-detail.spec.ts tests/admin/tour-schedule-detail-extended.spec.ts tests/api/admin-tour-schedule-detail.api.spec.ts --workers=1",
     "test:admin:dashboard": "playwright test tests/admin/dashboard.spec.ts tests/admin/dashboard-auth.spec.ts tests/admin/dashboard-extended.spec.ts tests/admin/dashboard-nav.spec.ts tests/api/admin-dashboard.api.spec.ts --workers=1",
+    "test:admin:booking-list": "playwright test tests/admin/booking-list.spec.ts tests/admin/booking-list-extended.spec.ts tests/admin/booking-list-backlog.spec.ts tests/api/admin-booking-list.api.spec.ts --workers=1",
+    "test:admin:booking-detail": "playwright test tests/admin/booking-detail.spec.ts tests/admin/booking-detail-extended.spec.ts tests/api/admin-booking-detail.api.spec.ts --workers=1",
     "test:api": "playwright test tests/api --workers=1",
     "prepush:check": "node scripts/prepush-check.mjs",
     "prepare": "husky"
