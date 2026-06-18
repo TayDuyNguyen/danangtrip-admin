@@ -111,7 +111,7 @@ const TourTable = ({
         // Tour - flexible
         columnHelper.accessor('name', {
             id: 'name',
-            meta: { width: 'auto' },
+            meta: { width: '350px' },
             header: t('table.header_tour'),
             cell: info => {
                 const tour = info.row.original;
@@ -381,7 +381,7 @@ const TourTable = ({
             </div>
 
             <div className="overflow-x-auto custom-scrollbar-horizontal">
-                <table className="w-full text-left border-collapse table-fixed min-w-[1280px]">
+                <table className="w-full text-left border-collapse table-fixed min-w-[1500px]">
                     <thead className="bg-surface border-b border-[#E2E8F0]">
                         {table.getHeaderGroups().map(headerGroup => (
                             <tr key={headerGroup.id}>

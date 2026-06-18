@@ -207,6 +207,7 @@
             "title": "Departure runs",
             "subtitle": "Real on-sale dates (tour schedule table). This is not the day-by-day “tour itinerary” above.",
             "manage": "Add schedule",
+            "manage_list": "Manage schedules",
             "edit_schedule": "Edit this departure run",
             "empty": "No departure runs yet",
             "load_error": "Could not load schedules",

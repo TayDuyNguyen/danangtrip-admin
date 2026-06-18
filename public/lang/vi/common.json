@@ -45,7 +45,8 @@
         "exporting": "Đang xuất...",
         "processing": "Đang xử lý...",
         "stay": "Ở lại",
-        "leave": "Rời đi"
+        "leave": "Rời đi",
+        "retry": "Thử lại"
     },
     "breadcrumb": {
         "home": "Trang chủ",

@@ -11,6 +11,7 @@
         "total_label": "TỔNG ĐƠN HÀNG",
         "pending_label": "CHỜ XÁC NHẬN",
         "confirmed_label": "ĐÃ XÁC NHẬN",
+        "completed_label": "HOÀN TẤT",
         "cancelled_label": "ĐÃ HỦY"
     },
     "filters": {
@@ -23,7 +24,8 @@
         "to_label": "Đến ngày",
         "button_apply": "Lọc",
         "button_reset": "Đặt lại",
-        "active_filtering": "ĐANG LỌC THEO:"
+        "active_filtering": "ĐANG LỌC THEO:",
+        "schedule_id_label": "Lịch tour ID"
     },
     "status": {
         "pending": "Chờ xác nhận",
@@ -35,7 +37,7 @@
         "pending": "Chờ thanh toán",
         "unpaid": "Chưa thanh toán",
         "paid": "Đã thanh toán",
-        "success": "Thành công",
+        "success": "Đã thanh toán",
         "failed": "Thất bại",
         "refunded": "Hoàn tiền"
     },
@@ -90,7 +92,9 @@
         "cancel_success": "Đã hủy đơn hàng thành công",
         "update_error": "Có lỗi xảy ra khi cập nhật đơn hàng",
         "export_success": "Đang tải file Excel...",
-        "export_error": "Có lỗi xảy ra khi xuất dữ liệu"
+        "export_error": "Có lỗi xảy ra khi xuất dữ liệu",
+        "list_load_error": "Không tải được danh sách đơn hàng",
+        "list_load_error_desc": "Dữ liệu đơn hàng tạm thời không khả dụng. Vui lòng thử lại."
     },
     "detail": {
         "page_title": "Chi tiết Đơn hàng",

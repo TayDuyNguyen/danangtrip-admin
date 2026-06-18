@@ -56,6 +56,7 @@ export interface BookingItem {
 
 export interface BookingListFilters {
     user_id?: number | string;
+    tour_schedule_id?: number | string;
     search?: string;
     status?: BookingStatus | 'all';
     payment_status?: PaymentStatus | 'all';

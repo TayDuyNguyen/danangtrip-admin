@@ -44,6 +44,15 @@ test.describe('Admin Tour List @P1', () => {
     await expect(tourListPage.rowByTourName('Tour Hội An cổ kính')).toHaveCount(0);
   });
 
+  /** TC_AD_TLIST_073 */
+  test('TC_AD_TLIST_073 search is case-insensitive', async () => {
+    await tourListPage.search('ba na');
+    await expect(tourListPage.rowByTourName(mockFeaturedTour.name)).toBeVisible({ timeout: 10_000 });
+    await tourListPage.searchInput.fill('');
+    await tourListPage.search('BA NA');
+    await expect(tourListPage.rowByTourName(mockFeaturedTour.name)).toBeVisible({ timeout: 10_000 });
+  });
+
   /** TC_AD_TLIST_003 */
   test('TC_AD_TLIST_003 filters rows by active status', async () => {
     await tourListPage.selectStatusFilter(copyStatusActive());

@@ -61,6 +61,23 @@ test.describe('GET /admin/users @P1', () => {
     }
   });
 
+  test('filters by q case-insensitively', async ({ request }) => {
+    const baseline = await request.get(`${testEnv.apiBaseUrl}/admin/users?q=staff@danangtrip.vn&per_page=50`, {
+      headers: authHeaders(),
+    });
+    expect(baseline.ok()).toBeTruthy();
+    const baselineBody = await baseline.json();
+    const baselineIds = (baselineBody.data?.data ?? []).map((r: { id: number }) => r.id).sort();
+
+    const upper = await request.get(`${testEnv.apiBaseUrl}/admin/users?q=STAFF@DANANGTRIP.VN&per_page=50`, {
+      headers: authHeaders(),
+    });
+    expect(upper.ok()).toBeTruthy();
+    const upperIds = ((await upper.json()).data?.data ?? []).map((r: { id: number }) => r.id).sort();
+
+    expect(upperIds).toEqual(baselineIds);
+  });
+
   test('filters by role=user', async ({ request }) => {
     const res = await request.get(`${testEnv.apiBaseUrl}/admin/users?role=user`, {
       headers: authHeaders(),

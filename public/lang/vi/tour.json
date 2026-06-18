@@ -207,6 +207,7 @@
             "title": "Các đợt khởi hành",
             "subtitle": "Các ngày bán tour thật (bảng lịch khởi hành). Khác với mục “Lịch trình tour” ở trên (mô tả từng ngày).",
             "manage": "Thêm lịch",
+            "manage_list": "Quản lý lịch",
             "edit_schedule": "Chỉnh sửa đợt khởi hành",
             "empty": "Chưa có đợt khởi hành nào",
             "load_error": "Không tải được lịch",

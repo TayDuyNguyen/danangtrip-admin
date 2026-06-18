@@ -7,6 +7,7 @@ export const ROUTES = {
     TOURS_CATEGORIES: '/admin/tour-categories',
     TOURS_SCHEDULES: '/admin/tours/schedules',
     TOURS_SCHEDULE_CREATE: '/admin/tours/:id/schedules/create',
+    TOURS_SCHEDULE_DETAIL: '/admin/tours/schedules/detail/:id',
     TOURS_SCHEDULE_EDIT: '/admin/tours/schedules/edit/:id',
     LOCATIONS_LIST: '/admin/locations',
     LOCATIONS_CREATE: '/admin/locations/create',

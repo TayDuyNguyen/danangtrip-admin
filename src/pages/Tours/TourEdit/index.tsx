@@ -738,7 +738,18 @@ function EditTour() {
                                 title={t('form.departures.title')}
                                 subtitle={t('form.departures.subtitle')}
                             />
-                            <div className="flex justify-end mb-4">
+                            <div className="flex flex-wrap justify-end gap-2 mb-4">
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        id &&
+                                        navigate(`${ROUTES.TOURS_SCHEDULES}?tour_id=${id}`)
+                                    }
+                                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white text-sm font-bold text-[#0f766e] border border-[#ccfbf1] hover:bg-[#f0fdfa] transition-colors"
+                                >
+                                    <CalendarPlus className="w-4 h-4" aria-hidden />
+                                    {t('form.departures.manage_list')}
+                                </button>
                                 <button
                                     type="button"
                                     onClick={() =>

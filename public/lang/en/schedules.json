@@ -44,7 +44,9 @@
         "delete_warning_hint": "This action cannot be undone"
     },
     "messages": {
-        "fetch_error": "Could not load schedule information"
+        "fetch_error": "Could not load schedule information",
+        "not_found": "Schedule not found",
+        "server_error": "Could not load schedule. Please try again."
     },
     "filters": {
         "search_label": "Search",
@@ -61,7 +63,11 @@
         "total": "Total schedules",
         "available": "Active",
         "full": "Sold out",
-        "cancelled": "Cancelled"
+        "cancelled": "Cancelled",
+        "title": "SCHEDULE STATS",
+        "booked": "BOOKED",
+        "slots_available": "AVAILABLE",
+        "max": "MAX"
     },
     "actions": {
         "add_new": "Add schedule",
@@ -69,6 +75,9 @@
         "view_tour": "View tour",
         "edit_tour": "Edit tour",
         "edit_schedule": "Update schedule",
+        "view_schedule": "View schedule detail",
+        "view_bookings": "View bookings ({{count}})",
+        "view_all_bookings": "View all bookings",
         "save_schedule": "Save schedule",
         "delete_this": "Delete this schedule",
         "bulk_activate": "Activate schedules",
@@ -99,6 +108,13 @@
         "body": "The schedule on {{date}} for tour “{{tour}}” will be permanently removed.",
         "warning": "If there are bookings for this schedule, cancel orders before deleting.",
         "confirm": "Delete schedule"
+    },
+    "detail": {
+        "title": "Schedule detail",
+        "schedule_id": "Schedule ID",
+        "summary": "Summary",
+        "prices": "Pricing",
+        "operational": "Operational"
     },
     "no_data": {
         "title": "No schedules found",

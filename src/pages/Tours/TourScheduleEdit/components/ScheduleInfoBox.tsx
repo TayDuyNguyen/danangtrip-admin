@@ -2,16 +2,18 @@ import { useTranslation } from 'react-i18next';
 import Badge from '@/components/ui/Badge';
 import type { Schedule } from '@/types/schedule';
 import { formatAdminShortDate } from '@/utils/dateDisplay';
+import { resolveScheduleDisplayStatus } from '@/utils/scheduleDisplay';
 
 interface Props {
     schedule: Schedule;
 }
 
 function statusBadgeProps(schedule: Schedule, t: (key: string) => string) {
-    if (schedule.status === 'CANCELLED') {
+    const displayStatus = resolveScheduleDisplayStatus(schedule);
+    if (displayStatus === 'CANCELLED') {
         return { variant: 'neutral' as const, label: t('schedules:status.cancelled') };
     }
-    if (schedule.status === 'FULL') {
+    if (displayStatus === 'FULL') {
         return { variant: 'warning' as const, label: t('schedules:status.full') };
     }
     return { variant: 'success' as const, label: t('schedules:status.available') };

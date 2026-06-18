@@ -44,6 +44,15 @@ test.describe('Admin User List — Core @P1', () => {
     await expect(userListPage.rowByEmail(mockCustomerUser.email)).toHaveCount(0);
   });
 
+  /** TC_AD_ULIST_060 */
+  test('TC_AD_ULIST_060 search is case-insensitive', async () => {
+    await userListPage.search('STAFF@DANANGTRIP.VN');
+    await expect(userListPage.rowByEmail(mockStaffLikeUser.email)).toBeVisible({ timeout: 10_000 });
+    await userListPage.searchInput.fill('');
+    await userListPage.search('le thi thanh thao');
+    await expect(userListPage.rowByEmail(mockStaffLikeUser.email)).toBeVisible({ timeout: 10_000 });
+  });
+
   /** TC_AD_ULIST_003 */
   test('TC_AD_ULIST_003 filters rows by USER role', async () => {
     await userListPage.selectRoleFilter('USER');

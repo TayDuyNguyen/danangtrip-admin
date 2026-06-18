@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { clsx } from 'clsx';
-import { ChevronLeft, ChevronRight, Trash2, ImageOff, ArrowUpDown, RefreshCw, Plus, Pencil } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Trash2, ImageOff, ArrowUpDown, RefreshCw, Plus, Pencil, Eye } from 'lucide-react';
 
 import type { Schedule } from '@/types/schedule';
 import { ScheduleBookingAvailability, ScheduleStatus } from '@/types/schedule';
@@ -100,6 +100,9 @@ const TourSchedulesTable = ({
 
     const toScheduleEdit = (id: number | string) =>
         ROUTES.TOURS_SCHEDULE_EDIT.replace(':id', String(id));
+
+    const toScheduleDetail = (id: number | string) =>
+        ROUTES.TOURS_SCHEDULE_DETAIL.replace(':id', String(id));
 
     return (
         <div className="bg-white border border-[#E2E8F0] rounded-2xl overflow-hidden shadow-sm">
@@ -393,6 +396,15 @@ const TourSchedulesTable = ({
                                                     className="w-7 h-7 flex items-center justify-center rounded-md bg-white border border-[#E2E8F0] text-[#64748B] hover:text-[#14b8a6] hover:border-[#14b8a6] transition-colors"
                                                 >
                                                     <Plus className="w-4 h-4" />
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    title={t('schedules:actions.view_schedule')}
+                                                    aria-label={t('schedules:actions.view_schedule')}
+                                                    onClick={() => navigate(toScheduleDetail(row.id))}
+                                                    className="w-7 h-7 flex items-center justify-center rounded-md bg-white border border-[#E2E8F0] text-[#64748B] hover:text-[#14b8a6] hover:border-[#14b8a6] transition-colors"
+                                                >
+                                                    <Eye className="w-4 h-4" />
                                                 </button>
                                                 <button
                                                     type="button"

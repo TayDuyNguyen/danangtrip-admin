@@ -120,7 +120,10 @@ export const PaymentTable = ({
                         ) : payments.length > 0 ? (
                             payments.map((payment) => {
                                 const isSuccess = payment.status === "success";
-                                const showRefundAction = isSuccess;
+                                const showRefundAction =
+                                    isSuccess &&
+                                    (!payment.latestRefundRequest ||
+                                        payment.latestRefundRequest.status === "pending");
 
                                 return (
                                     <tr
@@ -143,13 +146,20 @@ export const PaymentTable = ({
                                         {/* Booking Code Link */}
                                         <td className="py-4 px-6">
                                             {payment.bookingCode && payment.bookingId ? (
-                                                <Link
-                                                    to={ROUTES.BOOKINGS_DETAIL.replace(':id', String(payment.bookingId))}
-                                                    className="inline-flex items-center gap-1 text-[#14B8A6] hover:text-[#0f766e] font-bold group"
-                                                >
-                                                    <span>{payment.bookingCode}</span>
-                                                    <ExternalLink size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" />
-                                                </Link>
+                                                <div className="space-y-1">
+                                                    <Link
+                                                        to={ROUTES.BOOKINGS_DETAIL.replace(':id', String(payment.bookingId))}
+                                                        className="inline-flex items-center gap-1 text-[#14B8A6] hover:text-[#0f766e] font-bold group"
+                                                    >
+                                                        <span>{payment.bookingCode}</span>
+                                                        <ExternalLink size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+                                                    </Link>
+                                                    {payment.latestRefundRequest?.status === "pending" && (
+                                                        <span className="block w-fit rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-[10px] font-bold text-amber-700">
+                                                            Chờ hoàn {formatCurrency(payment.latestRefundRequest.approved_amount)}
+                                                        </span>
+                                                    )}
+                                                </div>
                                             ) : payment.bookingCode ? (
                                                 <span className="text-slate-900 font-bold">{payment.bookingCode}</span>
                                             ) : (
@@ -184,9 +194,24 @@ export const PaymentTable = ({
 
                                         {/* Amount */}
                                         <td className="py-4 px-6">
-                                            <span className="text-slate-950 font-black">
+                                            <span className="block text-slate-950 font-black">
                                                 {formatCurrency(payment.amount)}
                                             </span>
+                                            {payment.receivedAmount > 0 && (
+                                                <span className="mt-1 block text-[11px] text-emerald-600">
+                                                    Đã nhận: {formatCurrency(payment.receivedAmount)}
+                                                </span>
+                                            )}
+                                            {payment.shortAmount > 0 && (
+                                                <span className="block text-[11px] text-orange-600">
+                                                    Còn thiếu: {formatCurrency(payment.shortAmount)}
+                                                </span>
+                                            )}
+                                            {payment.excessAmount > 0 && (
+                                                <span className="block text-[11px] text-rose-600">
+                                                    Chuyển dư: {formatCurrency(payment.excessAmount)}
+                                                </span>
+                                            )}
                                         </td>
 
                                         {/* Gateway */}
@@ -222,7 +247,11 @@ export const PaymentTable = ({
                                                             className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg bg-rose-50 border border-rose-100 text-rose-600 disabled:opacity-50 disabled:bg-slate-50 disabled:border-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed hover:bg-rose-600 hover:text-white transition-all duration-200 shadow-xs shadow-rose-100/50 hover:shadow-lg hover:shadow-rose-500/20"
                                                         >
                                                             <RefreshCw size={12} />
-                                                            <span>{t("action.refund", "Hoàn tiền")}</span>
+                                                            <span>
+                                                                {payment.latestRefundRequest
+                                                                    ? "Xử lý hoàn"
+                                                                    : t("action.refund", "Hoàn tiền")}
+                                                            </span>
                                                         </button>
 
                                                         {/* Tooltip for Staff */}

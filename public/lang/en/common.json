@@ -45,7 +45,8 @@
         "exporting": "Exporting...",
         "processing": "Processing...",
         "stay": "Stay",
-        "leave": "Leave"
+        "leave": "Leave",
+        "retry": "Retry"
     },
     "breadcrumb": {
         "home": "Home",

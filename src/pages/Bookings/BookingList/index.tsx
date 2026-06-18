@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
+import { RefreshCw } from 'lucide-react';
 
 import { 
     useAdminBookingsQuery, 
@@ -12,23 +13,42 @@ import type {
     BookingListFilters, 
     BookingItem 
 } from '@/dataHelper/booking.dataHelper';
+import EmptyState from '@/components/common/EmptyState';
 
 import BookingHeader from './components/BookingHeader';
 import BookingStats from './components/BookingStats';
 import BookingFilter from './components/BookingFilter';
 import BookingTable from './components/BookingTable';
 import BookingCancelDialog from './components/BookingCancelDialog';
-import BookingDetailDialog from './components/BookingDetailDialog';
 import BookingConfirmPaymentDialog from './components/BookingConfirmPaymentDialog';
 
+const buildSearchParams = (filters: BookingListFilters) => {
+    const newParams = new URLSearchParams();
+
+    if (filters.status && filters.status !== 'all') {
+        newParams.set('status', filters.status);
+    }
+    if (filters.payment_status && filters.payment_status !== 'all') {
+        newParams.set('payment_status', filters.payment_status);
+    }
+    if (filters.user_id) {
+        newParams.set('user_id', String(filters.user_id));
+    }
+    if (filters.tour_schedule_id) {
+        newParams.set('tour_schedule_id', String(filters.tour_schedule_id));
+    }
+
+    return newParams;
+};
+
 const BookingList = () => {
-    const { t } = useTranslation('booking');
+    const { t } = useTranslation(['booking', 'common']);
     const [searchParams, setSearchParams] = useSearchParams();
     const userId = searchParams.get('user_id') || undefined;
+    const tourScheduleId = searchParams.get('tour_schedule_id') || undefined;
     const initialStatus = (searchParams.get('status') || 'all') as BookingListFilters['status'];
     const initialPaymentStatus = (searchParams.get('payment_status') || 'all') as BookingListFilters['payment_status'];
     
-    // State
     const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(10);
     const [filters, setFilters] = useState<BookingListFilters>({
@@ -36,6 +56,7 @@ const BookingList = () => {
         status: initialStatus,
         payment_status: initialPaymentStatus,
         user_id: userId,
+        tour_schedule_id: tourScheduleId,
         date_from: '',
         date_to: '',
         sort: 'booked_at',
@@ -44,19 +65,20 @@ const BookingList = () => {
 
     const [cancelConfig, setCancelConfig] = useState<BookingItem | null>(null);
     const [confirmPaymentConfig, setConfirmPaymentConfig] = useState<BookingItem | null>(null);
-    const [detailConfig, setDetailConfig] = useState<BookingItem | null>(null);
+
     const activeFilters: BookingListFilters = {
         ...filters,
         status: (searchParams.get('status') || filters.status || 'all') as BookingListFilters['status'],
         payment_status: (searchParams.get('payment_status') || filters.payment_status || 'all') as BookingListFilters['payment_status'],
         user_id: userId,
+        tour_schedule_id: tourScheduleId,
     };
 
-    // Queries
     const { 
         data: listData, 
         isLoading: isListLoading,
         isFetching: isListFetching,
+        isError: isListError,
         refetch: refetchList,
     } = useAdminBookingsQuery(activeFilters, page, limit);
     
@@ -71,7 +93,6 @@ const BookingList = () => {
         date_to: filters.date_to
     });
 
-    // Mutations
     const { 
         updateStatusMutation, 
         confirmPaymentMutation,
@@ -82,19 +103,14 @@ const BookingList = () => {
     const total = listData?.meta.total || 0;
 
     const handleFilterChange = (newFilters: BookingListFilters) => {
-        const newParams = new URLSearchParams();
-        if (newFilters.status && newFilters.status !== 'all') {
-            newParams.set('status', newFilters.status);
-        }
-        if (newFilters.payment_status && newFilters.payment_status !== 'all') {
-            newParams.set('payment_status', newFilters.payment_status);
-        }
-        if (newFilters.user_id) {
-            newParams.set('user_id', String(newFilters.user_id));
-        }
-        setSearchParams(newParams);
+        const resolved: BookingListFilters = {
+            ...newFilters,
+            user_id: newFilters.user_id !== undefined ? newFilters.user_id : userId,
+            tour_schedule_id: newFilters.tour_schedule_id !== undefined ? newFilters.tour_schedule_id : tourScheduleId,
+        };
 
-        setFilters(newFilters);
+        setSearchParams(buildSearchParams(resolved));
+        setFilters(resolved);
         setPage(1);
     };
 
@@ -102,17 +118,13 @@ const BookingList = () => {
         updateStatusMutation.mutate(
             { id, status: 'confirmed' },
             {
-                onSuccess: () => {
-                    toast.success(t('messages.confirm_success'));
-                    setDetailConfig((current) => current?.id === id ? { ...current, status: 'confirmed' } : current);
-                },
-                onError: () => toast.error(t('messages.update_error'))
+                onSuccess: () => toast.success(t('booking:messages.confirm_success')),
+                onError: () => toast.error(t('booking:messages.update_error'))
             }
         );
     };
 
     const handleConfirmPaymentClick = (booking: BookingItem) => {
-        setDetailConfig(null);
         setConfirmPaymentConfig(booking);
     };
 
@@ -121,22 +133,17 @@ const BookingList = () => {
 
         confirmPaymentMutation.mutate(confirmPaymentConfig.id, {
             onSuccess: () => {
-                toast.success(t('messages.confirm_payment_success', { defaultValue: 'Đã xác nhận thanh toán thành công' }));
-                setDetailConfig((current) => current?.id === confirmPaymentConfig.id 
-                    ? { ...current, paymentStatus: 'success', status: current.status === 'pending' ? 'confirmed' : current.status } 
-                    : current
-                );
+                toast.success(t('booking:messages.confirm_payment_success', { defaultValue: 'Đã xác nhận thanh toán thành công' }));
                 setConfirmPaymentConfig(null);
             },
             onError: () => {
-                toast.error(t('messages.update_error'));
+                toast.error(t('booking:messages.update_error'));
                 setConfirmPaymentConfig(null);
             }
         });
     };
 
     const handleCancelClick = (booking: BookingItem) => {
-        setDetailConfig(null);
         setCancelConfig(booking);
     };
 
@@ -147,13 +154,10 @@ const BookingList = () => {
             { id: cancelConfig.id, status: 'cancelled', reason },
             {
                 onSuccess: () => {
-                    toast.success(t('messages.cancel_success'));
-                    setDetailConfig((current) => current?.id === cancelConfig.id
-                        ? { ...current, status: 'cancelled', cancellationReason: reason }
-                        : current);
+                    toast.success(t('booking:messages.cancel_success'));
                     setCancelConfig(null);
                 },
-                onError: () => toast.error(t('messages.update_error'))
+                onError: () => toast.error(t('booking:messages.update_error'))
             }
         );
     };
@@ -162,8 +166,8 @@ const BookingList = () => {
         exportMutation.mutate(
             { ...activeFilters, fallbackFilename: `bookings_export_${new Date().getTime()}.xlsx` },
             {
-                onSuccess: () => toast.success(t('messages.export_success')),
-                onError: () => toast.error(t('messages.export_error'))
+                onSuccess: () => toast.success(t('booking:messages.export_success')),
+                onError: () => toast.error(t('booking:messages.export_error'))
             }
         );
     };
@@ -186,34 +190,42 @@ const BookingList = () => {
                 onFilterChange={handleFilterChange}
             />
 
-            <BookingTable 
-                data={bookings}
-                isLoading={isListLoading && !listData}
-                isRefreshing={isListFetching && !isListLoading}
-                total={total}
-                page={page}
-                limit={limit}
-                onPageChange={setPage}
-                onLimitChange={setLimit}
-                onRefresh={refetchList}
-                onConfirm={handleConfirmBooking}
-                onConfirmPayment={handleConfirmPaymentClick}
-                onCancel={handleCancelClick}
-                sorting={{ sortBy: filters.sort || 'booked_at', sortOrder: filters.order || 'desc' }}
-                onSort={(field) => {
-                    const order = filters.sort === field && filters.order === 'desc' ? 'asc' : 'desc';
-                    handleFilterChange({ ...filters, sort: field, order });
-                }}
-            />
-
-            <BookingDetailDialog
-                isOpen={!!detailConfig}
-                onClose={() => setDetailConfig(null)}
-                booking={detailConfig}
-                onConfirm={handleConfirmBooking}
-                onConfirmPayment={handleConfirmPaymentClick}
-                onCancel={handleCancelClick}
-            />
+            {isListError ? (
+                <div className="bg-white border border-[#E2E8F0] rounded-2xl p-10 flex flex-col items-center text-center">
+                    <EmptyState
+                        title={t('booking:messages.list_load_error')}
+                        description={t('booking:messages.list_load_error_desc')}
+                    />
+                    <button
+                        type="button"
+                        onClick={() => void refetchList()}
+                        className="mt-2 px-6 py-2.5 bg-[#14b8a6] text-white rounded-xl text-[13px] font-bold hover:bg-[#0f766e] transition-colors inline-flex items-center gap-2"
+                    >
+                        <RefreshCw className="w-4 h-4" />
+                        {t('common:actions.retry', 'Thử lại')}
+                    </button>
+                </div>
+            ) : (
+                <BookingTable 
+                    data={bookings}
+                    isLoading={isListLoading && !listData}
+                    isRefreshing={isListFetching && !isListLoading}
+                    total={total}
+                    page={page}
+                    limit={limit}
+                    onPageChange={setPage}
+                    onLimitChange={setLimit}
+                    onRefresh={refetchList}
+                    onConfirm={handleConfirmBooking}
+                    onConfirmPayment={handleConfirmPaymentClick}
+                    onCancel={handleCancelClick}
+                    sorting={{ sortBy: filters.sort || 'booked_at', sortOrder: filters.order || 'desc' }}
+                    onSort={(field) => {
+                        const order = filters.sort === field && filters.order === 'desc' ? 'asc' : 'desc';
+                        handleFilterChange({ ...filters, sort: field, order });
+                    }}
+                />
+            )}
 
             <BookingConfirmPaymentDialog
                 isOpen={!!confirmPaymentConfig}
@@ -229,6 +241,7 @@ const BookingList = () => {
                 onClose={() => setCancelConfig(null)}
                 onConfirm={handleConfirmCancel}
                 bookingCode={cancelConfig?.code || ''}
+                bookingId={cancelConfig?.id || ''}
                 customerName={cancelConfig?.customer.name || ''}
                 isSubmitting={updateStatusMutation.isPending}
             />

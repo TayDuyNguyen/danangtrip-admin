@@ -11,6 +11,7 @@
         "total_label": "TOTAL BOOKINGS",
         "pending_label": "PENDING CONFIRMATION",
         "confirmed_label": "CONFIRMED",
+        "completed_label": "COMPLETED",
         "cancelled_label": "CANCELLED"
     },
     "filters": {
@@ -23,7 +24,8 @@
         "to_label": "To Date",
         "button_apply": "Filter",
         "button_reset": "Reset",
-        "active_filtering": "ACTIVE FILTERS:"
+        "active_filtering": "ACTIVE FILTERS:",
+        "schedule_id_label": "Schedule ID"
     },
     "status": {
         "pending": "Pending",
@@ -35,7 +37,7 @@
         "pending": "Pending",
         "unpaid": "Unpaid",
         "paid": "Paid",
-        "success": "Success",
+        "success": "Paid",
         "failed": "Failed",
         "refunded": "Refunded"
     },
@@ -90,7 +92,9 @@
         "cancel_success": "Booking cancelled successfully",
         "update_error": "An error occurred while updating the booking",
         "export_success": "Excel file is downloading...",
-        "export_error": "An error occurred while exporting data"
+        "export_error": "An error occurred while exporting data",
+        "list_load_error": "Failed to load booking list",
+        "list_load_error_desc": "Booking data is temporarily unavailable. Please try again."
     },
     "detail": {
         "page_title": "Booking Details",

@@ -302,6 +302,10 @@ export function setScheduleDetailFail(id: number, status = 500, message = 'Sched
   scheduleDetailFailMessage = message;
 }
 
+export function clearScheduleDetailFail() {
+  scheduleDetailFailForId = null;
+}
+
 export function setScheduleDetailDelay(ms: number) {
   scheduleDetailDelayMs = ms;
 }

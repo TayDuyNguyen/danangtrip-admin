@@ -67,6 +67,28 @@ test.describe('GET /admin/tour-schedules @P1', () => {
       expect(rows.every((r: { tour_id: number }) => r.tour_id === 1)).toBe(true);
     }
   });
+
+  test('API_SCHEDLIST_007 search q is case-insensitive on tour name', async ({ request }) => {
+    test.skip(!apiAvailable, 'API not available');
+    const baseline = await request.get(`${testEnv.apiBaseUrl}/admin/tour-schedules?q=Ba%20Na&per_page=50`, {
+      headers: authHeaders(),
+    });
+    expect(baseline.status()).toBe(200);
+    const baselineBody = await baseline.json();
+    const baselineRows = baselineBody.data?.data ?? baselineBody.data ?? [];
+    const baselineIds = baselineRows.map((r: { id: number }) => r.id).sort();
+
+    const lower = await request.get(`${testEnv.apiBaseUrl}/admin/tour-schedules?q=ba%20na&per_page=50`, {
+      headers: authHeaders(),
+    });
+    expect(lower.status()).toBe(200);
+    const lowerBody = await lower.json();
+    const lowerIds = ((lowerBody.data?.data ?? lowerBody.data ?? []) as { id: number }[])
+      .map((r) => r.id)
+      .sort();
+
+    expect(lowerIds).toEqual(baselineIds);
+  });
 });
 
 test.describe('GET /admin/tour-schedules/status-counts @P2', () => {

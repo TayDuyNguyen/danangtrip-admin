@@ -183,6 +183,14 @@ export class TourScheduleListPage {
     return row.locator('button[aria-label*="Chỉnh sửa"], button[title*="Chỉnh sửa"], button[aria-label*="Edit"], button[title*="Edit"]').first();
   }
 
+  viewButtonInRow(row: Locator): Locator {
+    return row
+      .locator(
+        'button[aria-label*="Xem chi tiết"], button[title*="Xem chi tiết"], button[aria-label*="View schedule"], button[title*="View schedule"]'
+      )
+      .first();
+  }
+
   deleteButtonInRow(row: Locator): Locator {
     return row.locator('button[aria-label*="Xóa"], button[title*="Xóa"], button[aria-label*="Remove"], button[title*="Remove"], button[aria-label*="Delete"], button[title*="Delete"]').first();
   }

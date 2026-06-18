@@ -19,6 +19,7 @@ import { Button } from '@/components/ui/Button';
 import { ROUTES } from '@/routes/routes';
 import LoadingReact from '@/components/loading';
 import { cn } from '@/utils';
+import { isScheduleNotFoundError } from '@/utils/scheduleQueryError';
 
 type ScheduleLocationState = { fromTourEdit?: boolean };
 
@@ -44,6 +45,7 @@ const TourScheduleEdit = () => {
         data: schedule,
         isLoading: isLoadingSchedule,
         isError: isScheduleError,
+        error: scheduleError,
         refetch: refetchSchedule,
     } = useSchedule(id);
     const {
@@ -210,15 +212,23 @@ const TourScheduleEdit = () => {
     }
 
     if (isScheduleError || !schedule) {
+        const notFound = isScheduleNotFoundError(scheduleError);
         return (
             <div className="flex min-h-[400px] w-full flex-col items-center justify-center gap-4 p-6">
                 <p className="text-center text-sm font-semibold text-red-700" role="alert">
-                    {t('schedules:messages.fetch_error')}
+                    {notFound ? t('schedules:messages.not_found') : t('schedules:messages.server_error')}
                 </p>
-                <Button variant="outline" onClick={() => refetchSchedule()}>
-                    <i className="ri-refresh-line mr-2" aria-hidden />
-                    {t('tour:form.departures.retry')}
-                </Button>
+                <div className="flex flex-wrap items-center justify-center gap-3">
+                    {!notFound ? (
+                        <Button variant="outline" onClick={() => refetchSchedule()}>
+                            <i className="ri-refresh-line mr-2" aria-hidden />
+                            {t('tour:form.departures.retry')}
+                        </Button>
+                    ) : null}
+                    <Button variant="outline" onClick={() => navigate(schedulesListHref)}>
+                        {t('common:actions.back')}
+                    </Button>
+                </div>
             </div>
         );
     }

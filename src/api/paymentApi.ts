@@ -15,7 +15,15 @@ export const paymentApi = {
     getDetail: (id: number | string): Promise<ApiResponse<AdminRawPaymentItem>> =>
         axiosClient.get(API_ENDPOINTS.PAYMENTS.DETAIL(id)),
 
-    refund: (id: number | string, data: { refund_reason: string }): Promise<ApiResponse<AdminRawPaymentItem>> =>
+    refund: (id: number | string, data: {
+        refund_reason: string;
+        refund_bank_code: string;
+        refund_account_no: string;
+        refund_account_name: string;
+        transfer_reference: string;
+        approved_amount?: number;
+        evidence_url?: string;
+    }): Promise<ApiResponse<AdminRawPaymentItem>> =>
         axiosClient.post(API_ENDPOINTS.PAYMENTS.REFUND(id), data),
 
     export: (params: PaymentListFilters): Promise<AxiosResponse<Blob>> =>

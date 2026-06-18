@@ -240,7 +240,7 @@ export const ScheduleForm = ({ isEdit = false, originalStartDate }: ScheduleForm
                     </div>
                     <div className="relative flex justify-center">
                         <span className="bg-white px-4 text-[11px] font-bold uppercase tracking-[0.2em] text-slate-300">
-                            {t('schedules:fields.price_follows_tour')} (Tùy chọn)
+                            {t('schedules:detail.prices')}
                         </span>
                     </div>
                 </div>

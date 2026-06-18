@@ -102,20 +102,20 @@ export const BookingTable = ({
             </div>
 
             <div className="overflow-x-auto [scrollbar-width:thin] [&::-webkit-scrollbar]:h-1.5">
-                <table className="w-full text-left border-collapse min-w-[1000px] table-fixed">
+                <table className="w-full text-left border-collapse min-w-[1280px]">
                     <thead>
                         <tr className="bg-surface border-b border-[#E2E8F0] select-none text-[11px] uppercase font-bold text-text-secondary tracking-wider">
-                            <th className="px-6 py-4 w-36 text-left">
+                            <th className="px-6 py-4 w-40 whitespace-nowrap text-left">
                                 {t('labels.booking_code')}
                             </th>
-                            <th className="px-6 py-4 text-left">
+                            <th className="px-6 py-4 min-w-[200px] text-left">
                                 {t('labels.customer')}
                             </th>
-                            <th className="px-6 py-4 text-left">
+                            <th className="px-6 py-4 min-w-[220px] text-left">
                                 {t('labels.tour_summary')}
                             </th>
                             <th 
-                                className="px-6 py-4 w-72 cursor-pointer hover:text-slate-900 transition-colors text-left"
+                                className="px-6 py-4 min-w-[240px] whitespace-nowrap cursor-pointer hover:text-slate-900 transition-colors text-left"
                                 onClick={() => handleSortClick('booked_at')}
                             >
                                 <div className="flex items-center gap-1">
@@ -128,22 +128,22 @@ export const BookingTable = ({
                                 </div>
                             </th>
                             <th 
-                                className="px-6 py-4 w-36 cursor-pointer hover:text-slate-900 transition-colors text-left"
-                                onClick={() => handleSortClick('amount')}
+                                className="px-6 py-4 w-36 whitespace-nowrap cursor-pointer hover:text-slate-900 transition-colors text-left"
+                                onClick={() => handleSortClick('total_amount')}
                             >
                                 <div className="flex items-center gap-1">
                                     {t('labels.total_amount')}
-                                    {sorting.sortBy === 'amount' ? (
+                                    {sorting.sortBy === 'total_amount' ? (
                                         sorting.sortOrder === 'asc' ? <ChevronUp size={14} className="text-[#14B8A6] shrink-0" /> : <ChevronDown size={14} className="text-[#14B8A6] shrink-0" />
                                     ) : (
                                         <ArrowUpDown size={13} className="text-slate-400 shrink-0" />
                                     )}
                                 </div>
                             </th>
-                            <th className="px-6 py-4 w-48 text-left">
+                            <th className="px-6 py-4 w-44 text-left">
                                 {t('labels.booking_status')}
                             </th>
-                            <th className="px-6 py-4 w-36 text-right">
+                            <th className="px-6 py-4 min-w-[168px] text-right">
                                 {t('table.col_actions')}
                             </th>
                         </tr>
@@ -165,14 +165,14 @@ export const BookingTable = ({
                                     )}
                                 >
                                     {/* Code */}
-                                    <td className="px-6 py-4">
+                                    <td className="px-6 py-4 align-middle">
                                         <span className="text-[13px] font-black text-[#14b8a6] font-mono tracking-tight bg-[#14b8a6]/5 px-2.5 py-1 rounded-lg">
                                             {booking.code}
                                         </span>
                                     </td>
 
                                     {/* Customer info */}
-                                    <td className="px-6 py-4">
+                                    <td className="px-6 py-4 align-middle">
                                         <div className="flex items-center gap-3">
                                             <div className="w-8 h-8 rounded-full border-2 border-slate-100 overflow-hidden shrink-0">
                                                 {booking.customer.avatar ? (
@@ -195,7 +195,7 @@ export const BookingTable = ({
                                     </td>
 
                                     {/* Tour info */}
-                                    <td className="px-6 py-4">
+                                    <td className="px-6 py-4 align-middle">
                                         <div className="flex items-center gap-3">
                                             <div className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100 overflow-hidden flex items-center justify-center shrink-0">
                                                 {booking.tour.thumbnail ? (
@@ -216,7 +216,7 @@ export const BookingTable = ({
                                     </td>
 
                                     {/* Dates */}
-                                    <td className="px-6 py-4">
+                                    <td className="px-6 py-4 align-middle">
                                         <div className="flex flex-col gap-1 text-[11px] font-bold whitespace-nowrap">
                                             <div className="flex items-center gap-1.5 text-slate-400">
                                                 <Calendar size={12} className="shrink-0" />
@@ -232,14 +232,14 @@ export const BookingTable = ({
                                     </td>
 
                                     {/* Amount */}
-                                    <td className="px-6 py-4">
+                                    <td className="px-6 py-4 align-middle">
                                         <span className="text-sm font-black text-[#14b8a6] tracking-tight">
                                             {booking.amount.toLocaleString(i18n.language === 'vi' ? 'vi-VN' : 'en-US')} {t('common:currency')}
                                         </span>
                                     </td>
 
                                     {/* Status */}
-                                    <td className="px-6 py-4">
+                                    <td className="px-6 py-4 align-middle">
                                         <div className="flex flex-col gap-1 w-fit">
                                             <BookingStatusBadge status={booking.status} className="h-5" />
                                             <PaymentStatusBadge status={booking.paymentStatus} className="h-5" />

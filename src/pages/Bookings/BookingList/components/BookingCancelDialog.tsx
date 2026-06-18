@@ -4,12 +4,14 @@ import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { AlertCircle, Info, X } from 'lucide-react';
 import { cancelBookingSchema, type CancelBookingFormValues } from '@/validations';
+import { useAdminRefundPreviewQuery } from '@/hooks/useBookingQueries';
 
 interface Props {
     isOpen: boolean;
     onClose: () => void;
     onConfirm: (reason: string) => void;
     bookingCode: string;
+    bookingId: number | string;
     customerName: string;
     isSubmitting?: boolean;
 }
@@ -23,10 +25,13 @@ const BookingCancelDialog = ({
     onClose,
     onConfirm,
     bookingCode,
+    bookingId,
     customerName,
     isSubmitting,
 }: Props) => {
     const { t } = useTranslation('booking');
+    const { data: refundPreview, isLoading: isLoadingRefund } =
+        useAdminRefundPreviewQuery(bookingId, isOpen);
     const {
         register,
         handleSubmit,
@@ -92,6 +97,28 @@ const BookingCancelDialog = ({
                 </div>
 
                 <div className="space-y-6 p-8 pt-6">
+                    <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm">
+                        {isLoadingRefund ? (
+                            <p className="text-slate-500">Đang tính khoản hoàn theo chính sách...</p>
+                        ) : refundPreview ? (
+                            <div className="space-y-2">
+                                <div className="flex justify-between">
+                                    <span>Đã thanh toán</span>
+                                    <strong>{Number(refundPreview.paid_amount).toLocaleString('vi-VN')}đ</strong>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span>Tỷ lệ hoàn</span>
+                                    <strong>{refundPreview.refund_percent}%</strong>
+                                </div>
+                                <div className="flex justify-between text-emerald-700">
+                                    <span>Số tiền tạo yêu cầu hoàn</span>
+                                    <strong>{Number(refundPreview.refund_amount).toLocaleString('vi-VN')}đ</strong>
+                                </div>
+                            </div>
+                        ) : (
+                            <p className="text-red-500">Không thể tính khoản hoàn. Không nên hủy đơn lúc này.</p>
+                        )}
+                    </div>
                     <div>
                         <label
                             htmlFor="booking-cancel-reason"
@@ -131,7 +158,7 @@ const BookingCancelDialog = ({
                     </button>
                     <button
                         type="submit"
-                        disabled={isSubmitting}
+                        disabled={isSubmitting || isLoadingRefund || !refundPreview}
                         className="flex-1 rounded-2xl bg-red-500 py-3.5 text-[14px] font-black text-white shadow-lg shadow-red-500/20 transition-all active:scale-95 hover:bg-red-600 disabled:opacity-50"
                     >
                         {isSubmitting ? t('common:actions.processing') : t('dialog.confirm_cancel')}
