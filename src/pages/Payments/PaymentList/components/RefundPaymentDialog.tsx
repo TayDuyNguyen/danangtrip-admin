@@ -119,7 +119,7 @@ export const RefundPaymentDialog = ({
     const accountName = refundRequest?.account_name;
     const needsBankDetails = !bankCode || !accountNo || !accountName;
     const qrUrl = bankCode && accountNo && accountName
-        ? `https://img.vietqr.io/image/${encodeURIComponent(bankCode)}-${encodeURIComponent(accountNo)}-compact2.png?amount=${refundAmount}&addInfo=${encodeURIComponent(`Hoan tien DaNangTrip ${activePayment.bookingCode}`)}&accountName=${encodeURIComponent(accountName)}`
+        ? `https://img.vietqr.io/image/${encodeURIComponent(bankCode)}-${encodeURIComponent(accountNo)}-print.png?amount=${refundAmount}&addInfo=${encodeURIComponent(`Hoan tien DaNangTrip ${activePayment.bookingCode}`)}&accountName=${encodeURIComponent(accountName)}`
         : null;
 
     return (
@@ -131,7 +131,7 @@ export const RefundPaymentDialog = ({
             ></div>
 
             {/* Modal Box */}
-            <div className="relative max-h-[92vh] w-full max-w-2xl overflow-y-auto bg-white border border-slate-100 rounded-3xl p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200 z-10">
+            <div className="relative z-10 max-h-[92vh] w-full max-w-lg overflow-y-auto rounded-3xl border border-slate-100 bg-white p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200 sm:max-w-xl">
                 {/* Close Button */}
                 <button
                     onClick={onClose}
@@ -180,14 +180,25 @@ export const RefundPaymentDialog = ({
                 </div>
 
                 {qrUrl && (
-                    <div className="mb-5 grid grid-cols-[150px_1fr] gap-4 rounded-2xl border border-teal-100 bg-teal-50/40 p-4">
-                        <img src={qrUrl} alt="VietQR hoàn tiền" className="h-[150px] w-[150px] rounded-xl bg-white object-contain" />
-                        <div className="space-y-2 text-xs">
+                    <div className="mb-6 rounded-2xl border border-teal-100 bg-teal-50/40 p-5">
+                        <p className="mb-4 text-center text-sm font-bold text-teal-900">
+                            Quét mã VietQR để chuyển khoản hoàn tiền
+                        </p>
+                        <div className="flex justify-center">
+                            <img
+                                src={qrUrl}
+                                alt="VietQR hoàn tiền"
+                                className="w-full max-w-[min(100%,360px)] rounded-2xl border-4 border-white bg-white object-contain shadow-md"
+                            />
+                        </div>
+                        <div className="mt-5 space-y-2 rounded-xl bg-white/80 p-4 text-sm text-slate-700">
                             <p><strong>Ngân hàng:</strong> {bankCode}</p>
                             <p><strong>Số tài khoản:</strong> {accountNo}</p>
                             <p><strong>Chủ tài khoản:</strong> {accountName}</p>
                             <p className="text-rose-600"><strong>Số tiền:</strong> {formatCurrency(refundAmount)}</p>
-                            <p>Quét QR và chỉ xác nhận sau khi ứng dụng ngân hàng báo chuyển thành công.</p>
+                            <p className="text-xs text-slate-500">
+                                Quét QR bằng app ngân hàng. Chỉ bấm xác nhận hoàn tiền sau khi chuyển khoản thành công.
+                            </p>
                         </div>
                     </div>
                 )}
