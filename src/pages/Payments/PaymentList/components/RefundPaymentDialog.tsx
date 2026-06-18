@@ -4,7 +4,8 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useTranslation } from "react-i18next";
 import type { PaymentItem } from "@/dataHelper/payment.dataHelper";
-import { AlertTriangle, X } from "lucide-react";
+import { useAdminPaymentDetailQuery } from "@/hooks";
+import { AlertTriangle, Loader2, X } from "lucide-react";
 
 interface RefundPaymentDialogProps {
     payment: PaymentItem | null;
@@ -29,6 +30,12 @@ export const RefundPaymentDialog = ({
     isSubmitting,
 }: RefundPaymentDialogProps) => {
     const { t } = useTranslation("payment");
+
+    const { data: paymentDetail, isLoading: isLoadingDetail } = useAdminPaymentDetailQuery(
+        payment?.id ?? 0,
+        isOpen && !!payment
+    );
+    const activePayment = paymentDetail ?? payment;
 
     const schema = yup.object().shape({
         refund_reason: yup
@@ -61,17 +68,17 @@ export const RefundPaymentDialog = ({
     });
 
     useEffect(() => {
-        if (!isOpen || !payment) return;
-        const request = payment.latestRefundRequest;
+        if (!isOpen || !activePayment || isLoadingDetail) return;
+        const request = activePayment.latestRefundRequest;
         reset({
             refund_reason: request?.reason || "",
             refund_bank_code: request?.bank_code || "",
             refund_account_no: request?.account_no || "",
             refund_account_name: request?.account_name || "",
             transfer_reference: "",
-            approved_amount: request?.approved_amount || payment.amount,
+            approved_amount: request?.approved_amount || activePayment.amount,
         });
-    }, [isOpen, payment, reset]);
+    }, [isOpen, activePayment, isLoadingDetail, reset]);
 
     const handleFormSubmit = (data: {
         refund_reason: string;
@@ -92,14 +99,27 @@ export const RefundPaymentDialog = ({
     };
 
     if (!isOpen || !payment) return null;
-    const refundRequest = payment.latestRefundRequest;
-    const refundAmount = refundRequest?.approved_amount || payment.amount;
+
+    if (isLoadingDetail || !activePayment) {
+        return (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-xs" onClick={onClose} />
+                <div className="relative flex items-center gap-3 rounded-2xl bg-white px-6 py-5 shadow-2xl">
+                    <Loader2 className="h-5 w-5 animate-spin text-[#14B8A6]" />
+                    <span className="text-sm font-medium text-slate-600">Đang tải thông tin hoàn tiền...</span>
+                </div>
+            </div>
+        );
+    }
+
+    const refundRequest = activePayment.latestRefundRequest;
+    const refundAmount = refundRequest?.approved_amount || activePayment.amount;
     const bankCode = refundRequest?.bank_code;
     const accountNo = refundRequest?.account_no;
     const accountName = refundRequest?.account_name;
     const needsBankDetails = !bankCode || !accountNo || !accountName;
     const qrUrl = bankCode && accountNo && accountName
-        ? `https://img.vietqr.io/image/${encodeURIComponent(bankCode)}-${encodeURIComponent(accountNo)}-compact2.png?amount=${refundAmount}&addInfo=${encodeURIComponent(`Hoan tien DaNangTrip ${payment.bookingCode}`)}&accountName=${encodeURIComponent(accountName)}`
+        ? `https://img.vietqr.io/image/${encodeURIComponent(bankCode)}-${encodeURIComponent(accountNo)}-compact2.png?amount=${refundAmount}&addInfo=${encodeURIComponent(`Hoan tien DaNangTrip ${activePayment.bookingCode}`)}&accountName=${encodeURIComponent(accountName)}`
         : null;
 
     return (
@@ -143,15 +163,15 @@ export const RefundPaymentDialog = ({
                 <div className="bg-slate-50 border border-slate-100 rounded-2xl p-4 space-y-2.5 text-xs font-bold text-slate-500 mb-6">
                     <div className="flex justify-between">
                         <span>{t("table.transaction_code", "Mã Giao dịch:")}</span>
-                        <span className="text-slate-900">{payment.transactionCode}</span>
+                        <span className="text-slate-900">{activePayment.transactionCode}</span>
                     </div>
                     <div className="flex justify-between">
                         <span>{t("table.booking_code", "Mã Đơn:")}</span>
-                        <span className="text-slate-900">{payment.bookingCode}</span>
+                        <span className="text-slate-900">{activePayment.bookingCode}</span>
                     </div>
                     <div className="flex justify-between">
                         <span>{t("table.customer", "Khách hàng:")}</span>
-                        <span className="text-slate-900">{payment.customerName} ({payment.customerEmail})</span>
+                        <span className="text-slate-900">{activePayment.customerName} ({activePayment.customerEmail})</span>
                     </div>
                     <div className="flex justify-between border-t border-slate-200/50 pt-2.5">
                         <span>{t("refund.amount", "Số tiền hoàn:")}</span>
