@@ -25,6 +25,7 @@ const BookingList = React.lazy(() => import('@/pages/Bookings/BookingList'));
 const BookingDetail = React.lazy(() => import('@/pages/Bookings/BookingDetail'));
 const PaymentList = React.lazy(() => import('@/pages/Payments/PaymentList'));
 const PaymentDetail = React.lazy(() => import('@/pages/Payments/PaymentDetail'));
+import ReportsAccessRoute from '@/pages/Reports/shared/ReportsAccessRoute';
 const RatingsReport = React.lazy(() => import('@/pages/Reports/RatingsReport'));
 const BookingsReport = React.lazy(() => import('@/pages/Reports/BookingsReport'));
 const RevenueReport = React.lazy(() => import('@/pages/Reports/RevenueReport'));
@@ -112,11 +113,16 @@ const router = createBrowserRouter([
                     { path: ROUTES.BOOKINGS_DETAIL, element: withSuspense(BookingDetail) },
                     { path: ROUTES.PAYMENTS_LIST, element: withSuspense(PaymentList) },
                     { path: ROUTES.PAYMENTS_DETAIL, element: withSuspense(PaymentDetail) },
-                    { path: ROUTES.REPORTS_RATINGS, element: withSuspense(RatingsReport) },
-                    { path: ROUTES.REPORTS_BOOKINGS, element: withSuspense(BookingsReport) },
-                    { path: ROUTES.REPORTS_REVENUE, element: withSuspense(RevenueReport) },
-                    { path: ROUTES.REPORTS_LOCATIONS, element: withSuspense(LocationReport) },
-                    { path: ROUTES.REPORTS_USERS, element: withSuspense(UsersReport) },
+                    {
+                        element: <ReportsAccessRoute />,
+                        children: [
+                            { path: ROUTES.REPORTS_RATINGS, element: withSuspense(RatingsReport) },
+                            { path: ROUTES.REPORTS_BOOKINGS, element: withSuspense(BookingsReport) },
+                            { path: ROUTES.REPORTS_REVENUE, element: withSuspense(RevenueReport) },
+                            { path: ROUTES.REPORTS_LOCATIONS, element: withSuspense(LocationReport) },
+                            { path: ROUTES.REPORTS_USERS, element: withSuspense(UsersReport) },
+                        ],
+                    },
                     { path: ROUTES.USERS_LIST, element: withSuspense(UserList) },
                     { path: ROUTES.USERS_CREATE, element: withSuspense(UserCreate) },
                     { path: ROUTES.USERS_DETAIL, element: withSuspense(UserDetail) },
@@ -124,6 +130,7 @@ const router = createBrowserRouter([
                     { path: ROUTES.NOTIFICATIONS, element: withSuspense(NotificationList) },
                     { path: ROUTES.NOTIFICATIONS_SEND, element: withSuspense(NotificationSend) },
                     { path: ROUTES.CONTACTS, element: withSuspense(Contacts) },
+                    { path: '/admin/blog', element: <Navigate to={ROUTES.BLOG_POSTS} replace /> },
                     { path: ROUTES.BLOG_POSTS, element: withSuspense(BlogPostList) },
                     { path: ROUTES.BLOG_POSTS_CREATE, element: withSuspense(BlogPostCreate) },
                     { path: ROUTES.BLOG_POSTS_EDIT, element: withSuspense(BlogPostEdit) },

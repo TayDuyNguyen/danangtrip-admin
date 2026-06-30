@@ -19,5 +19,13 @@ export const settingsApi = {
     updateSettings: async (settings: import('@/types/settings.types').WebsiteSettings): Promise<ApiResponse<void>> => {
         return axiosClient.put(API_ENDPOINTS.SETTINGS.UPDATE, { settings });
     },
+
+    /**
+     * Partial update — only merges the provided setting groups (e.g. chatbot only).
+     */
+    updateSettingGroups: async (
+        groups: Record<string, Record<string, unknown>>
+    ): Promise<ApiResponse<void>> => {
+        return axiosClient.put(API_ENDPOINTS.SETTINGS.UPDATE, { settings: groups });
+    },
 };
-export default settingsApi;

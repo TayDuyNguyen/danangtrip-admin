@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { 
     ArrowLeft, 
@@ -16,10 +16,10 @@ import {
     ShoppingBag,
     ShoppingCart,
     DollarSign,
-    CreditCard,
     FileText,
     Users,
-    Loader2
+    Loader2,
+    ExternalLink
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -33,10 +33,14 @@ import BookingStatusBadge from '../BookingList/components/BookingStatusBadge';
 import PaymentStatusBadge from '../BookingList/components/PaymentStatusBadge';
 import BookingCancelDialog from '../BookingList/components/BookingCancelDialog';
 import BookingConfirmPaymentDialog from '../BookingList/components/BookingConfirmPaymentDialog';
+import BookingCompleteDialog from '../BookingList/components/BookingCompleteDialog';
+import PaymentGatewayBadge from '@/pages/Payments/PaymentList/components/PaymentGatewayBadge';
 import { formatCurrency } from '@/utils/pricing';
 import { formatAdminShortDate } from '@/utils/dateDisplay';
 import { cn } from '@/utils';
+import { isBookingDetailNotFoundError } from '@/utils/bookingDetailError';
 import type { BookingStatus } from '@/dataHelper/booking.dataHelper';
+import type { PaymentGateway } from '@/dataHelper/payment.dataHelper';
 
 /**
  * PassengerListPlaceholder Subcomponent
@@ -200,6 +204,7 @@ const BookingDetail = () => {
 
     const [isCancelOpen, setIsCancelOpen] = useState(false);
     const [isConfirmPaymentOpen, setIsConfirmPaymentOpen] = useState(false);
+    const [isCompleteOpen, setIsCompleteOpen] = useState(false);
     const [isCompleting, setIsCompleting] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
 
@@ -224,6 +229,7 @@ const BookingDetail = () => {
         data: booking, 
         isLoading, 
         isError,
+        error: detailError,
         refetch 
     } = useAdminBookingDetailQuery(id || '');
 
@@ -272,9 +278,12 @@ const BookingDetail = () => {
         });
     };
 
-    const handleComplete = () => {
+    const handleCompleteClick = () => {
+        setIsCompleteOpen(true);
+    };
+
+    const handleCompleteSubmit = () => {
         if (!booking) return;
-        if (!window.confirm(t('detail.dialog_complete_description', { code: booking.code }))) return;
 
         setIsCompleting(true);
         updateStatusMutation.mutate(
@@ -283,6 +292,7 @@ const BookingDetail = () => {
                 onSuccess: () => {
                     toast.success(t('detail.confirm_complete_success'));
                     setIsCompleting(false);
+                    setIsCompleteOpen(false);
                 },
                 onError: () => {
                     toast.error(t('messages.update_error'));
@@ -333,14 +343,28 @@ const BookingDetail = () => {
 
     const isTerminalState = booking ? (booking.bookingStatus === 'completed' || booking.bookingStatus === 'cancelled') : false;
     const canConfirmPayment = booking ? ((booking.paymentStatus === 'pending' || booking.paymentStatus === 'unpaid') && booking.bookingStatus !== 'cancelled') : false;
+    const isNotFound = isError && isBookingDetailNotFoundError(detailError);
+    const userDetailPath = booking?.userId
+        ? ROUTES.USERS_DETAIL.replace(':id', String(booking.userId))
+        : null;
+    const primaryTourId = booking?.items[0]?.tourId;
+    const tourEditPath = primaryTourId
+        ? ROUTES.TOURS_EDIT.replace(':id', String(primaryTourId))
+        : null;
+
+    const invoiceButtonClass = (extra = '') =>
+        cn(
+            'flex items-center justify-center gap-2 w-full px-5 py-3.5 border border-slate-200 text-slate-700 font-bold rounded-2xl hover:border-[#14b8a6] hover:text-[#14b8a6] hover:bg-teal-50/10 transition-all active:scale-95 duration-200 cursor-pointer disabled:opacity-50 text-[14px]',
+            extra
+        );
 
     return (
-        <div className="min-h-screen bg-[#F8FAFC] pb-20 font-sans">
+        <div className="min-h-screen bg-[#F8FAFC] pb-28 md:pb-20 font-sans">
             {/* Sticky Header */}
             <div className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-slate-200/60 shadow-xs transition-all duration-300">
                 <div
                     className={cn(
-                        'max-w-[1600px] mx-auto px-4 md:px-8 flex items-center justify-between gap-4 transition-all duration-300',
+                        'w-full px-4 sm:px-6 lg:px-10 flex items-center justify-between gap-4 transition-all duration-300',
                         isScrolled ? 'py-2' : 'min-h-20 py-3'
                     )}
                 >
@@ -422,7 +446,7 @@ const BookingDetail = () => {
             </div>
 
             {/* Core 2-Column Responsive Layout */}
-            <div className="max-w-[1600px] mx-auto px-4 md:px-8 mt-8">
+            <div className="w-full px-4 sm:px-6 lg:px-10 mt-8">
                 {isLoading ? (
                     /* Grid Skeleton */
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 animate-pulse">
@@ -438,16 +462,19 @@ const BookingDetail = () => {
                         </div>
                     </div>
                 ) : isError || !booking ? (
-                    <div className="flex flex-col items-center justify-center py-20 font-sans">
+                    <div
+                        className="flex flex-col items-center justify-center py-20 font-sans"
+                        data-testid="booking-detail-error"
+                    >
                         <div className="bg-white border border-slate-100 p-8 lg:p-12 rounded-3xl max-w-md text-center shadow-xl hover:shadow-2xl transition-all duration-300">
                             <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-rose-50 text-rose-500 mb-6">
                                 <AlertCircle size={32} />
                             </div>
                             <h3 className="text-[20px] font-bold text-slate-900 mb-2">
-                                {t('messages.update_error')}
+                                {t(isNotFound ? 'detail.not_found_title' : 'detail.load_error_title')}
                             </h3>
                             <p className="text-[14px] text-slate-500 font-bold mb-8 leading-relaxed">
-                                {t('detail.error_description')}
+                                {t(isNotFound ? 'detail.not_found_description' : 'detail.load_error_description')}
                             </p>
                             <div className="flex gap-3 justify-center">
                                 <button
@@ -473,10 +500,21 @@ const BookingDetail = () => {
                     
                     {/* Customer Info Card */}
                     <div className="bg-white rounded-3xl p-6 lg:p-8 border border-slate-100 shadow-xs hover:shadow-md transition-all duration-300">
-                        <h3 className="text-[16px] font-bold text-slate-900 mb-6 flex items-center gap-2">
-                            <User className="text-[#14b8a6]" size={20} />
-                            {t('detail.section_customer')}
-                        </h3>
+                        <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+                            <h3 className="text-[16px] font-bold text-slate-900 flex items-center gap-2">
+                                <User className="text-[#14b8a6]" size={20} />
+                                {t('detail.section_customer')}
+                            </h3>
+                            {userDetailPath && (
+                                <Link
+                                    to={userDetailPath}
+                                    className="inline-flex items-center gap-1.5 text-[12px] font-bold text-teal-600 hover:text-teal-700 hover:underline"
+                                >
+                                    {t('detail.view_user_profile')}
+                                    <ExternalLink size={14} />
+                                </Link>
+                            )}
+                        </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
                             {/* Personal Details */}
@@ -551,10 +589,21 @@ const BookingDetail = () => {
 
                     {/* Booked Tour details */}
                     <div className="space-y-6 bg-white rounded-3xl p-6 lg:p-8 border border-slate-100 shadow-xs hover:shadow-md transition-all duration-300">
-                        <h3 className="text-[16px] font-bold text-slate-900 mb-2 flex items-center gap-2">
-                            <ShoppingBag className="text-[#14b8a6]" size={20} />
-                            {t('detail.section_tour')}
-                        </h3>
+                        <div className="mb-2 flex flex-wrap items-center justify-between gap-3">
+                            <h3 className="text-[16px] font-bold text-slate-900 flex items-center gap-2">
+                                <ShoppingBag className="text-[#14b8a6]" size={20} />
+                                {t('detail.section_tour')}
+                            </h3>
+                            {tourEditPath && (
+                                <Link
+                                    to={tourEditPath}
+                                    className="inline-flex items-center gap-1.5 text-[12px] font-bold text-teal-600 hover:text-teal-700 hover:underline"
+                                >
+                                    {t('detail.view_tour_detail')}
+                                    <ExternalLink size={14} />
+                                </Link>
+                            )}
+                        </div>
 
                         {booking.items.map((item) => (
                             <div key={item.id} className="border-b border-slate-100 last:border-0 pb-6 last:pb-0 pt-4 first:pt-0 space-y-4">
@@ -660,9 +709,8 @@ const BookingDetail = () => {
                             </div>
 
                             <div className="mt-4 pt-4 border-t border-slate-50 flex items-center gap-2 text-[12px] font-bold text-slate-400">
-                                <CreditCard size={15} />
                                 <span className="uppercase tracking-wider">{t('detail.payment_method')}:</span>
-                                <span className="text-slate-700 uppercase font-semibold">{booking.paymentMethod}</span>
+                                <PaymentGatewayBadge gateway={booking.paymentMethod as PaymentGateway} />
                             </div>
                         </div>
                     </div>
@@ -681,9 +729,24 @@ const BookingDetail = () => {
                             </div>
                         ) : (
                             <div className="space-y-3.5">
+                                <button
+                                    type="button"
+                                    onClick={handleDownloadInvoice}
+                                    disabled={getInvoiceMutation.isPending}
+                                    className={invoiceButtonClass(getInvoiceMutation.isPending ? 'opacity-50 cursor-not-allowed' : '')}
+                                >
+                                    {getInvoiceMutation.isPending ? (
+                                        <Loader2 size={16} className="animate-spin text-[#14b8a6]" />
+                                    ) : (
+                                        <Download size={16} className="text-[#14b8a6]" />
+                                    )}
+                                    {t('detail.invoice_button')}
+                                </button>
+
                                 {/* Confirm Button: pending -> confirmed */}
                                 {booking.bookingStatus === 'pending' && (
                                     <button
+                                        type="button"
                                         onClick={handleConfirm}
                                         disabled={updateStatusMutation.isPending}
                                         className="flex items-center justify-center gap-2 w-full px-5 py-3.5 border border-emerald-500 text-emerald-600 font-bold rounded-2xl hover:bg-emerald-500 hover:text-white transition-all active:scale-95 duration-200 cursor-pointer disabled:opacity-50 text-[14px]"
@@ -700,6 +763,7 @@ const BookingDetail = () => {
                                 {/* Confirm Payment Button */}
                                 {canConfirmPayment && (
                                     <button
+                                        type="button"
                                         onClick={handleConfirmPaymentClick}
                                         disabled={confirmPaymentMutation.isPending}
                                         className="flex items-center justify-center gap-2 w-full px-5 py-3.5 border border-teal-500 text-teal-600 font-bold rounded-2xl hover:bg-teal-500 hover:text-white transition-all active:scale-95 duration-200 cursor-pointer disabled:opacity-50 text-[14px]"
@@ -716,7 +780,8 @@ const BookingDetail = () => {
                                 {/* Complete Button: confirmed -> completed */}
                                 {booking.bookingStatus === 'confirmed' && (
                                     <button
-                                        onClick={handleComplete}
+                                        type="button"
+                                        onClick={handleCompleteClick}
                                         disabled={updateStatusMutation.isPending || isCompleting}
                                         className="flex items-center justify-center gap-2 w-full px-5 py-3.5 border border-[#14b8a6] text-[#14b8a6] font-bold rounded-2xl hover:bg-[#14b8a6] hover:text-white transition-all active:scale-95 duration-200 cursor-pointer disabled:opacity-50 text-[14px]"
                                     >
@@ -731,6 +796,7 @@ const BookingDetail = () => {
 
                                 {/* Cancel Button: pending or confirmed -> cancelled */}
                                 <button
+                                    type="button"
                                     onClick={() => setIsCancelOpen(true)}
                                     disabled={updateStatusMutation.isPending}
                                     className="flex items-center justify-center gap-2 w-full px-5 py-3.5 border border-rose-500 text-rose-600 font-bold rounded-2xl hover:bg-rose-500 hover:text-white transition-all active:scale-95 duration-200 cursor-pointer disabled:opacity-50 text-[14px]"
@@ -756,6 +822,49 @@ const BookingDetail = () => {
             </div>
             )}
 
+            {!isLoading && booking && (
+                <div
+                    className="fixed bottom-0 inset-x-0 z-30 flex flex-col gap-2 w-full p-4 pt-3 bg-white/95 backdrop-blur-md border-t border-slate-200 md:hidden"
+                    data-booking-detail-mobile-footer
+                >
+                    {!isTerminalState && booking.bookingStatus === 'pending' && (
+                        <button
+                            type="button"
+                            onClick={handleConfirm}
+                            disabled={updateStatusMutation.isPending}
+                            className="flex items-center justify-center gap-2 w-full h-12 rounded-2xl bg-emerald-500 text-white text-sm font-bold shadow-lg shadow-emerald-500/20 transition-all active:scale-[0.98] disabled:opacity-50"
+                        >
+                            {updateStatusMutation.isPending ? <Loader2 size={16} className="animate-spin" /> : null}
+                            {t('actions.confirm')}
+                        </button>
+                    )}
+                    {!isTerminalState && booking.bookingStatus === 'confirmed' && (
+                        <button
+                            type="button"
+                            onClick={handleCompleteClick}
+                            disabled={isCompleting || updateStatusMutation.isPending}
+                            className="flex items-center justify-center gap-2 w-full h-12 rounded-2xl bg-[#14b8a6] text-white text-sm font-bold shadow-lg shadow-teal-500/20 transition-all active:scale-[0.98] disabled:opacity-50"
+                        >
+                            {isCompleting ? <Loader2 size={16} className="animate-spin" /> : null}
+                            {t('detail.confirm_complete')}
+                        </button>
+                    )}
+                    <button
+                        type="button"
+                        onClick={handleDownloadInvoice}
+                        disabled={getInvoiceMutation.isPending}
+                        className="flex items-center justify-center gap-2 w-full h-11 rounded-2xl border border-slate-200 text-slate-700 text-sm font-bold disabled:opacity-50"
+                    >
+                        {getInvoiceMutation.isPending ? (
+                            <Loader2 size={16} className="animate-spin" />
+                        ) : (
+                            <Download size={16} />
+                        )}
+                        {t('detail.invoice_button')}
+                    </button>
+                </div>
+            )}
+
             {/* Confirm Cancel Dialog */}
             {booking && (
                 <BookingCancelDialog
@@ -778,6 +887,16 @@ const BookingDetail = () => {
                     bookingCode={booking.code}
                     customerName={booking.customer.name}
                     isSubmitting={confirmPaymentMutation.isPending}
+                />
+            )}
+
+            {booking && (
+                <BookingCompleteDialog
+                    isOpen={isCompleteOpen}
+                    onClose={() => !isCompleting && setIsCompleteOpen(false)}
+                    onConfirm={handleCompleteSubmit}
+                    bookingCode={booking.code}
+                    isSubmitting={isCompleting}
                 />
             )}
         </div>

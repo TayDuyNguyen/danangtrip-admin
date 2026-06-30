@@ -60,6 +60,14 @@
         "reply_min": "Nội dung trả lời phải ít nhất 10 ký tự",
         "reply_max": "Nội dung trả lời không được vượt quá 2000 ký tự"
     },
+    "errors": {
+        "list_load_failed": "Không tải được danh sách liên hệ",
+        "list_load_failed_desc": "Dữ liệu liên hệ tạm thời không khả dụng. Vui lòng thử lại.",
+        "stats_load_failed": "Không tải được thống kê liên hệ",
+        "stats_load_failed_desc": "Số liệu tổng quan tạm thời không khả dụng. Vui lòng thử lại.",
+        "detail_load_failed": "Không tải được chi tiết liên hệ",
+        "detail_load_failed_desc": "Không thể hiển thị nội dung liên hệ. Vui lòng thử lại."
+    },
     "toast": {
         "reply_success": "Đã gửi trả lời!",
         "delete_success": "Đã xóa liên hệ!",

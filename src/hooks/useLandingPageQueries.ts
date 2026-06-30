@@ -22,17 +22,6 @@ export const useLandingPages = (filters?: LandingPageFilters) => {
     });
 };
 
-export const useLandingPage = (id: number | null) => {
-    return useQuery<LandingPage>({
-        queryKey: [QUERY_KEY, 'detail', id],
-        queryFn: async () => {
-            const response = await landingPageApi.get(id!);
-            return response.data as LandingPage;
-        },
-        enabled: !!id,
-    });
-};
-
 // ---------------------------------------------------------------------------
 // Write
 // ---------------------------------------------------------------------------

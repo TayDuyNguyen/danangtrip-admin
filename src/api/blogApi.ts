@@ -61,5 +61,3 @@ export const blogApi = {
     delete: (id: number | string): Promise<ApiResponse<null>> =>
         axiosClient.delete(API_ENDPOINTS.BLOG.DELETE(id)),
 };
-
-export default blogApi;

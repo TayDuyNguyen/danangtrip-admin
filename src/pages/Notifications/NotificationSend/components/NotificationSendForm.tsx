@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useForm, Controller, useWatch } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -22,12 +22,8 @@ interface NotificationSendFormProps {
     selectedUser: UserItem | null;
     setSelectedUser: (user: UserItem | null) => void;
     totalUserCount: number;
-    onValuesChange: (values: {
-        type: string;
-        title: string;
-        content: string;
-        data: string;
-    }) => void;
+    isUsersCountLoading: boolean;
+    onValuesChange: (values: NotificationFormValues) => void;
     onSubmit: (values: NotificationFormValues) => void;
     isSubmitting: boolean;
     resetSignal: number;
@@ -39,52 +35,76 @@ export const NotificationSendForm = ({
     selectedUser,
     setSelectedUser,
     totalUserCount,
+    isUsersCountLoading,
     onValuesChange,
     onSubmit,
     isSubmitting,
     resetSignal,
-}: NotificationSendFormProps) => {
+}: NotificationSendFormProps) => (
+    <NotificationSendFormFields
+        key={resetSignal}
+        mode={mode}
+        setMode={setMode}
+        selectedUser={selectedUser}
+        setSelectedUser={setSelectedUser}
+        totalUserCount={totalUserCount}
+        isUsersCountLoading={isUsersCountLoading}
+        onValuesChange={onValuesChange}
+        onSubmit={onSubmit}
+        isSubmitting={isSubmitting}
+    />
+);
+
+const NotificationSendFormFields = ({
+    mode,
+    setMode,
+    selectedUser,
+    setSelectedUser,
+    totalUserCount,
+    isUsersCountLoading,
+    onValuesChange,
+    onSubmit,
+    isSubmitting,
+}: Omit<NotificationSendFormProps, 'resetSignal'>) => {
     const { t } = useTranslation("notification");
     const [isDataCollapsed, setIsDataCollapsed] = useState(true);
     const [recipientError, setRecipientError] = useState<string | null>(null);
 
-    // Validation schema
-    const validationSchema = yup.object().shape({
-        type: yup.string().required(t("send.validation.title_required")), // reused for required type
-        title: yup
-            .string()
-            .required(t("send.validation.title_required"))
-            .max(100, t("send.validation.title_max")),
-        content: yup
-            .string()
-            .required(t("send.validation.content_required"))
-            .max(500, t("send.validation.content_max")),
-        data: yup.string().test("is-valid-link", t("send.validation.data_invalid_link"), (value) => {
-            if (!value || value.trim() === "") return true;
-
-            return /^(https?:\/\/|\/)/i.test(value.trim());
-        }),
-    });
+    const validationSchema = useMemo(
+        () =>
+            yup.object({
+                type: yup.string().required(t("send.validation.type_required")),
+                title: yup
+                    .string()
+                    .required(t("send.validation.title_required"))
+                    .max(100, t("send.validation.title_max")),
+                content: yup
+                    .string()
+                    .required(t("send.validation.content_required"))
+                    .max(500, t("send.validation.content_max")),
+                data: yup.string().test("is-valid-link", t("send.validation.data_invalid_link"), (value) => {
+                    if (!value || value.trim() === "") return true;
+                    return /^(https?:\/\/|\/)/i.test(value.trim());
+                }),
+            }),
+        [t]
+    );
 
     const {
         register,
         control,
         handleSubmit,
-        reset,
         formState: { errors },
     } = useForm<NotificationFormValues>({
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        resolver: yupResolver(validationSchema) as any,
+        resolver: yupResolver(validationSchema) as never,
         defaultValues: {
             type: "system",
             title: "",
             content: "",
             data: "",
         },
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } as any);
+    });
 
-    // Watch fields for live preview updates
     const watchedType = useWatch({ control, name: "type" });
     const watchedTitle = useWatch({ control, name: "title", defaultValue: "" });
     const watchedContent = useWatch({ control, name: "content", defaultValue: "" });
@@ -92,34 +112,18 @@ export const NotificationSendForm = ({
 
     useEffect(() => {
         onValuesChange({
-            type: watchedType,
-            title: watchedTitle,
-            content: watchedContent,
-            data: watchedData,
+            type: watchedType ?? "system",
+            title: watchedTitle ?? "",
+            content: watchedContent ?? "",
+            data: watchedData ?? "",
         });
     }, [watchedType, watchedTitle, watchedContent, watchedData, onValuesChange]);
 
-    useEffect(() => {
-        if (resetSignal === 0) {
-            return;
-        }
+    const showDataSection = !isDataCollapsed || Boolean(errors.data);
 
-        reset({
-            type: "system",
-            title: "",
-            content: "",
-            data: "",
-        });
-        // eslint-disable-next-line react-hooks/set-state-in-effect -- resetSignal intentionally resets local UI state with the form
-        setRecipientError(null);
-        setIsDataCollapsed(true);
-    }, [reset, resetSignal]);
-
-    // Handle form submit triggers
     const handleFormSubmit = (values: NotificationFormValues) => {
         if (mode === "individual" && !selectedUser) {
             setRecipientError(t("send.validation.user_required"));
-            // Scroll to recipient field
             const el = document.getElementById("recipient-section");
             if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
             return;
@@ -128,7 +132,6 @@ export const NotificationSendForm = ({
         onSubmit(values);
     };
 
-    // Type options with lucide icons
     const typeOptions: Option[] = [
         {
             value: "booking",
@@ -168,16 +171,22 @@ export const NotificationSendForm = ({
         },
     ];
 
+    const isBulkDisabled = isSubmitting || isUsersCountLoading || totalUserCount === 0;
+
     return (
         <form
             id="notification-send-form"
+            data-testid="notification-send-form"
             onSubmit={handleSubmit(handleFormSubmit)}
             className="space-y-6 w-full"
         >
-            {/* Mode Switcher */}
-            <div className="bg-white border border-slate-200/60 rounded-2xl p-1 inline-flex gap-1 shadow-2xs">
+            <div
+                className="bg-white border border-slate-200/60 rounded-2xl p-1 inline-flex gap-1 shadow-2xs"
+                data-testid="notification-send-mode-switch"
+            >
                 <button
                     type="button"
+                    data-testid="notification-send-mode-individual"
                     onClick={() => {
                         setMode("individual");
                         setRecipientError(null);
@@ -193,12 +202,14 @@ export const NotificationSendForm = ({
                 </button>
                 <button
                     type="button"
+                    data-testid="notification-send-mode-bulk"
                     onClick={() => {
                         setMode("bulk");
                         setRecipientError(null);
                         setSelectedUser(null);
                     }}
-                    disabled={isSubmitting}
+                    disabled={isBulkDisabled}
+                    title={totalUserCount === 0 ? t("send.bulk_disabled_no_users") : undefined}
                     className={`rounded-xl px-5 py-2.5 text-xs font-extrabold transition-all duration-200 cursor-pointer disabled:opacity-50 ${
                         mode === "bulk"
                             ? "bg-[#0066CC] text-white shadow-sm"
@@ -209,17 +220,20 @@ export const NotificationSendForm = ({
                 </button>
             </div>
 
-            {/* Bulk Mode Warning Box */}
             {mode === "bulk" && (
-                <div className="bg-amber-50 border border-amber-200/50 rounded-2xl p-4 flex gap-3 text-amber-800 animate-in fade-in slide-in-from-top-1 duration-200">
+                <div
+                    className="bg-amber-50 border border-amber-200/50 rounded-2xl p-4 flex gap-3 text-amber-800 animate-in fade-in slide-in-from-top-1 duration-200"
+                    data-testid="notification-send-bulk-warning"
+                >
                     <AlertTriangle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
                     <div className="text-xs font-bold leading-normal">
-                        {t("send.bulk_warning", { count: totalUserCount.toLocaleString() })}
+                        {totalUserCount === 0
+                            ? t("send.bulk_disabled_no_users")
+                            : t("send.bulk_warning", { count: totalUserCount.toLocaleString() })}
                     </div>
                 </div>
             )}
 
-            {/* Form Content Card */}
             <div className="bg-white rounded-3xl p-6 md:p-8 border border-slate-200/60 shadow-xs space-y-6">
                 <div className="flex items-center gap-3 pb-4 border-b border-slate-100">
                     <div className="flex items-center justify-center w-10 h-10 bg-blue-50 rounded-xl text-[#0066cc]">
@@ -230,7 +244,6 @@ export const NotificationSendForm = ({
                     </h3>
                 </div>
 
-                {/* Recipient Input (Individual Mode Only) */}
                 {mode === "individual" && (
                     <div id="recipient-section" className="animate-in fade-in duration-200">
                         <RecipientSelector
@@ -245,7 +258,6 @@ export const NotificationSendForm = ({
                     </div>
                 )}
 
-                {/* Notification Type Dropdown */}
                 <div className="space-y-2">
                     <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
                         {t("send.label_type")}
@@ -265,42 +277,40 @@ export const NotificationSendForm = ({
                     />
                 </div>
 
-                {/* Notification Title */}
                 <div className="space-y-2">
                     <div className="flex justify-between items-center">
                         <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
                             {t("send.label_title")}
                         </label>
                         <span className="text-[10px] font-semibold text-slate-400">
-                            {watchedTitle.length}/100
+                            {(watchedTitle ?? "").length}/100
                         </span>
                     </div>
                     <TextInput
                         placeholder={t("send.placeholder_title")}
+                        data-testid="notification-send-title"
                         {...register("title")}
                         invalid={!!errors.title}
                         disabled={isSubmitting}
                     />
                     {errors.title && (
-                        <p className="text-xs text-rose-500 font-semibold pl-1">
-                            {errors.title.message}
-                        </p>
+                        <p className="text-xs text-rose-500 font-semibold pl-1">{errors.title.message}</p>
                     )}
                 </div>
 
-                {/* Notification Content */}
                 <div className="space-y-2">
                     <div className="flex justify-between items-center">
                         <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
                             {t("send.label_content")}
                         </label>
                         <span className="text-[10px] font-semibold text-slate-400">
-                            {watchedContent.length}/500
+                            {(watchedContent ?? "").length}/500
                         </span>
                     </div>
                     <textarea
                         rows={4}
                         placeholder={t("send.placeholder_content")}
+                        data-testid="notification-send-content"
                         {...register("content")}
                         disabled={isSubmitting}
                         className={`w-full bg-[#f8fafc] border rounded-2xl py-3 px-4 text-sm font-semibold text-slate-800 placeholder-slate-400 outline-none transition-all duration-200 resize-none disabled:opacity-50 ${
@@ -310,30 +320,30 @@ export const NotificationSendForm = ({
                         }`}
                     />
                     {errors.content && (
-                        <p className="text-xs text-rose-500 font-semibold pl-1">
-                            {errors.content.message}
-                        </p>
+                        <p className="text-xs text-rose-500 font-semibold pl-1">{errors.content.message}</p>
                     )}
                 </div>
 
-                {/* Collapsible Supplementary Data (Collapsible Panel) */}
                 <div className="pt-4 border-t border-slate-100">
                     <button
                         type="button"
+                        data-testid="notification-send-link-toggle"
                         onClick={() => setIsDataCollapsed(!isDataCollapsed)}
                         className="flex items-center justify-between w-full py-2 text-left cursor-pointer group text-slate-500 hover:text-slate-800 transition-colors"
+                        aria-expanded={showDataSection}
                     >
                         <span className="text-xs font-extrabold uppercase tracking-wider">
                             {t("send.label_data")}
                         </span>
-                        {isDataCollapsed ? <ChevronDown size={18} /> : <ChevronUp size={18} />}
+                        {showDataSection ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
                     </button>
 
-                    {!isDataCollapsed && (
+                    {showDataSection && (
                         <div className="mt-3 space-y-2 animate-in fade-in duration-200">
                             <input
                                 type="text"
                                 placeholder={t("send.placeholder_data")}
+                                data-testid="notification-send-link"
                                 {...register("data")}
                                 disabled={isSubmitting}
                                 className={`w-full bg-[#f8fafc] border rounded-2xl py-3 px-4 text-sm font-semibold text-slate-800 placeholder-slate-400 outline-none transition-all duration-200 disabled:opacity-50 ${
@@ -346,9 +356,7 @@ export const NotificationSendForm = ({
                                 {t("send.label_data_helper")}
                             </p>
                             {errors.data && (
-                                <p className="text-xs text-rose-500 font-semibold pl-1">
-                                    {errors.data.message}
-                                </p>
+                                <p className="text-xs text-rose-500 font-semibold pl-1">{errors.data.message}</p>
                             )}
                         </div>
                     )}

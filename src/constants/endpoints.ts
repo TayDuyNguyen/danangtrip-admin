@@ -39,6 +39,7 @@ export const API_ENDPOINTS = {
         RATINGS: '/admin/reports/ratings',
         BOOKINGS: '/admin/reports/bookings',
         REVENUE_DETAIL: '/admin/reports/revenue-detail',
+        REVENUE_PAYMENTS_SUMMARY: '/admin/reports/revenue-payments-summary',
         LOCATIONS: '/admin/reports/locations',
         USERS: '/admin/reports/users',
     },

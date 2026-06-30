@@ -303,10 +303,18 @@ const TourTable = ({
 
     const selectedIds = useMemo(
         () =>
-            Object.entries(rowSelection)
-                .filter(([, selected]) => selected)
-                .map(([id]) => Number(id))
-                .filter((id) => !Number.isNaN(id)),
+            Object.entries(rowSelection).reduce<number[]>((ids, [id, selected]) => {
+                if (!selected) {
+                    return ids;
+                }
+
+                const numericId = Number(id);
+                if (!Number.isNaN(numericId)) {
+                    ids.push(numericId);
+                }
+
+                return ids;
+            }, []),
         [rowSelection]
     );
 
@@ -467,7 +475,13 @@ const TourTable = ({
 
                     <div className="flex items-center gap-1.5">
                         {Array.from({ length: Math.ceil(total / limit) }, (_, i) => i + 1)
-                            .filter(p => p === 1 || p === Math.ceil(total / limit) || Math.abs(p - page) <= 1)
+                            .reduce<number[]>((pages, p) => {
+                                const lastPage = Math.ceil(total / limit);
+                                if (p === 1 || p === lastPage || Math.abs(p - page) <= 1) {
+                                    pages.push(p);
+                                }
+                                return pages;
+                            }, [])
                             .map((p, i, arr) => (
                                 <div key={p} className="flex items-center gap-1.5">
                                     {i > 0 && arr[i - 1] !== p - 1 && <span className="text-slate-300 font-bold px-1">...</span>}

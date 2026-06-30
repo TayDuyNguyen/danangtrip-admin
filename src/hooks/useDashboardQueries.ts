@@ -19,7 +19,6 @@ import type {
     UserGrowthParams,
     TopToursParams,
     BookingsParams,
-    BookingsExportParams,
     BookingStatusCountsParams,
     SearchTrendsParams,
 } from '@/dataHelper/dashboard.dataHelper';
@@ -177,22 +176,6 @@ export const useBookingsQuery = (params: BookingsParams, enabled = true) => {
         },
         staleTime: 1000 * 30,
         enabled,
-    });
-};
-
-/**
- * Mutation hook for exporting bookings as a spreadsheet.
- * Returns { mutate, isPending } — Page just calls mutate(params).
- */
-export const useBookingsExportMutation = () => {
-    return useMutation({
-        mutationFn: async (params: BookingsExportParams & { fallbackFilename: string }) => {
-            const { fallbackFilename, ...exportParams } = params;
-            const response = await dashboardApi.getBookingsExport(exportParams);
-            const prepared = await prepareSpreadsheetDownload(response, fallbackFilename);
-            if (!prepared.ok) throw new Error(prepared.error);
-            downloadBlobFile(prepared.blob, prepared.filename);
-        },
     });
 };
 

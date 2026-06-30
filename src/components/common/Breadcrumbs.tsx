@@ -9,6 +9,7 @@ export interface BreadcrumbItem {
     label: string;      // translation key (e.g., 'sidebar.tours', 'breadcrumb.edit') or raw string
     path?: string;      // optional url path
     isRaw?: boolean;    // if true, displays raw label as text instead of translating it
+    ariaLabel?: string; // accessible label when visible text duplicates an action button
 }
 
 export type BreadcrumbActionVariant = 'primary' | 'outline';
@@ -18,12 +19,16 @@ export interface BreadcrumbAction {
     labelKey?: string;
     /** Raw label text or pre-translated label string */
     label?: string;
+    /** Distinct accessible name when label matches another control on the page */
+    ariaLabel?: string;
     icon?: LucideIcon;
     onClick?: () => void;
     variant?: BreadcrumbActionVariant;
     disabled?: boolean;
     type?: 'button' | 'submit' | 'reset';
     form?: string;
+    /** Override primary action colors (e.g. page-specific brand color) */
+    actionPrimaryClassName?: string;
 }
 
 interface BreadcrumbsProps {
@@ -71,7 +76,11 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ icon: RootIcon, items, action
                         <React.Fragment key={index}>
                             <ChevronRight size={12} className="text-slate-300 mx-0.5 shrink-0" />
                             {isLast ? (
-                                <span className="text-[#14b8a6] font-black tracking-wide truncate max-w-[200px] sm:max-w-none">
+                                <span
+                                    className="text-[#14b8a6] font-black tracking-wide truncate max-w-[200px] sm:max-w-none"
+                                    aria-label={item.ariaLabel}
+                                    aria-current="page"
+                                >
                                     {translatedLabel}
                                 </span>
                             ) : item.path ? (
@@ -104,10 +113,12 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ icon: RootIcon, items, action
                                 form={action.form}
                                 onClick={action.onClick}
                                 disabled={action.disabled}
+                                aria-label={action.ariaLabel}
                                 className={[
                                     'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-black uppercase tracking-wide transition-all duration-200 active:scale-95 disabled:opacity-50',
                                     isPrimary
-                                        ? 'bg-[#14b8a6] text-white shadow-md shadow-[#14b8a6]/20 hover:bg-[#0f766e]'
+                                        ? action.actionPrimaryClassName ??
+                                          'bg-[#14b8a6] text-white shadow-md shadow-[#14b8a6]/20 hover:bg-[#0f766e]'
                                         : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-slate-300',
                                 ].join(' ')}
                             >

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -29,7 +29,7 @@ export const RefundPaymentDialog = ({
     onSubmit,
     isSubmitting,
 }: RefundPaymentDialogProps) => {
-    const { t } = useTranslation("payment");
+    const { t } = useTranslation(["payment", "common"]);
 
     const { data: paymentDetail, isLoading: isLoadingDetail } = useAdminPaymentDetailQuery(
         payment?.id ?? 0,
@@ -37,18 +37,28 @@ export const RefundPaymentDialog = ({
     );
     const activePayment = paymentDetail ?? payment;
 
-    const schema = yup.object().shape({
-        refund_reason: yup
-            .string()
-            .required(t("validation.reason_required", "Lý do hoàn tiền là bắt buộc"))
-            .min(10, t("validation.reason_min", "Lý do hoàn tiền phải từ 10 ký tự trở lên"))
-            .max(255, t("validation.reason_max", "Lý do hoàn tiền tối đa 255 ký tự")),
-        refund_bank_code: yup.string().required("Vui lòng chọn ngân hàng"),
-        refund_account_no: yup.string().matches(/^[0-9]{6,30}$/, "Số tài khoản không hợp lệ").required("Vui lòng nhập số tài khoản"),
-        refund_account_name: yup.string().min(2).required("Vui lòng nhập tên chủ tài khoản"),
-        transfer_reference: yup.string().min(4, "Mã giao dịch phải có ít nhất 4 ký tự").required("Vui lòng nhập mã giao dịch sau khi chuyển tiền"),
-        approved_amount: yup.number().positive().optional(),
-    });
+    const schema = useMemo(
+        () =>
+            yup.object().shape({
+                refund_reason: yup
+                    .string()
+                    .required(t("validation.reason_required"))
+                    .min(10, t("validation.reason_min"))
+                    .max(255, t("validation.reason_max")),
+                refund_bank_code: yup.string().required(t("validation.bank_code_required")),
+                refund_account_no: yup
+                    .string()
+                    .matches(/^[0-9]{6,30}$/, t("validation.account_no_invalid"))
+                    .required(t("validation.account_no_required")),
+                refund_account_name: yup.string().min(2).required(t("validation.account_name_required")),
+                transfer_reference: yup
+                    .string()
+                    .min(4, t("validation.transfer_reference_min"))
+                    .required(t("validation.transfer_reference_required")),
+                approved_amount: yup.number().positive().optional(),
+            }),
+        [t]
+    );
 
     const {
         register,
@@ -106,7 +116,7 @@ export const RefundPaymentDialog = ({
                 <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-xs" onClick={onClose} />
                 <div className="relative flex items-center gap-3 rounded-2xl bg-white px-6 py-5 shadow-2xl">
                     <Loader2 className="h-5 w-5 animate-spin text-[#14B8A6]" />
-                    <span className="text-sm font-medium text-slate-600">Đang tải thông tin hoàn tiền...</span>
+                    <span className="text-sm font-medium text-slate-600">{t("refund.loading")}</span>
                 </div>
             </div>
         );
@@ -134,7 +144,9 @@ export const RefundPaymentDialog = ({
             <div className="relative z-10 max-h-[92vh] w-full max-w-lg overflow-y-auto rounded-3xl border border-slate-100 bg-white p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200 sm:max-w-xl">
                 {/* Close Button */}
                 <button
+                    type="button"
                     onClick={onClose}
+                    aria-label={t("refund.btn_close")}
                     className="absolute right-6 top-6 text-slate-400 hover:text-slate-900 p-1 hover:bg-slate-50 rounded-lg transition-all"
                 >
                     <X size={18} />
@@ -182,22 +194,22 @@ export const RefundPaymentDialog = ({
                 {qrUrl && (
                     <div className="mb-6 rounded-2xl border border-teal-100 bg-teal-50/40 p-5">
                         <p className="mb-4 text-center text-sm font-bold text-teal-900">
-                            Quét mã VietQR để chuyển khoản hoàn tiền
+                            {t("refund.vietqr_title")}
                         </p>
                         <div className="flex justify-center">
                             <img
                                 src={qrUrl}
-                                alt="VietQR hoàn tiền"
+                                alt={t("refund.vietqr_alt")}
                                 className="w-full max-w-[min(100%,360px)] rounded-2xl border-4 border-white bg-white object-contain shadow-md"
                             />
                         </div>
                         <div className="mt-5 space-y-2 rounded-xl bg-white/80 p-4 text-sm text-slate-700">
-                            <p><strong>Ngân hàng:</strong> {bankCode}</p>
-                            <p><strong>Số tài khoản:</strong> {accountNo}</p>
-                            <p><strong>Chủ tài khoản:</strong> {accountName}</p>
-                            <p className="text-rose-600"><strong>Số tiền:</strong> {formatCurrency(refundAmount)}</p>
+                            <p><strong>{t("refund.vietqr_bank")}:</strong> {bankCode}</p>
+                            <p><strong>{t("refund.vietqr_account_no")}:</strong> {accountNo}</p>
+                            <p><strong>{t("refund.vietqr_account_name")}:</strong> {accountName}</p>
+                            <p className="text-rose-600"><strong>{t("refund.vietqr_amount")}:</strong> {formatCurrency(refundAmount)}</p>
                             <p className="text-xs text-slate-500">
-                                Quét QR bằng app ngân hàng. Chỉ bấm xác nhận hoàn tiền sau khi chuyển khoản thành công.
+                                {t("refund.vietqr_hint")}
                             </p>
                         </div>
                     </div>
@@ -224,9 +236,9 @@ export const RefundPaymentDialog = ({
 
                     {needsBankDetails && (
                         <div className="grid grid-cols-2 gap-3">
-                            <input {...register("refund_bank_code")} placeholder="Mã ngân hàng, ví dụ MB" className="rounded-xl border border-slate-200 px-3 py-2.5 text-sm" />
-                            <input {...register("refund_account_no")} placeholder="Số tài khoản" className="rounded-xl border border-slate-200 px-3 py-2.5 text-sm" />
-                            <input {...register("refund_account_name")} placeholder="Tên chủ tài khoản" className="col-span-2 rounded-xl border border-slate-200 px-3 py-2.5 text-sm uppercase" />
+                            <input {...register("refund_bank_code")} placeholder={t("refund.bank_code_placeholder")} className="rounded-xl border border-slate-200 px-3 py-2.5 text-sm" />
+                            <input {...register("refund_account_no")} placeholder={t("refund.account_no_placeholder")} className="rounded-xl border border-slate-200 px-3 py-2.5 text-sm" />
+                            <input {...register("refund_account_name")} placeholder={t("refund.account_name_placeholder")} className="col-span-2 rounded-xl border border-slate-200 px-3 py-2.5 text-sm uppercase" />
                         </div>
                     )}
                     {!needsBankDetails && (
@@ -237,10 +249,12 @@ export const RefundPaymentDialog = ({
                         </>
                     )}
                     <div>
-                        <label className="mb-2 block text-xs font-black uppercase tracking-wider text-slate-400">Mã giao dịch ngân hàng *</label>
+                        <label className="mb-2 block text-xs font-black uppercase tracking-wider text-slate-400">
+                            {t("refund.transfer_reference_label")}
+                        </label>
                         <input
                             {...register("transfer_reference")}
-                            placeholder="Nhập mã giao dịch sau khi chuyển khoản thành công"
+                            placeholder={t("refund.transfer_reference_placeholder")}
                             className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm"
                         />
                         {errors.transfer_reference && <p className="mt-1 text-xs font-bold text-rose-500">{errors.transfer_reference.message}</p>}

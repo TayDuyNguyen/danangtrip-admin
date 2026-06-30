@@ -4,6 +4,7 @@ export * from './storage';
 export * from './tokenUtils';
 export * from './safeConverters';
 export * from './extractTourId';
+export * from './extractLocationId';
 export * from './pricing';
 export * from './slug';
 export * from './form';

@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { FiMessageSquare, FiStar, FiUser } from 'react-icons/fi';
 
 import EmptyState from '@/components/common/EmptyState';
+import ErrorWidget from '@/components/common/ErrorWidget';
 import ProgressBar from '@/components/ui/ProgressBar';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useLocationRatingStatsQuery, useLocationRatingsQuery } from '@/hooks/useLocationQueries';
@@ -12,8 +13,19 @@ interface LocationReviewsTabProps {
 
 const LocationReviewsTab = ({ locationId }: LocationReviewsTabProps) => {
     const { t, i18n } = useTranslation('location');
-    const { data: stats, isLoading: isStatsLoading } = useLocationRatingStatsQuery(locationId);
-    const { data: reviews, isLoading: isReviewsLoading } = useLocationRatingsQuery(locationId);
+    const {
+        data: stats,
+        isLoading: isStatsLoading,
+        isError: isStatsError,
+        refetch: refetchStats,
+    } = useLocationRatingStatsQuery(locationId);
+    const {
+        data: reviews,
+        isLoading: isReviewsLoading,
+        isError: isReviewsError,
+        refetch: refetchReviews,
+    } = useLocationRatingsQuery(locationId);
+
     const reviewDateFormatter = new Intl.DateTimeFormat(i18n.language === 'vi' ? 'vi-VN' : 'en-US', {
         day: '2-digit',
         month: 'long',
@@ -35,6 +47,20 @@ const LocationReviewsTab = ({ locationId }: LocationReviewsTabProps) => {
                 <div className="space-y-6">
                     {[1, 2, 3].map((i) => <Skeleton key={i} className="h-32 w-full rounded-2xl" />)}
                 </div>
+            </div>
+        );
+    }
+
+    if (isStatsError || isReviewsError) {
+        return (
+            <div className="py-8">
+                <ErrorWidget
+                    message={t('detail.reviews.load_error')}
+                    onRetry={() => {
+                        void refetchStats();
+                        void refetchReviews();
+                    }}
+                />
             </div>
         );
     }

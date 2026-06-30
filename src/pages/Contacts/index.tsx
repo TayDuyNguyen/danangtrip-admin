@@ -13,6 +13,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useAdminContactsQuery, useContactDetailQuery, useContactMutations, contactKeys } from "@/hooks/useContactQueries";
 import type { ContactListFilters, ContactListResponse, ContactItem } from "@/dataHelper";
 import Breadcrumbs from "@/components/common/Breadcrumbs";
+import EmptyState from "@/components/common/EmptyState";
 
 export const Contacts = () => {
     const { t } = useTranslation("contact");
@@ -79,12 +80,12 @@ export const Contacts = () => {
         isFetching: isListFetching,
         refetch: refetchList
     } = useAdminContactsQuery(filters, page, perPage);
-    const { data: detailData, isLoading: isDetailLoading, isError: isDetailError } = useContactDetailQuery(selectedId);
+    const { data: detailData, isLoading: isDetailLoading, isError: isDetailError, refetch: refetchDetail } = useContactDetailQuery(selectedId);
     const { replyMutation, deleteMutation, exportMutation } = useContactMutations();
 
     // 5. Actions Handlers
     const handleTabChange = (newStatus: string) => {
-        updateParams({ status: newStatus, page: 1 });
+        updateParams({ status: newStatus, page: 1, id: "" });
     };
 
     const handleSelectContact = (id: number) => {
@@ -146,9 +147,9 @@ export const Contacts = () => {
             onSuccess: () => {
                 toast.success(t("toast.delete_success"));
                 
-                // Clear selection if deleted item was active
-                const nextId = String(deleteTarget.id) === selectedId ? "" : selectedId;
-                updateParams({ id: nextId, page: 1 });
+                if (String(deleteTarget.id) === selectedId) {
+                    updateParams({ id: "" });
+                }
                 setDeleteTarget(null);
             },
             onError: () => {
@@ -178,13 +179,13 @@ export const Contacts = () => {
     
     const handlePrevPage = () => {
         if (page > 1) {
-            updateParams({ page: page - 1 });
+            updateParams({ page: page - 1, id: "" });
         }
     };
 
     const handleNextPage = () => {
         if (page < totalPages) {
-            updateParams({ page: page + 1 });
+            updateParams({ page: page + 1, id: "" });
         }
     };
 
@@ -236,6 +237,7 @@ export const Contacts = () => {
                     repliedCount={repliedCount}
                     isLoading={isListLoading}
                     isError={isListError}
+                    onRetry={() => void refetchList()}
                 />
             </div>
 
@@ -306,8 +308,24 @@ export const Contacts = () => {
                                 </div>
                             ))
                         ) : isListError ? (
-                            <div className="p-8 text-center text-rose-500 font-bold text-sm">
-                                {t("toast.network_error")}
+                            <div
+                                className="p-8 flex flex-col items-center text-center"
+                                data-testid="contact-list-error"
+                            >
+                                <EmptyState
+                                    icon={Mail}
+                                    title={t("errors.list_load_failed")}
+                                    description={t("errors.list_load_failed_desc")}
+                                    iconClassName="bg-rose-50 text-rose-500"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => void refetchList()}
+                                    className="mt-2 px-6 py-2.5 bg-[#14b8a6] text-white rounded-xl text-[13px] font-bold hover:bg-[#0f766e] transition-colors inline-flex items-center gap-2"
+                                >
+                                    <RefreshCw className="w-4 h-4" />
+                                    {t("common:actions.retry", "Thử lại")}
+                                </button>
                             </div>
                         ) : listData?.data.length === 0 ? (
                             <div className="p-8 text-center text-slate-400 font-bold text-xs select-none flex flex-col items-center gap-3">
@@ -321,6 +339,7 @@ export const Contacts = () => {
                                     item={item}
                                     isActive={selectedId === String(item.id)}
                                     onClick={() => handleSelectContact(item.id)}
+                                    onDeleteClick={() => setDeleteTarget({ id: item.id, name: item.name })}
                                 />
                             ))
                         )}
@@ -362,6 +381,7 @@ export const Contacts = () => {
                         item={detailData}
                         isLoading={isDetailLoading}
                         isError={isDetailError}
+                        onRetry={() => void refetchDetail()}
                         onDeleteClick={() => detailData && setDeleteTarget({ id: detailData.id, name: detailData.name })}
                         onReplySubmit={handleReplySubmit}
                         isReplying={replyMutation.isPending}

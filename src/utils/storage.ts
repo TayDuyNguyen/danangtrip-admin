@@ -66,18 +66,6 @@ export const clearTokens = () => {
  */
 export const getLanguage = () => localStorage.getItem(LANGUAGE_KEY);
 
-/**
- * Set language to localStorage
- * (Hàm để lưu ngôn ngữ vào localStorage)
- */
-export const setLanguage = (language: string) => localStorage.setItem(LANGUAGE_KEY, language);
-
-/**
- * Remove language from localStorage
- * (Hàm để xóa ngôn ngữ khỏi localStorage)
- */
-export const clearLanguage = () => localStorage.removeItem(LANGUAGE_KEY);
-
 export const getAdminPreferences = (): AdminPreferences => {
     try {
         const rawPreferences = localStorage.getItem(ADMIN_PREFERENCES_KEY);

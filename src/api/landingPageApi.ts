@@ -50,5 +50,3 @@ export const landingPageApi = {
         return axiosClient.delete(API_ENDPOINTS.LANDING_PAGES.DELETE(id));
     },
 };
-
-export default landingPageApi;

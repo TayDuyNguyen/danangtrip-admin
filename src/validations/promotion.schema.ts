@@ -80,4 +80,3 @@ export const promotionSchema = (t: TFunction) =>
     });
 
 export type PromotionSchemaInput = yup.InferType<ReturnType<typeof promotionSchema>>;
-export default promotionSchema;

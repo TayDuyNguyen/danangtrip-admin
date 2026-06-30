@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import CategoryHeader from './components/CategoryHeader';
 import CategoryGrid from './components/CategoryGrid';
 import CategoryDialog from './components/CategoryDialog';
@@ -6,11 +6,12 @@ import CategoryDeleteDialog from './components/CategoryDeleteDialog';
 import { useTourCategoriesQuery, useTourCategoryMutations } from '@/hooks/useTourCategoryQueries';
 import type { TourCategory } from '@/dataHelper/tourCategory.dataHelper';
 import LoadingReact from '@/components/loading';
-import { LayoutGrid, CheckCircle2, XCircle, Search, AlertCircle, RefreshCcw, Filter } from 'lucide-react';
+import { LayoutGrid, CheckCircle2, XCircle, Search, AlertCircle, RefreshCcw, Filter, RotateCcw } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import CustomSelect from '@/components/ui/CustomSelect';
 import { cn } from '@/utils/cn';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useDebounce } from '@/hooks/useDebounce';
 
 const normalizeReorderList = (items: TourCategory[]) =>
     items.map((category, index) => ({
@@ -22,7 +23,8 @@ const TourCategories = () => {
     const { t } = useTranslation('tour');
     
     // Search & Filter State
-    const [searchQuery, setSearchQuery] = useState('');
+    const [searchInput, setSearchInput] = useState('');
+    const debouncedSearch = useDebounce(searchInput, 300);
     const [statusFilter, setStatusFilter] = useState<'active' | 'inactive' | undefined>(undefined);
 
     // State for Dialogs
@@ -34,7 +36,7 @@ const TourCategories = () => {
 
     // Queries & Mutations
     const { data, isLoading, isError, refetch } = useTourCategoriesQuery({ 
-        search: searchQuery,
+        search: debouncedSearch,
         status: statusFilter,
         all: true,
         with_stats: true 
@@ -42,7 +44,19 @@ const TourCategories = () => {
     const { createMutation, updateMutation, deleteMutation, statusMutation, reorderMutation } = useTourCategoryMutations();
 
     const categories = data?.items || [];
-    const stats = data?.stats || { total: 0, active: 0, inactive: 0 };
+    const stats = data?.stats || { totalTours: 0, totalCategories: 0, active: 0, inactive: 0 };
+    const hasActiveFilters = searchInput.trim() !== '' || statusFilter !== undefined;
+
+    const statusFilterOptions = useMemo(
+        () => [
+            { value: '', label: t('status.all') },
+            { value: 'active', label: t('status.active') },
+            { value: 'inactive', label: t('status.inactive') },
+        ],
+        [t]
+    );
+
+    const statusUpdatingId = statusMutation.isPending ? (statusMutation.variables?.id ?? null) : null;
 
     // Calculate next sort order for new category
     const nextSortOrder = categories.length > 0 
@@ -57,11 +71,18 @@ const TourCategories = () => {
         setIsDialogOpen(true);
     };
 
+    const handleReorderCancel = () => {
+        setIsReorderMode(false);
+        setReorderList([]);
+    };
+
     const handleReorderToggle = () => {
-        if (!isReorderMode) {
-            setReorderList(normalizeReorderList([...categories].sort((a, b) => a.sort_order - b.sort_order)));
+        if (isReorderMode) {
+            handleReorderCancel();
+            return;
         }
-        setIsReorderMode(!isReorderMode);
+        setReorderList(normalizeReorderList([...categories].sort((a, b) => a.sort_order - b.sort_order)));
+        setIsReorderMode(true);
     };
 
     const handleReorderChange = (items: TourCategory[]) => {
@@ -132,6 +153,11 @@ const TourCategories = () => {
         }
     };
 
+    const handleResetFilters = () => {
+        setSearchInput('');
+        setStatusFilter(undefined);
+    };
+
     const handleStatusChange = (id: number, status: string) => {
         statusMutation.mutate({ id, status });
     };
@@ -150,7 +176,9 @@ const TourCategories = () => {
                 <p className="text-slate-500 font-medium mt-2 max-w-md">
                     {t('categories.messages.load_error_subtitle')}
                 </p>
-                <button 
+                <button
+                    type="button"
+                    data-testid="tour-category-retry"
                     onClick={() => refetch()}
                     className="mt-8 px-8 py-3.5 bg-[#14b8a6] text-white rounded-2xl font-black hover:bg-[#0f766e] hover:scale-105 active:scale-95 transition-all shadow-xl shadow-[#14b8a6]/20 flex items-center gap-2"
                 >
@@ -166,14 +194,19 @@ const TourCategories = () => {
             <CategoryHeader onAdd={handleAddClick} />
             
             {/* Stats Row */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div className="mb-3">
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+                    {t('categories.stats_scope_note')}
+                </p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8" data-testid="tour-category-stats">
                 <div className="bg-white p-7 rounded-[32px] border border-slate-200/60 shadow-sm flex items-center gap-5 group hover:shadow-xl hover:shadow-[#14b8a6]/5 transition-all">
                     <div className="w-14 h-14 bg-[#dff7f4] rounded-3xl flex items-center justify-center text-[#14b8a6] group-hover:scale-110 transition-transform">
                         <LayoutGrid size={28} />
                     </div>
                     <div>
-                        <p className="text-[11px] font-black uppercase tracking-widest text-slate-400 mb-1">{t('categories.table.header_tour_count')}</p>
-                        <p className="text-3xl font-black text-slate-900">{stats.total}</p>
+                        <p className="text-[11px] font-black uppercase tracking-widest text-slate-400 mb-1">{t('categories.stats_total_tours')}</p>
+                        <p className="text-3xl font-black text-slate-900">{stats.totalTours}</p>
                     </div>
                 </div>
                 <div className="bg-white p-7 rounded-[32px] border border-slate-200/60 shadow-sm flex items-center gap-5 group hover:shadow-xl hover:shadow-[#14b8a6]/5 transition-all">
@@ -181,7 +214,7 @@ const TourCategories = () => {
                         <CheckCircle2 size={28} />
                     </div>
                     <div>
-                        <p className="text-[11px] font-black uppercase tracking-widest text-slate-400 mb-1">{t('status.active')}</p>
+                        <p className="text-[11px] font-black uppercase tracking-widest text-slate-400 mb-1">{t('categories.stats_active_categories')}</p>
                         <p className="text-3xl font-black text-slate-900">{stats.active}</p>
                     </div>
                 </div>
@@ -190,7 +223,7 @@ const TourCategories = () => {
                         <XCircle size={28} />
                     </div>
                     <div>
-                        <p className="text-[11px] font-black uppercase tracking-widest text-slate-400 mb-1">{t('status.inactive')}</p>
+                        <p className="text-[11px] font-black uppercase tracking-widest text-slate-400 mb-1">{t('categories.stats_inactive_categories')}</p>
                         <p className="text-3xl font-black text-slate-900">{stats.inactive}</p>
                     </div>
                 </div>
@@ -206,9 +239,10 @@ const TourCategories = () => {
                         </div>
                         <input 
                             type="text"
+                            data-testid="tour-category-search"
                             placeholder={t('categories.search_placeholder')}
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
+                            value={searchInput}
+                            onChange={(e) => setSearchInput(e.target.value)}
                             className="w-full pl-14 pr-6 py-4 rounded-3xl bg-slate-50/50 border-none focus:bg-white focus:ring-4 focus:ring-[#14b8a6]/10 outline-hidden transition-all font-bold text-slate-900"
                         />
                     </div>
@@ -216,33 +250,38 @@ const TourCategories = () => {
                     {/* Status Dropdown */}
                     <div className="w-full md:w-auto min-w-[220px]">
                         <CustomSelect
-                            options={[
-                                { value: '', label: t('status.all') },
-                                { value: 'active', label: t('status.active') },
-                                { value: 'inactive', label: t('status.inactive') },
-                            ]}
-                            value={[
-                                { value: '', label: t('status.all') },
-                                { value: 'active', label: t('status.active') },
-                                { value: 'inactive', label: t('status.inactive') },
-                            ].find(opt => opt.value === (statusFilter || ''))}
+                            options={statusFilterOptions}
+                            value={statusFilterOptions.find(opt => opt.value === (statusFilter || ''))}
                             onChange={(opt) => setStatusFilter((opt as { value: 'active' | 'inactive' })?.value || undefined)}
                             placeholder={t('status.all')}
                             leftIcon={<Filter size={16} className="text-slate-400" />}
                         />
                     </div>
 
+                    {hasActiveFilters && (
+                        <button
+                            type="button"
+                            onClick={handleResetFilters}
+                            data-testid="tour-category-reset-filters"
+                            className="h-[58px] px-5 rounded-2xl flex items-center gap-2 font-black text-slate-600 border border-slate-200 hover:bg-slate-50 transition-all shrink-0"
+                        >
+                            <RotateCcw size={18} />
+                            <span>{t('categories.reset_filters')}</span>
+                        </button>
+                    )}
+
                     {/* Reorder Toggle */}
                     <button
+                        type="button"
                         onClick={handleReorderToggle}
-                        disabled={searchQuery !== '' || statusFilter !== undefined}
+                        disabled={searchInput !== '' || statusFilter !== undefined}
                         className={cn(
                             "h-[58px] px-6 rounded-2xl flex items-center gap-3 font-black transition-all border shrink-0",
                             isReorderMode 
                                 ? "bg-[#f4fce3] border-[#d9f99d] text-[#0f766e] ring-4 ring-[#14b8a6]/10"
                                 : "bg-white border-slate-200 text-slate-600 hover:border-slate-300 active:scale-95 disabled:opacity-50 disabled:grayscale"
                         )}
-                        title={searchQuery !== '' || statusFilter !== undefined ? t('categories.reorder.disabled_title') : undefined}
+                        title={searchInput !== '' || statusFilter !== undefined ? t('categories.reorder.disabled_title') : undefined}
                     >
                         <RefreshCcw size={20} className={cn(isReorderMode && "animate-spin-slow")} />
                         <span>{isReorderMode ? t('categories.reorder.button_sorting') : t('categories.reorder.button_sort')}</span>
@@ -262,6 +301,9 @@ const TourCategories = () => {
                 onEdit={handleEditClick}
                 onDelete={handleDeleteClick}
                 onStatusChange={handleStatusChange}
+                onAdd={handleAddClick}
+                hasActiveFilters={hasActiveFilters}
+                statusUpdatingId={statusUpdatingId}
                 isReorderMode={isReorderMode}
                 onReorderChange={handleReorderChange}
             />
@@ -287,7 +329,8 @@ const TourCategories = () => {
 
                         <div className="flex items-center gap-2">
                             <button
-                                onClick={() => setIsReorderMode(false)}
+                                type="button"
+                                onClick={handleReorderCancel}
                                 className="px-6 py-3 rounded-xl font-black text-slate-400 hover:text-white hover:bg-white/10 transition-all"
                             >
                                 {t('categories.reorder.cancel')}

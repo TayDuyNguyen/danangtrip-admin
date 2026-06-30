@@ -82,7 +82,7 @@ export const NotificationPreview = ({
 
                         {/* Content */}
                         <p className={`text-xs font-semibold mt-1 leading-relaxed ${content ? "text-slate-500 break-words line-clamp-2" : "text-slate-400 italic"}`}>
-                            {content || "..."}
+                            {content || t("send.preview_empty_content")}
                         </p>
 
                         {/* Badges & Meta */}

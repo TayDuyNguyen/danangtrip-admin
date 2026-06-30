@@ -10,7 +10,7 @@ import { getLocalizedApiErrorMessage } from '@/utils/apiError';
 /**
  * Key factory for tour queries
  */
-export const tourKeys = {
+const tourKeys = {
     all: ['tours'] as const,
     stats: () => [...tourKeys.all, 'stats'] as const,
     categories: () => [...tourKeys.all, 'categories'] as const,

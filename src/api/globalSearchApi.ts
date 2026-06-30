@@ -86,13 +86,17 @@ export const globalSearchApi = {
         }
 
         if (locations.status === 'fulfilled') {
-            groups.locations = (locations.value.data?.data ?? []).map(mapLocationToViewModel).map((location) => ({
-                id: `location-${location.id}`,
-                group: 'locations',
-                title: location.name,
-                subtitle: [location.district, location.address].filter(Boolean).join(' - '),
-                path: ROUTES.LOCATIONS_DETAIL.replace(':id', String(location.id)),
-            }));
+            groups.locations = (locations.value.data?.data ?? []).map((rawLocation) => {
+                const location = mapLocationToViewModel(rawLocation);
+
+                return {
+                    id: `location-${location.id}`,
+                    group: 'locations',
+                    title: location.name,
+                    subtitle: [location.district, location.address].filter(Boolean).join(' - '),
+                    path: ROUTES.LOCATIONS_DETAIL.replace(':id', String(location.id)),
+                };
+            });
         }
 
         if (bookings.status === 'fulfilled') {

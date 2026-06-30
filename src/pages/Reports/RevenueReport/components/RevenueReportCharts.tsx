@@ -192,7 +192,10 @@ const RevenueReportCharts: React.FC<RevenueReportChartsProps> = ({
                 </div>
 
                 {/* 1.2 Top 5 Tours (Horizontal Bar Chart) */}
-                <div className="p-[1px] rounded-3xl bg-gradient-to-br from-[#14b8a6]/20 via-slate-200/25 to-slate-100/10 shadow-xs hover:shadow-md hover:from-[#14b8a6]/30 transition-all duration-300">
+                <div
+                    className="p-[1px] rounded-3xl bg-gradient-to-br from-[#14b8a6]/20 via-slate-200/25 to-slate-100/10 shadow-xs hover:shadow-md hover:from-[#14b8a6]/30 transition-all duration-300"
+                    data-testid="revenue-top-tours-chart"
+                >
                     <div className="bg-white/95 backdrop-blur-md rounded-[23px] p-6 flex flex-col justify-between h-[380px]">
                         <div className="flex justify-between items-center mb-4">
                             <div>
@@ -226,12 +229,13 @@ const RevenueReportCharts: React.FC<RevenueReportChartsProps> = ({
                                             dataKey="tourName"
                                             tickLine={false}
                                             axisLine={false}
-                                            width={100}
-                                            tickFormatter={(name) => name.length > 15 ? `${name.substring(0, 15)}...` : name}
+                                            width={140}
+                                            tickFormatter={(name) => (name.length > 28 ? `${name.substring(0, 28)}…` : name)}
                                             tick={{ fill: '#475569', fontSize: 10, fontWeight: 700 }}
                                         />
                                         <Tooltip
                                             formatter={(value: unknown) => [`${Number(value).toLocaleString()} đ`, t('charts.revenue_label')]}
+                                            labelFormatter={(label) => String(label)}
                                             contentStyle={{
                                                 backgroundColor: 'rgba(255, 255, 255, 0.95)',
                                                 backdropFilter: 'blur(8px)',

@@ -16,7 +16,7 @@ export const BlogPostDetailContent = ({ post }: BlogPostDetailContentProps) => {
         if (!post.slug) return;
         navigator.clipboard.writeText(post.slug);
         setCopied(true);
-        toast.success(t('toast.copy_success', { defaultValue: 'Đã sao chép slug vào bộ nhớ tạm!' }));
+        toast.success(t('toast.copy_success'));
         setTimeout(() => setCopied(false), 2000);
     };
 
@@ -42,7 +42,7 @@ export const BlogPostDetailContent = ({ post }: BlogPostDetailContentProps) => {
                 ) : (
                     <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-teal-50 to-slate-100 text-slate-400 gap-2">
                         <FileText size={48} className="text-teal-500/60" />
-                        <span className="text-xs font-bold text-slate-400">{t('form.media.current_image', { defaultValue: 'Không có ảnh đại diện' })}</span>
+                        <span className="text-xs font-bold text-slate-400">{t('form.media.no_featured_image')}</span>
                     </div>
                 )}
                 {/* Visual Category Tags Overlay */}
@@ -98,7 +98,7 @@ export const BlogPostDetailContent = ({ post }: BlogPostDetailContentProps) => {
                         type="button"
                         onClick={handleCopySlug}
                         className="p-1.5 rounded-lg border border-slate-200 hover:border-[#14B8A6] hover:text-[#14B8A6] bg-white cursor-pointer transition-colors shadow-3xs shrink-0 active:scale-95"
-                        title={t('actions.copy', { defaultValue: 'Sao chép Slug' })}
+                        title={t('actions.copy')}
                     >
                         {copied ? <Check size={14} className="text-emerald-500 animate-in zoom-in-50" /> : <Copy size={14} />}
                     </button>
@@ -137,7 +137,7 @@ export const BlogPostDetailContent = ({ post }: BlogPostDetailContentProps) => {
                     />
                 ) : (
                     <p className="text-sm text-slate-400 italic text-center py-8">
-                        {t('empty.no_content', { defaultValue: 'Bài viết này không có nội dung.' })}
+                        {t('empty.no_content')}
                     </p>
                 )}
             </div>

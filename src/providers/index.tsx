@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { MotionConfig } from 'framer-motion';
 import { useAuthBootstrap } from '@/hooks/useAuthBootstrap';
 import { useUserStore } from '@/store/useUserStore';
 import LoadingReact from '@/components/loading';
@@ -34,10 +35,12 @@ function AuthBootstrapGate({ children }: { children: ReactNode }) {
 
 export default function AppProviders({ children }: AppProvidersProps) {
     return (
-        <QueryClientProvider client={queryClient}>
-            <AuthBootstrapGate>
-                {children}
-            </AuthBootstrapGate>
-        </QueryClientProvider>
+        <MotionConfig reducedMotion="user">
+            <QueryClientProvider client={queryClient}>
+                <AuthBootstrapGate>
+                    {children}
+                </AuthBootstrapGate>
+            </QueryClientProvider>
+        </MotionConfig>
     );
 }

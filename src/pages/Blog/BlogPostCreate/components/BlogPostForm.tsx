@@ -25,6 +25,7 @@ import {
     useCreateBlogCategoryMutation
 } from '@/hooks/useBlogQueries';
 import { blogApi } from '@/api/blogApi';
+import { ROUTES } from '@/routes/routes';
 import { slugifyVietnamese } from '@/utils/slug';
 import BlogMarkdownEditor from './BlogMarkdownEditor';
 import FeaturedImageUploader from './FeaturedImageUploader';
@@ -33,9 +34,17 @@ interface BlogPostFormProps {
     publishOption: 'draft' | 'published' | 'scheduled';
     onPublishOptionChange: (option: 'draft' | 'published' | 'scheduled') => void;
     onSubmittingChange?: (submitting: boolean) => void;
+    onCancel?: () => void;
+    onSuccess?: (id: number) => void;
 }
 
-const BlogPostForm = ({ publishOption, onPublishOptionChange, onSubmittingChange }: BlogPostFormProps) => {
+const BlogPostForm = ({
+    publishOption,
+    onPublishOptionChange,
+    onSubmittingChange,
+    onCancel,
+    onSuccess,
+}: BlogPostFormProps) => {
     const { t } = useTranslation('blog');
     const navigate = useNavigate();
 
@@ -51,6 +60,7 @@ const BlogPostForm = ({ publishOption, onPublishOptionChange, onSubmittingChange
     // 3. State for scheduling option in UI
     const [scheduleDate, setScheduleDate] = useState('');
     const [scheduleTime, setScheduleTime] = useState('09:00');
+    const [scheduleDateError, setScheduleDateError] = useState('');
 
     const location = useLocation();
     const duplicateData = location.state?.duplicateData as BlogPostViewModel | undefined;
@@ -135,6 +145,12 @@ const BlogPostForm = ({ publishOption, onPublishOptionChange, onSubmittingChange
 
     // Handle submit
     const onSubmit = async (data: CreateBlogPostInput) => {
+        if (publishOption === 'scheduled' && !scheduleDate.trim()) {
+            setScheduleDateError(t('form.validation.schedule_date_required'));
+            return;
+        }
+        setScheduleDateError('');
+
         // Construct published_at payload based on status and selection
         let publishedAtValue = null;
         let finalStatus = data.status || 'draft';
@@ -149,7 +165,7 @@ const BlogPostForm = ({ publishOption, onPublishOptionChange, onSubmittingChange
         }
 
         try {
-            await createPostMutation.mutateAsync({
+            const response = await createPostMutation.mutateAsync({
                 title: data.title,
                 content: data.content,
                 excerpt: data.excerpt || null,
@@ -158,7 +174,12 @@ const BlogPostForm = ({ publishOption, onPublishOptionChange, onSubmittingChange
                 status: finalStatus as 'draft' | 'published',
                 published_at: publishedAtValue
             });
-            navigate('/admin/blog-posts');
+            const createdId = response.data?.id;
+            if (createdId != null) {
+                onSuccess?.(createdId);
+            } else {
+                navigate(ROUTES.BLOG_POSTS);
+            }
         } catch {
             // Error handled by mutation toast
         }
@@ -203,27 +224,6 @@ const BlogPostForm = ({ publishOption, onPublishOptionChange, onSubmittingChange
             onSubmit={handleSubmit(onSubmit)}
             className="flex flex-col lg:flex-row gap-8"
         >
-            {/* Hidden buttons for header actions */}
-            <button
-                id="blog-form-submit-draft"
-                type="submit"
-                className="hidden"
-                onClick={() => {
-                    setValue('status', 'draft');
-                    onPublishOptionChange('draft');
-                }}
-            />
-            <button
-                id="blog-form-submit-publish"
-                type="submit"
-                className="hidden"
-                onClick={() => {
-                    if (publishOption === 'draft') {
-                        onPublishOptionChange('published');
-                        setValue('status', 'published');
-                    }
-                }}
-            />
             {/* Left Column: Form Fields */}
             <div className="flex-1 space-y-6">
                 <div className="bg-white rounded-3xl p-6 md:p-8 border border-slate-200/60 shadow-xs transition-all hover:shadow-sm">
@@ -371,6 +371,7 @@ const BlogPostForm = ({ publishOption, onPublishOptionChange, onSubmittingChange
                                         onChange={() => {
                                             onPublishOptionChange('scheduled');
                                             setValue('status', 'published');
+                                            setScheduleDateError('');
                                         }}
                                         className="mt-1 w-4 h-4 text-[#14B8A6] focus:ring-[#14B8A6]"
                                     />
@@ -393,24 +394,28 @@ const BlogPostForm = ({ publishOption, onPublishOptionChange, onSubmittingChange
                                         <input
                                             type="date"
                                             value={scheduleDate}
-                                            onChange={(e) => setScheduleDate(e.target.value)}
+                                            onChange={(e) => {
+                                                setScheduleDate(e.target.value);
+                                                if (e.target.value) setScheduleDateError('');
+                                            }}
                                             min={new Date().toISOString().split('T')[0]}
-                                            required
                                             className="flex-1 text-xs border border-slate-200 rounded-xl px-3 py-2 bg-white focus:ring-2 focus:ring-[#14B8A6]/20 focus:border-[#14B8A6] outline-none"
                                         />
                                         <input
                                             type="time"
                                             value={scheduleTime}
                                             onChange={(e) => setScheduleTime(e.target.value)}
-                                            required
                                             className="w-[85px] text-xs border border-slate-200 rounded-xl px-3 py-2 bg-white focus:ring-2 focus:ring-[#14B8A6]/20 focus:border-[#14B8A6] outline-none"
                                         />
                                     </div>
+                                    {scheduleDateError && (
+                                        <p className="text-xs text-red-500 font-medium">{scheduleDateError}</p>
+                                    )}
                                 </div>
                             )}
 
-                            {/* Form submit actions */}
-                            <div className="pt-4 border-t border-slate-100 flex flex-col gap-2">
+                            {/* Form submit actions — visible on mobile only; desktop uses sticky header */}
+                            <div className="pt-4 border-t border-slate-100 flex flex-col gap-2 md:hidden">
                                 <Button
                                     type="submit"
                                     onClick={() => setValue('status', publishOption === 'draft' ? 'draft' : 'published')}
@@ -427,7 +432,7 @@ const BlogPostForm = ({ publishOption, onPublishOptionChange, onSubmittingChange
                                     variant="outline"
                                     type="button"
                                     disabled={createPostMutation.isPending || isSubmitting}
-                                    onClick={() => navigate('/admin/blog-posts')}
+                                    onClick={() => (onCancel ? onCancel() : navigate(ROUTES.BLOG_POSTS))}
                                     className="w-full rounded-2xl h-12 border-slate-200 text-slate-500 hover:bg-slate-50 font-bold"
                                 >
                                     {t('actions.cancel')}
@@ -449,10 +454,10 @@ const BlogPostForm = ({ publishOption, onPublishOptionChange, onSubmittingChange
                                 {categoriesLoading ? (
                                     <div className="flex items-center gap-2 text-slate-400 py-2">
                                         <Loader2 className="w-4 h-4 animate-spin" />
-                                        <span className="text-xs font-semibold">Loading...</span>
+                                        <span className="text-xs font-semibold">{t('form.categories.loading')}</span>
                                     </div>
                                 ) : categories.length === 0 ? (
-                                    <div className="text-xs text-slate-400 py-2 font-medium">No categories found</div>
+                                    <div className="text-xs text-slate-400 py-2 font-medium">{t('form.categories.empty')}</div>
                                 ) : (
                                     categories.map((cat) => {
                                         const isChecked = watchCategoryIds.includes(cat.id);
@@ -465,6 +470,7 @@ const BlogPostForm = ({ publishOption, onPublishOptionChange, onSubmittingChange
                                                     type="checkbox"
                                                     checked={isChecked}
                                                     onChange={(e) => handleCategoryToggle(cat.id, e.target.checked)}
+                                                    aria-label={cat.name}
                                                     className="w-4.5 h-4.5 text-[#14B8A6] border-slate-300 rounded-sm focus:ring-[#14B8A6]"
                                                 />
                                                 <span

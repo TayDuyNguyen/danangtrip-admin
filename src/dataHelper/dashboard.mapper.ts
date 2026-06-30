@@ -42,10 +42,6 @@ export const toArraySafe = <T>(input: unknown): T[] => {
     return [];
 };
 
-export const toDateLabelSafe = (val: unknown): string => {
-    return String(val || '');
-};
-
 /**
  * Mappers: Raw Backend Data -> UI View Models
  */
@@ -57,7 +53,7 @@ const hasStatsTotalsShape = (x: Record<string, unknown>): boolean =>
  * GET /admin/dashboard/stats — backend có thể trả phẳng hoặc envelope:
  * `{ code, message, data: { total_revenue, total_bookings, ... } }`
  */
-export function extractDashboardStatsPayload(raw: unknown): RawDashboardStats | undefined {
+function extractDashboardStatsPayload(raw: unknown): RawDashboardStats | undefined {
     if (raw == null || typeof raw !== 'object') return undefined;
     const o = raw as Record<string, unknown>;
     if (hasStatsTotalsShape(o)) return o as RawDashboardStats;

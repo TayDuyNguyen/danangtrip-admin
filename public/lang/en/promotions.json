@@ -11,19 +11,26 @@
         "delete_success": "Promotion deleted successfully.",
         "delete_failed": "Failed to delete promotion.",
         "delete_confirm": "Are you sure you want to delete the promotion code {{code}}?",
+        "delete_title": "Confirm delete",
+        "delete_irreversible": "This action cannot be undone.",
+        "confirm_delete": "Delete promotion",
         "add_new": "Add New Promotion",
         "edit": "Edit Code",
         "save": "Save Changes",
         "cancel": "Cancel",
+        "reset_filters": "Reset filters",
         "search_placeholder": "Search by code or name..."
     },
     "fields": {
         "code": "Discount Code",
         "code_help": "No spaces, e.g. DANANG2026, SUMMER50k",
+        "code_placeholder": "e.g. SUMMER50",
         "name": "Campaign Name",
         "name_help": "Display name or purpose of the promotion",
+        "name_placeholder": "Summer promotion 2026",
         "description": "Detailed Description",
         "description_help": "Detailed conditions for applying the code",
+        "description_placeholder": "Detailed conditions or scope of the promotion...",
         "discount_type": "Discount Type",
         "discount_value": "Discount Value",
         "discount_value_percent_help": "Enter value from 1 to 100 (%)",
@@ -72,6 +79,45 @@
         "expired_or_inactive": "Expired/Inactive",
         "unlimited": "Unlimited",
         "filter_valid_now": "Valid Right Now",
-        "no_data": "No promotion codes found."
+        "no_data": "No promotion codes found.",
+        "currency_suffix": "VND",
+        "filtering_by": "Filtering by:",
+        "remove_filter": "Remove filter",
+        "new_badge": "New",
+        "max_discount_short": "Max: {{amount}}",
+        "min_order_short": "Order ≥ {{amount}}",
+        "no_min_order": "No minimum order",
+        "usage_times": "{{used}} / {{limit}} uses",
+        "unlimited_system": "Unlimited system-wide",
+        "per_user_limit": "Per user: max {{count}} times",
+        "starts_label": "Starts: {{date}}",
+        "ends_label": "Ends: {{date}}",
+        "toggle_active": "Active",
+        "toggle_expired_hint": "Expired code cannot be reactivated",
+        "table_actions": "Actions"
+    },
+    "stats": {
+        "total_codes": "Total codes",
+        "total_codes_hint": "Matching current filters",
+        "active_on_page": "Active (this page)",
+        "uses_on_page": "Uses (this page)",
+        "page_scope_hint": "Counts on current page only"
+    },
+    "table": {
+        "title": "Promotion list ({{total}})"
+    },
+    "pagination": {
+        "range": "Showing {{from}}–{{to}} of {{total}} items",
+        "items_per_page": "{{count}} per page"
+    },
+    "form": {
+        "section_basic": "Basic information",
+        "section_discount": "Discount settings",
+        "section_conditions": "Conditions & limits",
+        "section_validity": "Validity period"
+    },
+    "messages": {
+        "list_load_error": "Could not load promotions",
+        "list_load_error_desc": "Please check your connection and try again."
     }
 }

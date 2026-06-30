@@ -14,10 +14,6 @@ jobs:
     name: Quality Gates
     runs-on: ubuntu-latest
 
-    env:
-      VITE_API_URL: ${{ secrets.VITE_API_URL }}
-      VITE_PUBLIC_WEB_URL: ${{ secrets.VITE_PUBLIC_WEB_URL }}
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -29,7 +25,7 @@ jobs:
           cache: npm
 
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --ignore-scripts
 
       - name: Lint
         run: npm run lint
@@ -38,9 +34,15 @@ jobs:
         run: npm run typecheck
 
       - name: Validate production environment
+        env:
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
+          VITE_PUBLIC_WEB_URL: ${{ secrets.VITE_PUBLIC_WEB_URL }}
         run: npm run deploy:check
 
       - name: Build
+        env:
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
+          VITE_PUBLIC_WEB_URL: ${{ secrets.VITE_PUBLIC_WEB_URL }}
         run: npm run build
 
       - name: Upload release artifact

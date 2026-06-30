@@ -2,6 +2,7 @@ import MarkdownIt from 'markdown-it';
 import MdEditor from 'react-markdown-editor-lite';
 import 'react-markdown-editor-lite/lib/index.css';
 import { Info, Loader2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useBlogUploadMutations } from '@/hooks/useBlogQueries';
 
 const mdParser = new MarkdownIt({
@@ -27,6 +28,7 @@ const BlogMarkdownEditor = ({
     error,
     height = '400px'
 }: BlogMarkdownEditorProps) => {
+    const { t } = useTranslation('blog');
     const { uploadImageMutation } = useBlogUploadMutations();
 
     const handleImageUpload = (file: File): Promise<string> => {
@@ -55,7 +57,7 @@ const BlogMarkdownEditor = ({
                     </label>
                     <div className="flex items-center gap-1.5 text-xs text-slate-400">
                         <Info className="w-3.5 h-3.5" />
-                        <span>Markdown support</span>
+                        <span>{t('form.editor.markdown_support')}</span>
                     </div>
                 </div>
             )}
@@ -64,7 +66,7 @@ const BlogMarkdownEditor = ({
                 {uploadImageMutation.isPending && (
                     <div className="absolute inset-0 bg-white/50 backdrop-blur-[1px] z-50 flex items-center justify-center gap-2">
                         <Loader2 className="w-5 h-5 text-[#14b8a6] animate-spin" />
-                        <span className="text-xs font-semibold text-slate-600">Uploading image...</span>
+                        <span className="text-xs font-semibold text-slate-600">{t('form.editor.uploading')}</span>
                     </div>
                 )}
                 <MdEditor

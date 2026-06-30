@@ -10,6 +10,8 @@ import type { CreateLocationInput } from '@/validations/location.schema';
 interface ImageUploaderProps {
     setValue: UseFormSetValue<CreateLocationInput>;
     watch: UseFormWatch<CreateLocationInput>;
+    thumbnailError?: string;
+    videoUrlError?: string;
 }
 
 export interface ImageUploaderHandle {
@@ -17,7 +19,8 @@ export interface ImageUploaderHandle {
     clearPendingImages: () => void;
 }
 
-const ImageUploader = forwardRef<ImageUploaderHandle, ImageUploaderProps>(({ setValue, watch }, ref) => {
+const ImageUploader = forwardRef<ImageUploaderHandle, ImageUploaderProps>(
+    ({ setValue, watch, thumbnailError, videoUrlError }, ref) => {
     const { t } = useTranslation('location');
     const { uploadThumbnailMutation, uploadGalleryMutation } = useLocationUploadMutations();
     const pendingThumbnailRef = useRef<{ previewUrl: string; file: File } | null>(null);
@@ -186,6 +189,9 @@ const ImageUploader = forwardRef<ImageUploaderHandle, ImageUploaderProps>(({ set
                         onChange={handleThumbnailUpload}
                     />
                 </div>
+                {thumbnailError && (
+                    <p className="text-xs text-red-500 font-bold mt-2">{thumbnailError}</p>
+                )}
             </div>
 
             <div>
@@ -250,6 +256,9 @@ const ImageUploader = forwardRef<ImageUploaderHandle, ImageUploaderProps>(({ set
                         className="text-sm"
                     />
                 </div>
+                {videoUrlError && (
+                    <p className="text-xs text-red-500 font-medium mt-1">{videoUrlError}</p>
+                )}
             </div>
         </div>
     );

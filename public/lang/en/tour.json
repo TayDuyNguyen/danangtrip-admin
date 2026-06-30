@@ -306,6 +306,27 @@
         "subtitle": "Categorize and manage travel tour groups",
         "badge_new": "NEW",
         "search_placeholder": "Search categories...",
+        "stats_scope_note": "System-wide stats (not affected by current filters)",
+        "stats_total_tours": "Linked tours total",
+        "stats_active_categories": "Active categories",
+        "stats_inactive_categories": "Hidden categories",
+        "reset_filters": "Reset filters",
+        "empty_title": "No categories found",
+        "empty_subtitle": "Try changing filters or create a new category",
+        "empty_cta": "Add your first category",
+        "actions": {
+            "edit": "Edit category {{name}}",
+            "delete": "Delete category {{name}}",
+            "delete_blocked": "Cannot delete — {{count}} linked tour(s)"
+        },
+        "dialog": {
+            "button_delete": "Delete category"
+        },
+        "validation": {
+            "name_required": "Category name is required",
+            "slug_required": "Slug is required",
+            "icon_required": "Please select an icon"
+        },
         "reorder": {
             "disabled_title": "Clear search and filters to reorder",
             "button_sorting": "Reordering",

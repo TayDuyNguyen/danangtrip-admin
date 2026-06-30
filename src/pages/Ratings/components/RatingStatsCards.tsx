@@ -1,7 +1,8 @@
 import React from 'react';
-import { MessageSquare, Clock, CheckCircle2, XCircle } from 'lucide-react';
+import { MessageSquare, Clock, CheckCircle2, XCircle, RefreshCw } from 'lucide-react';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useTranslation } from 'react-i18next';
+import EmptyState from '@/components/common/EmptyState';
 
 interface RatingStatsCardsProps {
     stats?: {
@@ -11,12 +12,19 @@ interface RatingStatsCardsProps {
         rejected: number;
     };
     isLoading?: boolean;
+    isError?: boolean;
+    onRetry?: () => void;
 }
 
-const RatingStatsCards: React.FC<RatingStatsCardsProps> = ({ stats, isLoading = false }) => {
+const RatingStatsCards: React.FC<RatingStatsCardsProps> = ({
+    stats,
+    isLoading = false,
+    isError = false,
+    onRetry,
+}) => {
     const { t } = useTranslation(['ratings', 'common']);
 
-    if (isLoading || !stats) {
+    if (isLoading) {
         return (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
                 {[...Array(4)].map((_, idx) => (
@@ -32,6 +40,34 @@ const RatingStatsCards: React.FC<RatingStatsCardsProps> = ({ stats, isLoading = 
                 ))}
             </div>
         );
+    }
+
+    if (isError) {
+        return (
+            <div
+                className="bg-white border border-[#E2E8F0] rounded-2xl p-8 flex flex-col items-center text-center mb-6"
+                data-testid="rating-stats-error"
+            >
+                <EmptyState
+                    title={t('error.stats_load_failed')}
+                    description={t('error.stats_load_failed_desc')}
+                />
+                {onRetry && (
+                    <button
+                        type="button"
+                        onClick={() => void onRetry()}
+                        className="mt-2 px-6 py-2.5 bg-[#14b8a6] text-white rounded-xl text-[13px] font-bold hover:bg-[#0f766e] transition-colors inline-flex items-center gap-2"
+                    >
+                        <RefreshCw className="w-4 h-4" />
+                        {t('actions.retry', { ns: 'common', defaultValue: 'Thử lại' })}
+                    </button>
+                )}
+            </div>
+        );
+    }
+
+    if (!stats) {
+        return null;
     }
 
     return (

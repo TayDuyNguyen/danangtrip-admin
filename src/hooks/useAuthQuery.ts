@@ -1,5 +1,5 @@
 import { authApi } from '@/api';
-import type { LoginRequest, LoginResponse, RefreshTokenResponse, RegisterRequest, RegisterResponse } from '@/dataHelper';
+import type { LoginRequest, LoginResponse } from '@/dataHelper';
 import { useUserStore } from '@/store';
 import type { ApiResponse } from '@/types';
 import { setAccessToken } from '@/utils';
@@ -29,22 +29,6 @@ export const useLoginQuery = () => {
 }
 
 /**
- * Register query
- * (Query để đăng ký)
- */
-export const useRegisterQuery = () => {
-    return useMutation<ApiResponse<RegisterResponse>, Error, RegisterRequest>({
-        mutationFn: authApi.register,
-        onSuccess: () => {
-            // toast.success
-        },
-        onError: () => {
-            // toast.error
-        },
-    });
-}
-
-/**
  * Logout query
  * (Query để đăng xuất)
  */
@@ -60,24 +44,3 @@ export const useLogoutQuery = () => {
     });
 }
 
-/**
- * Refresh token query
- * (Query để refresh token)
- */
-export const useRefreshTokenQuery = () => {
-    return useMutation<ApiResponse<RefreshTokenResponse>, Error>({
-        mutationFn: authApi.refreshToken,
-        onSuccess: (res) => {
-            if (res.data?.token) {
-                setAccessToken(res.data.token);
-            }
-            if (res.data?.user) {
-                useUserStore.setState({ user: res.data.user });
-            }
-            // toast.success
-        },
-        onError: () => {
-            // toast.error
-        },
-    });
-}

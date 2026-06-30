@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { AlertTriangle, Send } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/Button";
@@ -18,45 +19,65 @@ export const BulkConfirmDialog = ({
     recipientCount,
 }: BulkConfirmDialogProps) => {
     const { t } = useTranslation("notification");
+    const titleId = "notification-bulk-send-dialog-title";
+    const bodyId = "notification-bulk-send-dialog-body";
+
+    useEffect(() => {
+        if (!isOpen) return;
+
+        const handleEscape = (event: KeyboardEvent) => {
+            if (event.key === "Escape" && !isMutating) {
+                onClose();
+            }
+        };
+
+        document.addEventListener("keydown", handleEscape);
+        return () => document.removeEventListener("keydown", handleEscape);
+    }, [isOpen, isMutating, onClose]);
 
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-            {/* Backdrop */}
-            <div 
-                className="absolute inset-0 bg-slate-900/40 backdrop-blur-xs transition-opacity duration-300"
-                onClick={onClose}
-            />
+        <div
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby={titleId}
+            aria-describedby={bodyId}
+            data-testid="notification-bulk-send-dialog"
+        >
+            <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-xs transition-opacity duration-300" />
 
-            {/* Modal Content */}
             <div className="bg-white rounded-3xl p-6 max-w-sm w-full border border-slate-100 shadow-2xl relative z-10 animate-in zoom-in-95 duration-200 flex flex-col items-center text-center">
-                {/* Warning Icon Container */}
                 <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center text-amber-500 mb-4 animate-bounce">
                     <AlertTriangle size={22} />
                 </div>
 
-                {/* Text Description */}
-                <h3 className="text-slate-900 font-black text-lg tracking-tight mb-2">
+                <h3 id={titleId} className="text-slate-900 font-black text-lg tracking-tight mb-2">
                     {t("send.dialog.bulk_title")}
                 </h3>
-                <p className="text-slate-500 text-sm font-semibold mb-6 px-2 leading-relaxed">
+                <p
+                    id={bodyId}
+                    className="text-slate-500 text-sm font-semibold mb-6 px-2 leading-relaxed"
+                >
                     {t("send.dialog.bulk_body", { count: recipientCount.toLocaleString() })}
                 </p>
 
-                {/* Footer Buttons */}
                 <div className="flex items-center gap-3 w-full">
                     <Button
                         variant="outline"
                         onClick={onClose}
                         disabled={isMutating}
+                        data-testid="notification-bulk-send-cancel"
                         className="flex-1 rounded-2xl py-3 border-slate-200 text-slate-500 hover:bg-slate-50 font-bold"
                     >
                         {t("send.dialog.bulk_cancel")}
                     </Button>
                     <button
+                        type="button"
                         onClick={onConfirm}
                         disabled={isMutating}
+                        data-testid="notification-bulk-send-confirm"
                         className="flex-1 rounded-2xl py-3 bg-[#0066CC] hover:bg-[#0052a3] text-white font-bold active:scale-[0.98] disabled:opacity-50 transition-all duration-150 flex items-center justify-center gap-1.5 cursor-pointer shadow-lg shadow-[#0066CC]/20"
                     >
                         {isMutating ? (

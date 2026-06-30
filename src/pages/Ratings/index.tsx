@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { Star, Trash2, Download } from 'lucide-react';
+import { Star, Trash2, Download, RefreshCw } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
 // Common Components
 import Breadcrumbs from '@/components/common/Breadcrumbs';
+import EmptyState from '@/components/common/EmptyState';
+import { reportApi } from '@/api/reportApi';
 
 // Queries & Mutations hooks
 import { useRatingsReportQuery } from '@/hooks/useReportQueries';
@@ -61,6 +63,7 @@ const Ratings: React.FC = () => {
     const { 
         data: reportData, 
         isLoading: isReportLoading,
+        isError: isReportError,
         refetch: refetchReport 
     } = useRatingsReportQuery(toRatingsReportFilters(filters));
 
@@ -69,6 +72,7 @@ const Ratings: React.FC = () => {
         data: ratingsData, 
         isLoading: isListLoading,
         isFetching: isListFetching,
+        isError: isListError,
         refetch: refetchList 
     } = useAdminRatingsListQuery(filters);
 
@@ -77,21 +81,32 @@ const Ratings: React.FC = () => {
         rejectMutation, 
         deleteMutation, 
         exportMutation,
-        markViewedMutation
+        markViewedMutation,
+        invalidateRatingQueries,
     } = useAdminRatingMutations();
 
-    // 5. Compute derived counts for stats row
-    const statsTotal = reportData?.stats.total || 0;
-    const statsNew = reportData?.stats.new || 0;
-    const statsViewed = reportData?.stats.viewed || 0;
-    const statsRejected = reportData?.charts.statuses.find(s => s.status === 'rejected')?.count || 0;
+    const pruneBulkSelection = React.useCallback((
+        ids: number[],
+        results: PromiseSettledResult<unknown>[],
+    ) => {
+        setSelectedIds((prev) =>
+            prev.filter((id) => {
+                const index = ids.indexOf(id);
+                if (index === -1) return true;
+                return results[index].status !== 'fulfilled';
+            })
+        );
+    }, []);
 
-    const stats = {
-        total: statsTotal,
-        new: statsNew,
-        viewed: statsViewed,
-        rejected: statsRejected,
-    };
+    // 5. Compute derived counts for stats row
+    const stats = reportData
+        ? {
+            total: reportData.stats.total || 0,
+            new: reportData.stats.new || 0,
+            viewed: reportData.stats.viewed || 0,
+            rejected: reportData.charts.statuses.find((status) => status.status === 'rejected')?.count || 0,
+        }
+        : undefined;
 
     // 6. Bulk Selection Helpers
     const ratingsItems = ratingsData?.items || [];
@@ -145,26 +160,47 @@ const Ratings: React.FC = () => {
         } else {
             // Bulk reject
             if (selectedIds.length === 0) return;
+            const bulkIds = [...selectedIds];
+            const bulkCount = bulkIds.length;
             setIsBulkLoading(true);
 
             toast.promise(
-                Promise.all(selectedIds.map(id => 
-                    rejectMutation.mutateAsync({ id, rejected_reason: reason })
-                )),
-                {
-                    loading: t('actions.processing', 'Đang xử lý...'),
-                    success: () => {
-                        setSelectedIds([]);
+                (async () => {
+                    try {
+                        const results = await Promise.allSettled(
+                            bulkIds.map((id) =>
+                                reportApi.rejectRating(id, { rejected_reason: reason })
+                            )
+                        );
+
+                        invalidateRatingQueries();
+                        pruneBulkSelection(bulkIds, results);
                         setIsRejectOpen(false);
                         refetchReport();
                         refetchList();
+
+                        const succeeded = results.filter((result) => result.status === 'fulfilled').length;
+                        const failed = bulkCount - succeeded;
+
+                        if (failed === 0) {
+                            return t('success.hide_bulk_success', 'Đã ẩn thành công {{count}} đánh giá.', { count: bulkCount });
+                        }
+                        if (succeeded === 0) {
+                            throw new Error(t('error.update_bulk', 'Cập nhật hàng loạt thất bại.'));
+                        }
+                        return t('success.hide_bulk_partial', 'Đã ẩn {{success}}/{{total}} đánh giá. {{failed}} thất bại.', {
+                            success: succeeded,
+                            total: bulkCount,
+                            failed,
+                        });
+                    } finally {
                         setIsBulkLoading(false);
-                        return t('success.hide_bulk_success', 'Đã ẩn thành công {{count}} đánh giá.', { count: selectedIds.length });
-                    },
-                    error: (err) => {
-                        setIsBulkLoading(false);
-                        return err?.response?.data?.message || t('error.update_bulk', 'Cập nhật hàng loạt thất bại.');
                     }
+                })(),
+                {
+                    loading: t('actions.processing', 'Đang xử lý...'),
+                    success: (message) => message,
+                    error: (err) => err?.message || t('error.update_bulk', 'Cập nhật hàng loạt thất bại.'),
                 }
             );
         }
@@ -199,24 +235,45 @@ const Ratings: React.FC = () => {
 
     const handleBulkDeleteConfirm = async () => {
         if (selectedIds.length === 0) return;
+        const bulkIds = [...selectedIds];
+        const bulkCount = bulkIds.length;
         setIsBulkLoading(true);
 
         toast.promise(
-            Promise.all(selectedIds.map(id => deleteMutation.mutateAsync(id))),
-            {
-                loading: t('actions.processing', 'Đang xử lý...'),
-                success: () => {
-                    setSelectedIds([]);
+            (async () => {
+                try {
+                    const results = await Promise.allSettled(
+                        bulkIds.map((id) => reportApi.deleteRating(id))
+                    );
+
+                    invalidateRatingQueries();
+                    pruneBulkSelection(bulkIds, results);
                     setIsBulkDeleteOpen(false);
                     refetchReport();
                     refetchList();
+
+                    const succeeded = results.filter((result) => result.status === 'fulfilled').length;
+                    const failed = bulkCount - succeeded;
+
+                    if (failed === 0) {
+                        return t('success.delete_bulk_success', 'Đã xóa vĩnh viễn thành công {{count}} đánh giá.', { count: bulkCount });
+                    }
+                    if (succeeded === 0) {
+                        throw new Error(t('error.delete_bulk', 'Xóa hàng loạt thất bại.'));
+                    }
+                    return t('success.delete_bulk_partial', 'Đã xóa {{success}}/{{total}} đánh giá. {{failed}} thất bại.', {
+                        success: succeeded,
+                        total: bulkCount,
+                        failed,
+                    });
+                } finally {
                     setIsBulkLoading(false);
-                    return t('success.delete_bulk_success', 'Đã xóa vĩnh viễn thành công {{count}} đánh giá.', { count: selectedIds.length });
-                },
-                error: (err) => {
-                    setIsBulkLoading(false);
-                    return err?.response?.data?.message || t('error.delete', 'Xóa thất bại.');
                 }
+            })(),
+            {
+                loading: t('actions.processing', 'Đang xử lý...'),
+                success: (message) => message,
+                error: (err) => err?.message || t('error.delete_bulk', 'Xóa hàng loạt thất bại.'),
             }
         );
     };
@@ -227,6 +284,7 @@ const Ratings: React.FC = () => {
             ...prev,
             ...newFilters,
         }));
+        setSelectedIds([]);
 
         if (Object.prototype.hasOwnProperty.call(newFilters, 'is_new')) {
             const nextParams = new URLSearchParams(searchParams);
@@ -245,6 +303,7 @@ const Ratings: React.FC = () => {
             per_page: perPage,
             page: 1,
         }));
+        setSelectedIds([]);
     }, []);
 
     const handleReset = React.useCallback(() => {
@@ -329,7 +388,9 @@ const Ratings: React.FC = () => {
             {/* Statistics Summary */}
             <RatingStatsCards 
                 stats={stats} 
-                isLoading={isReportLoading} 
+                isLoading={isReportLoading}
+                isError={isReportError}
+                onRetry={refetchReport}
             />
 
             {/* Advanced Filters */}
@@ -342,27 +403,47 @@ const Ratings: React.FC = () => {
             />
 
             {/* Ratings Records Table */}
-            <RatingTable
-                ratings={ratingsItems}
-                isLoading={isListLoading}
-                isRefreshing={isListFetching}
-                selectedIds={selectedIds}
-                onSelectToggle={handleSelectToggle}
-                isSelectedAll={isSelectedAll}
-                onSelectAllChange={handleSelectAllChange}
-                onMarkViewed={handleMarkViewed}
-                onRejectClick={handleRejectClick}
-                onDelete={handleDeleteClick}
-                page={filters.page || 1}
-                limit={filters.per_page || 10}
-                total={ratingsData?.total || 0}
-                onPageChange={(page) => handleFilterChange({ page })}
-                onLimitChange={handleLimitChange}
-                onRefresh={refetchList}
-                isMutating={isMutating}
-                onBulkReject={handleBulkRejectClick}
-                onBulkDelete={handleBulkDeleteClick}
-            />
+            {isListError ? (
+                <div
+                    className="bg-white border border-[#E2E8F0] rounded-2xl p-10 flex flex-col items-center text-center"
+                    data-testid="rating-list-error"
+                >
+                    <EmptyState
+                        title={t('messages.list_load_error')}
+                        description={t('messages.list_load_error_desc')}
+                    />
+                    <button
+                        type="button"
+                        onClick={() => void refetchList()}
+                        className="mt-2 px-6 py-2.5 bg-[#14b8a6] text-white rounded-xl text-[13px] font-bold hover:bg-[#0f766e] transition-colors inline-flex items-center gap-2"
+                    >
+                        <RefreshCw className="w-4 h-4" />
+                        {t('actions.retry', { ns: 'common', defaultValue: 'Thử lại' })}
+                    </button>
+                </div>
+            ) : (
+                <RatingTable
+                    ratings={ratingsItems}
+                    isLoading={isListLoading}
+                    isRefreshing={isListFetching}
+                    selectedIds={selectedIds}
+                    onSelectToggle={handleSelectToggle}
+                    isSelectedAll={isSelectedAll}
+                    onSelectAllChange={handleSelectAllChange}
+                    onMarkViewed={handleMarkViewed}
+                    onRejectClick={handleRejectClick}
+                    onDelete={handleDeleteClick}
+                    page={filters.page || 1}
+                    limit={filters.per_page || 10}
+                    total={ratingsData?.total || 0}
+                    onPageChange={(page) => handleFilterChange({ page })}
+                    onLimitChange={handleLimitChange}
+                    onRefresh={refetchList}
+                    isMutating={isMutating}
+                    onBulkReject={handleBulkRejectClick}
+                    onBulkDelete={handleBulkDeleteClick}
+                />
+            )}
 
             {/* Rejection / Hidden Input Dialog Portal */}
             <RejectRatingDialog

@@ -93,6 +93,7 @@ const PromotionFilter = ({ filters, onFilterChange }: Props) => {
 
                 {/* Valid now checkbox/toggle */}
                 <button
+                    type="button"
                     onClick={() => handleChange('valid_now', !filters.valid_now)}
                     className={`flex items-center gap-2 h-[48px] px-4 rounded-xl border text-[14px] font-bold transition-all active:scale-95 shadow-sm ${
                         filters.valid_now 
@@ -107,11 +108,12 @@ const PromotionFilter = ({ filters, onFilterChange }: Props) => {
                 {/* Reset button */}
                 {hasActiveFilters && (
                     <button
+                        type="button"
                         onClick={handleReset}
                         className="flex items-center gap-2 h-[48px] px-4 rounded-xl text-[14px] font-bold text-[#64748B] border border-[#E2E8F0] bg-white hover:text-[#EF4444] hover:border-[#EF4444] transition-all active:scale-95 shadow-sm"
                     >
                         <RotateCcw size={16} />
-                        {t('actions.cancel')}
+                        {t('actions.reset_filters')}
                     </button>
                 )}
             </div>
@@ -119,7 +121,9 @@ const PromotionFilter = ({ filters, onFilterChange }: Props) => {
             {/* Active filter tags */}
             {activeFilters.length > 0 && (
                 <div className="flex flex-wrap items-center gap-2 mt-4 pt-4 border-t border-slate-100 animate-in slide-in-from-top-2 duration-150">
-                    <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mr-1">Đang lọc theo:</span>
+                    <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mr-1">
+                        {t('labels.filtering_by')}
+                    </span>
                     {activeFilters.map((tag) => (
                         <div
                             key={tag.key}
@@ -127,9 +131,12 @@ const PromotionFilter = ({ filters, onFilterChange }: Props) => {
                         >
                             {tag.label}
                             <button
+                                type="button"
                                 onClick={() => handleChange(tag.key, tag.key === 'valid_now' ? false : '')}
                                 className="hover:bg-[#14b8a6]/10 rounded-full transition-colors p-0.5"
-                                title="Xóa lọc"
+                                aria-label={t('labels.remove_filter')}
+                                title={t('labels.remove_filter')}
+                                data-testid={`promotion-filter-remove-${tag.key}`}
                             >
                                 <X size={13} strokeWidth={3} />
                             </button>

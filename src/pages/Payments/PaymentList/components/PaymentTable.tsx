@@ -308,7 +308,12 @@ export const PaymentTable = ({
 
                         <div className="flex items-center gap-1.5">
                             {Array.from({ length: lastPage }, (_, i) => i + 1)
-                                .filter(p => p === 1 || p === lastPage || Math.abs(p - page) <= 1)
+                                .reduce<number[]>((pages, p) => {
+                                    if (p === 1 || p === lastPage || Math.abs(p - page) <= 1) {
+                                        pages.push(p);
+                                    }
+                                    return pages;
+                                }, [])
                                 .map((p, i, arr) => (
                                     <div key={p} className="flex items-center gap-1.5">
                                         {i > 0 && arr[i - 1] !== p - 1 && (

@@ -12,6 +12,8 @@
     "role_label": "Vai Trò (Xuất)",
     "role_all": "Tất cả vai trò",
     "role_admin": "Quản trị viên",
+    "role_manager": "Quản lý",
+    "role_staff": "Nhân viên",
     "role_user": "Người dùng",
     "status_label": "Trạng Thái (Xuất)",
     "status_all": "Tất cả trạng thái",
@@ -39,7 +41,9 @@
     "growth_subtitle": "Thống kê số lượng tài khoản đăng ký mới theo từng tháng",
     "no_data": "Không có dữ liệu tăng trưởng mới trong năm này",
     "users_label": "Người dùng mới đăng ký",
-    "legend_users": "Số lượng đăng ký mới"
+    "legend_users": "Số lượng đăng ký mới",
+    "roles_title": "Phân bổ vai trò người dùng",
+    "roles_subtitle": "Tỷ lệ tài khoản theo vai trò trong hệ thống"
   },
   "table": {
     "title": "Chi tiết tăng trưởng",

@@ -149,8 +149,6 @@ test.describe('Admin Dashboard — Navigation @P1', () => {
 
       { link: dashboardCopy.sidebarPromotions, url: /\/admin\/promotions/ },
 
-      { link: dashboardCopy.sidebarLanding, url: /\/admin\/landing-pages/ },
-
     ] as const;
 
 

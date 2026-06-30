@@ -11,19 +11,26 @@
         "delete_success": "Đã xóa mã khuyến mãi thành công.",
         "delete_failed": "Không thể xóa mã khuyến mãi này.",
         "delete_confirm": "Bạn có chắc chắn muốn xóa mã khuyến mãi {{code}} không?",
+        "delete_title": "Xác nhận xóa",
+        "delete_irreversible": "Hành động này không thể hoàn tác.",
+        "confirm_delete": "Đồng ý xóa",
         "add_new": "Thêm mã giảm giá mới",
         "edit": "Chỉnh sửa mã",
         "save": "Lưu thông tin",
         "cancel": "Hủy bỏ",
+        "reset_filters": "Đặt lại bộ lọc",
         "search_placeholder": "Tìm kiếm theo mã hoặc tên..."
     },
     "fields": {
         "code": "Mã giảm giá",
         "code_help": "Mã viết liền không dấu, ví dụ: DANANG2026, SUMMER50k",
+        "code_placeholder": "Ví dụ: SUMMER50",
         "name": "Tên chương trình",
         "name_help": "Tên hiển thị hoặc mục đích chương trình khuyến mãi",
+        "name_placeholder": "Khuyến mãi hè rực rỡ",
         "description": "Mô tả chi tiết",
         "description_help": "Mô tả chi tiết các điều kiện áp dụng nếu có",
+        "description_placeholder": "Mô tả chi tiết điều kiện hoặc phạm vi khuyến mãi...",
         "discount_type": "Loại giảm giá",
         "discount_value": "Mức giảm",
         "discount_value_percent_help": "Nhập giá trị từ 1 đến 100 (%)",
@@ -72,6 +79,45 @@
         "expired_or_inactive": "Hết hạn hoặc ngưng",
         "unlimited": "Không giới hạn",
         "filter_valid_now": "Đang có hiệu lực lúc này",
-        "no_data": "Không tìm thấy mã khuyến mãi nào."
+        "no_data": "Không tìm thấy mã khuyến mãi nào.",
+        "currency_suffix": "đ",
+        "filtering_by": "Đang lọc theo:",
+        "remove_filter": "Xóa lọc",
+        "new_badge": "Mới",
+        "max_discount_short": "Tối đa: {{amount}}",
+        "min_order_short": "Đơn hàng ≥ {{amount}}",
+        "no_min_order": "Không giới hạn đơn",
+        "usage_times": "{{used}} / {{limit}} lượt",
+        "unlimited_system": "Không giới hạn hệ thống",
+        "per_user_limit": "Mỗi user: tối đa {{count}} lần",
+        "starts_label": "Bắt đầu: {{date}}",
+        "ends_label": "Hết hạn: {{date}}",
+        "toggle_active": "Kích hoạt",
+        "toggle_expired_hint": "Mã đã hết hạn, không thể bật lại",
+        "table_actions": "Thao tác"
+    },
+    "stats": {
+        "total_codes": "Tổng số mã",
+        "total_codes_hint": "Theo bộ lọc hiện tại",
+        "active_on_page": "Đang chạy (trang này)",
+        "uses_on_page": "Lượt dùng (trang này)",
+        "page_scope_hint": "Chỉ tính trên trang hiện tại"
+    },
+    "table": {
+        "title": "Danh sách khuyến mãi ({{total}})"
+    },
+    "pagination": {
+        "range": "Hiển thị {{from}}–{{to}} trong tổng {{total}} mục",
+        "items_per_page": "{{count}} dòng/trang"
+    },
+    "form": {
+        "section_basic": "Thông tin cơ bản",
+        "section_discount": "Cấu hình giảm giá",
+        "section_conditions": "Điều kiện & Giới hạn áp dụng",
+        "section_validity": "Thời gian hiệu lực"
+    },
+    "messages": {
+        "list_load_error": "Không tải được danh sách khuyến mãi",
+        "list_load_error_desc": "Vui lòng kiểm tra kết nối và thử lại."
     }
 }

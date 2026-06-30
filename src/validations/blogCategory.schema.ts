@@ -14,15 +14,15 @@ export const blogCategorySchema = (t: TFunction) =>
             .string()
             .lowercase()
             .matches(/^[a-z0-9-]+$/, {
-                message: t('validation.slug_invalid', { defaultValue: 'Slug is invalid' }),
-                excludeEmptyString: true
+                message: t('blog:category.validation.slug_invalid'),
+                excludeEmptyString: true,
             })
             .max(60, t('blog:category.validation.slug_max'))
             .optional(),
         description: yup
             .string()
             .nullable()
-            .max(1000)
+            .max(1000, t('blog:category.validation.description_max'))
             .optional(),
     });
 

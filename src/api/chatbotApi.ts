@@ -106,5 +106,3 @@ export const chatbotApi = {
         return axiosClient.delete(API_ENDPOINTS.CHATBOT.CLEAR_CACHE);
     },
 };
-
-export default chatbotApi;

@@ -60,6 +60,14 @@
         "reply_min": "Reply must be at least 10 characters",
         "reply_max": "Reply cannot exceed 2000 characters"
     },
+    "errors": {
+        "list_load_failed": "Failed to load contact list",
+        "list_load_failed_desc": "Contact data is temporarily unavailable. Please try again.",
+        "stats_load_failed": "Failed to load contact statistics",
+        "stats_load_failed_desc": "Overview metrics are temporarily unavailable. Please try again.",
+        "detail_load_failed": "Failed to load contact details",
+        "detail_load_failed_desc": "Unable to display this contact. Please try again."
+    },
     "toast": {
         "reply_success": "Reply sent successfully!",
         "delete_success": "Contact deleted successfully!",

@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import type { RowSelectionState } from '@tanstack/react-table';
 import { useToursQuery, useTourStatsQuery, useTourMutations, useTourCategoriesQuery } from '@/hooks/useTourQueries';
 import type { TourFilters } from '@/dataHelper/tour.dataHelper';
@@ -18,6 +18,7 @@ import type { TourItem } from '@/dataHelper/tour.dataHelper';
 const TourList = () => {
     const { t } = useTranslation('tour');
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
     const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(10);
     const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
@@ -41,8 +42,20 @@ const TourList = () => {
         isBulk: boolean;
     } | null>(null);
 
+    const urlCategoryId = useMemo(() => {
+        const categoryId = searchParams.get('tour_category_id');
+        if (!categoryId || categoryId === 'all') return null;
+        const parsed = Number(categoryId);
+        return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
+    }, [searchParams]);
+
+    const queryFilters = useMemo((): TourFilters => {
+        if (urlCategoryId == null) return filters;
+        return { ...filters, tour_category_id: urlCategoryId };
+    }, [filters, urlCategoryId]);
+
     // Queries
-    const { data: listData, isLoading: isListLoading, refetch: refetchTours, isFetching: isToursFetching } = useToursQuery(filters, page, limit);
+    const { data: listData, isLoading: isListLoading, refetch: refetchTours, isFetching: isToursFetching } = useToursQuery(queryFilters, page, limit);
     const { data: statsData, isLoading: isStatsLoading, isFetching: isStatsFetching, refetch: refetchStats } = useTourStatsQuery();
     const { data: categoriesData } = useTourCategoriesQuery();
 
@@ -116,7 +129,7 @@ const TourList = () => {
     return (
         <div className="p-4 lg:p-10 mx-auto min-h-screen bg-white font-sans">
             <TourHeader
-                onExport={() => exportMutation.mutate(filters)}
+                onExport={() => exportMutation.mutate(queryFilters)}
                 isExporting={exportMutation.isPending}
             />
 
@@ -126,7 +139,7 @@ const TourList = () => {
             />
 
             <TourFilter
-                filters={filters}
+                filters={queryFilters}
                 onFilterChange={handleFilterChange}
                 categories={categories}
             />

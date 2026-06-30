@@ -1,9 +1,10 @@
 import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { Plus, FileText } from "lucide-react";
+import { Plus, FileText, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import Breadcrumbs from "@/components/common/Breadcrumbs";
+import EmptyState from "@/components/common/EmptyState";
 
 import BlogStatsRow from "./components/BlogStatsRow";
 import BlogFilterBar from "./components/BlogFilterBar";
@@ -36,7 +37,7 @@ export const BlogPostList = () => {
     }), [search, categoryId, status, sort, order]);
 
     // 2. Queries & Mutations
-    const { data, isLoading, isFetching, isError, refetch } = useAdminBlogPostsQuery(filters, page, perPage);
+    const { data, isLoading, isFetching, isError: isListError, refetch } = useAdminBlogPostsQuery(filters, page, perPage);
     const { data: categories = [] } = useBlogCategoriesQuery();
     const { deleteMutation, updateStatusMutation } = useBlogMutations();
 
@@ -128,42 +129,56 @@ export const BlogPostList = () => {
         setIsBulkDeleteDialogOpen(true);
     };
 
-    const handleConfirmBulkDelete = () => {
+    const handleConfirmBulkDelete = async () => {
         if (selectedIds.length === 0) return;
         setIsBulkDeleteDialogOpen(false);
         setIsBulkMutating(true);
-        const promises = selectedIds.map((id) => deleteMutation.mutateAsync(id));
+        const ids = [...selectedIds];
 
-        Promise.all(promises)
-            .then(() => {
+        try {
+            const results = await Promise.allSettled(ids.map((id) => deleteMutation.mutateAsync(id)));
+            const failedIds = ids.filter((_, i) => results[i]?.status === "rejected");
+            const successCount = ids.length - failedIds.length;
+
+            setSelectedIds(failedIds);
+
+            if (successCount === ids.length) {
                 toast.success(t("toast.bulk_delete_success"));
-                setSelectedIds([]);
-            })
-            .catch(() => {
+            } else if (successCount === 0) {
                 toast.error(t("toast.network_error"));
-            })
-            .finally(() => {
-                setIsBulkMutating(false);
-            });
+            } else {
+                toast.error(t("toast.bulk_partial_error"));
+            }
+        } finally {
+            setIsBulkMutating(false);
+        }
     };
 
-    const executeBulkStatusChange = (newStatus: 'published' | 'archived') => {
+    const executeBulkStatusChange = async (newStatus: 'published' | 'archived') => {
         if (selectedIds.length === 0) return;
 
         setIsBulkMutating(true);
-        const promises = selectedIds.map((id) => updateStatusMutation.mutateAsync({ id, status: newStatus }));
+        const ids = [...selectedIds];
 
-        Promise.all(promises)
-            .then(() => {
+        try {
+            const results = await Promise.allSettled(
+                ids.map((id) => updateStatusMutation.mutateAsync({ id, status: newStatus }))
+            );
+            const failedIds = ids.filter((_, i) => results[i]?.status === "rejected");
+            const successCount = ids.length - failedIds.length;
+
+            setSelectedIds(failedIds);
+
+            if (successCount === ids.length) {
                 toast.success(t("toast.bulk_status_success"));
-                setSelectedIds([]);
-            })
-            .catch(() => {
+            } else if (successCount === 0) {
                 toast.error(t("toast.network_error"));
-            })
-            .finally(() => {
-                setIsBulkMutating(false);
-            });
+            } else {
+                toast.error(t("toast.bulk_partial_error"));
+            }
+        } finally {
+            setIsBulkMutating(false);
+        }
     };
 
     // 6. Pagination & Stats Computations
@@ -175,7 +190,7 @@ export const BlogPostList = () => {
     const archivedCount = data?.stats.archived || 0;
 
     return (
-        <main className="p-1 sm:p-2 max-w-[1600px] mx-auto flex flex-col gap-6 font-sans">
+        <main className="w-full px-4 sm:px-6 lg:px-10 py-1 sm:py-2 flex flex-col gap-6 font-sans">
             {/* Page Header */}
             <div className="flex flex-col gap-3 mb-6">
                 <Breadcrumbs
@@ -207,15 +222,17 @@ export const BlogPostList = () => {
                 </div>
             </div>
 
-            {/* Stats Cards Row */}
-            <BlogStatsRow
-                total={totalCount}
-                published={publishedCount}
-                draft={draftCount}
-                archived={archivedCount}
-                isLoading={isLoading}
-                isError={isError}
-            />
+            {/* Stats Cards Row — hidden when list fails to avoid duplicate error UI */}
+            {!isListError && (
+                <BlogStatsRow
+                    total={totalCount}
+                    published={publishedCount}
+                    draft={draftCount}
+                    archived={archivedCount}
+                    isLoading={isLoading}
+                    isError={false}
+                />
+            )}
 
             {/* Filters Bar Toolbar */}
             <BlogFilterBar
@@ -226,8 +243,26 @@ export const BlogPostList = () => {
                 onReset={handleResetFilters}
             />
 
-            {/* List Table Grid */}
-            <BlogTable
+            {isListError ? (
+                <div
+                    className="bg-white border border-[#E2E8F0] rounded-2xl p-10 flex flex-col items-center text-center"
+                    data-testid="blog-list-error"
+                >
+                    <EmptyState
+                        title={t("messages.list_load_error")}
+                        description={t("messages.list_load_error_desc")}
+                    />
+                    <button
+                        type="button"
+                        onClick={() => void refetch()}
+                        className="mt-2 px-6 py-2.5 bg-[#14b8a6] text-white rounded-xl text-[13px] font-bold hover:bg-[#0f766e] transition-colors inline-flex items-center gap-2"
+                    >
+                        <RefreshCw className="w-4 h-4" />
+                        {t("common:actions.retry", "Thử lại")}
+                    </button>
+                </div>
+            ) : (
+                <BlogTable
                 data={data?.data || []}
                 isLoading={isLoading}
                 isRefreshing={isFetching && !isLoading}
@@ -248,6 +283,7 @@ export const BlogPostList = () => {
                 onBulkDelete={executeBulkDelete}
                 isBulkMutating={isBulkMutating}
             />
+            )}
 
             {/* Delete Confirmation Modal */}
             <DeleteConfirmDialog

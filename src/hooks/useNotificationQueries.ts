@@ -3,26 +3,38 @@ import { notificationApi } from "@/api/notificationApi";
 import { mapNotificationList } from "@/dataHelper/notification.mapper";
 import type { NotificationListFilters } from "@/types";
 
-export const notificationKeys = {
+const notificationKeys = {
     all: ["notifications"] as const,
     lists: () => [...notificationKeys.all, "list"] as const,
-    list: (filters: NotificationListFilters, page: number, limit: number) =>
-        [...notificationKeys.lists(), { ...filters, page, limit }] as const,
+    list: (filters: NotificationListFilters, page: number, limit: number, urlSearchKey = "") =>
+        [
+            ...notificationKeys.lists(),
+            filters.q ?? "",
+            filters.type ?? "",
+            filters.is_read ?? "",
+            filters.user_id ?? "",
+            filters.sort_by ?? "created_at",
+            filters.sort_order ?? "desc",
+            page,
+            limit,
+            urlSearchKey,
+        ] as const,
 };
 
 export const useAdminNotificationsQuery = (
     filters: NotificationListFilters,
     page: number,
-    limit: number
+    limit: number,
+    urlSearchKey = ""
 ) => {
     return useQuery({
-        queryKey: notificationKeys.list(filters, page, limit),
+        queryKey: notificationKeys.list(filters, page, limit, urlSearchKey),
         queryFn: async () => {
             const response = await notificationApi.getList({ ...filters, page, per_page: limit });
             if (!response.data) throw new Error("Empty response");
             return mapNotificationList(response.data);
         },
-        staleTime: 1000 * 30, // 30 seconds
+        staleTime: 0,
     });
 };
 

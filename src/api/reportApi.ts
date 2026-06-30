@@ -8,6 +8,7 @@ import type {
     RevenueReportFilters,
     RawRevenueTrendResponse,
     RawTourRevenueDetail,
+    RawRevenuePaymentsSummary,
     RawRevenueReportItem,
     RawLocationReportItem,
     LocationReportFilters,
@@ -80,6 +81,11 @@ export const reportApi = {
 
     getRevenueDetail: (params: { from?: string; to?: string }): Promise<ApiResponse<RawTourRevenueDetail[]>> =>
         axiosClient.get(API_ENDPOINTS.REPORTS.REVENUE_DETAIL, { params }),
+
+    getRevenuePaymentsSummary: (params: Pick<RevenueReportFilters, 'from' | 'to' | 'payment_gateway'>): Promise<ApiResponse<RawRevenuePaymentsSummary>> =>
+        axiosClient.get(API_ENDPOINTS.REPORTS.REVENUE_PAYMENTS_SUMMARY, {
+            params: sanitizeRevenueReportParams(params),
+        }),
 
     getPaymentsList: (params: RevenueReportFilters): Promise<ApiResponse<{
         data: RawRevenueReportItem[];

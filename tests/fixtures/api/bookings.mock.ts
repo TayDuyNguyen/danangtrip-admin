@@ -17,6 +17,7 @@ const flags = {
   mutationFail: false,
   listEmpty: false,
   detailFail: false,
+  detailDelayMs: 0,
   invoiceFail: false,
 };
 
@@ -32,7 +33,12 @@ export function resetMockBookings() {
   flags.mutationFail = false;
   flags.listEmpty = false;
   flags.detailFail = false;
+  flags.detailDelayMs = 0;
   flags.invoiceFail = false;
+}
+
+export function setBookingDetailDelay(ms: number) {
+  flags.detailDelayMs = ms;
 }
 
 export function setBookingListFail(on = true) {
@@ -381,6 +387,9 @@ export async function mockBookingsApi(page: Page) {
 
     if (method === 'GET' && isBookingDetailPath(path)) {
       const match = isBookingDetailPath(path)!;
+      if (flags.detailDelayMs > 0) {
+        await new Promise((resolve) => setTimeout(resolve, flags.detailDelayMs));
+      }
       if (flags.detailFail) {
         await route.fulfill({
           status: 500,

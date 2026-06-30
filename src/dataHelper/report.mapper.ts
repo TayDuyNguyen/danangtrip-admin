@@ -15,6 +15,7 @@ import type {
     BookingStatusDistributionPoint,
     RawRevenueTrendResponse,
     RawTourRevenueDetail,
+    RawRevenuePaymentsSummary,
     RawRevenueReportItem,
     RevenueReportViewModel,
     RevenueReportItemViewModel,
@@ -52,7 +53,7 @@ export const formatDate = (isoString: string | null | undefined): string => {
 /**
  * Format ISO Date string to "HH:mm"
  */
-export const formatTime = (isoString: string | null | undefined): string => {
+const formatTime = (isoString: string | null | undefined): string => {
     if (!isoString) return '';
     try {
         const date = new Date(isoString);
@@ -80,7 +81,7 @@ export const formatDateLabel = (dateStr: string | null | undefined): string => {
 /**
  * Maps morph class or type string to clean UI type
  */
-export const mapReviewableType = (type: string | null | undefined): 'tour' | 'location' => {
+const mapReviewableType = (type: string | null | undefined): 'tour' | 'location' => {
     if (!type) return 'location';
     const lower = type.toLowerCase();
     if (lower.includes('tour')) return 'tour';
@@ -90,7 +91,7 @@ export const mapReviewableType = (type: string | null | undefined): 'tour' | 'lo
 /**
  * Maps single raw rating item to ViewModel
  */
-export const mapReportRatingItem = (raw: RawRatingsReportItem): RatingsReportItemViewModel => {
+const mapReportRatingItem = (raw: RawRatingsReportItem): RatingsReportItemViewModel => {
     return {
         id: raw.id,
         score: raw.score,
@@ -206,20 +207,7 @@ const mapAggregateRatingsReport = (rows: RawRatingAggregateItem[]): RatingsRepor
         percentage: totalStatusCount > 0 ? Math.round((item.count / totalStatusCount) * 100) : 0,
     }));
 
-    const items: RatingsReportItemViewModel[] = rows.map((row, index) => ({
-        id: -(index + 1),
-        score: 0,
-        comment: `${toNumberSafe(row.count, 0).toLocaleString()} ratings`,
-        images: [],
-        status: row.status,
-        reviewableType: 'location',
-        reviewableId: 0,
-        reviewableName: 'Grouped ratings report row',
-        userName: row.date,
-        userAvatar: '',
-        createdAt: formatDate(row.date),
-        createdAtTime: '',
-    }));
+    const items: RatingsReportItemViewModel[] = [];
 
     return {
         stats: {
@@ -245,8 +233,8 @@ const mapAggregateRatingsReport = (rows: RawRatingAggregateItem[]): RatingsRepor
             pagination: {
                 currentPage: 1,
                 lastPage: 1,
-                perPage: Math.max(items.length, 10),
-                total: items.length,
+                perPage: 10,
+                total: 0,
             },
         },
     };
@@ -361,7 +349,7 @@ export const mapRatingsReport = (raw: RawRatingsReport | RawRatingAggregateItem[
 /**
  * Maps single raw booking item to ViewModel
  */
-export const mapReportBookingItem = (raw: RawBookingsReportItem): BookingsReportItemViewModel => {
+const mapReportBookingItem = (raw: RawBookingsReportItem): BookingsReportItemViewModel => {
     return {
         id: raw.id,
         bookingCode: raw.booking_code || '',
@@ -429,17 +417,7 @@ const mapAggregateBookingsReport = (rows: RawBookingAggregateItem[]): BookingsRe
         percentage: totalStatusCount > 0 ? Math.round((item.count / totalStatusCount) * 100) : 0,
     }));
 
-    const items: BookingsReportItemViewModel[] = rows.map((row, index) => ({
-        id: -(index + 1),
-        bookingCode: row.date,
-        customerName: `${toNumberSafe(row.count, 0).toLocaleString()} bookings`,
-        tourName: 'Grouped booking report row',
-        totalAmount: toNumberSafe(row.total_amount, 0),
-        status: row.booking_status,
-        paymentStatus: row.payment_status === 'paid' || row.payment_status === 'refunded' ? row.payment_status : 'pending',
-        bookedAt: formatDate(row.date),
-        bookedAtTime: '',
-    }));
+    const items: BookingsReportItemViewModel[] = [];
 
     return {
         stats: {
@@ -461,8 +439,8 @@ const mapAggregateBookingsReport = (rows: RawBookingAggregateItem[]): BookingsRe
             pagination: {
                 currentPage: 1,
                 lastPage: 1,
-                perPage: Math.max(items.length, 10),
-                total: items.length,
+                perPage: 10,
+                total: 0,
             },
         },
     };
@@ -571,7 +549,7 @@ export const mapBookingsReport = (raw: RawBookingsReport | RawBookingAggregateIt
 /**
  * Maps single raw payment item to RevenueReportItemViewModel
  */
-export const mapRevenueReportItem = (raw: RawRevenueReportItem): RevenueReportItemViewModel => {
+const mapRevenueReportItem = (raw: RawRevenueReportItem): RevenueReportItemViewModel => {
     return {
         id: raw.id,
         transactionCode: raw.transaction_code || '',
@@ -579,7 +557,7 @@ export const mapRevenueReportItem = (raw: RawRevenueReportItem): RevenueReportIt
         bookingCode: raw.booking?.booking_code || '',
         customerName: raw.booking?.user?.full_name || 'Guest',
         customerAvatar: raw.booking?.user?.avatar || '',
-        tourName: raw.booking?.booking_code ? `Tour Booking: ${raw.booking.booking_code}` : 'Tour Package',
+        tourName: raw.booking?.tour_name?.trim() || (raw.booking?.booking_code ? `Tour Booking: ${raw.booking.booking_code}` : 'Tour Package'),
         amount: toNumberSafe(raw.amount, 0),
         gateway: raw.payment_gateway,
         status: raw.payment_status,
@@ -615,6 +593,7 @@ export const mapRevenueReport = (
     } | undefined | null,
     filters: { from: string; to: string },
     prevRawTrend?: RawRevenueTrendResponse | null,
+    rawPaymentsSummary?: RawRevenuePaymentsSummary | null,
 ): RevenueReportViewModel => {
     const trendStats = rawTrend?.stats || [];
     const prevTrendStats = prevRawTrend?.stats || [];
@@ -636,12 +615,10 @@ export const mapRevenueReport = (
     const prevDaysDiff = prevTrendStats.length > 0 ? prevTrendStats.length : daysDiff;
     const prevDailyAverage = prevDaysDiff > 0 ? Number((prevTotalRevenue / prevDaysDiff).toFixed(0)) : 0;
 
-    // Total Refunded (from raw payments data)
-    const refundedPayments = rawPayments?.data.filter(p => p.payment_status === 'refunded') || [];
-    const totalRefunded = refundedPayments.reduce((sum, p) => sum + toNumberSafe(p.amount, 0), 0);
+    const totalRefunded = toNumberSafe(rawPaymentsSummary?.total_refunded, 0);
 
-    // Previous refunded (approximate: not available directly, so we show 0 change if no prev data)
-    const prevRefunded = 0; // No prev-period payments list fetched — show 0 if unknown
+    // Previous refunded trend not available without a second summary call
+    const prevRefunded = 0;
 
     // ── Trend percentages ──
     const totalRevenueTrend = calcTrend(totalRevenue, prevTotalRevenue);
@@ -664,44 +641,32 @@ export const mapRevenueReport = (
         revenue: toNumberSafe(item.total_revenue, 0),
     }));
 
-    // 4. Charts -> Gateway Breakdown
-    const gatewayMap: Record<string, { revenue: number; count: number; color: string; labelKey: string }> = {
-        momo: { revenue: 0, count: 0, color: '#D82D8F', labelKey: 'revenue.gateway.momo' },
-        vnpay: { revenue: 0, count: 0, color: '#3A5A9F', labelKey: 'revenue.gateway.vnpay' },
-        zalopay: { revenue: 0, count: 0, color: '#0084FF', labelKey: 'revenue.gateway.zalopay' },
+    const gatewayPalette: Record<string, { labelKey: string; color: string }> = {
+        momo: { labelKey: 'revenue.gateway.momo', color: '#D82D8F' },
+        vnpay: { labelKey: 'revenue.gateway.vnpay', color: '#3A5A9F' },
+        zalopay: { labelKey: 'revenue.gateway.zalopay', color: '#0084FF' },
+        sepay: { labelKey: 'revenue.gateway.sepay', color: '#0d9488' },
     };
 
+    const breakdown = rawPaymentsSummary?.gateway_breakdown ?? [];
     let totalGatewayRevenue = 0;
-    if (rawPayments?.data) {
-        rawPayments.data.forEach(p => {
-            if (p.payment_status === 'success') {
-                const gateway = p.payment_gateway.toLowerCase();
-                const amt = toNumberSafe(p.amount, 0);
-                totalGatewayRevenue += amt;
-                if (gatewayMap[gateway]) {
-                    gatewayMap[gateway].revenue += amt;
-                    gatewayMap[gateway].count += 1;
-                } else if (gateway === 'vnpay') {
-                    gatewayMap.vnpay.revenue += amt;
-                    gatewayMap.vnpay.count += 1;
-                } else if (gateway === 'momo') {
-                    gatewayMap.momo.revenue += amt;
-                    gatewayMap.momo.count += 1;
-                } else if (gateway === 'zalopay') {
-                    gatewayMap.zalopay.revenue += amt;
-                    gatewayMap.zalopay.count += 1;
-                }
-            }
-        });
-    }
+    const gateways: RevenueGatewayBreakdownPoint[] = breakdown.map((item) => {
+        const gateway = item.gateway.toLowerCase();
+        const revenue = toNumberSafe(item.revenue, 0);
+        totalGatewayRevenue += revenue;
+        const meta = gatewayPalette[gateway] ?? { labelKey: `revenue.gateway.${gateway}`, color: '#94a3b8' };
 
-    const gateways: RevenueGatewayBreakdownPoint[] = Object.entries(gatewayMap).map(([key, value]) => ({
-        gateway: key,
-        labelKey: value.labelKey,
-        revenue: value.revenue,
-        count: value.count,
-        percentage: totalGatewayRevenue > 0 ? Math.round((value.revenue / totalGatewayRevenue) * 100) : 0,
-        color: value.color,
+        return {
+            gateway,
+            labelKey: meta.labelKey,
+            revenue,
+            count: item.count,
+            percentage: 0,
+            color: meta.color,
+        };
+    }).map((item) => ({
+        ...item,
+        percentage: totalGatewayRevenue > 0 ? Math.round((item.revenue / totalGatewayRevenue) * 100) : 0,
     }));
 
     // 5. Table paginated list mapping
@@ -853,10 +818,39 @@ export const mapUsersReport = (raw: RawUsersReport | undefined | null): UsersRep
         };
     });
 
+    const totalUsers = Number(raw?.total_users ?? 0);
+    const activeUsers = Number(raw?.active_users ?? 0);
+    const activeRate = totalUsers > 0 ? Number(((activeUsers / totalUsers) * 100).toFixed(1)) : 0;
+
+    const rolePalette: Record<string, { labelKey: string; color: string }> = {
+        user: { labelKey: 'filter.role_user', color: '#14b8a6' },
+        admin: { labelKey: 'filter.role_admin', color: '#6366f1' },
+        manager: { labelKey: 'filter.role_manager', color: '#f59e0b' },
+        staff: { labelKey: 'filter.role_staff', color: '#64748b' },
+    };
+
+    const roleSource = raw?.role_distribution ?? [];
+    const totalRoles = roleSource.reduce((sum, role) => sum + role.count, 0);
+    const roleDistribution = roleSource.map((item) => {
+        const meta = rolePalette[item.role] ?? { labelKey: 'filter.role_user', color: '#94a3b8' };
+
+        return {
+            role: item.role,
+            labelKey: meta.labelKey,
+            count: item.count,
+            percentage: totalRoles > 0 ? Math.round((item.count / totalRoles) * 100) : 0,
+            color: meta.color,
+        };
+    });
+
     return {
         year: selectedYear,
         stats,
-        totalNewUsers: runningSum
+        totalNewUsers: runningSum,
+        totalUsers,
+        activeUsers,
+        activeRate,
+        roleDistribution,
     };
 };
 

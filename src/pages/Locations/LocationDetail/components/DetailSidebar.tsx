@@ -1,5 +1,3 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
     Eye,
@@ -15,48 +13,28 @@ import CustomSelect, { type Option } from '@/components/ui/CustomSelect';
 import ToggleSwitch from '@/components/ui/ToggleSwitch';
 import type { LocationViewModel } from '@/dataHelper/location.dataHelper';
 import {
-    useBulkLocationActionsMutation,
-    useDeleteLocationMutation,
     useUpdateLocationFeaturedMutation,
+    useUpdateLocationStatusMutation,
 } from '@/hooks/useLocationQueries';
-import DeleteLocationModal from '@/pages/Locations/components/DeleteLocationModal';
-import { ROUTES } from '@/routes/routes';
 import { useAuth } from '@/store';
 
 interface DetailSidebarProps {
     location: LocationViewModel;
+    onDeleteClick: () => void;
 }
 
-const DetailSidebar = ({ location }: DetailSidebarProps) => {
+const DetailSidebar = ({ location, onDeleteClick }: DetailSidebarProps) => {
     const { t } = useTranslation('location');
-    const navigate = useNavigate();
     const { user } = useAuth();
     const { mutate: toggleFeatured } = useUpdateLocationFeaturedMutation();
-    const { mutate: bulkAction } = useBulkLocationActionsMutation();
-    const { mutate: deleteLocation, isPending: isDeleting } = useDeleteLocationMutation();
-
-    const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
-    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const { mutate: updateStatus, isPending: isUpdatingStatus } = useUpdateLocationStatusMutation();
 
     const handleStatusChange = (option: Option | null) => {
         const nextStatus = option?.value;
         if (nextStatus !== 'active' && nextStatus !== 'inactive') {
             return;
         }
-        setIsUpdatingStatus(true);
-        bulkAction(
-            { ids: [location.id], action: nextStatus },
-            { onSettled: () => setIsUpdatingStatus(false) }
-        );
-    };
-
-    const handleDelete = () => {
-        deleteLocation(location.id, {
-            onSuccess: () => {
-                setIsDeleteModalOpen(false);
-                navigate(ROUTES.LOCATIONS_LIST);
-            },
-        });
+        updateStatus({ id: location.id, status: nextStatus });
     };
 
     return (
@@ -78,7 +56,6 @@ const DetailSidebar = ({ location }: DetailSidebarProps) => {
 
             {user?.role === 'admin' && (
                 <>
-                    {/* Management Card */}
                     <div className="bg-white rounded-[32px] p-6 border border-slate-100 shadow-sm space-y-6">
                         <div className="flex items-center gap-3 pb-4 border-b border-slate-50">
                             <div className="p-2.5 rounded-xl bg-slate-50 text-slate-500">
@@ -89,7 +66,6 @@ const DetailSidebar = ({ location }: DetailSidebarProps) => {
                             </h3>
                         </div>
 
-                        {/* Status Control */}
                         <div className="space-y-2">
                             <label className="text-[13px] font-bold text-slate-500 uppercase tracking-wider px-1">
                                 {t('detail.management.status')}
@@ -109,7 +85,6 @@ const DetailSidebar = ({ location }: DetailSidebarProps) => {
                             </div>
                         </div>
 
-                        {/* Featured Toggle */}
                         <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between">
                             <div className="space-y-0.5">
                                 <div className="flex items-center gap-2">
@@ -128,7 +103,6 @@ const DetailSidebar = ({ location }: DetailSidebarProps) => {
                             />
                         </div>
 
-                        {/* Info Tip */}
                         <div className="flex gap-3 p-4 rounded-2xl bg-indigo-50 border border-indigo-100/50 text-indigo-700">
                             <Info size={20} className="shrink-0 mt-0.5" />
                             <p className="text-[13px] font-medium leading-relaxed">
@@ -137,7 +111,6 @@ const DetailSidebar = ({ location }: DetailSidebarProps) => {
                         </div>
                     </div>
 
-                    {/* Danger Zone */}
                     <div className="bg-red-50/30 rounded-[32px] p-6 border border-red-100 shadow-sm border-dashed">
                         <h3 className="text-[13px] font-bold text-red-600 uppercase tracking-wider mb-4 px-1">
                             {t('detail.management.danger_zone')}
@@ -146,7 +119,8 @@ const DetailSidebar = ({ location }: DetailSidebarProps) => {
                             {t('detail.management.delete_desc')}
                         </p>
                         <button
-                            onClick={() => setIsDeleteModalOpen(true)}
+                            type="button"
+                            onClick={onDeleteClick}
                             className="w-full py-3.5 px-4 rounded-2xl bg-white border border-red-200 text-red-600 text-sm font-bold hover:bg-red-50 transition-colors flex items-center justify-center gap-2 shadow-sm shadow-red-100/50"
                         >
                             <Trash2 size={16} />
@@ -155,14 +129,6 @@ const DetailSidebar = ({ location }: DetailSidebarProps) => {
                     </div>
                 </>
             )}
-
-            <DeleteLocationModal
-                isOpen={isDeleteModalOpen}
-                onClose={() => setIsDeleteModalOpen(false)}
-                onConfirm={handleDelete}
-                locationName={location.name}
-                isDeleting={isDeleting}
-            />
         </div>
     );
 };

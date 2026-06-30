@@ -11,7 +11,18 @@
     "error": {
         "load_failed": "Không thể tải dữ liệu báo cáo",
         "laravel_connection": "Đã xảy ra sự cố kết nối với hệ thống API của Laravel.",
-        "api_failed": "Không thể tải dữ liệu từ API"
+        "api_failed": "Không thể tải dữ liệu từ API",
+        "hide": "Có lỗi xảy ra khi ẩn đánh giá.",
+        "delete": "Có lỗi xảy ra khi xóa đánh giá.",
+        "mark_viewed": "Có lỗi xảy ra khi đánh dấu đã xem.",
+        "update_bulk": "Cập nhật hàng loạt thất bại.",
+        "delete_bulk": "Xóa hàng loạt thất bại.",
+        "stats_load_failed": "Không tải được thống kê đánh giá",
+        "stats_load_failed_desc": "Số liệu tổng quan tạm thời không khả dụng. Vui lòng thử lại."
+    },
+    "messages": {
+        "list_load_error": "Không tải được danh sách đánh giá",
+        "list_load_error_desc": "Dữ liệu đánh giá tạm thời không khả dụng. Vui lòng thử lại."
     },
     "filter": {
         "validation": {
@@ -93,7 +104,10 @@
         "reject_reason_placeholder": "Nhập lý do ẩn để ghi nhận nội bộ",
         "warning_title": "LƯU Ý QUAN TRỌNG:",
         "warning_bulk_desc": "Hành động này sẽ cập nhật trạng thái của tất cả đánh giá đã chọn thành 'Từ chối' (Bị ẩn) và điểm đánh giá tương ứng của Tour/Địa điểm sẽ được tính toán lại.",
-        "warning_single_desc": "Khi từ chối, bài viết đánh giá sẽ bị ẩn khỏi trang chi tiết công khai. Hệ thống sẽ tự động gửi thông báo giải thích kèm lý do tới khách hàng."
+        "warning_single_desc": "Khi từ chối, bài viết đánh giá sẽ bị ẩn khỏi trang chi tiết công khai. Hệ thống sẽ tự động gửi thông báo giải thích kèm lý do tới khách hàng.",
+        "empty_title": "Không tìm thấy đánh giá",
+        "empty_subtitle": "Không có dữ liệu đánh giá nào khớp với bộ lọc hiện tại của bạn.",
+        "image_count_badge": "{{count}} ảnh"
     },
     "actions": {
         "hide_bulk": "Ẩn đã chọn",
@@ -110,10 +124,17 @@
         "reject_bulk_desc": "Bạn đang ẩn hàng loạt các đánh giá được chọn khỏi hiển thị công khai. Vui lòng ghi lại lý do ẩn.",
         "reject_single_desc": "Bạn đang ẩn bài đánh giá này khỏi hiển thị công khai. Vui lòng nhập lý do từ chối để gửi thông báo cho khách hàng.",
         "export_excel": "Xuất báo cáo Excel",
-        "exporting": "Đang xuất..."
+        "exporting": "Đang xuất...",
+        "reset_filters": "Đặt lại bộ lọc"
     },
     "success": {
-        "hide_bulk_success": "Đã ẩn thành công {{count}} đánh giá."
+        "hide": "Đã ẩn đánh giá thành công.",
+        "hide_bulk_success": "Đã ẩn thành công {{count}} đánh giá.",
+        "hide_bulk_partial": "Đã ẩn {{success}}/{{total}} đánh giá. {{failed}} thất bại.",
+        "delete": "Đã xóa đánh giá vĩnh viễn.",
+        "delete_bulk_success": "Đã xóa vĩnh viễn thành công {{count}} đánh giá.",
+        "delete_bulk_partial": "Đã xóa {{success}}/{{total}} đánh giá. {{failed}} thất bại.",
+        "mark_viewed": "Đã đánh dấu đánh giá là đã xem."
     },
     "modal": {
         "title": "Chi tiết nhận xét",

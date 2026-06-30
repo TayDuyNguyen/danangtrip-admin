@@ -6,9 +6,11 @@ import { Button } from '@/components/ui/Button';
 import { ROUTES } from '@/routes/routes';
 import { appEnv } from '@/config/env';
 import Breadcrumbs from '@/components/common/Breadcrumbs';
-import BlogPostForm from './components/BlogPostForm';
+import BlogPostForm, { type BlogEditPreviewState } from './components/BlogPostForm';
 import { useAdminBlogPostQuery, useBlogMutations } from '@/hooks/useBlogQueries';
 import { useAuth } from '@/store/useUserStore';
+import { useMainScrollCollapse } from '@/hooks/useMainScrollCollapse';
+import { cn } from '@/utils';
 import { toast } from 'sonner';
 import DeleteConfirmDialog from '../BlogPostList/components/DeleteConfirmDialog';
 import DuplicateConfirmDialog from './components/DuplicateConfirmDialog';
@@ -18,35 +20,38 @@ const BlogPostEdit = () => {
     const navigate = useNavigate();
     const { id } = useParams<{ id: string }>();
     const { user } = useAuth();
-    
+    const isScrolled = useMainScrollCollapse();
+
     const isAdmin = user?.role === 'admin';
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     const [isDuplicateDialogOpen, setIsDuplicateDialogOpen] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [previewState, setPreviewState] = useState<BlogEditPreviewState>({
+        canPreview: false,
+        previewSlug: '',
+    });
 
-    // Fetch post details
     const { data: blogPost, isLoading, isError } = useAdminBlogPostQuery(id);
     const { deleteMutation } = useBlogMutations();
 
-    const handleSave = () => {
-        (document.getElementById('blog-post-form') as HTMLFormElement | null)?.requestSubmit();
-    };
+    const previewDisabledTitle = t('actions.preview_disabled_helper');
 
     const handlePreview = () => {
-        if (blogPost?.slug) {
-            window.open(`${appEnv.publicWebUrl}/blog/${blogPost.slug}`, '_blank', 'noopener,noreferrer');
+        if (previewState.canPreview && previewState.previewSlug) {
+            window.open(
+                `${appEnv.publicWebUrl}/blog/${previewState.previewSlug}`,
+                '_blank',
+                'noopener,noreferrer'
+            );
         }
     };
 
-    const handleDuplicate = () => {
-        setIsDuplicateDialogOpen(true);
-    };
+    const handleDuplicate = () => setIsDuplicateDialogOpen(true);
 
     const handleConfirmDuplicate = () => {
         if (!blogPost) return;
         setIsDuplicateDialogOpen(false);
-        // Redirect to create page with current data in location state
-        navigate('/admin/blog-posts/create', { state: { duplicateData: blogPost } });
+        navigate(ROUTES.BLOG_POSTS_CREATE, { state: { duplicateData: blogPost } });
         toast.success(t('toast.duplicate_success'));
     };
 
@@ -61,7 +66,7 @@ const BlogPostEdit = () => {
             onError: () => {
                 toast.error(t('toast.network_error'));
                 setIsDeleteDialogOpen(false);
-            }
+            },
         });
     };
 
@@ -72,17 +77,13 @@ const BlogPostEdit = () => {
                     <div className="w-16 h-16 bg-red-50 text-red-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
                         <BookOpen className="w-8 h-8" />
                     </div>
-                    <h2 className="text-xl font-bold text-slate-900 mb-2">
-                        {t('error_post_not_found', { defaultValue: 'Không tìm thấy bài viết' })}
-                    </h2>
-                    <p className="text-slate-500 mb-8 text-sm">
-                        {t('error_post_not_found_desc', { defaultValue: 'Bài viết bạn đang tìm kiếm không tồn tại hoặc đã bị xóa.' })}
-                    </p>
-                    <Button 
+                    <h2 className="text-xl font-bold text-slate-900 mb-2">{t('error_post_not_found')}</h2>
+                    <p className="text-slate-500 mb-8 text-sm">{t('error_post_not_found_desc')}</p>
+                    <Button
                         onClick={() => navigate(ROUTES.BLOG_POSTS)}
-                        className="w-full rounded-xl bg-[#14B8A6] hover:bg-[#0f766e] text-white"
+                        className="w-full rounded-xl bg-[#14B8A6] hover:bg-[#0f766e] text-white font-bold"
                     >
-                        {t('actions.cancel')}
+                        {t('form.back_to_list')}
                     </Button>
                 </div>
             </div>
@@ -90,46 +91,65 @@ const BlogPostEdit = () => {
     }
 
     return (
-        <div className="min-h-screen bg-[#f8fafc] pb-20 font-sans">
-            {/* Sticky Header */}
-            <div className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-slate-200/60 shadow-xs">
-                <div className="max-w-[1600px] mx-auto px-4 md:px-8 h-20 flex items-center justify-between">
-                    {/* Header Left: Breadcrumb + Title */}
-                    <div className="flex items-center gap-4">
+        <div className="min-h-screen bg-[#f8fafc] pb-32 md:pb-20 font-sans">
+            <div className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-slate-200/60 shadow-sm transition-all duration-300">
+                <div
+                    className={cn(
+                        'w-full px-4 sm:px-6 lg:px-10 flex items-center justify-between gap-4 transition-all duration-300',
+                        isScrolled ? 'py-2' : 'min-h-20 py-3'
+                    )}
+                >
+                    <div className="flex min-w-0 flex-1 items-center gap-4">
                         <Button
                             variant="ghost"
-                            className="rounded-full w-10 h-10 p-0 hover:bg-slate-100 cursor-pointer"
+                            className="rounded-full w-10 h-10 p-0 hover:bg-slate-100 shrink-0 cursor-pointer"
+                            aria-label={t('form.back_to_list')}
                             onClick={() => navigate(ROUTES.BLOG_POSTS)}
                         >
                             <ArrowLeft className="w-5 h-5 text-slate-600" />
                         </Button>
-                        <div>
-                            <div className="mb-1">
+                        <div className="min-w-0 flex-1">
+                            <div
+                                className={cn(
+                                    'transition-all duration-300',
+                                    isScrolled ? 'opacity-0 h-0 overflow-hidden mb-0' : 'opacity-100 h-auto mb-1'
+                                )}
+                            >
                                 <Breadcrumbs
                                     icon={FileText}
                                     items={[
                                         { label: 'sidebar.posts', path: ROUTES.BLOG_POSTS },
-                                        { label: 'breadcrumb.edit' }
+                                        { label: 'breadcrumb.edit' },
                                     ]}
                                 />
                             </div>
-                            <h1 className="text-xl font-bold text-slate-900 tracking-tight leading-none">
-                                {t('edit_title', { defaultValue: 'Chỉnh sửa Bài viết' })}
+                            <h1
+                                className={cn(
+                                    'font-bold text-slate-900 tracking-tight leading-tight transition-all duration-300',
+                                    isScrolled ? 'text-base' : 'text-xl'
+                                )}
+                            >
+                                {t('edit_title')}
                             </h1>
                             {blogPost && (
-                                <p className="text-xs text-slate-400 font-medium truncate max-w-[200px] sm:max-w-[400px] mt-1 select-all">
+                                <p
+                                    className={cn(
+                                        'text-xs text-slate-400 font-medium truncate max-w-[200px] sm:max-w-[400px] select-all transition-all duration-300',
+                                        isScrolled ? 'opacity-0 h-0 overflow-hidden mt-0' : 'opacity-100 h-auto mt-1'
+                                    )}
+                                >
                                     {blogPost.title}
                                 </p>
                             )}
                         </div>
                     </div>
 
-                    {/* Header Right: Buttons */}
                     {!isLoading && blogPost && (
-                        <div className="hidden md:flex items-center gap-3">
+                        <div className="hidden md:flex shrink-0 items-center gap-3">
                             <Button
                                 variant="outline"
                                 onClick={() => navigate(ROUTES.BLOG_POSTS)}
+                                disabled={isSubmitting}
                                 className="rounded-xl border-slate-200 text-slate-500 hover:bg-slate-50 font-bold px-5 h-11"
                             >
                                 {t('actions.cancel')}
@@ -137,89 +157,57 @@ const BlogPostEdit = () => {
                             <Button
                                 variant="outline"
                                 onClick={handlePreview}
-                                disabled={blogPost.status !== 'published'}
-                                title={blogPost.status !== 'published' ? t('actions.preview_disabled_helper', { defaultValue: 'Chỉ có thể xem bài viết đã xuất bản' }) : ''}
-                                className="rounded-xl border-slate-200 text-slate-500 hover:bg-slate-50 font-bold px-5 h-11 flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-350"
+                                disabled={!previewState.canPreview}
+                                title={!previewState.canPreview ? previewDisabledTitle : undefined}
+                                className="rounded-xl border-slate-200 text-slate-500 hover:bg-slate-50 font-bold px-5 h-11 flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-slate-50"
                             >
                                 <ExternalLink className="w-4 h-4" />
-                                {t('view_post', { defaultValue: 'Xem bài viết' })}
+                                {t('view_post')}
                             </Button>
                             <Button
-                                onClick={handleSave}
+                                form="blog-post-form"
+                                type="submit"
                                 isLoading={isSubmitting}
                                 disabled={isSubmitting}
-                                className="rounded-xl bg-[#14B8A6] hover:bg-[#0f766e] text-white font-bold px-6 h-11 shadow-lg shadow-[#14B8A6]/20 transition-all hover:scale-[1.02] active:scale-95 cursor-pointer"
+                                className="rounded-xl bg-[#14B8A6] hover:bg-[#0f766e] text-white font-bold px-6 h-11 shadow-lg shadow-[#14B8A6]/20 transition-all hover:scale-[1.02] active:scale-95 cursor-pointer flex items-center gap-1.5"
                             >
-                                <Sparkles className="w-4 h-4 mr-2" />
-                                {t('actions.save_changes', { defaultValue: 'Lưu thay đổi' })}
+                                <Sparkles className="w-4 h-4" />
+                                {t('actions.save_changes')}
                             </Button>
                         </div>
                     )}
                 </div>
             </div>
 
-            {/* Main Form Content */}
-            <div className="max-w-[1600px] mx-auto px-4 md:px-8 mt-8">
+            <div className="w-full px-4 sm:px-6 lg:px-10 mt-8">
                 {isLoading ? (
                     <BlogPostFormSkeleton />
                 ) : (
                     blogPost && (
                         <div className="flex flex-col lg:flex-row gap-8">
-                            {/* Main Form Body */}
-                            <div className="flex-grow">
-                                <BlogPostForm initialData={blogPost} onSubmittingChange={setIsSubmitting} />
+                            <div className="flex-grow min-w-0">
+                                <BlogPostForm
+                                    initialData={blogPost}
+                                    onSubmittingChange={setIsSubmitting}
+                                    onPreviewStateChange={setPreviewState}
+                                    onCancel={() => navigate(ROUTES.BLOG_POSTS)}
+                                    onSuccess={() =>
+                                        navigate(ROUTES.BLOG_POSTS_DETAIL.replace(':id', String(blogPost.id)))
+                                    }
+                                />
                             </div>
 
-                            {/* Sidebar Quick Actions Card */}
-                            <div className="lg:w-80 shrink-0">
-                                <div className="bg-white rounded-3xl p-6 border border-slate-200/60 shadow-xs space-y-4">
-                                    <h4 className="text-sm font-bold text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2">
-                                        <Sparkles className="w-4 h-4 text-[#14B8A6]" />
-                                        {t('quick_actions', { defaultValue: 'Thao tác nhanh' })}
-                                    </h4>
-                                    
-                                    <div className="flex flex-col gap-2.5">
-                                        <button
-                                            type="button"
-                                            onClick={handlePreview}
-                                            disabled={blogPost.status !== 'published'}
-                                            title={blogPost.status !== 'published' ? t('actions.preview_disabled_helper', { defaultValue: 'Chỉ có thể xem bài viết đã xuất bản' }) : ''}
-                                            className="w-full py-3 px-4 border border-slate-200 hover:border-[#0066CC] hover:text-[#0066CC] bg-white text-slate-600 rounded-xl font-bold text-xs flex items-center justify-center gap-2 cursor-pointer transition-colors shadow-4xs disabled:opacity-50 disabled:cursor-not-allowed disabled:border-slate-100 disabled:text-slate-350 disabled:bg-slate-50/50 disabled:hover:border-slate-100 disabled:hover:text-slate-350"
-                                        >
-                                            <ExternalLink className="w-4 h-4" />
-                                            {t('view_post', { defaultValue: 'Xem bài viết' })}
-                                        </button>
-
-                                        <button
-                                            type="button"
-                                            onClick={handleDuplicate}
-                                            className="w-full py-3 px-4 border border-slate-200 hover:border-[#0066CC] hover:text-[#0066CC] bg-white text-slate-600 rounded-xl font-bold text-xs flex items-center justify-center gap-2 cursor-pointer transition-colors shadow-4xs"
-                                        >
-                                            <Copy className="w-4 h-4" />
-                                            {t('duplicate_post', { defaultValue: 'Nhân bản bài viết' })}
-                                        </button>
-
-                                        {isAdmin ? (
-                                            <button
-                                                type="button"
-                                                onClick={() => setIsDeleteDialogOpen(true)}
-                                                className="w-full py-3 px-4 border border-rose-100 hover:bg-rose-50 text-rose-500 rounded-xl font-bold text-xs flex items-center justify-center gap-2 cursor-pointer transition-all shadow-4xs active:scale-[0.98]"
-                                            >
-                                                <Trash2 className="w-4 h-4" />
-                                                {t('delete_post', { defaultValue: 'Xóa bài viết' })}
-                                            </button>
-                                        ) : (
-                                            <button
-                                                type="button"
-                                                disabled
-                                                className="w-full py-3 px-4 border border-slate-100 bg-slate-50 text-slate-350 rounded-xl font-bold text-xs flex items-center justify-center gap-2 cursor-not-allowed select-none opacity-50"
-                                                title={t('actions.delete_forbidden', { defaultValue: 'Bạn không có quyền xóa bài viết' })}
-                                            >
-                                                <Trash2 className="w-4 h-4" />
-                                                {t('delete_post', { defaultValue: 'Xóa bài viết' })}
-                                            </button>
-                                        )}
-                                    </div>
+                            <div className="lg:w-80 shrink-0 hidden lg:block">
+                                <div className="sticky top-28">
+                                    <QuickActionsCard
+                                        t={t}
+                                        isAdmin={isAdmin}
+                                        canPreview={previewState.canPreview}
+                                        previewDisabledTitle={previewDisabledTitle}
+                                        onPreview={handlePreview}
+                                        onDuplicate={handleDuplicate}
+                                        onDelete={() => setIsDeleteDialogOpen(true)}
+                                    />
                                 </div>
                             </div>
                         </div>
@@ -227,28 +215,44 @@ const BlogPostEdit = () => {
                 )}
             </div>
 
-            {/* Mobile Actions Bar */}
             {!isLoading && blogPost && (
-                <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-slate-200/80 p-4 flex gap-3 shadow-lg">
-                    <Button
-                        variant="outline"
-                        onClick={() => navigate(ROUTES.BLOG_POSTS)}
-                        className="flex-1 rounded-xl border-slate-200 text-slate-500 font-bold h-12"
-                    >
-                        {t('actions.cancel')}
-                    </Button>
-                    <Button
-                        onClick={handleSave}
-                        isLoading={isSubmitting}
-                        disabled={isSubmitting}
-                        className="flex-1 rounded-xl bg-[#14B8A6] hover:bg-[#0f766e] text-white font-bold h-12 shadow-lg shadow-[#14B8A6]/20"
-                    >
-                        {t('actions.save_changes', { defaultValue: 'Lưu thay đổi' })}
-                    </Button>
-                </div>
+                <>
+                    <div className="md:hidden fixed bottom-[4.25rem] left-0 right-0 z-30 px-4">
+                        <QuickActionsCard
+                            t={t}
+                            isAdmin={isAdmin}
+                            canPreview={previewState.canPreview}
+                            previewDisabledTitle={previewDisabledTitle}
+                            onPreview={handlePreview}
+                            onDuplicate={handleDuplicate}
+                            onDelete={() => setIsDeleteDialogOpen(true)}
+                            compact
+                        />
+                    </div>
+
+                    <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200/80 p-4 flex gap-3 shadow-lg">
+                        <Button
+                            variant="outline"
+                            type="button"
+                            disabled={isSubmitting}
+                            onClick={() => navigate(ROUTES.BLOG_POSTS)}
+                            className="flex-1 rounded-xl border-slate-200 text-slate-500 font-bold h-12"
+                        >
+                            {t('actions.cancel')}
+                        </Button>
+                        <Button
+                            form="blog-post-form"
+                            type="submit"
+                            isLoading={isSubmitting}
+                            disabled={isSubmitting}
+                            className="flex-[2] rounded-xl bg-[#14B8A6] hover:bg-[#0f766e] text-white font-bold h-12 shadow-lg shadow-[#14B8A6]/20"
+                        >
+                            {t('actions.save_changes')}
+                        </Button>
+                    </div>
+                </>
             )}
 
-            {/* Delete Confirm Modal */}
             <DeleteConfirmDialog
                 isOpen={isDeleteDialogOpen}
                 onClose={() => setIsDeleteDialogOpen(false)}
@@ -257,7 +261,6 @@ const BlogPostEdit = () => {
                 isMutating={deleteMutation.isPending}
             />
 
-            {/* Duplicate Confirm Modal */}
             <DuplicateConfirmDialog
                 isOpen={isDuplicateDialogOpen}
                 onClose={() => setIsDuplicateDialogOpen(false)}
@@ -267,49 +270,97 @@ const BlogPostEdit = () => {
     );
 };
 
-// Skeleton loading component for better visual transition
+interface QuickActionsCardProps {
+    t: ReturnType<typeof useTranslation<'blog'>>['t'];
+    isAdmin: boolean;
+    canPreview: boolean;
+    previewDisabledTitle: string;
+    onPreview: () => void;
+    onDuplicate: () => void;
+    onDelete: () => void;
+    compact?: boolean;
+}
+
+const QuickActionsCard = ({
+    t,
+    isAdmin,
+    canPreview,
+    previewDisabledTitle,
+    onPreview,
+    onDuplicate,
+    onDelete,
+    compact = false,
+}: QuickActionsCardProps) => (
+    <div
+        className={cn(
+            'bg-white rounded-3xl border border-slate-200/60 shadow-xs space-y-4',
+            compact ? 'p-4' : 'p-6'
+        )}
+    >
+        {!compact && (
+            <h4 className="text-sm font-bold text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-[#14B8A6]" />
+                {t('quick_actions')}
+            </h4>
+        )}
+
+        <div className={cn('flex flex-col', compact ? 'gap-2' : 'gap-2.5')}>
+            <button
+                type="button"
+                onClick={onPreview}
+                disabled={!canPreview}
+                title={!canPreview ? previewDisabledTitle : undefined}
+                className="w-full py-3 px-4 border border-slate-200 hover:border-[#0066CC] hover:text-[#0066CC] bg-white text-slate-600 rounded-xl font-bold text-xs flex items-center justify-center gap-2 cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:border-slate-100 disabled:bg-slate-50/50"
+            >
+                <ExternalLink className="w-4 h-4" />
+                {t('view_post')}
+            </button>
+
+            <button
+                type="button"
+                onClick={onDuplicate}
+                className="w-full py-3 px-4 border border-slate-200 hover:border-[#0066CC] hover:text-[#0066CC] bg-white text-slate-600 rounded-xl font-bold text-xs flex items-center justify-center gap-2 cursor-pointer transition-colors"
+            >
+                <Copy className="w-4 h-4" />
+                {t('duplicate_post')}
+            </button>
+
+            {isAdmin ? (
+                <button
+                    type="button"
+                    onClick={onDelete}
+                    className="w-full py-3 px-4 border border-rose-100 hover:bg-rose-50 text-rose-500 rounded-xl font-bold text-xs flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.98]"
+                >
+                    <Trash2 className="w-4 h-4" />
+                    {t('delete_post')}
+                </button>
+            ) : (
+                <button
+                    type="button"
+                    disabled
+                    className="w-full py-3 px-4 border border-slate-100 bg-slate-50 text-slate-350 rounded-xl font-bold text-xs flex items-center justify-center gap-2 cursor-not-allowed opacity-50"
+                    title={t('actions.delete_forbidden')}
+                >
+                    <Trash2 className="w-4 h-4" />
+                    {t('delete_post')}
+                </button>
+            )}
+        </div>
+    </div>
+);
+
 const BlogPostFormSkeleton = () => (
     <div className="flex flex-col lg:flex-row gap-8 animate-pulse">
-        {/* Left Column Skeleton */}
         <div className="flex-grow space-y-6">
             <div className="bg-white rounded-3xl p-6 md:p-8 border border-slate-200/60 shadow-xs space-y-6">
-                <div className="flex items-center gap-2 mb-2">
-                    <div className="w-4 h-4 bg-slate-200 rounded-full" />
-                    <div className="h-4 bg-slate-200 rounded w-1/4" />
-                </div>
-                {/* Title skeleton */}
                 <div className="h-8 bg-slate-200 rounded-lg w-3/4" />
-                {/* Slug skeleton */}
                 <div className="h-10 bg-slate-200 rounded-xl w-full" />
-                {/* Excerpt skeleton */}
-                <div className="space-y-2.5">
-                    <div className="h-4 bg-slate-200 rounded w-1/6" />
-                    <div className="h-20 bg-slate-200 rounded-2xl w-full" />
-                </div>
-                {/* Editor skeleton */}
-                <div className="space-y-2.5">
-                    <div className="h-4 bg-slate-200 rounded w-1/6" />
-                    <div className="h-[400px] bg-slate-200 rounded-2xl w-full" />
-                </div>
+                <div className="h-20 bg-slate-200 rounded-2xl w-full" />
+                <div className="h-[400px] bg-slate-200 rounded-2xl w-full" />
             </div>
         </div>
-
-        {/* Right Column Skeleton */}
-        <div className="lg:w-80 shrink-0 space-y-6">
-            {/* Card 1 Skeleton */}
-            <div className="bg-white rounded-3xl p-6 border border-slate-200/60 shadow-xs space-y-4">
-                <div className="h-4 bg-slate-200 rounded w-1/2" />
-                <div className="space-y-3">
-                    <div className="h-8 bg-slate-200 rounded-xl w-full" />
-                    <div className="h-8 bg-slate-200 rounded-xl w-full" />
-                    <div className="h-8 bg-slate-200 rounded-xl w-full" />
-                </div>
-            </div>
-            {/* Card 2 Skeleton */}
-            <div className="bg-white rounded-3xl p-6 border border-slate-200/60 shadow-xs space-y-4">
-                <div className="h-4 bg-slate-200 rounded w-1/2" />
-                <div className="h-24 bg-slate-200 rounded-xl w-full" />
-            </div>
+        <div className="lg:w-80 shrink-0 hidden lg:block">
+            <div className="bg-white rounded-3xl p-6 border border-slate-200/60 shadow-xs h-48" />
         </div>
     </div>
 );

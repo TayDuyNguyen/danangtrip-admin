@@ -1,5 +1,5 @@
 import { test as base, type Page } from '@playwright/test';
-import { createAdminToken, createUserRoleToken } from '../../utils/jwt';
+import { createAdminToken, createUserRoleToken, createStaffToken } from '../../utils/jwt';
 import { mockAdminUser } from './data/users.data';
 
 export interface AdminAuthFixtures {
@@ -47,6 +47,36 @@ async function seedSession(
 export async function seedAdminSession(page: Page, userId = 1) {
   const token = createAdminToken(userId);
   await seedSession(page, token, { ...adminUserState, id: userId });
+}
+
+/** Re-apply session on the live page (use in beforeEach before goto when tests mutate auth). */
+export async function ensureAdminSessionOnPage(page: Page, userId = 1) {
+  const token = createAdminToken(userId);
+  const user = { ...adminUserState, id: userId };
+  await page.evaluate(
+    ({ accessToken, persistedUser }) => {
+      localStorage.setItem('access_token', accessToken);
+      localStorage.setItem('remember_me', 'true');
+      localStorage.setItem(
+        'user-storage',
+        JSON.stringify({ state: { user: persistedUser }, version: 0 })
+      );
+      document.cookie = `access_token=${accessToken}; path=/`;
+    },
+    { accessToken: token, persistedUser: user }
+  );
+}
+
+export async function seedStaffSession(page: Page, userId = 3) {
+  const token = createStaffToken(userId);
+  await seedSession(page, token, {
+    ...adminUserState,
+    id: userId,
+    role: 'staff',
+    email: 'staff@test.com',
+    username: 'staff_user',
+    full_name: 'Staff User',
+  });
 }
 
 export async function seedNonAdminSession(page: Page, userId = 2) {

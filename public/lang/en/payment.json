@@ -3,14 +3,25 @@
   "subtitle": "Manage, search, and control customer payment transactions.",
   "stats": {
     "revenue": "Total Revenue",
+    "revenue_on_page": "Total Revenue (this page)",
     "success_count": "Successful Payments",
+    "success_count_on_page": "Successful Payments (this page)",
     "pending_count": "Pending Payments",
-    "refunded_amount": "Refunded Amount"
+    "pending_count_on_page": "Pending Payments (this page)",
+    "refunded_amount": "Refunded Amount",
+    "refunded_amount_on_page": "Refunded Amount (this page)"
   },
   "filter": {
     "search_placeholder": "Search transaction, booking code, customer name or email...",
     "all_statuses": "All Statuses",
     "all_gateways": "All Gateways",
+    "gateway_bank_transfer": "Bank Transfer",
+    "all_refund_statuses": "All Refund Requests",
+    "refund_pending": "Pending Refund",
+    "refund_processing": "Processing Refund",
+    "refund_completed": "Refunded",
+    "refund_failed": "Refund Failed",
+    "refund_rejected": "Refund Rejected",
     "reset": "Reset",
     "from": "From",
     "to": "To",
@@ -19,6 +30,7 @@
   },
   "status": {
     "pending": "Pending",
+    "partially_paid": "Partially Paid",
     "success": "Success",
     "failed": "Failed",
     "refunded": "Refunded"
@@ -53,13 +65,33 @@
     "reason_placeholder": "Enter detailed refund reason (minimum 10 characters)...",
     "btn_cancel": "Cancel",
     "btn_confirm": "Confirm Refund",
+    "btn_close": "Close",
+    "loading": "Loading refund details...",
+    "vietqr_title": "Scan VietQR to transfer refund",
+    "vietqr_alt": "VietQR refund",
+    "vietqr_bank": "Bank",
+    "vietqr_account_no": "Account Number",
+    "vietqr_account_name": "Account Holder",
+    "vietqr_amount": "Amount",
+    "vietqr_hint": "Scan the QR with your banking app. Confirm the refund only after the transfer succeeds.",
+    "bank_code_placeholder": "Bank code, e.g. MB",
+    "account_no_placeholder": "Account number",
+    "account_name_placeholder": "Account holder name",
+    "transfer_reference_label": "Bank Transfer Reference *",
+    "transfer_reference_placeholder": "Enter the transfer reference after a successful payment",
     "toast_success": "Refund request for transaction {{code}} has been successfully executed!",
     "toast_error": "An error occurred while executing refund: {{message}}"
   },
   "validation": {
     "reason_required": "Refund reason is required",
     "reason_min": "Refund reason must be at least 10 characters",
-    "reason_max": "Refund reason cannot exceed 255 characters"
+    "reason_max": "Refund reason cannot exceed 255 characters",
+    "bank_code_required": "Please select a bank",
+    "account_no_invalid": "Invalid account number",
+    "account_no_required": "Please enter an account number",
+    "account_name_required": "Please enter the account holder name",
+    "transfer_reference_min": "Transfer reference must be at least 4 characters",
+    "transfer_reference_required": "Please enter the transfer reference after payment"
   },
   "export": {
     "toast_success": "Transaction report exported successfully!",
@@ -93,6 +125,11 @@
     "timeline_failed": "Payment failed",
     "timeline_refunded": "Refunded successfully: {{reason}}",
     "back_to_list": "Back to list",
+    "not_found_title": "Payment not found",
+    "not_found_description": "This payment does not exist or has been removed from the system.",
+    "load_error_title": "Unable to load payment",
+    "load_error_description": "Payment data is temporarily unavailable. Please try again later.",
+    "retry_button": "Retry",
     "not_found": "Payment transaction not found or does not exist."
   }
 }

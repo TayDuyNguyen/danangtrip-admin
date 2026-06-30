@@ -1,12 +1,19 @@
 import type { RawLocation, RawRating, RawRatingStats } from '@/types';
 import type { LocationViewModel, LocationListData, LocationListResponse, RatingViewModel, RatingStatsViewModel, OpeningHours } from './location.dataHelper';
 import { toNumberSafe } from '@/utils/safeConverters';
+import { formatCurrency } from '@/utils/pricing';
 import type { CreateLocationInput } from '@/validations/location.schema';
+
+export type LocationPriceDisplay =
+    | { type: 'free' }
+    | { type: 'empty' }
+    | { type: 'single'; amount: number }
+    | { type: 'range'; min: number; max: number };
 
 /**
  * Format large numbers to human readable strings (e.g. 12400 -> 12.4K)
  */
-export const formatMetric = (value: number | undefined | null): string => {
+const formatMetric = (value: number | undefined | null): string => {
     const n = toNumberSafe(value, 0);
     if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M';
     if (n >= 1000) return (n / 1000).toFixed(1) + 'K';
@@ -16,7 +23,7 @@ export const formatMetric = (value: number | undefined | null): string => {
 /**
  * Normalize API price_level (1–4 or string) to i18n key under location:priceLevels
  */
-export const normalizePriceLevelKey = (level: string | number | undefined | null): string => {
+const normalizePriceLevelKey = (level: string | number | undefined | null): string => {
     if (level === null || level === undefined || level === '') return 'unknown';
     const n = typeof level === 'number' ? level : Number(level);
     if (n === 1) return 'free';
@@ -26,6 +33,44 @@ export const normalizePriceLevelKey = (level: string | number | undefined | null
     const s = String(level);
     if (['free', 'low', 'medium', 'high'].includes(s)) return s;
     return 'unknown';
+};
+
+/**
+ * Resolve how to show location price in list/detail UI (VND amounts, not $ labels).
+ */
+export const getLocationPriceDisplay = (
+    priceMin?: number | null,
+    priceMax?: number | null
+): LocationPriceDisplay => {
+    const min = priceMin != null ? toNumberSafe(priceMin) : null;
+    const max = priceMax != null ? toNumberSafe(priceMax) : null;
+    const hasMin = min != null;
+    const hasMax = max != null;
+
+    if (!hasMin && !hasMax) return { type: 'empty' };
+    if (hasMin && hasMax && min === 0 && max === 0) return { type: 'free' };
+    if (hasMin && !hasMax && min === 0) return { type: 'free' };
+    if (!hasMin && hasMax && max === 0) return { type: 'free' };
+
+    if (hasMin && hasMax) {
+        if (min === max) return { type: 'single', amount: min };
+        return { type: 'range', min, max };
+    }
+    if (hasMin) return { type: 'single', amount: min! };
+    return { type: 'single', amount: max! };
+};
+
+/** Format VND price for table cells; pass `t` for i18n free/empty labels. */
+export const formatLocationPriceLabel = (
+    priceMin?: number | null,
+    priceMax?: number | null,
+    t?: (key: string) => string
+): string => {
+    const display = getLocationPriceDisplay(priceMin, priceMax);
+    if (display.type === 'free') return t?.('table.price_free') ?? 'Miễn phí';
+    if (display.type === 'empty') return t?.('table.price_not_set') ?? '—';
+    if (display.type === 'single') return `${formatCurrency(display.amount)}đ`;
+    return `${formatCurrency(display.min)} - ${formatCurrency(display.max)}đ`;
 };
 
 function resolveDistrictLabel(raw: RawLocation): string {
@@ -38,7 +83,7 @@ function resolveDistrictLabel(raw: RawLocation): string {
 /**
  * Safely parse opening hours from string or object
  */
-export const parseOpeningHours = (val: unknown): string | string[] | OpeningHours | undefined => {
+const parseOpeningHours = (val: unknown): string | string[] | OpeningHours | undefined => {
     if (!val) return undefined;
     if (Array.isArray(val)) {
         if (val.length === 1 && typeof val[0] === 'string') {
@@ -73,7 +118,7 @@ export const parseOpeningHours = (val: unknown): string | string[] | OpeningHour
 /**
  * Format raw opening hours to a clean multiline string for form input
  */
-export const formatOpeningHoursForForm = (val: unknown): string => {
+const formatOpeningHoursForForm = (val: unknown): string => {
     const parsed = parseOpeningHours(val);
     if (!parsed) return '';
     if (typeof parsed === 'string') return parsed;
@@ -121,8 +166,14 @@ export const mapLocationToViewModel = (raw: RawLocation): LocationViewModel => {
             ? toNumberSafe(raw.longitude)
             : undefined,
         priceLevelKey: priceKey,
-        priceMin: raw.price_min ? toNumberSafe(raw.price_min) : undefined,
-        priceMax: raw.price_max ? toNumberSafe(raw.price_max) : undefined,
+        priceMin:
+            raw.price_min !== null && raw.price_min !== undefined && raw.price_min !== ''
+                ? toNumberSafe(raw.price_min)
+                : undefined,
+        priceMax:
+            raw.price_max !== null && raw.price_max !== undefined && raw.price_max !== ''
+                ? toNumberSafe(raw.price_max)
+                : undefined,
         rating: toNumberSafe(raw.avg_rating ?? raw.rating, 0),
         reviewCount: raw.review_count || 0,
         status: raw.status,
@@ -155,8 +206,14 @@ export const mapLocationToFormInput = (raw: RawLocation): CreateLocationInput & 
         email: raw.email || null,
         website: raw.website || null,
         opening_hours: formatOpeningHoursForForm(raw.opening_hours),
-        price_min: raw.price_min ? toNumberSafe(raw.price_min) : null,
-        price_max: raw.price_max ? toNumberSafe(raw.price_max) : null,
+        price_min:
+            raw.price_min !== null && raw.price_min !== undefined && raw.price_min !== ''
+                ? toNumberSafe(raw.price_min)
+                : null,
+        price_max:
+            raw.price_max !== null && raw.price_max !== undefined && raw.price_max !== ''
+                ? toNumberSafe(raw.price_max)
+                : null,
         price_level: raw.price_level ? Number(raw.price_level) : 1,
         thumbnail: raw.thumbnail || '',
         images: raw.images || [],

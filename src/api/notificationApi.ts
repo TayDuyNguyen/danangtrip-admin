@@ -36,7 +36,6 @@ export const notificationApi = {
         title: string;
         content: string;
         data?: Record<string, unknown> | null;
-    }): Promise<ApiResponse<null>> =>
+    }): Promise<ApiResponse<{ sent_count: number }>> =>
         axiosClient.post(API_ENDPOINTS.NOTIFICATIONS.SEND_ALL, data),
 };
-export default notificationApi;

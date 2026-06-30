@@ -4,7 +4,7 @@ import { mapPaymentList, mapPaymentItem } from "@/dataHelper/payment.mapper";
 import type { PaymentListFilters } from "@/dataHelper";
 import { prepareSpreadsheetDownload, downloadBlobFile } from "@/utils";
 
-export const paymentKeys = {
+const paymentKeys = {
     all: ["payments"] as const,
     lists: () => [...paymentKeys.all, "list"] as const,
     list: (filters: PaymentListFilters, page: number, limit: number) =>

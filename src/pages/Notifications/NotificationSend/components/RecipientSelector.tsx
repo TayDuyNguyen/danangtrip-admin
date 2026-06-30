@@ -1,10 +1,8 @@
 import { useState, useRef, useEffect } from "react";
 import { Search, X, Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { useInfiniteQuery } from "@tanstack/react-query";
-import { userApi } from "@/api/userApi";
-import { mapUserList } from "@/dataHelper/user.mapper";
 import { useDebounce } from "@/hooks/useDebounce";
+import { useAdminUserInfiniteSearch } from "@/hooks/useAdminUserInfiniteSearch";
 import type { UserItem } from "@/dataHelper";
 
 interface RecipientSelectorProps {
@@ -13,6 +11,8 @@ interface RecipientSelectorProps {
     error?: string;
     disabled?: boolean;
 }
+
+const ACTIVE_USER_FILTERS = { status: "active" as const };
 
 export const RecipientSelector = ({
     selectedUser,
@@ -23,42 +23,24 @@ export const RecipientSelector = ({
     const { t } = useTranslation("notification");
     const [searchVal, setSearchVal] = useState("");
     const [isOpen, setIsOpen] = useState(false);
+    const [activeIndex, setActiveIndex] = useState(-1);
     const containerRef = useRef<HTMLDivElement>(null);
     const dropdownRef = useRef<HTMLDivElement>(null);
+    const listboxId = "notification-recipient-listbox";
 
     const debouncedSearchVal = useDebounce(searchVal, 300);
-    const pageSize = 10;
 
     const {
-        data: usersData,
+        usersList,
         isLoading,
         isFetchingNextPage,
         hasNextPage,
         fetchNextPage,
-    } = useInfiniteQuery({
-        queryKey: ["notification-recipient-users", debouncedSearchVal],
-        queryFn: async ({ pageParam }) => {
-            const response = await userApi.getList({
-                q: debouncedSearchVal,
-                page: pageParam,
-                per_page: pageSize,
-            });
-
-            if (!response.data) {
-                throw new Error("Empty response");
-            }
-
-            return mapUserList(response.data);
-        },
-        initialPageParam: 1,
-        getNextPageParam: (lastPage) => {
-            const currentPage = lastPage.meta.current_page;
-            return currentPage < lastPage.meta.last_page ? currentPage + 1 : undefined;
-        },
-        staleTime: 1000 * 30,
-    });
-
-    const usersList: UserItem[] = usersData?.pages.flatMap((pageData) => pageData.data) || [];
+    } = useAdminUserInfiniteSearch(
+        debouncedSearchVal,
+        "notification-recipient-users",
+        ACTIVE_USER_FILTERS
+    );
 
     const handleDropdownScroll = () => {
         const dropdown = dropdownRef.current;
@@ -75,26 +57,60 @@ export const RecipientSelector = ({
         }
     };
 
-    // Click outside to close dropdown
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
                 setIsOpen(false);
+                setActiveIndex(-1);
             }
         };
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
+    const handleSelectUser = (user: UserItem) => {
+        onSelect(user);
+        setSearchVal("");
+        setIsOpen(false);
+        setActiveIndex(-1);
+    };
+
+    const handleSearchKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+        if (!isOpen && (event.key === "ArrowDown" || event.key === "Enter")) {
+            setIsOpen(true);
+            setActiveIndex(-1);
+            return;
+        }
+
+        if (event.key === "ArrowDown") {
+            event.preventDefault();
+            setActiveIndex((current) => Math.min(current + 1, usersList.length - 1));
+        } else if (event.key === "ArrowUp") {
+            event.preventDefault();
+            setActiveIndex((current) => Math.max(current - 1, 0));
+        } else if (event.key === "Enter" && activeIndex >= 0 && usersList[activeIndex]) {
+            event.preventDefault();
+            handleSelectUser(usersList[activeIndex]);
+        } else if (event.key === "Escape") {
+            setIsOpen(false);
+            setActiveIndex(-1);
+        }
+    };
+
     return (
-        <div className="space-y-2" ref={containerRef}>
-            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
+        <div className="space-y-2" ref={containerRef} data-testid="notification-recipient-selector">
+            <label
+                className="text-xs font-bold text-slate-500 uppercase tracking-wider block"
+                htmlFor="notification-recipient-search"
+            >
                 {t("send.label_recipient")}
             </label>
 
             {selectedUser ? (
-                /* Selected User View Card */
-                <div className="flex items-center justify-between bg-blue-50/40 border border-blue-200/60 rounded-2xl p-4 transition-all duration-300">
+                <div
+                    className="flex items-center justify-between bg-blue-50/40 border border-blue-200/60 rounded-2xl p-4 transition-all duration-300"
+                    data-testid="notification-recipient-selected"
+                >
                     <div className="flex items-center gap-3 min-w-0">
                         {selectedUser.avatar ? (
                             <img
@@ -123,24 +139,37 @@ export const RecipientSelector = ({
                             setSearchVal("");
                         }}
                         disabled={disabled}
+                        aria-label={t("send.clear_recipient")}
+                        data-testid="notification-recipient-clear"
                         className="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:bg-rose-50 hover:text-rose-500 transition-colors cursor-pointer disabled:opacity-50"
                     >
                         <X size={18} />
                     </button>
                 </div>
             ) : (
-                /* Search Input & Suggestions Autocomplete */
                 <div className="relative">
                     <div className="relative">
                         <input
+                            id="notification-recipient-search"
                             type="text"
+                            role="combobox"
+                            aria-expanded={isOpen}
+                            aria-controls={listboxId}
+                            aria-autocomplete="list"
+                            aria-invalid={Boolean(error)}
+                            data-testid="notification-recipient-search"
                             value={searchVal}
                             disabled={disabled}
                             onChange={(e) => {
                                 setSearchVal(e.target.value);
                                 setIsOpen(true);
+                                setActiveIndex(-1);
                             }}
-                            onFocus={() => setIsOpen(true)}
+                            onFocus={() => {
+                                setIsOpen(true);
+                                setActiveIndex(-1);
+                            }}
+                            onKeyDown={handleSearchKeyDown}
                             placeholder={t("send.placeholder_search_user")}
                             className={`w-full bg-[#f8fafc] border rounded-2xl py-3.5 pl-12 pr-12 text-sm font-semibold text-slate-800 placeholder-slate-400 outline-none transition-all duration-200 disabled:opacity-50 ${
                                 error
@@ -158,44 +187,47 @@ export const RecipientSelector = ({
                         )}
                     </div>
 
-                    {/* Suggestions Dropdown */}
                     {isOpen && (
                         <div
+                            id={listboxId}
+                            role="listbox"
                             ref={dropdownRef}
                             onScroll={handleDropdownScroll}
                             className="absolute left-0 right-0 top-full mt-2 bg-white border border-slate-100 rounded-2xl shadow-xl z-50 max-h-80 overflow-y-auto divide-y divide-slate-100 animate-in fade-in-50 slide-in-from-top-2 duration-200"
                         >
                             {usersList.length > 0 ? (
                                 <>
-                                    {usersList.map((user) => (
-                                    <div
-                                        key={user.id}
-                                        onClick={() => {
-                                            onSelect(user);
-                                            setIsOpen(false);
-                                        }}
-                                        className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 cursor-pointer transition-colors duration-150"
-                                    >
-                                        {user.avatar ? (
-                                            <img
-                                                src={user.avatar}
-                                                alt={user.fullName}
-                                                className="w-8 h-8 rounded-full object-cover border border-slate-100 shrink-0"
-                                            />
-                                        ) : (
-                                            <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-xs font-bold text-slate-600 border border-slate-200 shrink-0">
-                                                {user.fullName.charAt(0).toUpperCase()}
+                                    {usersList.map((user, index) => (
+                                        <button
+                                            key={user.id}
+                                            type="button"
+                                            role="option"
+                                            aria-selected={index === activeIndex}
+                                            onClick={() => handleSelectUser(user)}
+                                            className={`w-full flex items-center gap-3 px-4 py-3 hover:bg-slate-50 cursor-pointer transition-colors duration-150 text-left ${
+                                                index === activeIndex ? "bg-slate-50" : ""
+                                            }`}
+                                        >
+                                            {user.avatar ? (
+                                                <img
+                                                    src={user.avatar}
+                                                    alt={user.fullName}
+                                                    className="w-8 h-8 rounded-full object-cover border border-slate-100 shrink-0"
+                                                />
+                                            ) : (
+                                                <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-xs font-bold text-slate-600 border border-slate-200 shrink-0">
+                                                    {user.fullName.charAt(0).toUpperCase()}
+                                                </div>
+                                            )}
+                                            <div className="min-w-0 flex-1">
+                                                <h6 className="text-xs font-bold text-slate-800 truncate">
+                                                    {user.fullName}
+                                                </h6>
+                                                <p className="text-[10px] font-semibold text-slate-400 truncate">
+                                                    {user.username} • {user.email}
+                                                </p>
                                             </div>
-                                        )}
-                                        <div className="min-w-0 flex-1">
-                                            <h6 className="text-xs font-bold text-slate-800 truncate">
-                                                {user.fullName}
-                                            </h6>
-                                            <p className="text-[10px] font-semibold text-slate-400 truncate">
-                                                {user.username} • {user.email}
-                                            </p>
-                                        </div>
-                                    </div>
+                                        </button>
                                     ))}
                                     {isFetchingNextPage && (
                                         <div className="flex items-center justify-center gap-2 p-3 text-xs font-bold text-slate-400">
@@ -222,7 +254,7 @@ export const RecipientSelector = ({
             )}
 
             {error && (
-                <p className="text-xs text-rose-500 font-semibold pl-1">
+                <p className="text-xs text-rose-500 font-semibold pl-1" role="alert">
                     {error}
                 </p>
             )}

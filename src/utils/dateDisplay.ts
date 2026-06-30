@@ -89,7 +89,7 @@ export function formatAdminTableDateTime(value: TemporalLike): string {
     return `${padTwo(date.getHours())}:${padTwo(date.getMinutes())} ${formatAdminTableDate(date)}`;
 }
 
-export function formatAdminTableMonthYear(value: TemporalLike): string {
+function formatAdminTableMonthYear(value: TemporalLike): string {
     const date = parseTemporal(value);
     if (!date) {
         return typeof value === 'string' ? value : '';

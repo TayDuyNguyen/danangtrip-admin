@@ -8,6 +8,7 @@ interface NotificationStatsRowProps {
     unreadCount: number;
     isLoading?: boolean;
     isError?: boolean;
+    isFiltered?: boolean;
 }
 
 export const NotificationStatsRow = ({
@@ -16,8 +17,13 @@ export const NotificationStatsRow = ({
     unreadCount,
     isLoading = false,
     isError = false,
+    isFiltered = false,
 }: NotificationStatsRowProps) => {
     const { t } = useTranslation("notification");
+
+    const totalTitle = isFiltered ? t("stats.total_filtered") : t("stats.total");
+    const readTitle = isFiltered ? t("stats.read_filtered") : t("stats.read");
+    const unreadTitle = isFiltered ? t("stats.unread_filtered") : t("stats.unread");
 
     if (isError) {
         return (
@@ -34,7 +40,7 @@ export const NotificationStatsRow = ({
     return (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-2">
             <StatCard
-                title={t("stats.total")}
+                title={totalTitle}
                 value={total}
                 icon={Bell}
                 accent="secondary"
@@ -42,7 +48,7 @@ export const NotificationStatsRow = ({
                 isError={isError}
             />
             <StatCard
-                title={t("stats.read")}
+                title={readTitle}
                 value={readCount}
                 icon={MailOpen}
                 accent="teal"
@@ -50,7 +56,7 @@ export const NotificationStatsRow = ({
                 isError={isError}
             />
             <StatCard
-                title={t("stats.unread")}
+                title={unreadTitle}
                 value={unreadCount}
                 icon={Mail}
                 accent="rose"

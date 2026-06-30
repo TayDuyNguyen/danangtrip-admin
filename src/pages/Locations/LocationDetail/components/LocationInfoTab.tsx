@@ -9,6 +9,7 @@ import {
 } from 'react-icons/fi';
 
 import type { LocationViewModel, OpeningHours } from '@/dataHelper/location.dataHelper';
+import { formatLocationPriceLabel, getLocationPriceDisplay } from '@/dataHelper/location.mapper';
 
 interface LocationInfoTabProps {
     location: LocationViewModel;
@@ -161,9 +162,9 @@ const LocationInfoTab = ({ location }: LocationInfoTabProps) => {
                                     {t('detail.info.price_estimate')}
                                 </p>
                                 <p className="text-xl font-black text-indigo-900">
-                                    {location.priceMin && location.priceMax
-                                        ? `${location.priceMin.toLocaleString()} - ${location.priceMax.toLocaleString()} VND`
-                                        : t('detail.info.no_price')}
+                                    {getLocationPriceDisplay(location.priceMin, location.priceMax).type === 'empty'
+                                        ? t('detail.info.no_price')
+                                        : formatLocationPriceLabel(location.priceMin, location.priceMax, t)}
                                 </p>
                             </div>
                             <div className="px-4 py-2 rounded-xl bg-white text-indigo-600 font-bold shadow-sm border border-indigo-100">

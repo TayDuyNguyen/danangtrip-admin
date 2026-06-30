@@ -83,7 +83,12 @@ export const UserList = () => {
     const handleSelectAll = (checked: boolean) => {
         if (checked && data) {
             // Exclude current user from bulk selection for safety
-            const ids = data.data.filter((item) => item.id !== currentUser?.id).map((item) => item.id);
+            const ids = data.data.reduce<number[]>((selectedUserIds, item) => {
+                if (item.id !== currentUser?.id) {
+                    selectedUserIds.push(item.id);
+                }
+                return selectedUserIds;
+            }, []);
             setSelectedIds(ids);
         } else {
             setSelectedIds([]);

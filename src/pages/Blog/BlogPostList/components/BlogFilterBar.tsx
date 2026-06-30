@@ -108,9 +108,13 @@ export const BlogFilterBar = ({
                     <CustomSelect
                         options={categoryOptions}
                         value={currentCategoryOpt}
-                        onChange={(opt) =>
-                            onFilterChange({ ...filters, category_id: opt ? (opt.value as string) : undefined })
-                        }
+                        onChange={(opt) => {
+                            const raw = opt?.value as string | undefined;
+                            onFilterChange({
+                                ...filters,
+                                category_id: raw ? Number(raw) : undefined,
+                            });
+                        }}
                         leftIcon={<Tag size={18} />}
                     />
                 </div>
@@ -120,9 +124,13 @@ export const BlogFilterBar = ({
                     <CustomSelect
                         options={statusOptions}
                         value={currentStatusOpt}
-                        onChange={(opt) =>
-                            onFilterChange({ ...filters, status: opt ? (opt.value as string) : undefined })
-                        }
+                        onChange={(opt) => {
+                            const raw = opt?.value as string | undefined;
+                            onFilterChange({
+                                ...filters,
+                                status: raw || undefined,
+                            });
+                        }}
                         leftIcon={<Activity size={18} />}
                     />
                 </div>
@@ -130,7 +138,9 @@ export const BlogFilterBar = ({
                 {/* Reset Filters */}
                 {hasActiveFilters && (
                     <button
+                        type="button"
                         onClick={onReset}
+                        aria-label={t("common:actions.reset", "Đặt lại")}
                         className="w-full lg:w-auto h-[52px] px-6 rounded-2xl border border-slate-200 text-slate-500 hover:text-rose-600 hover:border-rose-200 hover:bg-rose-50/30 transition-all duration-300 font-bold text-sm flex items-center justify-center gap-2 cursor-pointer shrink-0"
                     >
                         <RotateCcw size={16} />
@@ -143,7 +153,7 @@ export const BlogFilterBar = ({
             {hasActiveFilters && (
                 <div className="flex items-center gap-2 flex-wrap border-t border-slate-50 pt-3">
                     <span className="text-xs font-bold text-slate-400">
-                        {t("table.selected", { count: 0 }).replace("Đã chọn 0", "Bộ lọc đang kích hoạt:")}:
+                        {t("filters.active_label")}:
                     </span>
                     {filters.search && (
                         <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-50 border border-slate-100 rounded-full text-xs font-bold text-slate-600">

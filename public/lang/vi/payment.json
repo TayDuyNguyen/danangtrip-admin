@@ -3,14 +3,25 @@
   "subtitle": "Quản lý, tìm kiếm và kiểm soát giao dịch thanh toán của khách hàng.",
   "stats": {
     "revenue": "Tổng Doanh thu",
+    "revenue_on_page": "Tổng Doanh thu (trang này)",
     "success_count": "Giao dịch Thành công",
+    "success_count_on_page": "Giao dịch Thành công (trang này)",
     "pending_count": "Giao dịch Đang chờ",
-    "refunded_amount": "Số tiền Hoàn trả"
+    "pending_count_on_page": "Giao dịch Đang chờ (trang này)",
+    "refunded_amount": "Số tiền Hoàn trả",
+    "refunded_amount_on_page": "Số tiền Hoàn trả (trang này)"
   },
   "filter": {
     "search_placeholder": "Tìm kiếm mã giao dịch, mã đơn, tên hoặc email khách hàng...",
     "all_statuses": "Tất cả Trạng thái",
     "all_gateways": "Tất cả Cổng thanh toán",
+    "gateway_bank_transfer": "Chuyển khoản",
+    "all_refund_statuses": "Tất cả yêu cầu hoàn",
+    "refund_pending": "Chờ hoàn tiền",
+    "refund_processing": "Đang xử lý hoàn",
+    "refund_completed": "Đã hoàn tiền",
+    "refund_failed": "Hoàn tiền thất bại",
+    "refund_rejected": "Từ chối hoàn",
     "reset": "Làm mới",
     "from": "Từ",
     "to": "Đến",
@@ -19,6 +30,7 @@
   },
   "status": {
     "pending": "Đang chờ",
+    "partially_paid": "Thanh toán một phần",
     "success": "Thành công",
     "failed": "Lỗi",
     "refunded": "Đã hoàn tiền"
@@ -53,13 +65,33 @@
     "reason_placeholder": "Nhập chi tiết lý do hoàn tiền (tối thiểu 10 ký tự)...",
     "btn_cancel": "Hủy bỏ",
     "btn_confirm": "Xác nhận hoàn tiền",
+    "btn_close": "Đóng",
+    "loading": "Đang tải thông tin hoàn tiền...",
+    "vietqr_title": "Quét mã VietQR để chuyển khoản hoàn tiền",
+    "vietqr_alt": "VietQR hoàn tiền",
+    "vietqr_bank": "Ngân hàng",
+    "vietqr_account_no": "Số tài khoản",
+    "vietqr_account_name": "Chủ tài khoản",
+    "vietqr_amount": "Số tiền",
+    "vietqr_hint": "Quét QR bằng app ngân hàng. Chỉ bấm xác nhận hoàn tiền sau khi chuyển khoản thành công.",
+    "bank_code_placeholder": "Mã ngân hàng, ví dụ MB",
+    "account_no_placeholder": "Số tài khoản",
+    "account_name_placeholder": "Tên chủ tài khoản",
+    "transfer_reference_label": "Mã giao dịch ngân hàng *",
+    "transfer_reference_placeholder": "Nhập mã giao dịch sau khi chuyển khoản thành công",
     "toast_success": "Yêu cầu hoàn tiền giao dịch {{code}} đã được thực hiện thành công!",
     "toast_error": "Có lỗi xảy ra khi thực hiện hoàn tiền: {{message}}"
   },
   "validation": {
     "reason_required": "Lý do hoàn tiền là bắt buộc",
     "reason_min": "Lý do hoàn tiền phải từ 10 ký tự trở lên",
-    "reason_max": "Lý do hoàn tiền tối đa 255 ký tự"
+    "reason_max": "Lý do hoàn tiền tối đa 255 ký tự",
+    "bank_code_required": "Vui lòng chọn ngân hàng",
+    "account_no_invalid": "Số tài khoản không hợp lệ",
+    "account_no_required": "Vui lòng nhập số tài khoản",
+    "account_name_required": "Vui lòng nhập tên chủ tài khoản",
+    "transfer_reference_min": "Mã giao dịch phải có ít nhất 4 ký tự",
+    "transfer_reference_required": "Vui lòng nhập mã giao dịch sau khi chuyển tiền"
   },
   "export": {
     "toast_success": "Đã xuất báo cáo giao dịch thành công!",
@@ -93,6 +125,11 @@
     "timeline_failed": "Thanh toán thất bại",
     "timeline_refunded": "Hoàn tiền thành công: {{reason}}",
     "back_to_list": "Quay lại danh sách",
+    "not_found_title": "Không tìm thấy giao dịch",
+    "not_found_description": "Giao dịch không tồn tại hoặc đã bị xóa khỏi hệ thống.",
+    "load_error_title": "Không tải được chi tiết giao dịch",
+    "load_error_description": "Dữ liệu giao dịch tạm thời không khả dụng. Vui lòng thử lại sau.",
+    "retry_button": "Thử lại",
     "not_found": "Không tìm thấy giao dịch hoặc giao dịch không tồn tại."
   }
 }

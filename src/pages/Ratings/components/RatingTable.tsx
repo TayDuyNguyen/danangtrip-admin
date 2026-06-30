@@ -3,7 +3,7 @@ import type { RatingViewModel } from '@/dataHelper/rating.dataHelper';
 import { 
     Star, MapPin, Map, Clock, Check, X, 
     Trash2, ExternalLink, ChevronLeft, ChevronRight, 
-    RefreshCw, AlertTriangle, Eye
+    RefreshCw, AlertTriangle, Eye, ImageIcon
 } from 'lucide-react';
 import clsx from 'clsx';
 import CustomSelect, { type Option } from "@/components/ui/CustomSelect";
@@ -300,6 +300,12 @@ export const RatingTable = ({
                                                 >
                                                     {rating.comment || <span className="italic text-slate-400 font-normal">{t('table.no_comment')}</span>}
                                                 </p>
+                                                {rating.imageCount > 0 && (
+                                                    <span className="inline-flex items-center gap-1 mt-1.5 text-[10px] font-black text-slate-500 bg-slate-50 border border-slate-100 rounded-md px-1.5 py-0.5">
+                                                        <ImageIcon size={10} />
+                                                        {t('table.image_count_badge', { count: rating.imageCount })}
+                                                    </span>
+                                                )}
                                             </div>
                                         </td>
 
@@ -374,6 +380,7 @@ export const RatingTable = ({
                                                     onClick={() => onDelete(rating.id)}
                                                     disabled={isMutating}
                                                     className="inline-flex items-center p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 border border-transparent hover:border-rose-100 rounded-lg transition-all cursor-pointer disabled:opacity-50"
+                                                    aria-label={t('table.tooltip_delete')}
                                                     title={t('table.tooltip_delete')}
                                                 >
                                                     <Trash2 size={13} />
@@ -393,7 +400,7 @@ export const RatingTable = ({
                                         </div>
                                         <div className="space-y-1">
                                             <p className="text-[#1E293B] font-bold text-[16px]">
-                                                {t('charts.no_trend_data', 'Không tìm thấy đánh giá')}
+                                                {t('table.empty_title', 'Không tìm thấy đánh giá')}
                                             </p>
                                             <p className="text-slate-400 text-[14px]">
                                                 {t('table.empty_subtitle', 'Không có dữ liệu đánh giá nào khớp với bộ lọc hiện tại của bạn.')}
@@ -429,7 +436,12 @@ export const RatingTable = ({
 
                         <div className="flex items-center gap-1.5">
                             {Array.from({ length: lastPage }, (_, i) => i + 1)
-                                .filter(p => p === 1 || p === lastPage || Math.abs(p - page) <= 1)
+                                .reduce<number[]>((pages, p) => {
+                                    if (p === 1 || p === lastPage || Math.abs(p - page) <= 1) {
+                                        pages.push(p);
+                                    }
+                                    return pages;
+                                }, [])
                                 .map((p, i, arr) => (
                                     <div key={p} className="flex items-center gap-1.5">
                                         {i > 0 && arr[i - 1] !== p - 1 && (

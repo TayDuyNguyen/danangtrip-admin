@@ -1,5 +1,5 @@
-import { useRef, useState } from 'react';
-import { useForm, Controller, useWatch, type FieldErrors } from 'react-hook-form';
+import { useRef, useState, useEffect } from 'react';
+import { useForm, Controller, useWatch, type FieldErrors, type Resolver } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useTranslation } from 'react-i18next';
 import {
@@ -42,19 +42,22 @@ import MapPicker from './MapPicker';
 import MarkdownEditor from './MarkdownEditor';
 import ImageUploader, { type ImageUploaderHandle } from './ImageUploader';
 import TagSelector from './TagSelector';
-import { slugifyVietnamese } from '@/utils/slug';
+import { slugifyVietnamese, extractCreatedLocationId } from '@/utils';
+import { UnsavedChangesGuard } from '@/components/common/UnsavedChangesGuard';
 
 interface LocationFormProps {
     isEdit?: boolean;
     initialData?: CreateLocationInput & { id: number };
     onSubmittingChange?: (isSubmitting: boolean) => void;
-    onSuccess?: () => void;
+    onSuccess?: (id?: number) => void;
+    onCancel?: () => void;
+    onDelete?: () => void;
 }
 
 const createDefaultValues = {
     name: '',
     slug: '',
-    category_id: 0 as number,
+    category_id: undefined as unknown as number,
     subcategory_id: null,
     description: '',
     short_description: '',
@@ -78,7 +81,7 @@ const createDefaultValues = {
     video_url: '',
 };
 
-const LocationForm = ({ isEdit = false, initialData, onSubmittingChange, onSuccess }: LocationFormProps) => {
+const LocationForm = ({ isEdit = false, initialData, onSubmittingChange, onSuccess, onCancel, onDelete }: LocationFormProps) => {
     const { t } = useTranslation('location');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const imageUploaderRef = useRef<ImageUploaderHandle>(null);
@@ -96,12 +99,11 @@ const LocationForm = ({ isEdit = false, initialData, onSubmittingChange, onSucce
         handleSubmit,
         setValue,
         watch,
-        reset,
-        formState: { errors }
+        formState: { errors, isDirty }
     } = useForm<CreateLocationInput>({
-        resolver: yupResolver(createLocationSchema(t)),
+        resolver: yupResolver(createLocationSchema(t)) as Resolver<CreateLocationInput>,
         defaultValues: initialData || createDefaultValues
-    } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
+    });
 
     const normalizeOpeningHours = (value: CreateLocationInput['opening_hours']) => {
         if (Array.isArray(value)) {
@@ -137,10 +139,10 @@ const LocationForm = ({ isEdit = false, initialData, onSubmittingChange, onSucce
                 await updateMutation.mutateAsync({ id: initialData.id, data: payload });
                 onSuccess?.();
             } else {
-                await createMutation.mutateAsync(payload as any); // eslint-disable-line @typescript-eslint/no-explicit-any
+                const res = await createMutation.mutateAsync(payload);
+                const createdId = extractCreatedLocationId(res);
                 imageUploaderRef.current?.clearPendingImages();
-                reset(createDefaultValues as CreateLocationInput);
-                onSuccess?.();
+                onSuccess?.(createdId ?? undefined);
             }
         } finally {
             setSubmittingState(false);
@@ -179,6 +181,12 @@ const LocationForm = ({ isEdit = false, initialData, onSubmittingChange, onSucce
 
     const watchName = useWatch({ control, name: 'name' });
     const watchAllFields = useWatch({ control });
+
+    useEffect(() => {
+        if (isEdit || !watchName) return;
+        setValue('slug', slugifyVietnamese(watchName), { shouldValidate: true, shouldDirty: false });
+    }, [watchName, isEdit, setValue]);
+
     const debugErrors = Object.fromEntries(
         Object.entries(errors).map(([key, value]) => [
             key,
@@ -195,20 +203,56 @@ const LocationForm = ({ isEdit = false, initialData, onSubmittingChange, onSucce
         }
     };
 
-    // Calculate form completion
-    const requiredFields = [
+    const priceLevelOptions = (['free', 'low', 'medium', 'high'] as const).map((key, index) => ({
+        value: index + 1,
+        label: t(`priceLevels.${key}`),
+    }));
+
+    type CompletionField = {
+        key: keyof CreateLocationInput;
+        label: string;
+        isDone?: (fields: Partial<CreateLocationInput>) => boolean;
+    };
+
+    const requiredFields: CompletionField[] = [
         { key: 'name', label: t('form.basic.name') },
-        { key: 'category_id', label: t('form.basic.category') },
-        { key: 'district', label: t('form.contact.district') },
-        { key: 'address', label: t('form.contact.address') },
+        { key: 'slug', label: t('form.basic.slug') },
+        {
+            key: 'category_id',
+            label: t('form.basic.category'),
+            isDone: (fields) => typeof fields.category_id === 'number' && fields.category_id > 0,
+        },
+        { key: 'short_description', label: t('form.basic.short_description') },
         { key: 'description', label: t('form.basic.description') },
+        { key: 'address', label: t('form.contact.address') },
+        { key: 'district', label: t('form.contact.district') },
+        {
+            key: 'latitude',
+            label: t('form.sections.map'),
+            isDone: (fields) =>
+                typeof fields.latitude === 'number' &&
+                !Number.isNaN(fields.latitude) &&
+                typeof fields.longitude === 'number' &&
+                !Number.isNaN(fields.longitude),
+        },
         { key: 'thumbnail', label: t('form.media.thumbnail') },
     ];
-    const completedFields = requiredFields.filter(f => !!watchAllFields[f.key as keyof typeof watchAllFields]);
+
+    const isFieldComplete = (field: CompletionField) => {
+        if (field.isDone) return field.isDone(watchAllFields);
+        const value = watchAllFields[field.key];
+        return !!value;
+    };
+
+    const completedFields = requiredFields.filter(isFieldComplete);
     const completionPercent = Math.round((completedFields.length / requiredFields.length) * 100);
 
+    const busy = isSubmitting || createMutation.isPending || updateMutation.isPending;
+
     return (
-        <form
+        <>
+            <UnsavedChangesGuard isDirty={isDirty && !busy} />
+            <form
             id="location-form"
             onSubmit={handleSubmit(onSubmit, focusFirstInvalidField)}
             className="flex flex-col lg:flex-row gap-8"
@@ -492,21 +536,10 @@ const LocationForm = ({ isEdit = false, initialData, onSubmittingChange, onSucce
                                         {t('form.pricing.price_level')}
                                     </label>
                                     <CustomSelect
-                                        options={[
-                                            { value: 1, label: '$ - Miễn phí / rẻ' },
-                                            { value: 2, label: '$$ - Phổ thông' },
-                                            { value: 3, label: '$$$ - Cao' },
-                                            { value: 4, label: '$$$$ - Rất cao' },
-                                        ]}
-                                        value={{
-                                            value: field.value || 1,
-                                            label: [
-                                                '$ - Miễn phí / rẻ',
-                                                '$$ - Phổ thông',
-                                                '$$$ - Cao',
-                                                '$$$$ - Rất cao',
-                                            ][(field.value || 1) - 1],
-                                        }}
+                                        options={priceLevelOptions}
+                                        value={
+                                            priceLevelOptions.find((opt) => opt.value === (field.value || 1)) ?? priceLevelOptions[0]
+                                        }
                                         onChange={(opt: Option | null) => field.onChange(opt?.value)}
                                     />
                                 </div>
@@ -533,8 +566,8 @@ const LocationForm = ({ isEdit = false, initialData, onSubmittingChange, onSucce
                 <div className="bg-white rounded-3xl p-6 md:p-8 border border-slate-200/60 shadow-sm transition-all hover:shadow-md">
                     <SectionHeader
                         icon={Tag}
-                        title="Tags & Amenities"
-                        subtitle="Mở rộng thông tin cho địa điểm"
+                        title={t('form.sections.tags_amenities')}
+                        subtitle={t('form.section_descriptions.tags_amenities')}
                     />
 
                     <div className="space-y-6">
@@ -543,7 +576,7 @@ const LocationForm = ({ isEdit = false, initialData, onSubmittingChange, onSucce
                             control={control}
                             render={({ field }) => (
                                 <TagSelector
-                                    label="Tags"
+                                    label={t('form.tags_amenities.tags')}
                                     options={tags}
                                     value={(field.value as number[]) || []}
                                     onChange={field.onChange}
@@ -557,7 +590,7 @@ const LocationForm = ({ isEdit = false, initialData, onSubmittingChange, onSucce
                             control={control}
                             render={({ field }) => (
                                 <TagSelector
-                                    label="Tiện ích (Amenities)"
+                                    label={t('form.tags_amenities.amenities')}
                                     options={amenities}
                                     value={(field.value as number[]) || []}
                                     onChange={field.onChange}
@@ -577,9 +610,14 @@ const LocationForm = ({ isEdit = false, initialData, onSubmittingChange, onSucce
                         required
                     />
                     <div data-location-field="thumbnail">
-                        <ImageUploader ref={imageUploaderRef} setValue={setValue} watch={watch} />
+                        <ImageUploader
+                            ref={imageUploaderRef}
+                            setValue={setValue}
+                            watch={watch}
+                            thumbnailError={errors.thumbnail?.message}
+                            videoUrlError={errors.video_url?.message}
+                        />
                     </div>
-                    {errors.thumbnail && <p className="text-xs text-red-500 font-bold mt-2">{errors.thumbnail.message}</p>}
                 </div>
             </div>
 
@@ -619,7 +657,7 @@ const LocationForm = ({ isEdit = false, initialData, onSubmittingChange, onSucce
 
                             <div className="pt-2 space-y-2">
                                 {requiredFields.map(field => {
-                                    const isDone = !!watchAllFields[field.key as keyof typeof watchAllFields];
+                                    const isDone = isFieldComplete(field);
                                     return (
                                         <div key={field.key} className="flex items-center gap-2">
                                             <div className={`w-1.5 h-1.5 rounded-full ${isDone ? 'bg-[#14b8a6]' : 'bg-slate-200'}`} />
@@ -688,10 +726,21 @@ const LocationForm = ({ isEdit = false, initialData, onSubmittingChange, onSucce
                         >
                             {isEdit ? t('form.actions.update_location') : t('form.actions.create_location')}
                         </Button>
+                        {isEdit && onDelete && (
+                            <Button
+                                type="button"
+                                variant="ghost"
+                                className="w-full text-red-500 font-semibold"
+                                onClick={onDelete}
+                            >
+                                {t('actions.delete')}
+                            </Button>
+                        )}
                         <Button
+                            type="button"
                             variant="ghost"
                             className="w-full text-slate-500 font-semibold"
-                            onClick={() => window.history.back()}
+                            onClick={onCancel ?? (() => window.history.back())}
                         >
                             {t('actions.cancel')}
                         </Button>
@@ -699,6 +748,7 @@ const LocationForm = ({ isEdit = false, initialData, onSubmittingChange, onSucce
                 </div>
             </div>
         </form>
+        </>
     );
 };
 

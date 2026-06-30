@@ -17,13 +17,21 @@ import {
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useChatbotLogs } from '@/hooks/useChatbotQueries';
+import { useDebounce } from '@/hooks/useDebounce';
 import type { ChatLog } from '@/api/chatbotApi';
 import { TextInput } from '@/components/ui/TextInput';
 import CustomSelect, { type Option } from '@/components/ui/CustomSelect';
 
-export default function LogsTab() {
+export default function LogsTab({
+    fetchEnabled = true,
+}: {
+    isActive?: boolean;
+    fetchEnabled?: boolean;
+}) {
     const { t, i18n } = useTranslation('chatbot');
+    const { t: tCommon } = useTranslation('common');
     const [search, setSearch] = useState('');
+    const debouncedSearch = useDebounce(search, 300);
     const [intent, setIntent] = useState('');
     const [cacheHit, setCacheHit] = useState('');
     const [rating, setRating] = useState<'positive' | 'negative' | ''>('');
@@ -32,13 +40,15 @@ export default function LogsTab() {
     // API params
     const logParams = {
         page,
-        search: search.trim() || undefined,
+        search: debouncedSearch.trim() || undefined,
         intent: intent || undefined,
         cache_hit: cacheHit === '' ? undefined : cacheHit === 'true',
         rating: rating || undefined,
     };
 
-    const { data: logsData, isLoading, isError, refetch } = useChatbotLogs(logParams);
+    const { data: logsData, isLoading, isError, refetch } = useChatbotLogs(logParams, {
+        enabled: fetchEnabled,
+    });
 
     // Selected log for detailed view Modal
     const [selectedLog, setSelectedLog] = useState<ChatLog | null>(null);
@@ -90,7 +100,7 @@ export default function LogsTab() {
     const currentCacheOpt = cacheOptions.find(o => o.value === cacheHit) || cacheOptions[0];
     const currentRatingOpt = ratingOptions.find(o => o.value === rating) || ratingOptions[0];
 
-    const hasActiveFilters = !!(search || intent || cacheHit || rating);
+    const hasActiveFilters = !!(debouncedSearch || intent || cacheHit || rating);
 
     return (
         <div className="space-y-6">
@@ -290,7 +300,10 @@ export default function LogsTab() {
 
             {/* Modal: View Log Details */}
             {selectedLog && (
-                <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-slate-950/40 backdrop-blur-xs">
+                <div
+                    className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-slate-950/40 backdrop-blur-xs"
+                    data-testid="chatbot-log-detail-modal"
+                >
                     <div className="bg-white rounded-[32px] w-full max-w-3xl shadow-2xl border border-slate-100 overflow-hidden flex flex-col max-h-[85vh] animate-in zoom-in-95 duration-200">
                         {/* Modal Header */}
                         <div className="p-6 border-b border-slate-100 flex justify-between items-center shrink-0">
@@ -299,7 +312,9 @@ export default function LogsTab() {
                                 <p className="text-[11px] text-slate-400 font-bold">Session ID: {selectedLog.session_id}</p>
                             </div>
                             <button
+                                type="button"
                                 onClick={() => setSelectedLog(null)}
+                                aria-label={tCommon('actions.close')}
                                 className="p-2 bg-slate-50 hover:bg-slate-100 text-slate-400 hover:text-slate-900 rounded-full transition-colors cursor-pointer"
                             >
                                 <X size={16} />

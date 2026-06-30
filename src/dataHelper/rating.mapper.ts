@@ -6,7 +6,7 @@ import { formatAdminTableTemporal } from '@/utils';
 /**
  * Map raw rating object from API to clean RatingViewModel for the UI
  */
-export const mapRatingItem = (raw: RawRating): RatingViewModel => {
+const mapRatingItem = (raw: RawRating): RatingViewModel => {
     const isTour = !!raw.tour_id || !!raw.tour;
     const targetType = isTour ? 'tour' : 'location';
     const targetId = raw.tour_id || raw.location_id || 0;
@@ -24,16 +24,19 @@ export const mapRatingItem = (raw: RawRating): RatingViewModel => {
         : raw.location?.thumbnail || '';
 
     // Normalize images: can be string URLs or objects containing image_url
-    const images = (raw.images || []).map((img: RawRatingImage | string) => {
+    const images = (raw.images || []).flatMap((img: RawRatingImage | string) => {
         if (typeof img === 'string') return img;
-        return img?.image_url || '';
-    }).filter(url => !!url);
+        return img?.image_url ? [img.image_url] : [];
+    });
+
+    const imageCount = toNumberSafe(raw.image_count, images.length);
 
     return {
         id: raw.id,
         score: toNumberSafe(raw.score, 0),
         comment: raw.comment || '',
         images,
+        imageCount,
         status: raw.status,
         rejectedReason: raw.rejected_reason || '',
         helpfulCount: toNumberSafe(raw.helpful_count, 0),

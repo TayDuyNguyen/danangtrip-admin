@@ -9,18 +9,36 @@ import {
   getMockBookingDetail,
   mockBookingsApi,
   resetMockBookings,
+  setBookingDetailDelay,
   setBookingInvoiceFail,
   setBookingMutationFail,
 } from '../fixtures/api/bookings.mock';
 import {
+  cancelledBookingDetailId,
+  completedBookingDetailId,
   confirmedBookingDetailId,
   edgeBookingDetailId,
   mockBookingDetailMultiPassenger,
+  mockBookingDetailPending,
   multiPassengerDetailId,
   primaryBookingDetailId,
 } from '../fixtures/data/booking-detail.data';
 
 test.describe('Admin Booking Detail extended @P2', () => {
+  /** TC_AD_BDET_004 */
+  test('TC_AD_BDET_004 shows skeleton while detail API is delayed', async ({ adminPage }) => {
+    resetMockBookings();
+    setBookingDetailDelay(1500);
+    await mockAdminLayoutApis(adminPage);
+    await mockBookingsApi(adminPage);
+    const detailPage = new BookingDetailPage(adminPage, primaryBookingDetailId);
+    await detailPage.goto();
+    await expect(detailPage.loadingSkeletonGrid).toBeVisible();
+    await expect(detailPage.customerSection).toHaveCount(0);
+    await detailPage.waitForLoaded();
+    await detailPage.captureUiScreenshot('TC_AD_BDET_004');
+  });
+
   /** TC_AD_BDET_010 */
   test('TC_AD_BDET_010 shows address missing fallback', async ({ adminPage }) => {
     resetMockBookings();
@@ -31,6 +49,18 @@ test.describe('Admin Booking Detail extended @P2', () => {
     await detailPage.waitForLoaded();
     await expect(adminPage.getByText(copy.addressMissing)).toBeVisible();
     await expect(adminPage.getByText(copy.noNote)).toBeVisible();
+  });
+
+  /** TC_AD_BDET_012 */
+  test('TC_AD_BDET_012 displays tour thumbnail when available', async ({ adminPage }) => {
+    resetMockBookings();
+    await mockAdminLayoutApis(adminPage);
+    await mockBookingsApi(adminPage);
+    const detailPage = new BookingDetailPage(adminPage, primaryBookingDetailId);
+    await detailPage.goto();
+    await detailPage.waitForLoaded();
+    const tourName = mockBookingDetailPending.items[0].tour!.name;
+    await expect(adminPage.getByRole('img', { name: tourName })).toBeVisible();
   });
 
   /** TC_AD_BDET_013 */
@@ -71,6 +101,74 @@ test.describe('Admin Booking Detail extended @P2', () => {
     await expect(section.getByText('1', { exact: true }).nth(1)).toBeVisible();
   });
 
+  /** TC_AD_BDET_019 */
+  test('TC_AD_BDET_019 shows zero discount without NaN', async ({ adminPage }) => {
+    resetMockBookings();
+    await mockAdminLayoutApis(adminPage);
+    await mockBookingsApi(adminPage);
+    const detailPage = new BookingDetailPage(adminPage, edgeBookingDetailId);
+    await detailPage.goto();
+    await detailPage.waitForLoaded();
+    const paymentCard = detailPage.paymentCard;
+    await expect(paymentCard.getByText('- 0 ₫')).toBeVisible();
+    await expect(paymentCard.getByText(/^NaN/)).toHaveCount(0);
+  });
+
+  /** TC_AD_BDET_021 */
+  test('TC_AD_BDET_021 timeline shows confirmed milestone with date', async ({ adminPage }) => {
+    resetMockBookings();
+    await mockAdminLayoutApis(adminPage);
+    await mockBookingsApi(adminPage);
+    const detailPage = new BookingDetailPage(adminPage, confirmedBookingDetailId);
+    await detailPage.goto();
+    await detailPage.waitForLoaded();
+    const timeline = adminPage.locator('div').filter({ has: detailPage.timelineSection });
+    await expect(timeline.getByRole('heading', { level: 4, name: /Đã xác nhận đơn|Confirmed/i })).toBeVisible();
+    await expect(timeline.getByText(/10\/06\/2026/).first()).toBeVisible();
+  });
+
+  /** TC_AD_BDET_022 */
+  test('TC_AD_BDET_022 timeline shows completed milestone for completed booking', async ({ adminPage }) => {
+    resetMockBookings();
+    await mockAdminLayoutApis(adminPage);
+    await mockBookingsApi(adminPage);
+    const detailPage = new BookingDetailPage(adminPage, completedBookingDetailId);
+    await detailPage.goto();
+    await detailPage.waitForLoaded();
+    const timeline = adminPage.locator('div').filter({ has: detailPage.timelineSection });
+    await expect(timeline.getByRole('heading', { level: 4, name: /Đã hoàn tất tour|Completed/i })).toBeVisible();
+    await expect(adminPage.getByText(copy.terminalCompleted)).toBeVisible();
+  });
+
+  /** TC_AD_BDET_023 */
+  test('TC_AD_BDET_023 timeline shows cancelled milestone and reason', async ({ adminPage }) => {
+    resetMockBookings();
+    await mockAdminLayoutApis(adminPage);
+    await mockBookingsApi(adminPage);
+    const detailPage = new BookingDetailPage(adminPage, cancelledBookingDetailId);
+    await detailPage.goto();
+    await detailPage.waitForLoaded();
+    const timeline = adminPage.locator('div').filter({ has: detailPage.timelineSection });
+    await expect(timeline.getByRole('heading', { level: 4, name: copy.timelineCancelled })).toBeVisible();
+    await expect(adminPage.getByText('Khách hủy vì lịch trình thay đổi')).toBeVisible();
+  });
+
+  /** TC_AD_BDET_034 */
+  test('TC_AD_BDET_034 shows error toast when cancel fails', async ({ adminPage }) => {
+    resetMockBookings();
+    setBookingMutationFail(true);
+    await mockAdminLayoutApis(adminPage);
+    await mockBookingsApi(adminPage);
+    const detailPage = new BookingDetailPage(adminPage, primaryBookingDetailId);
+    await detailPage.goto();
+    await detailPage.waitForLoaded();
+    await detailPage.openCancelDialog();
+    await detailPage.fillCancelReason('Khách yêu cầu hủy đơn');
+    await detailPage.submitCancelDialog();
+    await expect(adminPage.getByText(copy.updateError)).toBeVisible();
+    expect(getMockBooking(primaryBookingDetailId)?.booking_status).toBe('pending');
+  });
+
   /** TC_AD_BDET_020 */
   test('TC_AD_BDET_020 timeline shows booked milestone', async ({ adminPage }) => {
     resetMockBookings();
@@ -84,7 +182,7 @@ test.describe('Admin Booking Detail extended @P2', () => {
   });
 
   /** TC_AD_BDET_028 */
-  test('TC_AD_BDET_028 dismisses complete browser confirm without API', async ({ adminPage }) => {
+  test('TC_AD_BDET_028 dismisses complete dialog without API', async ({ adminPage }) => {
     resetMockBookings();
     await mockAdminLayoutApis(adminPage);
     await mockBookingsApi(adminPage);
@@ -95,10 +193,10 @@ test.describe('Admin Booking Detail extended @P2', () => {
         patchCalled = true;
       }
     });
-    adminPage.on('dialog', (dialog) => dialog.dismiss());
     await detailPage.goto();
     await detailPage.waitForLoaded();
-    await detailPage.completeBookingButton.click();
+    await detailPage.openCompleteDialog();
+    await detailPage.dismissCompleteDialog();
     expect(patchCalled).toBe(false);
     expect(getMockBooking(confirmedBookingDetailId)?.booking_status).toBe('confirmed');
   });
@@ -157,8 +255,8 @@ test.describe('Admin Booking Detail extended @P2', () => {
     await expect(adminPage.getByText(/20\/06\/2026/)).toBeVisible();
   });
 
-  /** TC_AD_BDET_027 */
-  test('TC_AD_BDET_027 collapses sticky header on scroll', async ({ adminPage }) => {
+  /** TC_AD_BDET_041 — sticky header collapse (supplement) */
+  test('TC_AD_BDET_041 collapses sticky header on scroll', async ({ adminPage }) => {
     resetMockBookings();
     await mockAdminLayoutApis(adminPage);
     await mockBookingsApi(adminPage);
@@ -172,5 +270,61 @@ test.describe('Admin Booking Detail extended @P2', () => {
 
     await detailPage.scrollMainContent(0);
     await expect(detailPage.stickyContextBadge).toBeHidden();
+  });
+
+  /** TC_AD_BDET_039 */
+  test('TC_AD_BDET_039 mobile layout keeps actions usable', async ({ adminPage }) => {
+    resetMockBookings();
+    await mockAdminLayoutApis(adminPage);
+    await mockBookingsApi(adminPage);
+    const detailPage = new BookingDetailPage(adminPage, primaryBookingDetailId);
+    await detailPage.goto({ width: 375, height: 812 });
+    await detailPage.waitForLoaded();
+    await expect(detailPage.mobileFooter).toBeVisible();
+    await expect(detailPage.mobileFooter.getByRole('button', { name: copy.confirmBooking })).toBeVisible();
+    await expect(detailPage.cancelBookingButton).toBeVisible();
+    await detailPage.captureUiScreenshot('TC_AD_BDET_039');
+  });
+
+  /** TC_AD_BDET_060 */
+  test('TC_AD_BDET_060 renders detail at standard viewport 1535x697', async ({ adminPage }) => {
+    resetMockBookings();
+    await mockAdminLayoutApis(adminPage);
+    await mockBookingsApi(adminPage);
+    const detailPage = new BookingDetailPage(adminPage, primaryBookingDetailId);
+    await detailPage.goto();
+    await detailPage.waitForLoaded();
+    await detailPage.captureUiScreenshot('TC_AD_BDET_060');
+  });
+});
+
+test.describe('Admin Booking Detail — lifecycle @P1', () => {
+  test.describe.configure({ mode: 'serial' });
+
+  /** TC_AD_BDET_040 */
+  test('TC_AD_BDET_040 pending to confirmed to completed lifecycle', async ({ adminPage }) => {
+    resetMockBookings();
+    await mockAdminLayoutApis(adminPage);
+    await mockBookingsApi(adminPage);
+    const detailPage = new BookingDetailPage(adminPage, primaryBookingDetailId);
+    await detailPage.goto();
+    await detailPage.waitForLoaded();
+
+    await expect(detailPage.confirmBookingButton).toBeVisible();
+    const confirmReq = detailPage.waitForStatusPatch();
+    await detailPage.confirmBookingButton.click();
+    await confirmReq;
+    await expect(adminPage.getByText(copy.confirmSuccess)).toBeVisible();
+    await expect(detailPage.completeBookingButton).toBeVisible({ timeout: 10_000 });
+    await expect(detailPage.allConfirmBookingButtons).toHaveCount(0);
+
+    const completeReq = detailPage.waitForStatusPatch();
+    await detailPage.openCompleteDialog();
+    await detailPage.submitCompleteDialog();
+    await completeReq;
+    await expect(adminPage.getByText(copy.completeSuccess)).toBeVisible();
+    await expect(adminPage.getByText(copy.terminalCompleted)).toBeVisible({ timeout: 10_000 });
+    expect(getMockBooking(primaryBookingDetailId)?.booking_status).toBe('completed');
+    await detailPage.captureUiScreenshot('TC_AD_BDET_040');
   });
 });

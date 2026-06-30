@@ -176,8 +176,6 @@ const PaymentList = () => {
             <PaymentFilterBar
                 filters={filters}
                 onFilterChange={handleFilterChange}
-                onExport={handleExport}
-                isExporting={exportMutation.isPending}
             />
 
             {/* Payment Transactions Table */}

@@ -8,7 +8,7 @@ import { getLocalizedApiErrorMessage } from '@/utils/apiError';
 /**
  * Query Keys Factory
  */
-export const tourCategoryKeys = {
+const tourCategoryKeys = {
     all: ['tour-categories'] as const,
     lists: () => [...tourCategoryKeys.all, 'list'] as const,
     list: (params: CategoryListParams) => [...tourCategoryKeys.lists(), params] as const,

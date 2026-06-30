@@ -23,9 +23,14 @@ import { useChatbotStats } from '@/hooks/useChatbotQueries';
 
 const COLORS = ['#14b8a6', '#0f766e', '#06b6d4', '#3b82f6', '#6366f1', '#8b5cf6', '#d946ef', '#ec4899', '#f43f5e', '#f97316', '#eab308', '#22c55e', '#64748b'];
 
-export default function DashboardTab() {
+interface DashboardTabProps {
+    isActive?: boolean;
+}
+
+export default function DashboardTab({ isActive = true }: DashboardTabProps) {
     const { t, i18n } = useTranslation('chatbot');
-    const { data: stats, isLoading, isError, refetch, isFetching } = useChatbotStats();
+    const { data: stats, isLoading, isError, refetch, isFetching } = useChatbotStats({ isActive });
+    const numberLocale = i18n.language === 'vi' ? 'vi-VN' : 'en-US';
 
     if (isLoading) {
         return (
@@ -86,7 +91,7 @@ export default function DashboardTab() {
                     </div>
                     <div>
                         <p className="text-slate-400 text-[10px] font-bold uppercase tracking-wider">{t('dashboard.total_messages')}</p>
-                        <h4 className="text-2xl font-black text-slate-950 mt-1">{kpis.total_messages.toLocaleString()}</h4>
+                        <h4 className="text-2xl font-black text-slate-950 mt-1">{kpis.total_messages.toLocaleString(numberLocale)}</h4>
                     </div>
                 </div>
 

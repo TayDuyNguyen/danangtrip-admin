@@ -120,7 +120,7 @@ function fromListRow(
     discount_amount: discount,
     final_amount: finalAmount,
     deposit_amount: 500_000,
-    payment_method: 'bank_transfer',
+    payment_method: 'sepay',
     payment_status: row.payment_status,
     booking_status: row.booking_status,
     cancellation_reason: row.cancellation_reason ?? null,
@@ -137,7 +137,7 @@ function fromListRow(
         tour: {
           id: 1,
           name: row.tour_name,
-          thumbnail: row.tour_thumbnail,
+          thumbnail: row.tour_thumbnail ?? 'https://picsum.photos/seed/bk-tour/320/240',
           duration: '1 ngày',
           slug: 'tour-item',
           category: row.tour_category,

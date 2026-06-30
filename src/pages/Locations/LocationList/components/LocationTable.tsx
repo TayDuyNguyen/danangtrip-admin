@@ -13,6 +13,7 @@ import {
     RefreshCw
 } from 'lucide-react';
 import type { LocationViewModel } from '@/dataHelper/location.dataHelper';
+import { formatLocationPriceLabel } from '@/dataHelper/location.mapper';
 import ToggleSwitch from '@/components/ui/ToggleSwitch';
 import Badge from '@/components/ui/Badge';
 import LoadingReact from '@/components/loading';
@@ -233,8 +234,8 @@ const LocationTable = ({
                                         <Badge variant="neutral" className="font-bold">{item.district}</Badge>
                                     </td>
                                     <td className="px-6 py-4">
-                                        <span className="text-[13px] font-black text-slate-700">
-                                            {t(`priceLevels.${item.priceLevelKey}`)}
+                                        <span className="text-[13px] font-black text-slate-700 whitespace-nowrap tabular-nums">
+                                            {formatLocationPriceLabel(item.priceMin, item.priceMax, t)}
                                         </span>
                                     </td>
                                     <td className="px-6 py-4">
@@ -323,7 +324,12 @@ const LocationTable = ({
 
                     <div className="flex items-center gap-1.5">
                         {Array.from({ length: lastPage }, (_, i) => i + 1)
-                            .filter(p => p === 1 || p === lastPage || Math.abs(p - page) <= 1)
+                            .reduce<number[]>((pages, p) => {
+                                if (p === 1 || p === lastPage || Math.abs(p - page) <= 1) {
+                                    pages.push(p);
+                                }
+                                return pages;
+                            }, [])
                             .map((p, i, arr) => (
                                 <div key={p} className="flex items-center gap-1.5">
                                     {i > 0 && arr[i - 1] !== p - 1 && (

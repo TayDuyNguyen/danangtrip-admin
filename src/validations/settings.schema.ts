@@ -1,6 +1,20 @@
 import * as yup from "yup";
 import type { TFunction } from "i18next";
 
+const optionalUrl = (t: TFunction) =>
+    yup
+        .string()
+        .trim()
+        .test(
+            "url",
+            t("settings:validation.url_invalid", { defaultValue: "Invalid URL format." }),
+            (value) => {
+                if (!value) return true;
+                return yup.string().url().isValidSync(value);
+            }
+        )
+        .default("");
+
 export const websiteSettingsSchema = (t: TFunction) => yup.object({
     general: yup.object({
         hotline: yup.string()
@@ -23,11 +37,11 @@ export const websiteSettingsSchema = (t: TFunction) => yup.object({
             .required(t("settings:validation.favicon_required", { defaultValue: "Browser favicon is required." })),
     }),
     social: yup.object({
-        facebook: yup.string().url().nullable().optional().default(""),
-        instagram: yup.string().url().nullable().optional().default(""),
-        youtube: yup.string().url().nullable().optional().default(""),
-        tiktok: yup.string().url().nullable().optional().default(""),
-        zalo: yup.string().url().nullable().optional().default(""),
+        facebook: optionalUrl(t),
+        instagram: optionalUrl(t),
+        youtube: optionalUrl(t),
+        tiktok: optionalUrl(t),
+        zalo: optionalUrl(t),
     }),
     payment: yup.object({
         sepay: yup.boolean().required(),
@@ -43,9 +57,9 @@ export const websiteSettingsSchema = (t: TFunction) => yup.object({
         }
     ),
     policy: yup.object({
-        terms: yup.string().url().nullable().optional().default(""),
-        privacy: yup.string().url().nullable().optional().default(""),
-        data_protection: yup.string().url().nullable().optional().default(""),
+        terms: optionalUrl(t),
+        privacy: optionalUrl(t),
+        data_protection: optionalUrl(t),
     }),
     seo: yup.object({
         meta_title: yup.string()

@@ -68,7 +68,7 @@ const SettingImageUploader = ({
     const isPending = uploadImageMutation.isPending || deleteImageMutation.isPending;
 
     return (
-        <div className="space-y-2">
+        <div className="space-y-2" data-testid="settings-image-uploader">
             <div
                 onClick={() => !isPending && fileInputRef.current?.click()}
                 className={`relative w-full ${aspectRatioClass} rounded-2xl border-2 border-dashed flex flex-col items-center justify-center transition-all overflow-hidden ${
@@ -90,7 +90,7 @@ const SettingImageUploader = ({
                                     }}
                                     className="text-white text-xs font-semibold px-4 py-2 bg-white/20 backdrop-blur-md rounded-lg border border-white/30 hover:bg-white/40 transition-colors cursor-pointer"
                                 >
-                                    Thay đổi
+                                    {t('actions.change_image', { defaultValue: 'Change' })}
                                 </button>
                                 <button
                                     type="button"

@@ -1,6 +1,6 @@
-import { useState, useMemo } from 'react';
-import { useTranslation, Trans } from 'react-i18next';
-import { FolderPlus, Folder, FileText, Search, AlertTriangle, AlertCircle, RefreshCcw, ArrowUpDown, CheckCircle2 } from 'lucide-react';
+import { useRef, useState, useMemo, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
+import { FolderPlus, Folder, FileText, Search, AlertCircle, RefreshCcw, ArrowUpDown, CheckCircle2, RotateCcw } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import Breadcrumbs from '@/components/common/Breadcrumbs';
@@ -8,6 +8,7 @@ import StatCard from '@/components/common/StatCard';
 import LoadingReact from '@/components/loading';
 import { BlogCategoryTable } from './components/BlogCategoryTable';
 import { BlogCategoryForm } from './components/BlogCategoryForm';
+import { BlogCategoryDeleteDialog } from './components/BlogCategoryDeleteDialog';
 
 import {
     useBlogCategoriesQuery,
@@ -26,29 +27,28 @@ const normalizeReorderList = (items: BlogCategoryViewModel[]) =>
     }));
 
 const BlogCategories = () => {
-    const { t } = useTranslation('blog');
+    const { t } = useTranslation(['blog', 'common']);
+    const formSectionRef = useRef<HTMLDivElement>(null);
 
-    // State
     const [search, setSearch] = useState('');
     const [isReorderMode, setIsReorderMode] = useState(false);
     const [reorderList, setReorderList] = useState<BlogCategoryViewModel[]>([]);
     const [editingCategory, setEditingCategory] = useState<BlogCategoryViewModel | null>(null);
     const [deletingCategory, setDeletingCategory] = useState<BlogCategoryViewModel | null>(null);
+    const [formResetSignal, setFormResetSignal] = useState(0);
+    const [isFormDirty, setIsFormDirty] = useState(false);
 
-    // Queries & Mutations
     const { data: categories = [], isLoading, isError, refetch } = useBlogCategoriesQuery();
     const createMutation = useCreateBlogCategoryMutation();
     const updateMutation = useUpdateBlogCategoryMutation();
     const deleteMutation = useDeleteBlogCategoryMutation();
     const reorderMutation = useReorderBlogCategoriesMutation();
 
-    // Stats
     const totalCategories = categories.length;
     const totalPosts = useMemo(() => {
         return categories.reduce((sum, item) => sum + (item.postCount || 0), 0);
     }, [categories]);
 
-    // Local client-side filtering for search responsiveness
     const filteredCategories = useMemo(() => {
         const query = search.trim().toLowerCase();
         if (!query) return categories;
@@ -62,34 +62,51 @@ const BlogCategories = () => {
     }, [categories, search]);
 
     const displayCategories = isReorderMode ? reorderList : filteredCategories;
+    const hasActiveSearch = search.trim() !== '';
+    const canReorder = categories.length >= 2;
 
-    // Handlers
+    const scrollToForm = useCallback(() => {
+        formSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, []);
+
+    const confirmDiscardFormChanges = useCallback((): boolean => {
+        if (!isFormDirty) return true;
+        return window.confirm(
+            t('common:notices.unsaved_changes_body', {
+                defaultValue: 'Bạn có những thay đổi chưa được lưu. Bạn có chắc chắn muốn rời khỏi trang này không?',
+            }),
+        );
+    }, [isFormDirty, t]);
+
     const handleAddClick = () => {
+        if (!confirmDiscardFormChanges()) return;
         setEditingCategory(null);
-        // Scroll to the form on mobile/tablet
-        const formElement = document.getElementById('blog-category-form-section');
-        if (formElement) {
-            formElement.scrollIntoView({ behavior: 'smooth' });
-        }
+        scrollToForm();
     };
 
     const handleEditClick = (category: BlogCategoryViewModel) => {
+        if (!confirmDiscardFormChanges()) return;
         setEditingCategory(category);
-        const formElement = document.getElementById('blog-category-form-section');
-        if (formElement) {
-            formElement.scrollIntoView({ behavior: 'smooth' });
-        }
+        scrollToForm();
     };
 
     const handleDeleteClick = (category: BlogCategoryViewModel) => {
+        if ((category.postCount || 0) > 0) return;
         setDeletingCategory(category);
     };
 
+    const handleReorderCancel = () => {
+        setIsReorderMode(false);
+        setReorderList([]);
+    };
+
     const handleReorderToggle = () => {
-        if (!isReorderMode) {
-            setReorderList(normalizeReorderList([...categories].sort((left, right) => left.sortOrder - right.sortOrder)));
+        if (isReorderMode) {
+            handleReorderCancel();
+            return;
         }
-        setIsReorderMode((value) => !value);
+        setReorderList(normalizeReorderList([...categories].sort((left, right) => left.sortOrder - right.sortOrder)));
+        setIsReorderMode(true);
     };
 
     const handleReorderChange = (items: BlogCategoryViewModel[]) => {
@@ -109,6 +126,7 @@ const BlogCategories = () => {
                 onSuccess: async () => {
                     await refetch();
                     setIsReorderMode(false);
+                    setReorderList([]);
                 },
             },
         );
@@ -127,12 +145,20 @@ const BlogCategories = () => {
                 {
                     onSuccess: () => {
                         setEditingCategory(null);
+                        setIsFormDirty(false);
                     },
-                }
+                },
             );
-        } else {
-            createMutation.mutate(payload);
+            return;
         }
+
+        createMutation.mutate(payload, {
+            onSuccess: () => {
+                setEditingCategory(null);
+                setIsFormDirty(false);
+                setFormResetSignal((value) => value + 1);
+            },
+        });
     };
 
     const handleConfirmDelete = () => {
@@ -142,9 +168,14 @@ const BlogCategories = () => {
                 setDeletingCategory(null);
                 if (editingCategory?.id === deletingCategory.id) {
                     setEditingCategory(null);
+                    setFormResetSignal((value) => value + 1);
                 }
             },
         });
+    };
+
+    const handleResetSearch = () => {
+        setSearch('');
     };
 
     if (isLoading && categories.length === 0) {
@@ -158,17 +189,19 @@ const BlogCategories = () => {
                     <AlertCircle size={48} />
                 </div>
                 <h2 className="text-2xl font-black tracking-tight text-slate-900">
-                    {t('category.validation.load_error', { defaultValue: 'Không tải được danh mục' })}
+                    {t('blog:category.validation.load_error')}
                 </h2>
                 <p className="mt-2 max-w-md font-medium text-slate-500">
-                    {t('error.try_again')}
+                    {t('blog:error.try_again')}
                 </p>
                 <button
+                    type="button"
+                    data-testid="blog-category-retry"
                     onClick={() => refetch()}
                     className="mt-8 flex items-center gap-2 rounded-2xl bg-[#14b8a6] px-8 py-3.5 font-black text-white shadow-xl shadow-[#14b8a6]/20 transition-all hover:scale-105 hover:bg-[#0f766e] active:scale-95"
                 >
                     <RefreshCcw size={20} />
-                    <span>{t('actions.btn_reset', { defaultValue: 'Thử lại' })}</span>
+                    <span>{t('blog:actions.btn_reset', { defaultValue: 'Thử lại' })}</span>
                 </button>
             </div>
         );
@@ -176,42 +209,46 @@ const BlogCategories = () => {
 
     return (
         <div className="w-full animate-in fade-in slide-in-from-bottom-4 px-4 py-8 duration-700">
-            {/* Breadcrumb & Title Header */}
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
                 <div>
                     <Breadcrumbs
                         items={[
-                            { label: t('breadcrumb'), path: '/admin/blog-posts' },
-                            { label: t('category.title') },
+                            { label: t('blog:breadcrumb'), path: '/admin/blog-posts' },
+                            { label: t('blog:category.title') },
                         ]}
                     />
                     <h1 className="text-3xl font-black tracking-tight text-slate-900 mt-2">
-                        {t('category.title')}
+                        {t('blog:category.title')}
                     </h1>
                     <p className="text-slate-500 text-sm font-medium mt-1">
-                        {t('category.subtitle')}
+                        {t('blog:category.subtitle')}
                     </p>
                 </div>
 
                 <button
+                    type="button"
+                    data-testid="blog-category-add-button"
                     onClick={handleAddClick}
                     className="flex items-center justify-center gap-2 bg-[#0066CC] hover:bg-[#004999] text-white rounded-2xl px-6 py-3.5 font-black text-sm transition-all shadow-lg shadow-[#0066CC]/20 active:scale-95 shrink-0"
                 >
                     <FolderPlus size={18} />
-                    <span>{t('form.categories.add_new')}</span>
+                    <span>{t('blog:form.categories.add_new')}</span>
                 </button>
             </div>
 
-            {/* Stats Row */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <p className="mb-3 text-xs font-bold uppercase tracking-widest text-slate-400">
+                {t('blog:category.stats_scope_note')}
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8" data-testid="blog-category-stats">
                 <StatCard
-                    title={t('category.stats.total')}
+                    title={t('blog:category.stats.total')}
                     value={totalCategories}
                     icon={Folder}
                     accent="secondary"
                 />
                 <StatCard
-                    title={t('category.stats.total_posts')}
+                    title={t('blog:category.stats.total_posts')}
                     value={totalPosts}
                     icon={FileText}
                     accent="teal"
@@ -225,7 +262,8 @@ const BlogCategories = () => {
                     </div>
                     <input
                         type="text"
-                        placeholder={t('category.table.search_placeholder')}
+                        data-testid="blog-category-search"
+                        placeholder={t('blog:category.table.search_placeholder')}
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         className="w-full rounded-2xl border border-slate-200/80 bg-white py-3 pl-11 pr-4 font-bold text-sm text-slate-900 outline-hidden transition-all placeholder:text-slate-400 focus:border-[#0066CC] focus:ring-4 focus:ring-[#0066CC]/5"
@@ -233,30 +271,52 @@ const BlogCategories = () => {
                 </div>
 
                 <div className="flex items-center gap-3 self-end sm:self-auto">
+                    {hasActiveSearch && (
+                        <button
+                            type="button"
+                            data-testid="blog-category-reset-search"
+                            onClick={handleResetSearch}
+                            className="flex items-center gap-2 rounded-2xl border border-slate-200 px-4 py-3 font-black text-sm text-slate-600 transition-all hover:bg-slate-50"
+                        >
+                            <RotateCcw size={16} />
+                            <span>{t('blog:category.reset_search')}</span>
+                        </button>
+                    )}
                     <button
+                        type="button"
+                        data-testid="blog-category-reorder-button"
                         onClick={handleReorderToggle}
-                        disabled={search.trim() !== ''}
+                        disabled={hasActiveSearch || !canReorder}
                         className={`flex items-center gap-3 rounded-2xl border px-5 py-3 font-black text-sm transition-all disabled:opacity-50 disabled:grayscale ${
                             isReorderMode
                                 ? 'border-[#d9f99d] bg-[#f4fce3] text-[#0f766e] ring-4 ring-[#14b8a6]/10'
                                 : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300 active:scale-95'
                         }`}
-                        title={search.trim() !== '' ? t('category.reorder.disabled_title') : undefined}
+                        title={
+                            hasActiveSearch
+                                ? t('blog:category.reorder.disabled_title')
+                                : !canReorder
+                                  ? t('blog:category.reorder.disabled_min_title')
+                                  : undefined
+                        }
                     >
                         <ArrowUpDown size={18} />
-                        <span>{isReorderMode ? t('category.reorder.button_sorting') : t('category.reorder.button_sort')}</span>
+                        <span>
+                            {isReorderMode
+                                ? t('blog:category.reorder.button_sorting')
+                                : t('blog:category.reorder.button_sort')}
+                        </span>
                     </button>
                     <div className="flex items-center justify-between gap-3 text-xs font-bold text-slate-400 rounded-2xl border border-slate-100 bg-slate-50/40 px-4 py-3">
-                        <span>{filteredCategories.length} {t('category.table.count_suffix')}</span>
+                        <span>
+                            {filteredCategories.length} {t('blog:category.table.count_suffix')}
+                        </span>
                     </div>
                 </div>
             </div>
 
-            {/* Double Column Layout */}
             <div className="flex flex-col lg:flex-row gap-8 items-start">
-                {/* Left Column - List Table */}
                 <div className="flex-1 w-full bg-white border border-slate-200/60 rounded-3xl overflow-hidden shadow-sm">
-                    {/* Table or Empty State */}
                     {displayCategories.length > 0 ? (
                         <BlogCategoryTable
                             categories={displayCategories}
@@ -267,33 +327,43 @@ const BlogCategories = () => {
                             onReorderChange={handleReorderChange}
                         />
                     ) : (
-                        <div className="py-16">
+                        <div className="py-16" data-testid="blog-category-empty">
                             <Folder size={48} className="text-slate-300/60 mx-auto mb-4" />
                             <h3 className="text-base font-black text-slate-800 text-center">
-                                {t('empty.title', { defaultValue: 'Không tìm thấy kết quả' })}
+                                {categories.length === 0
+                                    ? t('blog:category.empty_title')
+                                    : t('blog:category.empty_search_title')}
                             </h3>
                             <p className="text-xs font-medium text-slate-400 mt-1 text-center">
-                                {t('empty.subtitle', { defaultValue: 'Thử đổi từ khóa hoặc bộ lọc' })}
+                                {categories.length === 0
+                                    ? t('blog:category.empty_subtitle')
+                                    : t('blog:category.empty_search_subtitle')}
                             </p>
                         </div>
                     )}
 
-                    {/* Table Footer */}
                     <div className="px-6 py-4 border-t border-slate-100 bg-slate-50/30 text-center sm:text-left">
                         <p className="text-xs font-medium text-slate-400 flex items-center justify-center sm:justify-start gap-1.5">
-                            <AlertTriangle size={14} className="text-amber-500" />
-                            {isReorderMode ? t('category.reorder.bar_hint') : t('category.table.drag_helper')}
+                            {isReorderMode ? t('blog:category.reorder.bar_hint') : t('blog:category.table.drag_helper')}
                         </p>
                     </div>
                 </div>
 
-                {/* Right Column - Inline Form */}
-                <div id="blog-category-form-section" className="w-full lg:w-[380px] shrink-0">
+                <div
+                    id="blog-category-form-section"
+                    ref={formSectionRef}
+                    className="w-full lg:w-[380px] shrink-0"
+                >
                     <BlogCategoryForm
                         initialData={editingCategory}
                         isSubmitting={createMutation.isPending || updateMutation.isPending}
                         onSubmit={handleFormSubmit}
-                        onReset={() => setEditingCategory(null)}
+                        onReset={() => {
+                            setEditingCategory(null);
+                            setIsFormDirty(false);
+                        }}
+                        resetSignal={formResetSignal}
+                        onDirtyChange={setIsFormDirty}
                     />
                 </div>
             </div>
@@ -304,6 +374,7 @@ const BlogCategories = () => {
                         initial={{ y: 100, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
                         exit={{ y: 100, opacity: 0 }}
+                        data-testid="blog-category-reorder-bar"
                         className="fixed bottom-8 left-1/2 z-50 flex -translate-x-1/2 items-center gap-8 rounded-[32px] border border-slate-800 bg-slate-900 px-8 py-5 text-white shadow-2xl"
                     >
                         <div className="flex items-center gap-3">
@@ -311,95 +382,46 @@ const BlogCategories = () => {
                                 <ArrowUpDown size={18} />
                             </div>
                             <div>
-                                <p className="text-sm font-black tracking-tight">{t('category.reorder.bar_title')}</p>
-                                <p className="text-[11px] font-medium text-slate-400">{t('category.reorder.bar_hint')}</p>
+                                <p className="text-sm font-black tracking-tight">{t('blog:category.reorder.bar_title')}</p>
+                                <p className="text-[11px] font-medium text-slate-400">{t('blog:category.reorder.bar_hint')}</p>
                             </div>
                         </div>
 
                         <div className="flex items-center gap-2">
                             <button
-                                onClick={() => setIsReorderMode(false)}
+                                type="button"
+                                data-testid="blog-category-reorder-cancel"
+                                onClick={handleReorderCancel}
                                 className="rounded-xl px-6 py-3 font-black text-slate-400 transition-all hover:bg-white/10 hover:text-white"
                             >
-                                {t('category.reorder.cancel')}
+                                {t('blog:category.reorder.cancel')}
                             </button>
                             <button
+                                type="button"
+                                data-testid="blog-category-reorder-save"
                                 onClick={handleReorderSave}
                                 disabled={reorderMutation.isPending}
-                                className="flex items-center gap-2 rounded-xl bg-[#0066CC] px-8 py-3 font-black text-white shadow-lg shadow-[#0066CC]/20 transition-all hover:bg-[#004999]"
+                                className="flex items-center gap-2 rounded-xl bg-[#0066CC] px-8 py-3 font-black text-white shadow-lg shadow-[#0066CC]/20 transition-all hover:bg-[#004999] disabled:opacity-50"
                             >
                                 {reorderMutation.isPending ? (
                                     <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
                                 ) : (
                                     <CheckCircle2 size={18} />
                                 )}
-                                <span>{t('category.reorder.save')}</span>
+                                <span>{t('blog:category.reorder.save')}</span>
                             </button>
                         </div>
                     </motion.div>
                 )}
             </AnimatePresence>
 
-            {/* Confirm Delete Dialog Modal */}
-            <AnimatePresence>
-                {deletingCategory && (
-                    <div className="fixed inset-0 z-110 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
-                        <motion.div
-                            initial={{ scale: 0.95, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            exit={{ scale: 0.95, opacity: 0 }}
-                            className="bg-white w-full max-w-md rounded-[32px] shadow-2xl overflow-hidden border border-slate-100"
-                        >
-                            <div className="p-10 text-center">
-                                <div className="w-20 h-20 bg-red-50 rounded-[28px] flex items-center justify-center mx-auto mb-6">
-                                    <AlertTriangle size={40} className="text-red-500" />
-                                </div>
-
-                                <h2 className="text-xl font-black text-slate-900 tracking-tight mb-3">
-                                    {t('category.delete.confirm_title')}
-                                </h2>
-
-                                <p className="text-slate-500 text-sm font-medium leading-relaxed px-4">
-                                    <Trans
-                                        t={t}
-                                        i18nKey="category.delete.confirm_body"
-                                        values={{ name: deletingCategory.name }}
-                                        components={{ strong: <strong className="text-slate-900 font-black" /> }}
-                                    />
-                                </p>
-
-                                <div className="mt-4 p-3 bg-amber-50 rounded-2xl border border-amber-100 flex items-start gap-2.5 text-left">
-                                    <AlertCircle size={16} className="text-amber-600 shrink-0 mt-0.5" />
-                                    <p className="text-amber-800 text-xs font-bold leading-relaxed">
-                                        {t('category.delete.confirm_warning')}
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div className="px-8 pb-10 flex flex-col gap-3">
-                                <button
-                                    onClick={handleConfirmDelete}
-                                    disabled={deleteMutation.isPending}
-                                    className="w-full bg-red-600 hover:bg-red-700 text-white py-4 rounded-2xl font-black transition-all flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50"
-                                >
-                                    {deleteMutation.isPending ? (
-                                        <div className="w-5 h-5 border-3 border-white/30 border-t-white rounded-full animate-spin" />
-                                    ) : (
-                                        <span>{t('category.delete.btn_delete')}</span>
-                                    )}
-                                </button>
-                                <button
-                                    onClick={() => setDeletingCategory(null)}
-                                    disabled={deleteMutation.isPending}
-                                    className="w-full py-4 rounded-2xl font-black text-slate-400 hover:text-slate-900 hover:bg-slate-50 transition-all active:scale-95"
-                                >
-                                    {t('actions.cancel')}
-                                </button>
-                            </div>
-                        </motion.div>
-                    </div>
-                )}
-            </AnimatePresence>
+            <BlogCategoryDeleteDialog
+                isOpen={!!deletingCategory}
+                categoryName={deletingCategory?.name ?? ''}
+                onClose={() => setDeletingCategory(null)}
+                onConfirm={handleConfirmDelete}
+                isDeleting={deleteMutation.isPending}
+            />
         </div>
     );
 };

@@ -15,7 +15,12 @@
         "category_all": "All Categories",
         "status_all": "All Statuses",
         "btn_filter": "Filter",
-        "btn_reset": "Reset"
+        "btn_reset": "Reset",
+        "active_label": "Active filters"
+    },
+    "messages": {
+        "list_load_error": "Failed to load blog posts",
+        "list_load_error_desc": "Blog data is temporarily unavailable. Please try again."
     },
     "table": {
         "selected": "Selected {{count}}",
@@ -39,6 +44,7 @@
         "edit": "Edit",
         "delete": "Delete",
         "preview_disabled_helper": "Only published articles can be viewed",
+        "preview_scheduled_helper": "This post is not published yet — scheduled for a future date",
         "bulk_publish": "Publish",
         "bulk_archive": "Archive",
         "bulk_delete": "Delete",
@@ -52,16 +58,21 @@
         "confirm": "Confirm",
         "status_draft": "Draft",
         "status_published": "Published",
-        "status_archived": "Archived"
+        "status_archived": "Archived",
+        "save_changes": "Save Changes",
+        "delete_forbidden": "You do not have permission to delete this post",
+        "copy": "Copy slug"
     },
     "status": {
         "draft": "DRAFT",
         "published": "PUBLISHED",
-        "archived": "ARCHIVED"
+        "archived": "ARCHIVED",
+        "scheduled": "SCHEDULED"
     },
     "empty": {
         "title": "No articles found",
-        "subtitle": "Try changing the filters or create a new article"
+        "subtitle": "Try changing the filters or create a new article",
+        "no_content": "This post has no content."
     },
     "toast": {
         "delete_success": "Blog post deleted successfully",
@@ -69,6 +80,7 @@
         "bulk_delete_success": "Blog posts deleted successfully",
         "bulk_status_success": "Blog posts status updated successfully",
         "network_error": "Network error or server failed to respond",
+        "bulk_partial_error": "Some posts could not be updated",
         "draft_success": "Draft saved successfully!",
         "publish_success": "Blog post published successfully!",
         "category_create_success": "Category created successfully!",
@@ -77,7 +89,8 @@
         "upload_error": "Failed to upload image!",
         "update_success": "Blog post updated successfully!",
         "update_error": "Failed to update blog post!",
-        "duplicate_success": "Blog post duplicated successfully!"
+        "duplicate_success": "Blog post duplicated successfully!",
+        "copy_success": "Slug copied to clipboard!"
     },
     "create_title": "Create New Post",
     "create_subtitle": "Write and publish a travel blog post",
@@ -87,6 +100,11 @@
     "detail_title": "Blog Post Details",
     "detail_breadcrumb": "Details",
     "quick_actions": "Quick Actions",
+    "view_post": "View Post",
+    "duplicate_post": "Duplicate Post",
+    "delete_post": "Delete Post",
+    "error_post_not_found": "Post Not Found",
+    "error_post_not_found_desc": "The blog post you are looking for does not exist or has been deleted.",
     "duplicate_confirm_title": "Duplicate this post?",
     "duplicate_confirm_body": "A new blog post will be created with pre-filled content from this post.",
     "info_section": "INFORMATION",
@@ -95,6 +113,9 @@
     "info_author": "Author",
     "info_views": "Views",
     "info_views_val": "{{count}} views",
+    "role": {
+        "author": "Author"
+    },
     "form": {
         "title": "Post Title",
         "title_placeholder": "Enter post title...",
@@ -106,6 +127,7 @@
         "excerpt_placeholder": "A brief description of the post, shown in listings...",
         "content": "Content",
         "content_placeholder": "Start writing the blog post content...",
+        "back_to_list": "Back to blog list",
         "required": "Required",
         "sections": {
             "content": "Post Content",
@@ -131,6 +153,8 @@
         },
         "categories": {
             "placeholder": "Select category...",
+            "loading": "Loading categories...",
+            "empty": "No categories found",
             "add_new": "Add New Category",
             "add_btn": "Add",
             "input_placeholder": "New category name..."
@@ -141,7 +165,8 @@
             "helper": "PNG, JPG, WEBP · Max 5MB · Recommended 1200x630px",
             "change": "Change",
             "delete": "Delete",
-            "current_image": "Current Image"
+            "current_image": "Current Image",
+            "no_featured_image": "No featured image"
         },
         "guidelines": {
             "item_1": "Title should be descriptive and SEO friendly",
@@ -154,7 +179,12 @@
             "title_max": "Title must not exceed 255 characters",
             "content_required": "Post content is required",
             "categories_required": "Please select at least one category",
-            "excerpt_max": "Excerpt must not exceed 500 characters"
+            "excerpt_max": "Excerpt must not exceed 500 characters",
+            "schedule_date_required": "Please select a publish date when scheduling"
+        },
+        "editor": {
+            "markdown_support": "Markdown support",
+            "uploading": "Uploading image..."
         }
     },
     "category": {
@@ -163,6 +193,17 @@
         "stats": {
             "total": "TOTAL CATEGORIES",
             "total_posts": "TOTAL POSTS"
+        },
+        "stats_scope_note": "System-wide stats (not affected by current filters)",
+        "reset_search": "Clear search",
+        "empty_title": "No categories yet",
+        "empty_subtitle": "Create your first category using the form on the right",
+        "empty_search_title": "No results found",
+        "empty_search_subtitle": "Try a different search keyword",
+        "actions": {
+            "edit": "Edit category {{name}}",
+            "delete": "Delete category {{name}}",
+            "delete_blocked": "Cannot delete — {{count}} linked posts"
         },
         "table": {
             "col_name": "Category",
@@ -181,6 +222,7 @@
             "button_sort": "Sort order",
             "button_sorting": "Sorting",
             "disabled_title": "Sorting is unavailable while a search filter is active",
+            "disabled_min_title": "At least 2 categories are required to reorder",
             "bar_title": "Drag and drop to reorder categories",
             "bar_hint": "The new order will be saved when you confirm",
             "cancel": "Cancel",
@@ -215,7 +257,10 @@
         "validation": {
             "name_required": "Category name is required",
             "name_max": "Category name must not exceed 50 characters",
-            "slug_max": "Slug must not exceed 60 characters"
+            "slug_max": "Slug must not exceed 60 characters",
+            "slug_invalid": "Slug may only contain lowercase letters, numbers, and hyphens",
+            "description_max": "Description must not exceed 1000 characters",
+            "load_error": "Failed to load categories"
         }
     }
 }
