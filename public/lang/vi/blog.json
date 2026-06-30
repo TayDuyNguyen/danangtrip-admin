@@ -15,7 +15,12 @@
         "category_all": "Tất cả danh mục",
         "status_all": "Tất cả trạng thái",
         "btn_filter": "Lọc",
-        "btn_reset": "Đặt lại"
+        "btn_reset": "Đặt lại",
+        "active_label": "Bộ lọc đang kích hoạt"
+    },
+    "messages": {
+        "list_load_error": "Không tải được danh sách bài viết",
+        "list_load_error_desc": "Dữ liệu bài viết tạm thời không khả dụng. Vui lòng thử lại."
     },
     "table": {
         "selected": "Đã chọn {{count}}",
@@ -39,6 +44,7 @@
         "edit": "Sửa",
         "delete": "Xóa",
         "preview_disabled_helper": "Chỉ có thể xem bài viết đã xuất bản",
+        "preview_scheduled_helper": "Bài viết chưa đến thời gian xuất bản",
         "bulk_publish": "Xuất bản",
         "bulk_archive": "Lưu trữ",
         "bulk_delete": "Xóa",
@@ -52,16 +58,21 @@
         "confirm": "Xác nhận",
         "status_draft": "Bản nháp",
         "status_published": "Đã xuất bản",
-        "status_archived": "Lưu trữ"
+        "status_archived": "Lưu trữ",
+        "save_changes": "Lưu thay đổi",
+        "delete_forbidden": "Bạn không có quyền xóa bài viết",
+        "copy": "Sao chép Slug"
     },
     "status": {
         "draft": "BẢN NHÁP",
         "published": "ĐÃ XUẤT BẢN",
-        "archived": "LƯU TRỮ"
+        "archived": "LƯU TRỮ",
+        "scheduled": "LÊN LỊCH"
     },
     "empty": {
         "title": "Không tìm thấy bài viết nào",
-        "subtitle": "Thử thay đổi bộ lọc hoặc tạo bài viết mới"
+        "subtitle": "Thử thay đổi bộ lọc hoặc tạo bài viết mới",
+        "no_content": "Bài viết này không có nội dung."
     },
     "toast": {
         "delete_success": "Đã xóa bài viết thành công",
@@ -69,6 +80,7 @@
         "bulk_delete_success": "Đã xóa các bài viết thành công",
         "bulk_status_success": "Đã cập nhật trạng thái các bài viết thành công",
         "network_error": "Lỗi mạng hoặc máy chủ không phản hồi",
+        "bulk_partial_error": "Một số bài viết không thể cập nhật",
         "draft_success": "Đã lưu bản nháp thành công!",
         "publish_success": "Bài viết đã được xuất bản!",
         "category_create_success": "Tạo danh mục thành công!",
@@ -77,7 +89,8 @@
         "upload_error": "Lỗi tải ảnh lên!",
         "update_success": "Cập nhật bài viết thành công!",
         "update_error": "Cập nhật bài viết thất bại!",
-        "duplicate_success": "Đã nhân bản bài viết thành công!"
+        "duplicate_success": "Đã nhân bản bài viết thành công!",
+        "copy_success": "Đã sao chép slug vào bộ nhớ tạm!"
     },
     "create_title": "Tạo Bài viết mới",
     "create_subtitle": "Viết và xuất bản bài viết du lịch",
@@ -87,6 +100,11 @@
     "detail_title": "Chi tiết Bài viết",
     "detail_breadcrumb": "Chi tiết",
     "quick_actions": "Thao tác nhanh",
+    "view_post": "Xem bài viết",
+    "duplicate_post": "Nhân bản bài viết",
+    "delete_post": "Xóa bài viết",
+    "error_post_not_found": "Không tìm thấy bài viết",
+    "error_post_not_found_desc": "Bài viết bạn đang tìm kiếm không tồn tại hoặc đã bị xóa.",
     "duplicate_confirm_title": "Nhân bản bài viết này?",
     "duplicate_confirm_body": "Một bài viết mới sẽ được tạo với nội dung được điền sẵn từ bài viết hiện tại.",
     "info_section": "THÔNG TIN",
@@ -95,6 +113,9 @@
     "info_author": "Tác giả",
     "info_views": "Lượt xem",
     "info_views_val": "{{count}} lượt",
+    "role": {
+        "author": "Tác giả"
+    },
     "form": {
         "title": "Tiêu đề bài viết",
         "title_placeholder": "Nhập tiêu đề bài viết...",
@@ -106,6 +127,7 @@
         "excerpt_placeholder": "Mô tả ngắn gọn về bài viết, hiển thị trong danh sách...",
         "content": "Nội dung",
         "content_placeholder": "Bắt đầu viết nội dung bài viết...",
+        "back_to_list": "Quay lại danh sách bài viết",
         "required": "Bắt buộc",
         "sections": {
             "content": "Nội dung bài viết",
@@ -131,6 +153,8 @@
         },
         "categories": {
             "placeholder": "Chọn danh mục...",
+            "loading": "Đang tải danh mục...",
+            "empty": "Không có danh mục nào",
             "add_new": "Thêm danh mục mới",
             "add_btn": "Thêm",
             "input_placeholder": "Tên danh mục mới..."
@@ -141,7 +165,8 @@
             "helper": "PNG, JPG, WEBP · Tối đa 5MB · Khuyến nghị 1200x630px",
             "change": "Thay đổi",
             "delete": "Xóa",
-            "current_image": "Ảnh hiện tại"
+            "current_image": "Ảnh hiện tại",
+            "no_featured_image": "Không có ảnh đại diện"
         },
         "guidelines": {
             "item_1": "Tiêu đề nên ngắn gọn, có từ khóa SEO",
@@ -154,7 +179,12 @@
             "title_max": "Tiêu đề không được vượt quá 255 ký tự",
             "content_required": "Nội dung bài viết không được để trống",
             "categories_required": "Vui lòng chọn ít nhất một danh mục",
-            "excerpt_max": "Tóm tắt không được vượt quá 500 ký tự"
+            "excerpt_max": "Tóm tắt không được vượt quá 500 ký tự",
+            "schedule_date_required": "Vui lòng chọn ngày xuất bản khi lên lịch"
+        },
+        "editor": {
+            "markdown_support": "Hỗ trợ Markdown",
+            "uploading": "Đang tải ảnh lên..."
         }
     },
     "category": {
@@ -163,6 +193,17 @@
         "stats": {
             "total": "TỔNG DANH MỤC",
             "total_posts": "TỔNG BÀI VIẾT"
+        },
+        "stats_scope_note": "Thống kê toàn hệ thống (không theo bộ lọc hiện tại)",
+        "reset_search": "Xóa tìm kiếm",
+        "empty_title": "Chưa có danh mục nào",
+        "empty_subtitle": "Tạo danh mục đầu tiên bằng form bên phải",
+        "empty_search_title": "Không tìm thấy kết quả",
+        "empty_search_subtitle": "Thử đổi từ khóa tìm kiếm",
+        "actions": {
+            "edit": "Sửa danh mục {{name}}",
+            "delete": "Xóa danh mục {{name}}",
+            "delete_blocked": "Không thể xóa — đang có {{count}} bài viết"
         },
         "table": {
             "col_name": "Danh mục",
@@ -181,6 +222,7 @@
             "button_sort": "Sắp xếp thứ tự",
             "button_sorting": "Đang sắp xếp",
             "disabled_title": "Không thể sắp xếp khi đang tìm kiếm",
+            "disabled_min_title": "Cần ít nhất 2 danh mục để sắp xếp",
             "bar_title": "Kéo thả để thay đổi thứ tự hiển thị",
             "bar_hint": "Thứ tự mới sẽ được lưu khi bạn xác nhận",
             "cancel": "Hủy",
@@ -215,7 +257,10 @@
         "validation": {
             "name_required": "Tên danh mục không được để trống",
             "name_max": "Tên danh mục không được vượt quá 50 ký tự",
-            "slug_max": "Slug không được vượt quá 60 ký tự"
+            "slug_max": "Slug không được vượt quá 60 ký tự",
+            "slug_invalid": "Slug chỉ được chứa chữ thường, số và dấu gạch ngang",
+            "description_max": "Mô tả không được vượt quá 1000 ký tự",
+            "load_error": "Không tải được danh mục"
         }
     }
 }

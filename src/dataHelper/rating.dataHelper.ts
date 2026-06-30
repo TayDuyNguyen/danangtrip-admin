@@ -66,6 +66,7 @@ export interface RatingViewModel {
     score: number;
     comment: string;
     images: string[];
+    imageCount: number;
     status: 'pending' | 'approved' | 'rejected';
     rejectedReason: string;
     helpfulCount: number;

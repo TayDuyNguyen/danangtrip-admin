@@ -12,6 +12,8 @@ import type { Category } from '@/dataHelper/category.dataHelper';
 import { getCategoryIconComponent, resolveCategoryIconName } from '@/utils/categoryIcon';
 import { slugifyVietnamese } from '@/utils/slug';
 import { cn } from '@/utils/cn';
+import { CATEGORY_COLOR_OPTIONS } from '@/constants/categoryTheme';
+import { UnsavedChangesGuard } from '@/components/common/UnsavedChangesGuard';
 
 interface Props {
     isOpen: boolean;
@@ -27,10 +29,10 @@ const iconSuggestions = [
     'Ship', 'Tent', 'Sun', 'Moon', 'Star', 'Heart', 'Navigation', 'Flag',
 ];
 
-const colorOptions = ['#E0F2FE', '#FFEDD5', '#DCFCE7', '#FEF9C3', '#FEE2E2', '#E0E7FF', '#CFFAFE', '#FCE7F3', '#1E293B'];
+const colorOptions = [...CATEGORY_COLOR_OPTIONS];
 
 const CategoryFormModal = ({ isOpen, onClose, initialData, onSubmit, isSubmitting }: Props) => {
-    const { t } = useTranslation('location');
+    const { t } = useTranslation(['location', 'common']);
     const [isIconBrowserOpen, setIsIconBrowserOpen] = useState(false);
     const [iconSearch, setIconSearch] = useState('');
 
@@ -38,7 +40,7 @@ const CategoryFormModal = ({ isOpen, onClose, initialData, onSubmit, isSubmittin
         register,
         handleSubmit,
         control,
-        formState: { errors },
+        formState: { errors, isDirty },
         reset,
         setValue,
     } = useForm<CategoryFormValues>({
@@ -99,15 +101,27 @@ const CategoryFormModal = ({ isOpen, onClose, initialData, onSubmit, isSubmittin
         onClose();
     };
 
+    const handleCloseAttempt = () => {
+        if (isDirty && !isSubmitting) {
+            const confirmClose = window.confirm(t('common:notices.unsaved_changes_body'));
+            if (!confirmClose) return;
+        }
+        handleClose();
+    };
+
     return (
-        <Drawer
-            isOpen={isOpen}
-            onClose={handleClose}
-            title={initialData ? t('categories.edit') : t('categories.add')}
-            subtitle={initialData ? t('form.edit_subtitle') : t('form.page_subtitle')}
-            badge={!initialData ? t('categories.badge_new') : undefined}
-            width="max-w-md"
-        >
+        <>
+            <UnsavedChangesGuard isDirty={isDirty && isOpen && !isSubmitting} />
+            <Drawer
+                isOpen={isOpen}
+                onClose={handleCloseAttempt}
+                title={initialData ? t('categories.edit') : t('categories.add')}
+                subtitle={initialData ? t('categories.form.edit_subtitle') : t('categories.form.create_subtitle')}
+                badge={!initialData ? t('categories.badge_new') : undefined}
+                width="max-w-md"
+                closeOnBackdropClick={false}
+                panelTestId="location-category-drawer"
+            >
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 pb-20">
                 <div className="space-y-2">
                     <label className="ml-1 text-[11px] font-black uppercase tracking-widest text-slate-500">
@@ -116,6 +130,7 @@ const CategoryFormModal = ({ isOpen, onClose, initialData, onSubmit, isSubmittin
                     <input
                         {...register('name')}
                         type="text"
+                        data-testid="location-category-name-input"
                         placeholder={t('categories.form.name_placeholder')}
                         className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-3.5 font-bold text-slate-900 outline-hidden transition-all placeholder:text-slate-400 focus:border-[#14b8a6] focus:bg-white focus:ring-4 focus:ring-[#14b8a6]/10"
                     />
@@ -215,7 +230,12 @@ const CategoryFormModal = ({ isOpen, onClose, initialData, onSubmit, isSubmittin
 
                                 <div className="grid max-h-[240px] grid-cols-6 gap-2 overflow-y-auto pr-2 no-scrollbar">
                                     {iconSuggestions
-                                        .filter((name) => name.toLowerCase().includes(iconSearch.toLowerCase()))
+                                        .reduce<string[]>((matches, name) => {
+                                            if (name.toLowerCase().includes(iconSearch.toLowerCase())) {
+                                                matches.push(name);
+                                            }
+                                            return matches;
+                                        }, [])
                                         .map((name) => {
                                             const IconComp = getCategoryIconComponent(name, 'HelpCircle');
                                             const isSelected = (selectedIcon || 'Map') === name;
@@ -351,14 +371,15 @@ const CategoryFormModal = ({ isOpen, onClose, initialData, onSubmit, isSubmittin
                 <div className="fixed bottom-0 left-0 right-0 z-10 flex items-center justify-end gap-3 border-t border-slate-100 bg-white p-6">
                     <button
                         type="button"
-                        onClick={onClose}
+                        onClick={handleCloseAttempt}
                         className="rounded-2xl px-8 py-3.5 font-black text-slate-500 transition-all hover:bg-slate-100"
                     >
-                        {t('actions.cancel')}
+                        {t('categories.dialog.button_cancel')}
                     </button>
                     <button
                         type="submit"
                         disabled={isSubmitting}
+                        data-testid="location-category-save"
                         className="flex items-center gap-2 rounded-2xl bg-[#14b8a6] px-10 py-3.5 font-black text-white shadow-xl shadow-[#14b8a6]/20 transition-all hover:scale-105 hover:bg-[#0f766e] active:scale-95 disabled:opacity-50"
                     >
                         {isSubmitting ? (
@@ -371,6 +392,7 @@ const CategoryFormModal = ({ isOpen, onClose, initialData, onSubmit, isSubmittin
                 </div>
             </form>
         </Drawer>
+        </>
     );
 };
 

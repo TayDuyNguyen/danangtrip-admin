@@ -12,21 +12,32 @@ import {
     Lock
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { useSettings, useUpdateSettings } from '@/hooks/useSettingQueries';
+import { useSettings, useUpdateSettingGroups } from '@/hooks/useSettingQueries';
 import { 
     useChatbotCache, 
     useDeleteCache, 
     useClearAllCache 
 } from '@/hooks/useChatbotQueries';
 import ToggleSwitch from '@/components/ui/ToggleSwitch';
-import type { WebsiteSettings } from '@/types/settings.types';
+import ChatbotCacheConfirmDialog from './ChatbotCacheConfirmDialog';
 
-export default function CacheSettingsTab() {
+type CacheConfirmMode = 'delete' | 'clearAll' | null;
+
+export default function CacheSettingsTab({
+    fetchEnabled = true,
+}: {
+    isActive?: boolean;
+    fetchEnabled?: boolean;
+}) {
     const { t } = useTranslation('chatbot');
 
-    // 1. Settings state & hooks
-    const { data: settings, isLoading: isSettingsLoading, isError: isSettingsError } = useSettings();
-    const updateSettingsMutation = useUpdateSettings();
+    const [confirmMode, setConfirmMode] = useState<CacheConfirmMode>(null);
+    const [pendingDeleteHash, setPendingDeleteHash] = useState<string | null>(null);
+
+    const { data: settings, isLoading: isSettingsLoading, isError: isSettingsError } = useSettings({
+        enabled: fetchEnabled,
+    });
+    const updateSettingsMutation = useUpdateSettingGroups();
 
     // Local form state
     const [enabled, setEnabled] = useState(true);
@@ -49,7 +60,9 @@ export default function CacheSettingsTab() {
     /* eslint-enable react-hooks/set-state-in-effect */
 
     // 2. Cache state & hooks
-    const { data: caches = [], isLoading: isCacheLoading, refetch: refetchCache, isFetching: isCacheFetching } = useChatbotCache();
+    const { data: caches = [], isLoading: isCacheLoading, refetch: refetchCache, isFetching: isCacheFetching } = useChatbotCache({
+        enabled: fetchEnabled,
+    });
     const deleteCacheMutation = useDeleteCache();
     const clearAllCacheMutation = useClearAllCache();
     const [cacheSearch, setCacheSearch] = useState('');
@@ -63,31 +76,62 @@ export default function CacheSettingsTab() {
     // Handle Save Settings
     const handleSaveSettings = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!settings) return;
-
-        const updatedSettings: WebsiteSettings = {
-            ...settings,
-            chatbot: {
-                enabled,
-                clarification_attempt_limit: Number(clarificationLimit),
-                cache_ttl_seconds: Number(cacheTtl),
-                cache: {
-                    threshold_transactional: Number(thresholdTransactional),
-                    threshold_faq: Number(thresholdFaq),
-                }
-            }
-        };
 
         try {
-            await updateSettingsMutation.mutateAsync(updatedSettings);
+            await updateSettingsMutation.mutateAsync({
+                chatbot: {
+                    enabled,
+                    clarification_attempt_limit: Number(clarificationLimit),
+                    cache_ttl_seconds: Number(cacheTtl),
+                    cache: {
+                        threshold_transactional: Number(thresholdTransactional),
+                        threshold_faq: Number(thresholdFaq),
+                    },
+                },
+            });
         } catch {
             // Toast handled by mutation hook
         }
     };
 
     const isSaving = updateSettingsMutation.isPending;
+    const isConfirmMutating = deleteCacheMutation.isPending || clearAllCacheMutation.isPending;
+
+    const closeConfirm = () => {
+        if (isConfirmMutating) return;
+        setConfirmMode(null);
+        setPendingDeleteHash(null);
+    };
+
+    const handleConfirmCacheAction = () => {
+        if (confirmMode === 'clearAll') {
+            clearAllCacheMutation.mutate(undefined, {
+                onSuccess: () => closeConfirm(),
+            });
+            return;
+        }
+        if (confirmMode === 'delete' && pendingDeleteHash) {
+            deleteCacheMutation.mutate(pendingDeleteHash, {
+                onSuccess: () => closeConfirm(),
+            });
+        }
+    };
+
+    const confirmTitle =
+        confirmMode === 'clearAll'
+            ? t('settings.clear_all_confirm_title')
+            : t('settings.delete_cache_confirm_title');
+
+    const confirmMessage =
+        confirmMode === 'clearAll'
+            ? t('settings.clear_all_confirm')
+            : t('settings.delete_cache_confirm');
+
+    const confirmLabel =
+        confirmMode === 'clearAll' ? t('settings.clear_all') : t('settings.delete_cache_tooltip');
 
     return (
+        <>
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 items-start">
             {/* Column 1 & 2: Active Semantic Cache Management */}
             <div className="xl:col-span-2 bg-white p-6 rounded-[24px] border border-slate-200/60 shadow-xs space-y-6 flex flex-col min-h-[550px]">
@@ -110,12 +154,10 @@ export default function CacheSettingsTab() {
                         </button>
                         {caches.length > 0 && (
                             <button
-                                onClick={() => {
-                                    if (window.confirm(t('settings.clear_all_confirm'))) {
-                                        clearAllCacheMutation.mutate();
-                                    }
-                                }}
+                                type="button"
+                                onClick={() => setConfirmMode('clearAll')}
                                 disabled={clearAllCacheMutation.isPending}
+                                data-testid="chatbot-clear-all-cache"
                                 className="flex items-center gap-1.5 px-4 py-2 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-bold rounded-xl text-xs transition-all cursor-pointer disabled:opacity-50"
                             >
                                 <Trash2 className="w-3.5 h-3.5" />
@@ -147,7 +189,7 @@ export default function CacheSettingsTab() {
                     ) : filteredCaches.length === 0 ? (
                         <div className="text-center py-20 text-slate-400 text-xs">
                             <Database className="w-10 h-10 text-slate-200 mx-auto mb-3" />
-                            {t('settings.no_cache')}
+                            {caches.length === 0 ? t('settings.no_cache') : t('settings.no_cache_search')}
                         </div>
                     ) : (
                         <table className="w-full border-collapse text-left text-xs">
@@ -175,14 +217,15 @@ export default function CacheSettingsTab() {
                                         </td>
                                         <td className="p-3.5 pr-4 text-right">
                                             <button
+                                                type="button"
                                                 onClick={() => {
-                                                    if (window.confirm(t('settings.delete_cache_confirm'))) {
-                                                        deleteCacheMutation.mutate(c.question_hash);
-                                                    }
+                                                    setPendingDeleteHash(c.question_hash);
+                                                    setConfirmMode('delete');
                                                 }}
                                                 disabled={deleteCacheMutation.isPending}
                                                 className="p-1.5 hover:bg-rose-50 text-slate-400 hover:text-rose-600 rounded-lg transition-colors cursor-pointer disabled:opacity-50"
                                                 title={t('settings.delete_cache_tooltip')}
+                                                aria-label={t('settings.delete_cache_tooltip')}
                                             >
                                                 <Trash2 size={14} />
                                             </button>
@@ -338,5 +381,16 @@ export default function CacheSettingsTab() {
                 )}
             </div>
         </div>
+
+        <ChatbotCacheConfirmDialog
+            isOpen={confirmMode !== null}
+            title={confirmTitle}
+            message={confirmMessage}
+            confirmLabel={confirmLabel}
+            onClose={closeConfirm}
+            onConfirm={handleConfirmCacheAction}
+            isMutating={isConfirmMutating}
+        />
+        </>
     );
 }

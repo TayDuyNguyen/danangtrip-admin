@@ -1,4 +1,4 @@
-import { useEffect, useState, createElement } from 'react';
+import { useEffect, useState, createElement, useMemo } from 'react';
 import { useForm, Controller, useWatch } from 'react-hook-form';
 import CustomSelect from '@/components/ui/CustomSelect';
 import Drawer from '@/components/ui/Drawer';
@@ -11,6 +11,8 @@ import { getCategoryIconComponent, resolveCategoryIconName } from '@/utils/categ
 import { slugifyVietnamese } from '@/utils/slug';
 import { cn } from '@/utils/cn';
 import { motion, AnimatePresence } from 'framer-motion';
+import { CATEGORY_COLOR_OPTIONS } from '@/constants/categoryTheme';
+import { UnsavedChangesGuard } from '@/components/common/UnsavedChangesGuard';
 
 const iconSuggestions = [
     'Map', 'Waves', 'Mountain', 'Landmark', 'Utensils', 'Camera', 
@@ -40,20 +42,10 @@ interface CategoryDialogProps {
     isLoading?: boolean;
 }
 
-const colorOptions = [
-    '#E0F2FE', // Light blue
-    '#FFEDD5', // Orange
-    '#DCFCE7', // Green
-    '#FEF9C3', // Yellow
-    '#FEE2E2', // Red
-    '#E0E7FF', // Indigo
-    '#CFFAFE', // Cyan
-    '#FCE7F3', // Pink
-    '#000000', // Black
-];
+const colorOptions = [...CATEGORY_COLOR_OPTIONS];
 
 const CategoryDialog = ({ isOpen, onClose, onSubmit, initialData, nextSortOrder = 1, isLoading }: CategoryDialogProps) => {
-    const { t } = useTranslation('tour');
+    const { t } = useTranslation(['tour', 'common']);
     
     const [isIconBrowserOpen, setIsIconBrowserOpen] = useState(false);
     const [iconSearch, setIconSearch] = useState('');
@@ -64,7 +56,7 @@ const CategoryDialog = ({ isOpen, onClose, onSubmit, initialData, nextSortOrder 
         reset,
         setValue,
         control,
-        formState: { errors }
+        formState: { errors, isDirty }
     } = useForm<CategoryFormValues>({
         resolver: yupResolver(tourCategorySchema(t)) as never,
         defaultValues: {
@@ -123,16 +115,36 @@ const CategoryDialog = ({ isOpen, onClose, onSubmit, initialData, nextSortOrder 
         }
     }, [isOpen, initialData, reset, nextSortOrder]);
 
+    const statusOptions = useMemo(
+        () => [
+            { value: 'active', label: t('status.active') },
+            { value: 'inactive', label: t('status.inactive') },
+        ],
+        [t]
+    );
+
+    const handleCloseAttempt = () => {
+        if (isDirty && !isLoading) {
+            const confirmClose = window.confirm(t('common:notices.unsaved_changes_body'));
+            if (!confirmClose) return;
+        }
+        onClose();
+    };
+
     return (
-        <Drawer
-            isOpen={isOpen}
-            onClose={onClose}
-            title={initialData ? t('categories.edit') : t('categories.add')}
-            subtitle={initialData ? t('form.edit_subtitle') : t('form.page_subtitle')}
-            badge={!initialData ? t('categories.badge_new') : undefined}
-            width="max-w-md"
-        >
-            <form onSubmit={handleSubmit((data) => onSubmit(data))} className="space-y-6 pb-20">
+        <>
+            <UnsavedChangesGuard isDirty={isDirty && isOpen && !isLoading} />
+            <Drawer
+                isOpen={isOpen}
+                onClose={handleCloseAttempt}
+                title={initialData ? t('categories.edit') : t('categories.add')}
+                subtitle={initialData ? t('form.edit_subtitle') : t('form.page_subtitle')}
+                badge={!initialData ? t('categories.badge_new') : undefined}
+                width="max-w-md"
+                closeOnBackdropClick={false}
+                panelTestId="tour-category-drawer"
+            >
+            <form onSubmit={handleSubmit((data) => onSubmit(data))} noValidate className="space-y-6 pb-20">
                 {/* Name */}
                 <div className="space-y-2">
                     <label className="text-[11px] font-black uppercase tracking-widest text-slate-500 ml-1">
@@ -141,6 +153,7 @@ const CategoryDialog = ({ isOpen, onClose, onSubmit, initialData, nextSortOrder 
                     <input
                         {...register('name')}
                         type="text"
+                        data-testid="tour-category-name-input"
                         placeholder={t('categories.form.name_placeholder')}
                         className="w-full px-5 py-3.5 rounded-2xl bg-slate-50 border border-slate-200 focus:bg-white focus:border-[#14b8a6] focus:ring-4 focus:ring-[#14b8a6]/10 outline-hidden transition-all font-bold text-slate-900 placeholder:text-slate-400"
                     />
@@ -242,7 +255,12 @@ const CategoryDialog = ({ isOpen, onClose, onSubmit, initialData, nextSortOrder 
                                 {/* Icon Grid with Filter */}
                                 <div className="grid grid-cols-6 gap-2 max-h-[240px] overflow-y-auto pr-2 no-scrollbar">
                                     {iconSuggestions
-                                        .filter(name => name.toLowerCase().includes(iconSearch.toLowerCase()))
+                                        .reduce<string[]>((matches, name) => {
+                                            if (name.toLowerCase().includes(iconSearch.toLowerCase())) {
+                                                matches.push(name);
+                                            }
+                                            return matches;
+                                        }, [])
                                         .map((name) => {
                                             const IconComp = getCategoryIconComponent(name, 'HelpCircle');
                                             const isSelected = selectedIcon === name;
@@ -347,14 +365,8 @@ const CategoryDialog = ({ isOpen, onClose, onSubmit, initialData, nextSortOrder 
                             control={control}
                             render={({ field }) => (
                                 <CustomSelect
-                                    options={[
-                                        { value: 'active', label: t('status.active') },
-                                        { value: 'inactive', label: t('status.inactive') },
-                                    ]}
-                                    value={[
-                                        { value: 'active', label: t('status.active') },
-                                        { value: 'inactive', label: t('status.inactive') },
-                                    ].find(opt => opt.value === field.value)}
+                                    options={statusOptions}
+                                    value={statusOptions.find(opt => opt.value === field.value)}
                                     onChange={(opt) => field.onChange((opt as { value: string })?.value)}
                                 />
                             )}
@@ -366,7 +378,7 @@ const CategoryDialog = ({ isOpen, onClose, onSubmit, initialData, nextSortOrder 
                 <div className="fixed bottom-0 right-0 left-0 p-6 bg-white border-t border-slate-100 flex items-center justify-end gap-3 z-10">
                     <button
                         type="button"
-                        onClick={onClose}
+                        onClick={handleCloseAttempt}
                         className="px-8 py-3.5 rounded-2xl font-black text-slate-500 hover:bg-slate-100 transition-all"
                     >
                         {t('dialog.button_cancel')}
@@ -374,6 +386,7 @@ const CategoryDialog = ({ isOpen, onClose, onSubmit, initialData, nextSortOrder 
                     <button
                         type="submit"
                         disabled={isLoading}
+                        data-testid="tour-category-save"
                         className="flex items-center gap-2 bg-[#14b8a6] text-white px-10 py-3.5 rounded-2xl font-black hover:bg-[#0f766e] hover:scale-105 active:scale-95 transition-all shadow-xl shadow-[#14b8a6]/20 disabled:opacity-50"
                     >
                         {isLoading ? (
@@ -386,6 +399,7 @@ const CategoryDialog = ({ isOpen, onClose, onSubmit, initialData, nextSortOrder 
                 </div>
             </form>
         </Drawer>
+        </>
     );
 };
 

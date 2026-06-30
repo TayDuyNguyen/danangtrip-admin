@@ -1,12 +1,14 @@
 import type { ContactItem } from "@/dataHelper";
 import { useTranslation } from "react-i18next";
 import type { TFunction } from "i18next";
+import { Trash2 } from "lucide-react";
 import Badge from "@/components/ui/Badge";
 
 interface ContactListItemProps {
     item: ContactItem;
     isActive: boolean;
     onClick: () => void;
+    onDeleteClick: () => void;
 }
 
 const getRelativeTimeString = (dateString: string, locale: string, t: TFunction) => {
@@ -37,6 +39,7 @@ export const ContactListItem = ({
     item,
     isActive,
     onClick,
+    onDeleteClick,
 }: ContactListItemProps) => {
     const { t, i18n } = useTranslation("contact");
 
@@ -52,7 +55,7 @@ export const ContactListItem = ({
         <div
             onClick={onClick}
             className={`
-                px-4 py-3.5 border-b border-slate-50 cursor-pointer transition-all duration-200 relative select-none
+                group px-4 py-3.5 border-b border-slate-50 cursor-pointer transition-all duration-200 relative select-none
                 ${isActive 
                     ? "bg-[#EFF6FF] border-l-4 border-[#14b8a6]" 
                     : isNew 
@@ -70,9 +73,24 @@ export const ContactListItem = ({
                 <span className={`text-[13px] font-bold truncate ${isNew ? "text-slate-900 font-extrabold" : "text-slate-700"}`}>
                     {item.name}
                 </span>
-                <span className="text-[10px] font-medium text-slate-400 shrink-0">
-                    {getRelativeTimeString(item.createdAt, i18n.language, t)}
-                </span>
+                <div className="flex items-center gap-1 shrink-0">
+                    <button
+                        type="button"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onDeleteClick();
+                        }}
+                        aria-label={t("actions.delete")}
+                        title={t("actions.delete")}
+                        data-testid={`contact-list-delete-${item.id}`}
+                        className="w-7 h-7 rounded-lg border border-slate-100 bg-white hover:border-rose-100 hover:bg-rose-50 text-slate-400 hover:text-rose-500 flex items-center justify-center transition-all shrink-0 cursor-pointer"
+                    >
+                        <Trash2 size={13} />
+                    </button>
+                    <span className="text-[10px] font-medium text-slate-400">
+                        {getRelativeTimeString(item.createdAt, i18n.language, t)}
+                    </span>
+                </div>
             </div>
 
             {/* Row 2: Subject */}

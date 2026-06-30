@@ -8,7 +8,7 @@ import axiosClient from "@/api/axiosClient";
 import { API_ENDPOINTS } from "@/constants";
 import { mapApiErrorMessage } from "@/utils";
 
-export const blogKeys = {
+const blogKeys = {
     all: ["blogs"] as const,
     lists: () => [...blogKeys.all, "list"] as const,
     list: (filters: BlogListFilters, page: number, limit: number) =>

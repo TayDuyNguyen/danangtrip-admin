@@ -87,11 +87,23 @@
         "meta_title_min": "Meta title phải chứa ít nhất 10 ký tự.",
         "meta_title_max": "Meta title không được vượt quá 100 ký tự.",
         "meta_description_min": "Meta description phải chứa ít nhất 20 ký tự.",
-        "meta_description_max": "Meta description không được vượt quá 200 ký tự."
+        "meta_description_max": "Meta description không được vượt quá 200 ký tự.",
+        "url_invalid": "URL không hợp lệ."
+    },
+    "hints": {
+        "chatbot_managed_elsewhere": "Cấu hình Chatbot AI được quản lý riêng tại màn",
+        "payment_reserved": "Cổng dự phòng — chưa kích hoạt trên hệ thống."
     },
     "actions": {
         "save_success": "Cấu hình website đã được lưu thành công.",
         "save_failed": "Lỗi cập nhật cấu hình website.",
+        "load_failed": "Không tải được cấu hình website.",
+        "load_failed_desc": "Dữ liệu cấu hình tạm thời không khả dụng. Vui lòng thử tải lại.",
+        "retry": "Thử lại",
+        "loading_config": "Đang tải cấu hình...",
+        "change_image": "Thay đổi",
+        "payment_toggle_enable": "Bật {{gateway}}",
+        "payment_toggle_disable": "Tắt {{gateway}}",
         "discard": "Hủy bỏ",
         "save": "Lưu thay đổi",
         "saving": "Đang lưu cấu hình...",

@@ -98,8 +98,6 @@ const copy = {
 
   sidebarPromotions: /Khuyến mãi|Promotions/i,
 
-  sidebarLanding: /Landing Pages/i,
-
   logout: /Đăng xuất|Logout/i,
 
   contactsNotif: /Liên hệ mới|New contacts/i,

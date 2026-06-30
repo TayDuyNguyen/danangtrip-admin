@@ -1,7 +1,9 @@
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import { Reorder } from 'framer-motion';
 import { GripVertical, Folder, Pencil, Trash2, FileText } from 'lucide-react';
 import type { BlogCategoryViewModel } from '@/types';
+import { ROUTES } from '@/routes/routes';
 
 interface BlogCategoryTableProps {
     categories: BlogCategoryViewModel[];
@@ -32,9 +34,11 @@ const BlogCategoryCard = ({
     const { t } = useTranslation('blog');
     const isEditing = editingId === category.id;
     const postCount = category.postCount || 0;
+    const canDelete = postCount === 0;
 
     return (
         <div
+            data-testid={`blog-category-card-${category.id}`}
             className={`rounded-[28px] border bg-white p-5 shadow-sm transition-all ${
                 isEditing
                     ? 'border-[#0066CC]/30 ring-4 ring-[#0066CC]/5'
@@ -50,6 +54,7 @@ const BlogCategoryCard = ({
                             : 'border-slate-200 bg-slate-50 text-slate-400'
                     }`}
                     tabIndex={-1}
+                    aria-hidden
                 >
                     <GripVertical size={18} />
                 </button>
@@ -93,18 +98,31 @@ const BlogCategoryCard = ({
                     {!isReorderMode && (
                         <div className="flex items-center gap-2">
                             <button
+                                type="button"
                                 onClick={() => onEdit(category)}
+                                aria-label={t('category.actions.edit', { name: category.name })}
+                                data-testid={`blog-category-edit-${category.id}`}
                                 className="rounded-xl border border-slate-200 bg-white p-2.5 text-slate-500 transition-colors hover:bg-slate-50 hover:text-[#0066CC]"
                                 title={t('actions.edit')}
-                                type="button"
                             >
                                 <Pencil size={15} />
                             </button>
                             <button
-                                onClick={() => onDelete(category)}
-                                className="rounded-xl border border-slate-200 bg-white p-2.5 text-slate-500 transition-colors hover:bg-slate-50 hover:text-red-500"
-                                title={t('actions.delete')}
                                 type="button"
+                                onClick={() => onDelete(category)}
+                                disabled={!canDelete}
+                                aria-label={
+                                    canDelete
+                                        ? t('category.actions.delete', { name: category.name })
+                                        : t('category.actions.delete_blocked', { count: postCount })
+                                }
+                                title={
+                                    canDelete
+                                        ? t('actions.delete')
+                                        : t('category.actions.delete_blocked', { count: postCount })
+                                }
+                                data-testid={`blog-category-delete-${category.id}`}
+                                className="rounded-xl border border-slate-200 bg-white p-2.5 text-slate-500 transition-colors hover:bg-slate-50 hover:text-red-500 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-slate-200 disabled:hover:text-slate-500"
                             >
                                 <Trash2 size={15} />
                             </button>
@@ -121,7 +139,17 @@ const BlogCategoryCard = ({
                     <p className="text-[11px] font-black uppercase tracking-widest text-slate-400">
                         {t('category.card.posts_count')}
                     </p>
-                    <p className="mt-1 text-lg font-black text-slate-900">{postCount}</p>
+                    {postCount > 0 ? (
+                        <Link
+                            to={`${ROUTES.BLOG_POSTS}?category_id=${category.id}`}
+                            className="mt-1 inline-block text-lg font-black text-[#0066CC] hover:underline"
+                            data-testid={`blog-category-posts-link-${category.id}`}
+                        >
+                            {postCount}
+                        </Link>
+                    ) : (
+                        <p className="mt-1 text-lg font-black text-slate-900">{postCount}</p>
+                    )}
                 </div>
             </div>
         </div>
@@ -156,13 +184,13 @@ export const BlogCategoryTable = ({
     }
 
     return (
-        <div className="grid gap-4 p-6 xl:grid-cols-2">
+        <div className="grid gap-4 p-6 xl:grid-cols-2" data-testid="blog-category-grid">
             {categories.map((category, index) => (
                 <BlogCategoryCard
                     key={category.id}
                     category={category}
                     editingId={editingId}
-                    displayOrder={index + 1}
+                    displayOrder={category.sortOrder || index + 1}
                     onEdit={onEdit}
                     onDelete={onDelete}
                 />

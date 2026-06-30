@@ -7,6 +7,7 @@ interface ErrorWidgetProps {
     message?: string;
     onRetry?: () => void;
     onBack?: () => void;
+    backLabel?: string;
     className?: string;
 }
 
@@ -15,9 +16,10 @@ const ErrorWidget = ({
     message,
     onRetry,
     onBack,
+    backLabel,
     className,
 }: ErrorWidgetProps) => {
-    const { t } = useTranslation('dashboard');
+    const { t } = useTranslation(['dashboard', 'common']);
 
     return (
         <div className={cn("flex flex-col items-center justify-center p-6 text-center bg-red-50/30 rounded-3xl border border-red-100/50 h-full", className)}>
@@ -44,7 +46,7 @@ const ErrorWidget = ({
                             onClick={onBack}
                             className="px-4 py-2 bg-white border border-red-100 text-red-600 text-xs font-black rounded-xl hover:bg-red-50 transition-colors shadow-sm active:scale-95"
                         >
-                            {t('common:actions.close')}
+                            {backLabel ?? t('common:actions.close')}
                         </button>
                     )}
                 </div>

@@ -10,7 +10,10 @@
     "stats": {
         "total": "TOTAL NOTIFICATIONS",
         "read": "READ",
-        "unread": "UNREAD"
+        "unread": "UNREAD",
+        "total_filtered": "TOTAL (FILTERED)",
+        "read_filtered": "READ (FILTERED)",
+        "unread_filtered": "UNREAD (FILTERED)"
     },
     "filters": {
         "search_placeholder": "Search title, content...",
@@ -53,24 +56,31 @@
     "dialog": {
         "delete_title": "Delete this notification?",
         "delete_body": "This notification will be permanently removed from the system. Are you sure you want to proceed?",
+        "bulk_delete_title": "Delete selected notifications?",
+        "bulk_delete_body": "Are you sure you want to delete {{count}} selected notifications? This action cannot be undone.",
         "delete_confirm": "Delete",
         "cancel": "Cancel"
     },
     "toast": {
         "delete_success": "Notification deleted successfully!",
         "bulk_delete_success": "Selected notifications deleted successfully!",
+        "bulk_delete_partial": "Deleted {{success}} of {{total}} notifications. {{failed}} failed.",
         "network_error": "An error occurred. Please try again!"
     },
     "send": {
         "title": "Send Notification",
         "subtitle": "Send notifications to system users",
         "breadcrumb": "Send Notification",
+        "breadcrumb_aria": "Current page: Send notification",
         "btn_cancel": "Cancel",
         "btn_submit": "Send notification",
+        "btn_submit_aria": "Submit notification from header actions",
         "btn_sending": "Sending...",
         "mode_individual": "Send Individual",
         "mode_bulk": "Send Bulk",
-        "bulk_warning": "Notification will be sent to all users in the system ({{count}} users). This action cannot be undone.",
+        "bulk_warning": "Notification will be sent to all active users ({{count}} users). This action cannot be undone.",
+        "bulk_disabled_no_users": "No active users available for bulk send.",
+        "clear_recipient": "Clear selected recipient",
         "label_recipient": "Recipient *",
         "placeholder_search_user": "Search by name, email, username...",
         "loading_users": "Loading users...",
@@ -86,6 +96,7 @@
         "label_data_helper": "Optional. Paste a page link to open when the user clicks the notification.",
         "preview_title": "Preview",
         "preview_empty_title": "Notification title",
+        "preview_empty_content": "Notification content will appear here",
         "preview_time": "Just now",
         "preview_to_all": "All {{count}} users",
         "guide_title": "💡 Notes",
@@ -95,11 +106,11 @@
         "guide_item_4": "Users receive notifications in-app and via email",
         "validation": {
             "user_required": "Please select a recipient",
+            "type_required": "Notification type is required",
             "title_required": "Title is required",
             "title_max": "Title must not exceed 100 characters",
             "content_required": "Content is required",
             "content_max": "Content must not exceed 500 characters",
-            "data_invalid_json": "Invalid JSON data",
             "data_invalid_link": "Link must start with /, http://, or https://"
         },
         "dialog": {

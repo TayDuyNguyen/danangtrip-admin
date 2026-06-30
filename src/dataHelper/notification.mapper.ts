@@ -22,7 +22,7 @@ const parseDataSafe = (data: string | Record<string, unknown> | null): Record<st
 /**
  * Map raw notification item to UI view model
  */
-export const mapNotificationItem = (raw: RawNotificationItem): NotificationViewModel => {
+const mapNotificationItem = (raw: RawNotificationItem): NotificationViewModel => {
     return {
         id: raw.id,
         userId: raw.user_id,

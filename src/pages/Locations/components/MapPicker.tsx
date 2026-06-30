@@ -192,7 +192,7 @@ const MapPicker = ({ lat, lng, onChange, address }: MapPickerProps) => {
                             onChange(DANANG_CENTER[0], DANANG_CENTER[1]);
                         }}
                         className="p-2 bg-white rounded-lg shadow-md border border-slate-200 text-slate-600 hover:text-[#14b8a6] transition-colors"
-                        title="Reset to Da Nang Center"
+                        aria-label={t('form.map.reset_center')}
                     >
                         <MapPin className="w-5 h-5" />
                     </button>

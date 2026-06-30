@@ -9,8 +9,6 @@ import CustomSelect, { type Option } from "@/components/ui/CustomSelect";
 interface PaymentFilterBarProps {
     filters: PaymentListFilters;
     onFilterChange: (newFilters: PaymentListFilters) => void;
-    onExport: () => void;
-    isExporting?: boolean;
 }
 
 export const PaymentFilterBar = ({
@@ -60,6 +58,7 @@ export const PaymentFilterBar = ({
     const statusOptions = [
         { value: "all", label: t("filter.all_statuses", "Tất cả Trạng thái") },
         { value: "pending", label: t("status.pending", "Đang chờ") },
+        { value: "partially_paid", label: t("status.partially_paid", "Thanh toán một phần") },
         { value: "success", label: t("status.success", "Thành công") },
         { value: "failed", label: t("status.failed", "Lỗi") },
         { value: "refunded", label: t("status.refunded", "Đã hoàn tiền") },
@@ -68,7 +67,7 @@ export const PaymentFilterBar = ({
     const gatewayOptions = [
         { value: "all", label: t("filter.all_gateways", "Tất cả Cổng thanh toán") },
         { value: "sepay", label: "SePay" },
-        { value: "bank_transfer", label: "Chuyển khoản" },
+        { value: "bank_transfer", label: t("filter.gateway_bank_transfer", "Chuyển khoản") },
         { value: "momo", label: "MoMo" },
         { value: "vnpay", label: "VNPay" },
         { value: "zalopay", label: "ZaloPay" },
@@ -77,12 +76,12 @@ export const PaymentFilterBar = ({
     const currentStatus = statusOptions.find(opt => opt.value === (filters.payment_status || "all")) || statusOptions[0];
     const currentGateway = gatewayOptions.find(opt => opt.value === (filters.payment_gateway || "all")) || gatewayOptions[0];
     const refundOptions = [
-        { value: "all", label: "Tất cả yêu cầu hoàn" },
-        { value: "pending", label: "Chờ hoàn tiền" },
-        { value: "processing", label: "Đang xử lý hoàn" },
-        { value: "completed", label: "Đã hoàn tiền" },
-        { value: "failed", label: "Hoàn tiền thất bại" },
-        { value: "rejected", label: "Từ chối hoàn" },
+        { value: "all", label: t("filter.all_refund_statuses", "Tất cả yêu cầu hoàn") },
+        { value: "pending", label: t("filter.refund_pending", "Chờ hoàn tiền") },
+        { value: "processing", label: t("filter.refund_processing", "Đang xử lý hoàn") },
+        { value: "completed", label: t("filter.refund_completed", "Đã hoàn tiền") },
+        { value: "failed", label: t("filter.refund_failed", "Hoàn tiền thất bại") },
+        { value: "rejected", label: t("filter.refund_rejected", "Từ chối hoàn") },
     ];
     const currentRefund = refundOptions.find(opt => opt.value === (filters.refund_status || "all")) || refundOptions[0];
 

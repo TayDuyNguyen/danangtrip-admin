@@ -1,7 +1,8 @@
-import { Mail, Trash2, Phone, CheckCircle, MailCheck } from "lucide-react";
+import { Mail, Trash2, Phone, CheckCircle, MailCheck, RefreshCw } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import Badge from "@/components/ui/Badge";
 import { Skeleton } from "@/components/ui/Skeleton";
+import EmptyState from "@/components/common/EmptyState";
 import ReplyForm from "./ReplyForm";
 import type { ContactItem } from "@/dataHelper";
 
@@ -9,6 +10,7 @@ interface ContactDetailPanelProps {
     item?: ContactItem;
     isLoading?: boolean;
     isError?: boolean;
+    onRetry?: () => void;
     onDeleteClick: () => void;
     onReplySubmit: (data: { reply: string }) => void;
     isReplying?: boolean;
@@ -18,11 +20,12 @@ export const ContactDetailPanel = ({
     item,
     isLoading = false,
     isError = false,
+    onRetry,
     onDeleteClick,
     onReplySubmit,
     isReplying = false,
 }: ContactDetailPanelProps) => {
-    const { t } = useTranslation("contact");
+    const { t } = useTranslation(["contact", "common"]);
 
     if (isLoading) {
         return (
@@ -59,16 +62,26 @@ export const ContactDetailPanel = ({
 
     if (isError) {
         return (
-            <div className="bg-white/80 backdrop-blur-md rounded-3xl p-8 border border-slate-100 shadow-2xs h-full flex flex-col items-center justify-center text-center">
-                <div className="w-16 h-16 rounded-full bg-rose-50 flex items-center justify-center text-rose-500 mb-4">
-                    <Mail size={32} />
-                </div>
-                <h3 className="text-slate-900 font-black text-lg tracking-tight mb-2">
-                    {t("toast.network_error")}
-                </h3>
-                <p className="text-slate-400 text-sm font-semibold">
-                    {t("toast.network_error")}
-                </p>
+            <div
+                className="bg-white/80 backdrop-blur-md rounded-3xl p-8 border border-slate-100 shadow-2xs h-full flex flex-col items-center justify-center text-center"
+                data-testid="contact-detail-error"
+            >
+                <EmptyState
+                    icon={Mail}
+                    title={t("errors.detail_load_failed")}
+                    description={t("errors.detail_load_failed_desc")}
+                    iconClassName="bg-rose-50 text-rose-500"
+                />
+                {onRetry && (
+                    <button
+                        type="button"
+                        onClick={() => void onRetry()}
+                        className="mt-2 px-6 py-2.5 bg-[#14b8a6] text-white rounded-xl text-[13px] font-bold hover:bg-[#0f766e] transition-colors inline-flex items-center gap-2"
+                    >
+                        <RefreshCw className="w-4 h-4" />
+                        {t("actions.retry", { ns: "common", defaultValue: "Thử lại" })}
+                    </button>
+                )}
             </div>
         );
     }
@@ -143,7 +156,9 @@ export const ContactDetailPanel = ({
                 </div>
 
                 <button
+                    type="button"
                     onClick={onDeleteClick}
+                    aria-label={t("actions.delete")}
                     className="p-3 bg-white border border-rose-100 hover:bg-rose-50 text-rose-500 rounded-2xl transition-all duration-300 flex items-center gap-2 cursor-pointer shadow-xs font-bold text-sm shrink-0 active:scale-95"
                     title={t("actions.delete")}
                 >

@@ -3,6 +3,7 @@ import { Check, X, Trash2, Eye, ExternalLink, Star, RefreshCw } from 'lucide-rea
 import { useAuth } from '@/store';
 import { useTranslation } from 'react-i18next';
 import type { RatingsReportItemViewModel } from '@/dataHelper/report.dataHelper';
+import ReportPerPageSelector from '../../shared/ReportPerPageSelector';
 
 interface RatingsReportTableProps {
     data?: {
@@ -16,6 +17,7 @@ interface RatingsReportTableProps {
     };
     isLoading?: boolean;
     onPageChange: (page: number) => void;
+    onPerPageChange?: (perPage: number) => void;
     onApprove: (id: number) => void;
     onReject: (id: number) => void;
     onDelete: (id: number) => void;
@@ -26,6 +28,7 @@ const RatingsReportTable: React.FC<RatingsReportTableProps> = ({
     data,
     isLoading = false,
     onPageChange,
+    onPerPageChange,
     onApprove,
     onReject,
     onDelete,
@@ -221,9 +224,18 @@ const RatingsReportTable: React.FC<RatingsReportTableProps> = ({
                 {/* Pagination Footer */}
                 {!isLoading && pagination && pagination.total > 0 && (
                     <div className="px-[24px] py-[16px] border-t border-[#E2E8F0] flex flex-col sm:flex-row gap-4 justify-between items-center bg-[#F8FAFC]/50 shrink-0">
-                        <span className="text-[12px] font-bold text-[#94A3B8]">
-                            {t('table.pagination_showing', { from: startIndex, to: endIndex, total: pagination.total.toLocaleString() })}
-                        </span>
+                        <div className="flex flex-col sm:flex-row gap-3 items-center">
+                            <span className="text-[12px] font-bold text-[#94A3B8]">
+                                {t('table.pagination_showing', { from: startIndex, to: endIndex, total: pagination.total.toLocaleString() })}
+                            </span>
+                            {onPerPageChange && (
+                                <ReportPerPageSelector
+                                    value={pagination.perPage}
+                                    onChange={onPerPageChange}
+                                    testId="ratings-report-per-page"
+                                />
+                            )}
+                        </div>
                         <div className="flex gap-1.5 items-center">
                             <button type="button" onClick={() => onPageChange(pagination.currentPage - 1)}
                                 disabled={pagination.currentPage <= 1 || isModerating}

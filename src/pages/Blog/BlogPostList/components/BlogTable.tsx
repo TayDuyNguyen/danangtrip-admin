@@ -186,6 +186,7 @@ export const BlogTable = ({
                                     type="checkbox"
                                     checked={allChecked}
                                     onChange={(e) => onSelectAll(e.target.checked)}
+                                    aria-label={t("common:table.select_all", "Chọn tất cả")}
                                     className="w-4 h-4 rounded border-slate-300 text-[#14b8a6] focus:ring-[#14b8a6]/20 accent-[#14b8a6] cursor-pointer"
                                 />
                             </th>
@@ -252,6 +253,10 @@ export const BlogTable = ({
                                                 type="checkbox"
                                                 checked={isSelected}
                                                 onChange={() => onSelectRow(item.id)}
+                                                aria-label={t("common:table.select_row", {
+                                                    name: item.title,
+                                                    defaultValue: `Chọn ${item.title}`,
+                                                })}
                                                 className="w-4 h-4 rounded border-[#E2E8F0] text-[#14b8a6] focus:ring-[#14b8a6]/20 accent-[#14b8a6] cursor-pointer"
                                             />
                                         </td>
@@ -408,6 +413,7 @@ export const BlogTable = ({
                                                     type="button"
                                                     onClick={() => navigate(`/admin/blog-posts/${item.id}`)}
                                                     className="w-[30px] h-[30px] flex items-center justify-center bg-white border border-[#E2E8F0] text-[#64748B] hover:text-[#14B8A6] hover:border-[#14B8A6] rounded-[6px] transition-all duration-200 cursor-pointer shadow-sm"
+                                                    aria-label={t("actions.view")}
                                                     title={t("actions.view")}
                                                 >
                                                     <Eye size={14} />
@@ -416,6 +422,7 @@ export const BlogTable = ({
                                                     type="button"
                                                     onClick={() => navigate(ROUTES.BLOG_POSTS_EDIT.replace(':id', String(item.id)))}
                                                     className="w-[30px] h-[30px] flex items-center justify-center bg-white border border-[#E2E8F0] text-[#64748B] hover:text-[#F59E0B] hover:border-[#F59E0B] rounded-[6px] transition-all duration-200 cursor-pointer shadow-sm"
+                                                    aria-label={t("actions.edit")}
                                                     title={t("actions.edit")}
                                                 >
                                                     <Edit size={14} />
@@ -424,6 +431,7 @@ export const BlogTable = ({
                                                     type="button"
                                                     onClick={() => onDelete(item.id)}
                                                     className="w-[30px] h-[30px] flex items-center justify-center bg-white border border-[#E2E8F0] text-[#64748B] hover:text-[#EF4444] hover:border-[#EF4444] rounded-[6px] transition-all duration-200 cursor-pointer shadow-sm"
+                                                    aria-label={t("actions.delete")}
                                                     title={t("actions.delete")}
                                                 >
                                                     <Trash2 size={14} />
@@ -474,7 +482,12 @@ export const BlogTable = ({
 
                         <div className="flex items-center gap-1.5">
                             {Array.from({ length: lastPage }, (_, i) => i + 1)
-                                .filter(p => p === 1 || p === lastPage || Math.abs(p - page) <= 1)
+                                .reduce<number[]>((pages, p) => {
+                                    if (p === 1 || p === lastPage || Math.abs(p - page) <= 1) {
+                                        pages.push(p);
+                                    }
+                                    return pages;
+                                }, [])
                                 .map((p, i, arr) => (
                                     <div key={p} className="flex items-center gap-1.5">
                                         {i > 0 && arr[i - 1] !== p - 1 && (

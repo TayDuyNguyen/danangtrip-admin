@@ -7,6 +7,7 @@ interface ToggleSwitchProps {
     disabled?: boolean;
     className?: string;
     size?: 'sm' | 'md';
+    ariaLabel?: string;
 }
 
 const ToggleSwitch = ({ 
@@ -14,13 +15,17 @@ const ToggleSwitch = ({
     onChange, 
     disabled = false, 
     className = '',
-    size = 'md'
+    size = 'md',
+    ariaLabel,
 }: ToggleSwitchProps) => {
     const isSm = size === 'sm';
     
     return (
         <button
             type="button"
+            role="switch"
+            aria-checked={enabled}
+            aria-label={ariaLabel}
             onClick={() => !disabled && onChange(!enabled)}
             disabled={disabled}
             className={cn(

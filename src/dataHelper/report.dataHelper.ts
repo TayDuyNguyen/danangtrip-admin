@@ -336,6 +336,17 @@ export interface RawTourRevenueDetail {
     total_revenue: number | string;
 }
 
+export interface RawRevenueGatewayBreakdownItem {
+    gateway: string;
+    revenue: number | string;
+    count: number;
+}
+
+export interface RawRevenuePaymentsSummary {
+    gateway_breakdown: RawRevenueGatewayBreakdownItem[];
+    total_refunded: number | string;
+}
+
 /**
  * Raw individual payment item from /admin/payments
  */
@@ -350,6 +361,7 @@ export interface RawRevenueReportItem {
     booking?: {
         id: number;
         booking_code: string;
+        tour_name?: string | null;
         user?: {
             id: number;
             full_name: string;
@@ -525,12 +537,20 @@ export interface RawUsersReportMonthStat {
     count: number;
 }
 
+export interface RawUsersReportRoleStat {
+    role: string;
+    count: number;
+}
+
 /**
  * Raw Users Report payload from backend
  */
 export interface RawUsersReport {
     year: number;
     stats: RawUsersReportMonthStat[];
+    total_users?: number;
+    active_users?: number;
+    role_distribution?: RawUsersReportRoleStat[];
 }
 
 /**
@@ -543,6 +563,14 @@ export interface UsersReportMonthViewModel {
     cumulativeCount: number;// running total of new users
 }
 
+export interface UsersRoleDistributionPoint {
+    role: string;
+    labelKey: string;
+    count: number;
+    percentage: number;
+    color: string;
+}
+
 /**
  * Complete UI View Model for Users Report
  */
@@ -550,5 +578,9 @@ export interface UsersReportViewModel {
     year: number;
     stats: UsersReportMonthViewModel[];
     totalNewUsers: number;
+    totalUsers: number;
+    activeUsers: number;
+    activeRate: number;
+    roleDistribution: UsersRoleDistributionPoint[];
 }
 

@@ -139,7 +139,7 @@ const PromotionFormDrawer = ({ isOpen, onClose, initialData, onSubmit, isSubmitt
             onClose={handleClose}
             title={initialData ? t('actions.edit') : t('actions.add_new')}
             subtitle={t('subtitle')}
-            badge={!initialData ? 'New' : undefined}
+            badge={!initialData ? t('labels.new_badge') : undefined}
             width="max-w-xl"
         >
             <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6 pb-24 font-sans text-slate-800">
@@ -147,7 +147,7 @@ const PromotionFormDrawer = ({ isOpen, onClose, initialData, onSubmit, isSubmitt
                 <div className="space-y-4">
                     <h3 className="flex items-center gap-2 text-[12px] font-black uppercase tracking-wider text-[#14b8a6]">
                         <Tag size={14} />
-                        Thông tin cơ bản
+                        {t('form.section_basic')}
                     </h3>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -158,7 +158,7 @@ const PromotionFormDrawer = ({ isOpen, onClose, initialData, onSubmit, isSubmitt
                             <input
                                 {...register('code')}
                                 type="text"
-                                placeholder="Ví dụ: SUMMER50"
+                                placeholder={t('fields.code_placeholder')}
                                 className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 font-bold text-slate-900 uppercase placeholder:text-slate-400 focus:border-[#14b8a6] focus:bg-white focus:outline-hidden"
                             />
                             <p className="text-[10px] text-slate-400 font-medium italic">{t('fields.code_help')}</p>
@@ -177,7 +177,7 @@ const PromotionFormDrawer = ({ isOpen, onClose, initialData, onSubmit, isSubmitt
                             <input
                                 {...register('name')}
                                 type="text"
-                                placeholder="Khuyến mãi hè rực rỡ"
+                                placeholder={t('fields.name_placeholder')}
                                 className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 font-bold text-slate-900 placeholder:text-slate-400 focus:border-[#14b8a6] focus:bg-white focus:outline-hidden"
                             />
                             <p className="text-[10px] text-slate-400 font-medium italic">{t('fields.name_help')}</p>
@@ -197,7 +197,7 @@ const PromotionFormDrawer = ({ isOpen, onClose, initialData, onSubmit, isSubmitt
                         <textarea
                             {...register('description')}
                             rows={3}
-                            placeholder="Mô tả chi tiết điều kiện hoặc phạm vi khuyến mãi..."
+                            placeholder={t('fields.description_placeholder')}
                             className="w-full resize-none rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 font-bold text-slate-900 placeholder:text-slate-400 focus:border-[#14b8a6] focus:bg-white focus:outline-hidden"
                         />
                     </div>
@@ -210,7 +210,7 @@ const PromotionFormDrawer = ({ isOpen, onClose, initialData, onSubmit, isSubmitt
                 <div className="space-y-4">
                     <h3 className="flex items-center gap-2 text-[12px] font-black uppercase tracking-wider text-[#14b8a6]">
                         <Save size={14} />
-                        Cấu hình giảm giá
+                        {t('form.section_discount')}
                     </h3>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -297,7 +297,7 @@ const PromotionFormDrawer = ({ isOpen, onClose, initialData, onSubmit, isSubmitt
                 <div className="space-y-4">
                     <h3 className="flex items-center gap-2 text-[12px] font-black uppercase tracking-wider text-[#14b8a6]">
                         <HelpCircle size={14} />
-                        Điều kiện & Giới hạn áp dụng
+                        {t('form.section_conditions')}
                     </h3>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -395,7 +395,7 @@ const PromotionFormDrawer = ({ isOpen, onClose, initialData, onSubmit, isSubmitt
                 <div className="space-y-4">
                     <h3 className="flex items-center gap-2 text-[12px] font-black uppercase tracking-wider text-[#14b8a6]">
                         <Calendar size={14} />
-                        Thời gian hiệu lực
+                        {t('form.section_validity')}
                     </h3>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

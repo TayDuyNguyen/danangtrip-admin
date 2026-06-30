@@ -28,6 +28,7 @@ import RefundPaymentDialog from '../PaymentList/components/RefundPaymentDialog';
 import { formatCurrency } from '@/utils/pricing';
 import { formatAdminShortDate } from '@/utils/dateDisplay';
 import { mapApiErrorMessage } from '@/utils';
+import { isPaymentDetailNotFoundError } from '@/utils/paymentDetailError';
 import Breadcrumbs from '@/components/common/Breadcrumbs';
 
 /**
@@ -138,7 +139,8 @@ export const PaymentDetail = () => {
     const [isRefundDialogOpen, setIsRefundDialogOpen] = useState(false);
 
     // Queries & Mutations
-    const { data: payment, isLoading, error } = useAdminPaymentDetailQuery(id || '');
+    const { data: payment, isLoading, isError, error, refetch } = useAdminPaymentDetailQuery(id || '');
+    const isNotFound = isError && isPaymentDetailNotFoundError(error);
     const { refundMutation } = usePaymentMutations();
 
     const handleRefundSubmit = (data: {
@@ -174,21 +176,39 @@ export const PaymentDetail = () => {
         );
     }
 
-    if (error || !payment) {
+    if (isError || !payment) {
         return (
-            <div className="flex flex-col items-center justify-center min-h-[400px] text-center p-6 bg-white border border-slate-100 rounded-3xl shadow-xs">
+            <div
+                className="flex flex-col items-center justify-center min-h-[400px] text-center p-6 bg-white border border-slate-100 rounded-3xl shadow-xs"
+                data-testid="payment-detail-error"
+            >
                 <AlertCircle size={40} className="text-rose-500 mb-3" />
-                <h3 className="text-slate-900 text-lg font-bold">{t('detail.not_found', 'Không tìm thấy giao dịch')}</h3>
+                <h3 className="text-slate-900 text-lg font-bold">
+                    {t(isNotFound ? 'detail.not_found_title' : 'detail.load_error_title')}
+                </h3>
                 <p className="text-slate-500 text-sm mt-1 mb-6">
-                    {t('detail.not_found_desc', 'Không tìm thấy giao dịch hoặc giao dịch không tồn tại.')}
+                    {t(isNotFound ? 'detail.not_found_description' : 'detail.load_error_description')}
                 </p>
-                <button
-                    onClick={() => navigate(ROUTES.PAYMENTS_LIST)}
-                    className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-bold bg-[#14b8a6] text-white rounded-xl shadow-lg hover:bg-[#0f766e] transition-all"
-                >
-                    <ArrowLeft size={16} />
-                    <span>{t('detail.back_to_list', 'Quay lại danh sách')}</span>
-                </button>
+                <div className="flex flex-wrap items-center justify-center gap-3">
+                    <button
+                        type="button"
+                        onClick={() => navigate(ROUTES.PAYMENTS_LIST)}
+                        className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-bold border border-slate-200 bg-white text-slate-600 rounded-xl hover:bg-slate-50 transition-all"
+                    >
+                        <ArrowLeft size={16} />
+                        <span>{t('detail.back_to_list', 'Quay lại danh sách')}</span>
+                    </button>
+                    {!isNotFound && (
+                        <button
+                            type="button"
+                            onClick={() => void refetch()}
+                            className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-bold bg-[#14b8a6] text-white rounded-xl shadow-lg hover:bg-[#0f766e] transition-all"
+                        >
+                            <RefreshCw size={16} />
+                            <span>{t('detail.retry_button', 'Thử lại')}</span>
+                        </button>
+                    )}
+                </div>
             </div>
         );
     }

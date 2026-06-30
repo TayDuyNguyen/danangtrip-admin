@@ -1,6 +1,7 @@
-import { Mail, MailOpen, Send } from "lucide-react";
+import { Mail, MailOpen, Send, RefreshCw } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Skeleton } from "@/components/ui/Skeleton";
+import EmptyState from "@/components/common/EmptyState";
 
 interface StatsCardProps {
     title: string;
@@ -65,6 +66,7 @@ interface ContactStatsRowProps {
     repliedCount: number;
     isLoading?: boolean;
     isError?: boolean;
+    onRetry?: () => void;
 }
 
 export const ContactStatsRow = ({
@@ -74,17 +76,30 @@ export const ContactStatsRow = ({
     repliedCount,
     isLoading = false,
     isError = false,
+    onRetry,
 }: ContactStatsRowProps) => {
-    const { t } = useTranslation("contact");
+    const { t } = useTranslation(["contact", "common"]);
 
     if (isError) {
         return (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-2">
-                {[...Array(4)].map((_, i) => (
-                    <div key={i} className="bg-rose-50 border border-rose-100 rounded-3xl p-6 text-center text-rose-600 font-bold text-sm">
-                        {t("toast.network_error")}
-                    </div>
-                ))}
+            <div
+                className="bg-white border border-slate-100 rounded-3xl p-8 flex flex-col items-center text-center mb-2"
+                data-testid="contact-stats-error"
+            >
+                <EmptyState
+                    title={t("errors.stats_load_failed")}
+                    description={t("errors.stats_load_failed_desc")}
+                />
+                {onRetry && (
+                    <button
+                        type="button"
+                        onClick={() => void onRetry()}
+                        className="mt-2 px-6 py-2.5 bg-[#14b8a6] text-white rounded-xl text-[13px] font-bold hover:bg-[#0f766e] transition-colors inline-flex items-center gap-2"
+                    >
+                        <RefreshCw className="w-4 h-4" />
+                        {t("actions.retry", { ns: "common", defaultValue: "Thử lại" })}
+                    </button>
+                )}
             </div>
         );
     }

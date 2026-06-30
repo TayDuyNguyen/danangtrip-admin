@@ -48,6 +48,10 @@
         "leave": "Leave",
         "retry": "Retry"
     },
+    "table": {
+        "select_all": "Select all posts on this page",
+        "select_row": "Select post: {{name}}"
+    },
     "breadcrumb": {
         "home": "Home",
         "edit": "Edit",

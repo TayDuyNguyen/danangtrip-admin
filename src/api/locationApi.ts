@@ -4,6 +4,8 @@ import { API_ENDPOINTS } from '@/constants/endpoints';
 import type { LocationListResponse, LocationFilters } from '@/dataHelper/location.dataHelper';
 import type { ApiResponse, RawLocation, Paginator, RawRating, RawRatingStats, PaginationParams } from '@/types';
 import type { CreateLocationInput } from '@/validations/location.schema';
+import type { AxiosResponse } from 'axios';
+import { downloadBlobFile, prepareSpreadsheetDownload } from '@/utils/spreadsheetExport';
 
 export type LocationStatsPayload = {
     total: number;
@@ -34,8 +36,8 @@ const locationApi = {
             params: toAdminLocationParams(filters),
         }),
 
-    getStats: (): Promise<ApiResponse<LocationStatsPayload>> =>
-        axiosClient.get(API_ENDPOINTS.LOCATIONS.STATS),
+    getStats: (params?: { from?: string; to?: string }): Promise<ApiResponse<LocationStatsPayload>> =>
+        axiosClient.get(API_ENDPOINTS.LOCATIONS.STATS, { params }),
 
     getAdminDistricts: (): Promise<ApiResponse<string[]>> =>
         axiosClient.get(API_ENDPOINTS.LOCATIONS.DISTRICTS),
@@ -71,6 +73,19 @@ const locationApi = {
 
     getRatings: (id: string | number, params?: PaginationParams): Promise<ApiResponse<Paginator<RawRating>>> =>
         axiosClient.get(API_ENDPOINTS.LOCATIONS.RATINGS(id), { params }),
+
+    exportExcel: async (filters: LocationFilters): Promise<void> => {
+        const params = toAdminLocationParams(filters);
+        const response = (await axiosClient.get(API_ENDPOINTS.EXPORT.LOCATIONS, {
+            params,
+            responseType: 'blob',
+        })) as AxiosResponse<Blob>;
+        const dateStr = new Date().toISOString().split('T')[0];
+        const fallback = `danh-sach-dia-diem_${dateStr}.xlsx`;
+        const prepared = await prepareSpreadsheetDownload(response, fallback);
+        if (!prepared.ok) throw new Error(prepared.error);
+        downloadBlobFile(prepared.blob, prepared.filename);
+    },
 };
 
 export default locationApi;

@@ -10,7 +10,10 @@
     "stats": {
         "total": "TỔNG THÔNG BÁO",
         "read": "ĐÃ ĐỌC",
-        "unread": "CHƯA ĐỌC"
+        "unread": "CHƯA ĐỌC",
+        "total_filtered": "TỔNG (KẾT QUẢ LỌC)",
+        "read_filtered": "ĐÃ ĐỌC (KẾT QUẢ LỌC)",
+        "unread_filtered": "CHƯA ĐỌC (KẾT QUẢ LỌC)"
     },
     "filters": {
         "search_placeholder": "Tìm theo tiêu đề, nội dung...",
@@ -53,24 +56,31 @@
     "dialog": {
         "delete_title": "Xóa thông báo này?",
         "delete_body": "Thông báo sẽ bị xóa vĩnh viễn khỏi hệ thống. Bạn có chắc chắn muốn tiếp tục?",
+        "bulk_delete_title": "Xóa các thông báo đã chọn?",
+        "bulk_delete_body": "Bạn có chắc muốn xóa {{count}} thông báo đã chọn? Hành động này không thể hoàn tác.",
         "delete_confirm": "Xóa",
         "cancel": "Hủy"
     },
     "toast": {
         "delete_success": "Xóa thông báo thành công!",
         "bulk_delete_success": "Xóa các thông báo đã chọn thành công!",
+        "bulk_delete_partial": "Đã xóa {{success}}/{{total}} thông báo. {{failed}} mục thất bại.",
         "network_error": "Đã xảy ra lỗi kết nối. Vui lòng thử lại!"
     },
     "send": {
         "title": "Gửi Thông báo",
         "subtitle": "Gửi thông báo đến người dùng hệ thống",
         "breadcrumb": "Gửi Thông báo",
+        "breadcrumb_aria": "Trang hiện tại: Gửi thông báo",
         "btn_cancel": "Hủy",
         "btn_submit": "Gửi thông báo",
+        "btn_submit_aria": "Gửi thông báo từ thanh điều hướng",
         "btn_sending": "Đang gửi...",
         "mode_individual": "Gửi cá nhân",
         "mode_bulk": "Gửi hàng loạt",
-        "bulk_warning": "Thông báo sẽ được gửi đến tất cả người dùng trong hệ thống ({{count}} người dùng). Hành động này không thể hoàn tác.",
+        "bulk_warning": "Thông báo sẽ được gửi đến tất cả người dùng đang hoạt động ({{count}} người dùng). Hành động này không thể hoàn tác.",
+        "bulk_disabled_no_users": "Không có người dùng đang hoạt động để gửi hàng loạt.",
+        "clear_recipient": "Xóa người nhận đã chọn",
         "label_recipient": "Người nhận *",
         "placeholder_search_user": "Tìm theo tên, email, username...",
         "loading_users": "Đang tải người dùng...",
@@ -86,6 +96,7 @@
         "label_data_helper": "Không bắt buộc. Dán link trang cần mở khi người dùng click thông báo.",
         "preview_title": "Xem trước",
         "preview_empty_title": "Tiêu đề thông báo",
+        "preview_empty_content": "Nội dung thông báo sẽ hiển thị tại đây",
         "preview_time": "Vừa xong",
         "preview_to_all": "Tất cả {{count}} người dùng",
         "guide_title": "💡 Lưu ý",
@@ -95,11 +106,11 @@
         "guide_item_4": "Người dùng nhận thông báo trong app và email",
         "validation": {
             "user_required": "Vui lòng chọn người nhận",
+            "type_required": "Loại thông báo là bắt buộc",
             "title_required": "Tiêu đề là bắt buộc",
             "title_max": "Tiêu đề không quá 100 ký tự",
             "content_required": "Nội dung là bắt buộc",
             "content_max": "Nội dung không quá 500 ký tự",
-            "data_invalid_json": "Dữ liệu JSON không hợp lệ",
             "data_invalid_link": "Link phải bắt đầu bằng /, http:// hoặc https://"
         },
         "dialog": {

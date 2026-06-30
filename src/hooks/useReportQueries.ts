@@ -8,7 +8,7 @@ import type { RatingsReportFilters, BookingsReportFilters, RevenueReportFilters,
 import { prepareSpreadsheetDownload, downloadBlobFile } from '@/utils';
 import { toast } from 'sonner';
 
-export const reportKeys = {
+const reportKeys = {
     all: ['reports'] as const,
     ratingsReport: (params: RatingsReportFilters) => [...reportKeys.all, 'ratings', params] as const,
     bookingsReport: (params: BookingsReportFilters) => [...reportKeys.all, 'bookings', params] as const,
@@ -20,7 +20,10 @@ export const reportKeys = {
 /**
  * Query hook to fetch processed Ratings Report ViewModel
  */
-export const useRatingsReportQuery = (params: RatingsReportFilters & { date_from?: string; date_to?: string }) => {
+export const useRatingsReportQuery = (
+    params: RatingsReportFilters & { date_from?: string; date_to?: string },
+    options?: { enabled?: boolean }
+) => {
     const reportParams = {
         ...params,
         from: params.from || params.date_from,
@@ -33,13 +36,14 @@ export const useRatingsReportQuery = (params: RatingsReportFilters & { date_from
             return mapRatingsReport(response.data);
         },
         staleTime: 1000 * 30, // 30 seconds
+        enabled: options?.enabled ?? true,
     });
 };
 
 /**
  * Query hook to fetch processed Bookings Report ViewModel
  */
-export const useBookingsReportQuery = (params: BookingsReportFilters) => {
+export const useBookingsReportQuery = (params: BookingsReportFilters, options?: { enabled?: boolean }) => {
     return useQuery({
         queryKey: reportKeys.bookingsReport(params),
         queryFn: async () => {
@@ -47,6 +51,7 @@ export const useBookingsReportQuery = (params: BookingsReportFilters) => {
             return mapBookingsReport(response.data);
         },
         staleTime: 1000 * 30, // 30 seconds
+        enabled: options?.enabled ?? true,
     });
 };
 
@@ -54,7 +59,7 @@ export const useBookingsReportQuery = (params: BookingsReportFilters) => {
  * Query hook to fetch processed Revenue Report ViewModel.
  * Fetches trend, details, and payments list in parallel.
  */
-export const useRevenueReportQuery = (params: RevenueReportFilters) => {
+export const useRevenueReportQuery = (params: RevenueReportFilters, options?: { enabled?: boolean }) => {
     const from = params.from || '';
     const to = params.to || '';
 
@@ -82,10 +87,11 @@ export const useRevenueReportQuery = (params: RevenueReportFilters) => {
     return useQuery({
         queryKey: reportKeys.revenueReport(params),
         queryFn: async () => {
-            const [trendRes, detailRes, paymentsRes, prevTrendRes] = await Promise.all([
+            const [trendRes, detailRes, paymentsRes, paymentsSummaryRes, prevTrendRes] = await Promise.all([
                 reportApi.getRevenueTrend({ period: 'day', from, to }),
                 reportApi.getRevenueDetail({ from, to }),
                 reportApi.getPaymentsList(params),
+                reportApi.getRevenuePaymentsSummary({ from, to, payment_gateway: params.payment_gateway }),
                 // Fetch previous period for trend comparison
                 (prevFrom && prevTo)
                     ? reportApi.getRevenueTrend({ period: 'day', from: prevFrom, to: prevTo })
@@ -98,9 +104,11 @@ export const useRevenueReportQuery = (params: RevenueReportFilters) => {
                 paymentsRes.data,
                 { from, to },
                 prevTrendRes?.data ?? null,
+                paymentsSummaryRes.data,
             );
         },
         staleTime: 1000 * 30, // 30 seconds
+        enabled: options?.enabled ?? true,
     });
 };
 
@@ -110,7 +118,8 @@ export const useRevenueReportQuery = (params: RevenueReportFilters) => {
  */
 export const useLocationsReportQuery = (
     reportParams: { from?: string; to?: string },
-    tableParams: LocationReportFilters & { sort_by?: string; sort_order?: string }
+    tableParams: LocationReportFilters & { sort_by?: string; sort_order?: string },
+    options?: { enabled?: boolean }
 ) => {
     const from = reportParams.from || '';
     const to = reportParams.to || '';
@@ -144,7 +153,7 @@ export const useLocationsReportQuery = (
             }
 
             const [statsRes, distRes] = await Promise.all([
-                locationApi.getStats(),
+                locationApi.getStats({ from, to }),
                 reportApi.getLocationsReport({ from, to }),
             ]);
 
@@ -155,6 +164,7 @@ export const useLocationsReportQuery = (
             );
         },
         staleTime: 1000 * 30, // 30 seconds
+        enabled: options?.enabled ?? true,
     });
 };
 

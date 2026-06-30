@@ -87,11 +87,23 @@
         "meta_title_min": "Meta title must be at least 10 characters.",
         "meta_title_max": "Meta title cannot exceed 100 characters.",
         "meta_description_min": "Meta description must be at least 20 characters.",
-        "meta_description_max": "Meta description cannot exceed 200 characters."
+        "meta_description_max": "Meta description cannot exceed 200 characters.",
+        "url_invalid": "Invalid URL format."
+    },
+    "hints": {
+        "chatbot_managed_elsewhere": "AI Chatbot settings are managed separately on the",
+        "payment_reserved": "Reserved gateway — not yet enabled in production."
     },
     "actions": {
         "save_success": "Website configurations saved successfully.",
         "save_failed": "Failed to update website configurations.",
+        "load_failed": "Failed to load website configurations.",
+        "load_failed_desc": "Configuration data is temporarily unavailable. Please try loading again.",
+        "retry": "Retry",
+        "loading_config": "Loading configurations...",
+        "change_image": "Change",
+        "payment_toggle_enable": "Enable {{gateway}}",
+        "payment_toggle_disable": "Disable {{gateway}}",
         "discard": "Discard",
         "save": "Save Changes",
         "saving": "Saving configurations...",

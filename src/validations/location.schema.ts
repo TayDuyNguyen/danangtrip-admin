@@ -20,7 +20,12 @@ export const createLocationSchema = (t: TFunction) => yup.object({
         .required(t("location:validation.required", { field: t("location:form.basic.slug") })),
 
     category_id: yup.number()
+        .transform((_value, originalValue) => {
+            if (originalValue === '' || originalValue == null || originalValue === 0) return undefined;
+            return Number(originalValue);
+        })
         .required(t("location:validation.required", { field: t("location:form.basic.category") }))
+        .min(1, t("location:validation.required", { field: t("location:form.basic.category") }))
         .typeError(t("location:validation.number", { field: t("location:form.basic.category") })),
 
     subcategory_id: yup.number()

@@ -7,14 +7,14 @@ import type { TFunction } from "i18next";
  */
 export const tourCategorySchema = (t: TFunction) => yup.object({
     name: yup.string()
-        .required(t("tour:categories.form.name_placeholder"))
+        .required(t("tour:categories.validation.name_required"))
         .min(2, t("tour:validation.min_length", { field: t("tour:categories.form.name"), min: 2 })),
     
     slug: yup.string()
-        .required(t("tour:categories.form.slug_placeholder")),
+        .required(t("tour:categories.validation.slug_required")),
     
     icon: yup.string()
-        .required(t("tour:categories.form.icon_placeholder")),
+        .required(t("tour:categories.validation.icon_required")),
     
     description: yup.string()
         .max(500, t("tour:validation.max_length", { field: t("tour:categories.form.description"), max: 500 }))

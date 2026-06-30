@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ROUTES } from '@/routes/routes';
 import type { RevenueReportItemViewModel } from '@/dataHelper/report.dataHelper';
+import ReportPerPageSelector from '../../shared/ReportPerPageSelector';
 
 interface RevenueReportTableProps {
     data?: {
@@ -17,12 +18,14 @@ interface RevenueReportTableProps {
     };
     isLoading?: boolean;
     onPageChange: (page: number) => void;
+    onPerPageChange?: (perPage: number) => void;
 }
 
 const RevenueReportTable: React.FC<RevenueReportTableProps> = ({
     data,
     isLoading = false,
     onPageChange,
+    onPerPageChange,
 }) => {
     const { t } = useTranslation('revenue_report');
 
@@ -164,9 +167,18 @@ const RevenueReportTable: React.FC<RevenueReportTableProps> = ({
             {/* Pagination Footer */}
             {!isLoading && pagination && pagination.total > 0 && (
                 <div className="px-[24px] py-[16px] border-t border-[#E2E8F0] flex flex-col sm:flex-row gap-4 justify-between items-center bg-slate-50/50 shrink-0">
-                    <span className="text-[12px] font-bold text-slate-500">
-                        {t('table.pagination_showing', { from: startIndex, to: endIndex, total: pagination.total.toLocaleString() })}
-                    </span>
+                    <div className="flex flex-col sm:flex-row gap-3 items-center">
+                        <span className="text-[12px] font-bold text-slate-500">
+                            {t('table.pagination_showing', { from: startIndex, to: endIndex, total: pagination.total.toLocaleString() })}
+                        </span>
+                        {onPerPageChange && (
+                            <ReportPerPageSelector
+                                value={pagination.perPage}
+                                onChange={onPerPageChange}
+                                testId="revenue-report-per-page"
+                            />
+                        )}
+                    </div>
                     <div className="flex gap-1.5 items-center">
                         <button type="button" onClick={() => onPageChange(pagination.currentPage - 1)} disabled={pagination.currentPage <= 1}
                             className="px-3.5 py-1.5 rounded-lg text-xs font-bold border border-slate-100 bg-white text-slate-600 hover:bg-[#14b8a6]/5 hover:text-[#14b8a6] hover:border-[#14b8a6]/20 active:scale-95 disabled:opacity-50 disabled:active:scale-100 transition-all cursor-pointer select-none">

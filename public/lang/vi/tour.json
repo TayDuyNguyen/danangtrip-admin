@@ -306,6 +306,27 @@
         "subtitle": "Phân loại và quản lý các nhóm sản phẩm tour du lịch",
         "badge_new": "MỚI",
         "search_placeholder": "Tìm kiếm danh mục...",
+        "stats_scope_note": "Thống kê toàn hệ thống (không theo bộ lọc hiện tại)",
+        "stats_total_tours": "Tổng tour liên kết",
+        "stats_active_categories": "Danh mục đang hoạt động",
+        "stats_inactive_categories": "Danh mục tạm ẩn",
+        "reset_filters": "Đặt lại bộ lọc",
+        "empty_title": "Không có danh mục nào",
+        "empty_subtitle": "Thử thay đổi bộ lọc hoặc tạo danh mục mới",
+        "empty_cta": "Thêm danh mục đầu tiên",
+        "actions": {
+            "edit": "Sửa danh mục {{name}}",
+            "delete": "Xóa danh mục {{name}}",
+            "delete_blocked": "Không thể xóa — đang có {{count}} tour liên kết"
+        },
+        "dialog": {
+            "button_delete": "Xóa danh mục"
+        },
+        "validation": {
+            "name_required": "Vui lòng nhập tên danh mục",
+            "slug_required": "Vui lòng nhập đường dẫn (slug)",
+            "icon_required": "Vui lòng chọn biểu tượng"
+        },
         "reorder": {
             "disabled_title": "Vui lòng xóa tìm kiếm/lọc để sắp xếp",
             "button_sorting": "Đang sắp xếp",

@@ -15,7 +15,10 @@ const SaveBar = ({ isVisible, isSubmitting, onDiscard, onSave }: SaveBarProps) =
     if (!isVisible) return null;
 
     return (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-full max-w-4xl px-4 animate-in fade-in slide-in-from-bottom-5 duration-300">
+        <div
+            data-testid="settings-save-bar"
+            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-full max-w-4xl px-4 animate-in fade-in slide-in-from-bottom-5 duration-300"
+        >
             <div className="bg-slate-900/90 backdrop-blur-md border border-slate-800 text-white rounded-2xl px-6 py-4 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
                     <div className="p-2 bg-amber-500/10 text-amber-500 rounded-xl">
@@ -34,6 +37,7 @@ const SaveBar = ({ isVisible, isSubmitting, onDiscard, onSave }: SaveBarProps) =
                 <div className="flex items-center gap-3 w-full md:w-auto shrink-0 justify-end">
                     <button
                         type="button"
+                        data-testid="settings-discard-button"
                         onClick={onDiscard}
                         disabled={isSubmitting}
                         className="text-xs font-bold text-slate-300 hover:text-white px-4 py-2.5 rounded-xl border border-slate-700 hover:border-slate-600 transition-all cursor-pointer disabled:opacity-50"
@@ -42,6 +46,7 @@ const SaveBar = ({ isVisible, isSubmitting, onDiscard, onSave }: SaveBarProps) =
                     </button>
                     <Button
                         type="button"
+                        data-testid="settings-save-button"
                         onClick={onSave}
                         isLoading={isSubmitting}
                         disabled={isSubmitting}

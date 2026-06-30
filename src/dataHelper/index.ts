@@ -10,8 +10,7 @@ export {
     type CategoryStats as TourCategoryStats,
     type CategoryListResponse as TourCategoryListResponse,
     type TourCategory as TourCategoryModel,
-    tourCategoryMapper,
-    getCategoryIcon
+    tourCategoryMapper
 } from './tourCategory.dataHelper';
 export * from './schedule.dataHelper';
 export * from './booking.dataHelper';

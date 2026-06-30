@@ -21,7 +21,7 @@ export const mapBlogCategory = (raw: RawBlogCategory): BlogCategoryViewModel => 
     };
 };
 
-export const mapBlogPostAuthor = (raw: RawBlogPostAuthor | null | undefined): BlogPostAuthorViewModel | null => {
+const mapBlogPostAuthor = (raw: RawBlogPostAuthor | null | undefined): BlogPostAuthorViewModel | null => {
     if (!raw) return null;
     return {
         id: raw.id,

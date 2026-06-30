@@ -21,6 +21,17 @@ function unwrapApiData<T>(payload: unknown): T {
     return obj as T;
 }
 
+function unwrapCategoryPayload(payload: unknown): RawTourCategory {
+    const data = unwrapApiData<Record<string, unknown> | null>(payload);
+    if (!data || typeof data !== 'object') {
+        return {};
+    }
+    if ('category' in data && data.category && typeof data.category === 'object') {
+        return data.category as RawTourCategory;
+    }
+    return data as RawTourCategory;
+}
+
 /**
  * Service to handle category related API calls
  * (Service xử lý các cuộc gọi API liên quan đến danh mục)
@@ -47,7 +58,7 @@ export const tourCategoryApi = {
      */
     createCategory: async (data: Partial<RawTourCategory>): Promise<TourCategory> => {
         const response = await axiosClient.post(API_ENDPOINTS.TOURS.ADMIN_CATEGORIES, data);
-        const payload = unwrapApiData<RawTourCategory>(response);
+        const payload = unwrapCategoryPayload(response);
         return tourCategoryMapper.toViewModel(payload);
     },
 
@@ -57,7 +68,7 @@ export const tourCategoryApi = {
      */
     updateCategory: async (id: number, data: Partial<RawTourCategory>): Promise<TourCategory> => {
         const response = await axiosClient.put(API_ENDPOINTS.TOURS.ADMIN_CATEGORY(id), data);
-        const payload = unwrapApiData<RawTourCategory>(response);
+        const payload = unwrapCategoryPayload(response);
         return tourCategoryMapper.toViewModel(payload);
     },
 
@@ -65,10 +76,8 @@ export const tourCategoryApi = {
      * Update category status specifically
      * (Cập nhật riêng trạng thái danh mục)
      */
-    updateStatus: async (id: number, status: string): Promise<TourCategory> => {
-        const response = await axiosClient.patch(API_ENDPOINTS.TOURS.ADMIN_CATEGORY_STATUS(id), { status });
-        const payload = unwrapApiData<RawTourCategory>(response);
-        return tourCategoryMapper.toViewModel(payload);
+    updateStatus: async (id: number, status: string): Promise<void> => {
+        await axiosClient.patch(API_ENDPOINTS.TOURS.ADMIN_CATEGORY_STATUS(id), { status });
     },
 
     /**

@@ -7,6 +7,7 @@ interface DeleteNotificationDialogProps {
     onClose: () => void;
     onConfirm: () => void;
     isMutating?: boolean;
+    bulkCount?: number;
 }
 
 export const DeleteNotificationDialog = ({
@@ -14,13 +15,18 @@ export const DeleteNotificationDialog = ({
     onClose,
     onConfirm,
     isMutating = false,
+    bulkCount,
 }: DeleteNotificationDialogProps) => {
     const { t } = useTranslation("notification");
+    const isBulk = bulkCount !== undefined && bulkCount > 0;
 
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+        <div
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4"
+            data-testid={isBulk ? "notification-bulk-delete-dialog" : "notification-delete-dialog"}
+        >
             {/* Backdrop */}
             <div 
                 className="absolute inset-0 bg-slate-900/40 backdrop-blur-xs transition-opacity duration-300"
@@ -36,10 +42,12 @@ export const DeleteNotificationDialog = ({
 
                 {/* Text Description */}
                 <h3 className="text-slate-900 font-black text-lg tracking-tight mb-2">
-                    {t("dialog.delete_title")}
+                    {isBulk ? t("dialog.bulk_delete_title") : t("dialog.delete_title")}
                 </h3>
                 <p className="text-slate-400 text-sm font-semibold mb-6 px-2 leading-relaxed">
-                    {t("dialog.delete_body")}
+                    {isBulk
+                        ? t("dialog.bulk_delete_body", { count: bulkCount })
+                        : t("dialog.delete_body")}
                 </p>
 
                 {/* Footer Buttons */}

@@ -5,7 +5,7 @@ import { mapUserList, mapUserItem } from "@/dataHelper/user.mapper";
 import type { UserListFilters, UserBookingListResponse, UserRatingListResponse } from "@/dataHelper";
 import { prepareSpreadsheetDownload, downloadBlobFile, readSpreadsheetErrorMessage } from "@/utils";
 
-export const userKeys = {
+const userKeys = {
     all: ["users"] as const,
     lists: () => [...userKeys.all, "list"] as const,
     list: (filters: UserListFilters, page: number, limit: number) =>

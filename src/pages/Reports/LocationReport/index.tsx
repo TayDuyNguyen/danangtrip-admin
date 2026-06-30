@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { FileDown, MapPin, AlertTriangle, RefreshCw, Sparkles, FileText } from 'lucide-react';
-import Breadcrumbs from '@/components/common/Breadcrumbs';
-import { ROUTES } from '@/routes/routes';
+import { MapPin } from 'lucide-react';
 import { useLocationsReportQuery, useReportMutations } from '@/hooks/useReportQueries';
+import useReportMockMode, { useReportApiErrorToast } from '../shared/useReportMockMode';
+import { REPORTS_MOCK_PARAM, parseReportPerPage } from '../shared/reports.constants';
+import ReportPageShell from '../shared/ReportPageShell';
+import { downloadMockCsv } from '../shared/mockExportCsv';
 import LocationReportFilterBar from './components/LocationReportFilterBar';
 import LocationStatsCards from './components/LocationStatsCards';
 import LocationReportCharts from './components/LocationReportCharts';
@@ -163,19 +165,19 @@ const getMockLocationReportData = (
  * Data integration and chart/table components will be wired in steps 05–07.
  */
 const LocationReport: React.FC = () => {
-    const { t } = useTranslation('location_report');
+    const { t } = useTranslation(['location_report', 'reports_common']);
+    const { t: tCommon } = useTranslation('reports_common');
     const [searchParams, setSearchParams] = useSearchParams();
-    const [isMockMode, setIsMockMode] = useState<boolean>(false);
-    const [hasAttemptedRealApi, setHasAttemptedRealApi] = useState<boolean>(false);
+    const { isMockMode, toggleMockMode, enableMockMode } = useReportMockMode();
     const [activeTab, setActiveTab] = useState<TabType>('views');
 
-    // 1. Initialise filters from URL SearchParams
     const initialFrom = searchParams.get('from') || getFirstDayOfMonth();
     const initialTo   = searchParams.get('to')   || getToday();
     const initialCat  = searchParams.get('category_id') || 'all';
     const initialDist = searchParams.get('district')    || 'all';
     const initialSt   = (searchParams.get('status') as LocationReportFilters['status']) || 'all';
     const initialPage = Number(searchParams.get('page')) || 1;
+    const initialPerPage = parseReportPerPage(searchParams.get('per_page'));
 
     const [localFilters, setLocalFilters] = useState<Omit<LocationReportFilters, 'page' | 'per_page'>>({
         from:        initialFrom,
@@ -192,27 +194,30 @@ const LocationReport: React.FC = () => {
         district:    initialDist,
         status:      initialSt,
         page:        initialPage,
-        per_page:    10,
+        per_page:    initialPerPage,
     });
 
-    // 2. Sync active filters back into URL
     useEffect(() => {
-        const newParams: Record<string, string> = {
-            from:  activeFilters.from || '',
-            to:    activeFilters.to   || '',
-            page:  String(activeFilters.page),
-        };
-        if (activeFilters.category_id && activeFilters.category_id !== 'all') {
-            newParams.category_id = String(activeFilters.category_id);
-        }
-        if (activeFilters.district && activeFilters.district !== 'all') {
-            newParams.district = activeFilters.district;
-        }
-        if (activeFilters.status && activeFilters.status !== 'all') {
-            newParams.status = activeFilters.status;
-        }
-        setSearchParams(newParams);
-    }, [activeFilters, setSearchParams]);
+        setSearchParams((prev) => {
+            const next = new URLSearchParams(prev);
+            next.set('from', activeFilters.from || '');
+            next.set('to', activeFilters.to || '');
+            next.set('page', String(activeFilters.page));
+            next.set('per_page', String(activeFilters.per_page));
+            if (activeFilters.category_id && activeFilters.category_id !== 'all') {
+                next.set('category_id', String(activeFilters.category_id));
+            } else next.delete('category_id');
+            if (activeFilters.district && activeFilters.district !== 'all') {
+                next.set('district', activeFilters.district);
+            } else next.delete('district');
+            if (activeFilters.status && activeFilters.status !== 'all') {
+                next.set('status', activeFilters.status);
+            } else next.delete('status');
+            if (isMockMode) next.set(REPORTS_MOCK_PARAM, '1');
+            else next.delete(REPORTS_MOCK_PARAM);
+            return next;
+        }, { replace: true });
+    }, [activeFilters, isMockMode, setSearchParams]);
 
     // 3. TanStack Query — fetch combined locations report data
     const {
@@ -227,20 +232,12 @@ const LocationReport: React.FC = () => {
             ...activeFilters,
             sort_by:    TAB_SORT_MAP[activeTab],
             sort_order: 'desc',
-        }
+        },
+        { enabled: !isMockMode }
     );
 
-    // Auto-switch to mock on API error
-    useEffect(() => {
-        if (isRealError && !isMockMode && !hasAttemptedRealApi) {
-            const timer = setTimeout(() => {
-                setIsMockMode(true);
-                setHasAttemptedRealApi(true);
-                toast.warning(t('mock.toast_to_mock'));
-            }, 0);
-            return () => clearTimeout(timer);
-        }
-    }, [isRealError, isMockMode, hasAttemptedRealApi, t]);
+    useReportApiErrorToast(isRealError, isMockMode);
+    const showErrorPanel = isRealError && !isMockMode;
 
     // 4. Report mutation hooks
     const { exportLocationsMutation } = useReportMutations();
@@ -251,16 +248,23 @@ const LocationReport: React.FC = () => {
     const data = isMockMode ? getMockLocationReportData(activeFilters, activeTab) : realData;
 
     // 5. Handler functions
-    const handleLocalFilterChange = (updated: Partial<typeof localFilters>) => {
-        setLocalFilters(prev => ({ ...prev, ...updated }));
-    };
-
-    const handleApplyFilters = () => {
-        if (localFilters.from && localFilters.to && new Date(localFilters.from) > new Date(localFilters.to)) {
+    const applyFilterValues = useCallback((values: typeof localFilters) => {
+        if (values.from && values.to && new Date(values.from) > new Date(values.to)) {
             toast.error(t('filter.validation.date_range'));
             return;
         }
-        setActiveFilters(prev => ({ ...prev, ...localFilters, page: 1 }));
+        setLocalFilters(values);
+        setActiveFilters((prev) => ({ ...prev, ...values, page: 1 }));
+    }, [t]);
+
+    const handleLocalFilterChange = (updated: Partial<typeof localFilters>) => {
+        setLocalFilters((prev) => ({ ...prev, ...updated }));
+    };
+
+    const handleApplyFilters = () => applyFilterValues(localFilters);
+
+    const handleQuickRangeApply = (dates: { from: string; to: string }) => {
+        applyFilterValues({ ...localFilters, ...dates });
     };
 
     const handleResetFilters = () => {
@@ -277,7 +281,11 @@ const LocationReport: React.FC = () => {
     };
 
     const handlePageChange = (newPage: number) => {
-        setActiveFilters(prev => ({ ...prev, page: newPage }));
+        setActiveFilters((prev) => ({ ...prev, page: newPage }));
+    };
+
+    const handlePerPageChange = (perPage: number) => {
+        setActiveFilters((prev) => ({ ...prev, per_page: perPage, page: 1 }));
     };
 
     const handleTabChange = (tab: TabType) => {
@@ -291,22 +299,20 @@ const LocationReport: React.FC = () => {
             const fallbackFilename = `bao-cao-dia-diem_${activeFilters.from}_to_${activeFilters.to}_${dateStr}.csv`;
 
             if (isMockMode) {
-                toast.loading(t('export.toast_mock_loading'));
-                setTimeout(() => {
-                    toast.dismiss();
-                    toast.success(t('export.toast_mock_success'));
-                    // BOM + basic CSV for Vietnamese characters
-                    const bom = '\uFEFF';
-                    const headers = 'ID,Tên địa điểm,Danh mục,Quận/Huyện,Lượt xem,Yêu thích,Đánh giá,Trạng thái\n';
-                    const blob = new Blob([bom + headers], { type: 'text/csv;charset=utf-8;' });
-                    const url  = URL.createObjectURL(blob);
-                    const link = document.createElement('a');
-                    link.setAttribute('href', url);
-                    link.setAttribute('download', fallbackFilename);
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                }, 1000);
+                const bom = '\uFEFF';
+                const headers = bom + 'ID,Tên địa điểm,Danh mục,Quận/Huyện,Lượt xem,Yêu thích,Đánh giá,Trạng thái\n';
+                const rows = data?.table.items
+                    .map((i) =>
+                        `"${i.id}","${i.name}","${i.categoryName}","${i.district}","${i.views}","${i.favorites}","${i.rating}","${i.status}"`
+                    )
+                    .join('\n') ?? '';
+                downloadMockCsv({
+                    filename: fallbackFilename,
+                    headers,
+                    rows,
+                    loadingMessage: tCommon('export.toast_mock_loading'),
+                    successMessage: tCommon('export.toast_mock_success'),
+                });
                 return;
             }
 
@@ -323,147 +329,42 @@ const LocationReport: React.FC = () => {
         }
     };
 
-    const toggleMockMode = () => {
-        const next = !isMockMode;
-        setIsMockMode(next);
-        toast.success(next ? t('mock.toast_switched_mock') : t('mock.toast_switched_real'));
-    };
-
     return (
-        <div className="p-1 sm:p-2 max-w-[1600px] mx-auto space-y-6 animate-in fade-in duration-300">
-            {/* 1. Page Header & Breadcrumb */}
-            <div className="flex flex-col gap-3">
-                {/* Breadcrumbs */}
-                <Breadcrumbs
-                    icon={FileText}
-                    items={[
-                        { label: 'sidebar.reports', path: ROUTES.REPORTS_RATINGS },
-                        { label: 'sidebar.reports_locations' }
-                    ]}
-                />
-
-                {/* ─── Gradient border shell header card ─── */}
-                <div className="p-[1px] rounded-3xl bg-gradient-to-br from-[#14b8a6]/25 via-slate-200/20 to-transparent shadow-sm hover:shadow-md transition-all duration-300">
-                    <div className="bg-white/98 backdrop-blur-sm rounded-[23px] px-6 py-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                        <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-gradient-to-br from-[#14b8a6] to-[#0f766e] text-white rounded-2xl flex items-center justify-center shadow-md shadow-[#14b8a6]/20 shrink-0">
-                                <MapPin size={20} strokeWidth={2.5} />
-                            </div>
-                            <div>
-                                <h1 className="text-[22px] font-black text-[#0F172A] tracking-tight leading-tight">{t('title')}</h1>
-                                <p className="text-xs font-bold text-[#94A3B8] mt-1">{t('subtitle')}</p>
-                            </div>
-                        </div>
-
-                        {/* Header actions */}
-                        <div className="flex items-center gap-2">
-                            {/* Mock Mode toggle */}
-                            <button
-                                type="button"
-                                id="location-report-mock-toggle"
-                                onClick={toggleMockMode}
-                                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-black border transition-all cursor-pointer ${
-                                    isMockMode
-                                        ? 'bg-amber-50 border-amber-200 text-amber-600 shadow-2xs'
-                                        : 'bg-slate-50 border-slate-200 text-slate-500 hover:bg-slate-100 shadow-2xs'
-                                }`}
-                                title={t('mock.toggle_title')}
-                            >
-                                <Sparkles size={13} className={isMockMode ? 'animate-bounce text-amber-500' : ''} />
-                                {isMockMode ? t('mock.mock_on') : t('mock.mock_off')}
-                            </button>
-
-                            {/* Export CSV */}
-                            <button
-                                type="button"
-                                id="location-report-export-btn"
-                                onClick={handleExportCSV}
-                                disabled={isLoading || isFetching || exportLocationsMutation.isPending}
-                                className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold bg-white border border-[#E2E8F0] hover:border-[#14b8a6] hover:bg-[#14b8a6]/5 hover:text-[#14b8a6] shadow-xs active:scale-95 transition-all duration-200 disabled:opacity-50 disabled:active:scale-100 cursor-pointer select-none text-[#0F172A]/80"
-                            >
-                                {exportLocationsMutation.isPending ? (
-                                    <div className="w-4 h-4 border-2 border-[#14b8a6] border-t-transparent rounded-full animate-spin" />
-                                ) : (
-                                    <FileDown size={16} />
-                                )}
-                                {t('export.btn_label')}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {/* 2. Error state — API failed and not in mock mode */}
-            {isRealError && !isMockMode ? (
-                <div className="p-[1px] rounded-3xl bg-gradient-to-br from-red-500/20 via-slate-200/25 to-slate-100/10 shadow-xs max-w-lg mx-auto mt-12 animate-in fade-in duration-300">
-                    <div className="bg-white rounded-[23px] p-8 text-center flex flex-col items-center justify-center font-sans">
-                        <div className="w-12 h-12 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4 border border-red-100/50">
-                            <AlertTriangle size={24} />
-                        </div>
-                        <div>
-                            <h3 className="text-base font-black text-[#0F172A]">{t('error.load_failed')}</h3>
-                            <p className="text-xs font-bold text-[#94A3B8] mt-1.5">{t('error.connection')}</p>
-                        </div>
-                        <div className="flex gap-2 justify-center mt-6">
-                            <button
-                                onClick={() => refetch()}
-                                className="inline-flex items-center gap-2 bg-[#14b8a6] hover:bg-[#0f766e] text-white font-bold text-xs px-6 py-2.5 rounded-xl active:scale-95 transition-all shadow-md cursor-pointer"
-                            >
-                                <RefreshCw size={15} />
-                                {t('error.retry_btn')}
-                            </button>
-                            <button
-                                onClick={toggleMockMode}
-                                className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs px-6 py-2.5 rounded-xl active:scale-95 transition-all shadow-md cursor-pointer"
-                            >
-                                <Sparkles size={15} />
-                                {t('error.use_mock_btn')}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            ) : (
-                <>
-                    {/* 3. Filter Bar */}
-                    <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-both delay-75">
-                        <LocationReportFilterBar
-                            filters={localFilters}
-                            onFilterChange={handleLocalFilterChange}
-                            onApply={handleApplyFilters}
-                            onReset={handleResetFilters}
-                            isSubmitting={isLoading || isFetching}
-                        />
-                    </div>
-
-                    {/* 4. KPI Stats Cards */}
-                    <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-both delay-150">
-                        <LocationStatsCards
-                            stats={data?.stats}
-                            isLoading={isLoading}
-                        />
-                    </div>
-
-                    {/* 5. Distribution Charts */}
-                    <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-both delay-200">
-                        <LocationReportCharts
-                            data={data?.charts}
-                            isLoading={isLoading}
-                        />
-                    </div>
-
-                    {/* 6. Top Lists Tab Table */}
-                    <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-both delay-300">
-                        <LocationReportTables
-                            data={data?.table}
-                            isLoading={isLoading}
-                            activeTab={activeTab}
-                            onTabChange={handleTabChange}
-                            onPageChange={handlePageChange}
-                        />
-                    </div>
-                </>
-            )}
-        </div>
+        <ReportPageShell
+            icon={MapPin}
+            title={t('title')}
+            subtitle={t('subtitle')}
+            breadcrumbCurrentLabel="sidebar.reports_locations"
+            testIdPrefix="locations-report"
+            isMockMode={isMockMode}
+            showErrorPanel={showErrorPanel}
+            isExportDisabled={isLoading || isFetching}
+            isExportPending={exportLocationsMutation.isPending}
+            exportLabel={tCommon('export.btn_label')}
+            onToggleMock={toggleMockMode}
+            onExport={handleExportCSV}
+            onRetry={() => refetch()}
+            onUseMock={enableMockMode}
+        >
+            <LocationReportFilterBar
+                filters={localFilters}
+                onFilterChange={handleLocalFilterChange}
+                onApply={handleApplyFilters}
+                onReset={handleResetFilters}
+                onQuickRangeApply={handleQuickRangeApply}
+                isSubmitting={isLoading || isFetching}
+            />
+            <LocationStatsCards stats={data?.stats} isLoading={isLoading} />
+            <LocationReportCharts data={data?.charts} isLoading={isLoading} />
+            <LocationReportTables
+                data={data?.table}
+                isLoading={isLoading}
+                activeTab={activeTab}
+                onTabChange={handleTabChange}
+                onPageChange={handlePageChange}
+                onPerPageChange={handlePerPageChange}
+            />
+        </ReportPageShell>
     );
 };
 

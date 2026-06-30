@@ -30,13 +30,28 @@ import BlogMarkdownEditor from '@/pages/Blog/BlogPostCreate/components/BlogMarkd
 import FeaturedImageUploader from './FeaturedImageUploader';
 import { UnsavedChangesGuard } from '@/components/common/UnsavedChangesGuard';
 import type { BlogPostViewModel } from '@/types';
+import type { UpdateBlogPostPayload } from '@/types/blog';
+
+export interface BlogEditPreviewState {
+    canPreview: boolean;
+    previewSlug: string;
+}
 
 interface BlogPostFormProps {
     initialData: BlogPostViewModel;
     onSubmittingChange?: (submitting: boolean) => void;
+    onPreviewStateChange?: (state: BlogEditPreviewState) => void;
+    onCancel?: () => void;
+    onSuccess?: () => void;
 }
 
-const BlogPostForm = ({ initialData, onSubmittingChange }: BlogPostFormProps) => {
+const BlogPostForm = ({
+    initialData,
+    onSubmittingChange,
+    onPreviewStateChange,
+    onCancel,
+    onSuccess,
+}: BlogPostFormProps) => {
     const { t } = useTranslation('blog');
     const navigate = useNavigate();
 
@@ -81,6 +96,7 @@ const BlogPostForm = ({ initialData, onSubmittingChange }: BlogPostFormProps) =>
     const [publishOption, setPublishOption] = useState<'draft' | 'published' | 'scheduled' | 'archived'>(getInitialPublishOption);
     const [scheduleDate, setScheduleDate] = useState(getInitialScheduleDate);
     const [scheduleTime, setScheduleTime] = useState(getInitialScheduleTime);
+    const [scheduleDateError, setScheduleDateError] = useState('');
     const [bypassGuard, setBypassGuard] = useState(false);
 
     // 4. Form setup
@@ -118,6 +134,14 @@ const BlogPostForm = ({ initialData, onSubmittingChange }: BlogPostFormProps) =>
         onSubmittingChange?.(isPendingSubmitting);
     }, [isPendingSubmitting, onSubmittingChange]);
 
+    useEffect(() => {
+        const previewSlug = slugVal || initialData.slug;
+        onPreviewStateChange?.({
+            canPreview: publishOption === 'published' && !!previewSlug,
+            previewSlug,
+        });
+    }, [publishOption, slugVal, initialData.slug, onPreviewStateChange]);
+
     // Format Dates for Info Section
     const formatDateTime = (date: Date) => {
         const pad = (n: number) => String(n).padStart(2, '0');
@@ -126,9 +150,14 @@ const BlogPostForm = ({ initialData, onSubmittingChange }: BlogPostFormProps) =>
 
     // Handle submit
     const onSubmit = async (data: CreateBlogPostInput) => {
-        // Construct published_at payload based on status and selection
+        if (publishOption === 'scheduled' && !scheduleDate.trim()) {
+            setScheduleDateError(t('form.validation.schedule_date_required'));
+            return;
+        }
+        setScheduleDateError('');
+
         let publishedAtValue = null;
-        let finalStatus = data.status || 'draft';
+        let finalStatus: UpdateBlogPostPayload['status'] = 'draft';
 
         if (publishOption === 'scheduled' && scheduleDate) {
             finalStatus = 'published';
@@ -150,15 +179,14 @@ const BlogPostForm = ({ initialData, onSubmittingChange }: BlogPostFormProps) =>
                     excerpt: data.excerpt || null,
                     featured_image: data.featured_image || null,
                     category_ids: data.category_ids,
-                    status: finalStatus as 'draft' | 'published',
-                    published_at: publishedAtValue
-                }
+                    status: finalStatus,
+                    published_at: publishedAtValue,
+                },
             });
-            // Reset react-hook-form to match new values and clear dirty flag
             reset(data);
             setBypassGuard(true);
             setTimeout(() => {
-                navigate(ROUTES.BLOG_POSTS);
+                onSuccess?.();
             }, 0);
         } catch {
             // Error handled by mutation toast
@@ -205,28 +233,6 @@ const BlogPostForm = ({ initialData, onSubmittingChange }: BlogPostFormProps) =>
             className="flex flex-col lg:flex-row gap-8"
         >
             <UnsavedChangesGuard isDirty={isDirty && !bypassGuard} />
-
-            {/* Hidden buttons for header actions */}
-            <button
-                id="blog-form-submit-draft"
-                type="submit"
-                className="hidden"
-                onClick={() => {
-                    setValue('status', 'draft');
-                    setPublishOption('draft');
-                }}
-            />
-            <button
-                id="blog-form-submit-publish"
-                type="submit"
-                className="hidden"
-                onClick={() => {
-                    if (publishOption === 'draft') {
-                        setPublishOption('published');
-                        setValue('status', 'published');
-                    }
-                }}
-            />
 
             {/* Left Column: Form Fields */}
             <div className="flex-1 space-y-6">
@@ -380,6 +386,7 @@ const BlogPostForm = ({ initialData, onSubmittingChange }: BlogPostFormProps) =>
                                         onChange={() => {
                                             setPublishOption('scheduled');
                                             setValue('status', 'published');
+                                            setScheduleDateError('');
                                         }}
                                         className="mt-1 w-4 h-4 text-[#14B8A6] focus:ring-[#14B8A6]"
                                     />
@@ -422,19 +429,23 @@ const BlogPostForm = ({ initialData, onSubmittingChange }: BlogPostFormProps) =>
                                         <input
                                             type="date"
                                             value={scheduleDate}
-                                            onChange={(e) => setScheduleDate(e.target.value)}
+                                            onChange={(e) => {
+                                                setScheduleDate(e.target.value);
+                                                if (e.target.value) setScheduleDateError('');
+                                            }}
                                             min={new Date().toISOString().split('T')[0]}
-                                            required
                                             className="flex-1 text-xs border border-slate-200 rounded-xl px-3 py-2 bg-white focus:ring-2 focus:ring-[#14B8A6]/20 focus:border-[#14B8A6] outline-none"
                                         />
                                         <input
                                             type="time"
                                             value={scheduleTime}
                                             onChange={(e) => setScheduleTime(e.target.value)}
-                                            required
                                             className="w-[85px] text-xs border border-slate-200 rounded-xl px-3 py-2 bg-white focus:ring-2 focus:ring-[#14B8A6]/20 focus:border-[#14B8A6] outline-none"
                                         />
                                     </div>
+                                    {scheduleDateError && (
+                                        <p className="text-xs text-red-500 font-medium">{scheduleDateError}</p>
+                                    )}
                                 </div>
                             )}
 
@@ -463,21 +474,20 @@ const BlogPostForm = ({ initialData, onSubmittingChange }: BlogPostFormProps) =>
                                 </div>
                             </div>
 
-                            {/* Form submit actions */}
-                            <div className="pt-4 border-t border-slate-100 flex flex-col gap-2">
+                            {/* Form submit actions — mobile only */}
+                            <div className="pt-4 border-t border-slate-100 flex flex-col gap-2 md:hidden">
                                 <Button
                                     type="submit"
-                                    onClick={() => setValue('status', publishOption === 'draft' ? 'draft' : 'published')}
                                     className="w-full rounded-2xl h-12 font-bold bg-[#14B8A6] hover:bg-[#0f766e] shadow-lg shadow-[#14B8A6]/20 text-white transition-all"
                                     isLoading={updatePostMutation.isPending || isSubmitting}
                                 >
-                                    {t('actions.save_changes', { defaultValue: 'Lưu thay đổi' })}
+                                    {t('actions.save_changes')}
                                 </Button>
                                 <Button
                                     variant="outline"
                                     type="button"
                                     disabled={updatePostMutation.isPending || isSubmitting}
-                                    onClick={() => navigate('/admin/blog-posts')}
+                                    onClick={() => (onCancel ? onCancel() : navigate(ROUTES.BLOG_POSTS))}
                                     className="w-full rounded-2xl h-12 border-slate-200 text-slate-500 hover:bg-slate-50 font-bold"
                                 >
                                     {t('actions.cancel')}
@@ -499,10 +509,10 @@ const BlogPostForm = ({ initialData, onSubmittingChange }: BlogPostFormProps) =>
                                 {categoriesLoading ? (
                                     <div className="flex items-center gap-2 text-slate-400 py-2">
                                         <Loader2 className="w-4 h-4 animate-spin" />
-                                        <span className="text-xs font-semibold">Loading...</span>
+                                        <span className="text-xs font-semibold">{t('form.categories.loading')}</span>
                                     </div>
                                ) : categories.length === 0 ? (
-                                    <div className="text-xs text-slate-400 py-2 font-medium">No categories found</div>
+                                    <div className="text-xs text-slate-400 py-2 font-medium">{t('form.categories.empty')}</div>
                                 ) : (
                                     categories.map((cat) => {
                                         const isChecked = watchCategoryIds.includes(cat.id);
@@ -515,6 +525,7 @@ const BlogPostForm = ({ initialData, onSubmittingChange }: BlogPostFormProps) =>
                                                     type="checkbox"
                                                     checked={isChecked}
                                                     onChange={(e) => handleCategoryToggle(cat.id, e.target.checked)}
+                                                    aria-label={cat.name}
                                                     className="w-4.5 h-4.5 text-[#14B8A6] border-slate-300 rounded-sm focus:ring-[#14B8A6]"
                                                 />
                                                 <span

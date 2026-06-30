@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import type { ReactNode } from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import {
     LayoutDashboard,
@@ -17,13 +18,13 @@ import {
     Mail,
     Star,
     Tag,
-    Globe,
     Bot
 } from 'lucide-react';
 import { ROUTES } from '@/routes/routes';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/store';
 import { useUserStore } from '@/store/useUserStore';
+import { canAccessReports } from '@/pages/Reports/shared/reportAccess';
 import { useLogoutQuery } from '@/hooks/useAuthQuery';
 
 /**
@@ -77,7 +78,7 @@ const navItems = [
 
     { icon: Settings, label: 'sidebar.settings', path: '/admin/settings' },
     { icon: Tag, label: 'sidebar.promotions', path: ROUTES.PROMOTIONS },
-    { icon: Globe, label: 'sidebar.landing_pages', path: ROUTES.LANDING_PAGES },
+    // Landing Pages: hidden from sidebar — CMS chưa tích hợp web user; route /admin/landing-pages vẫn truy cập trực tiếp.
 ];
 
 const Sidebar = () => {
@@ -144,13 +145,17 @@ const Sidebar = () => {
             {/* Navigation Section */}
             <nav className="flex-1 overflow-y-auto py-6 px-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                 <div className="space-y-1.5">
-                    {navItems.map((item) => {
+                    {navItems.reduce<ReactNode[]>((items, item) => {
+                        if (item.path === '/admin/reports' && !canAccessReports(user)) {
+                            return items;
+                        }
+
                         const hasSub = !!item.subItems;
                         const matchPaths = ('matchPaths' in item && item.matchPaths) ? item.matchPaths : [item.path];
                         const isMainActive = matchPaths.some((matchPath) => location.pathname.startsWith(matchPath)) || (item.path === ROUTES.DASHBOARD && location.pathname === '/');
                         const isOpen = openMenus[item.path];
 
-                        return (
+                        items.push(
                             <div key={item.path} className="flex flex-col relative group/item" title={isCollapsed ? t(item.label) : ''}>
                                 {hasSub ? (
                                     <button
@@ -217,7 +222,8 @@ const Sidebar = () => {
                                 )}
                             </div>
                         );
-                    })}
+                        return items;
+                    }, [])}
                 </div>
             </nav>
 

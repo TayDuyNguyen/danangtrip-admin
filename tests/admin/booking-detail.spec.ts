@@ -43,6 +43,14 @@ test.describe('Admin Booking Detail @P1', () => {
     await expect(detailPage.passengersSection).toBeVisible();
     await expect(detailPage.timelineSection).toBeVisible();
     await expect(detailPage.operationsSection).toBeVisible();
+    await detailPage.captureUiScreenshot('TC_AD_BDET_003');
+  });
+
+  /** TC_AD_BDET_024 */
+  test('TC_AD_BDET_024 shows confirm and cancel only for pending booking', async () => {
+    await expect(detailPage.confirmBookingButton).toBeVisible();
+    await expect(detailPage.cancelBookingButton).toBeVisible();
+    await expect(detailPage.allCompleteBookingButtons).toHaveCount(0);
   });
 
   /** TC_AD_BDET_008 */
@@ -53,14 +61,12 @@ test.describe('Admin Booking Detail @P1', () => {
 
   /** TC_AD_BDET_009 */
   test('TC_AD_BDET_009 displays full customer information', async ({ adminPage }) => {
-    const customerCard = adminPage
-      .locator('.bg-white.rounded-3xl')
-      .filter({ has: detailPage.customerSection });
-    await expect(customerCard.getByText(mockBookingDetailPending.customer_name)).toBeVisible();
-    await expect(customerCard.getByText(mockBookingDetailPending.customer_email, { exact: true })).toBeVisible();
-    await expect(customerCard.getByText(mockBookingDetailPending.customer_phone!)).toBeVisible();
-    await expect(customerCard.getByText(mockBookingDetailPending.customer_address!)).toBeVisible();
-    await expect(customerCard.getByText(mockBookingDetailPending.customer_note!)).toBeVisible();
+    const main = adminPage.locator('main');
+    await expect(main.getByText(mockBookingDetailPending.customer_name, { exact: true })).toBeVisible();
+    await expect(main.getByText(mockBookingDetailPending.customer_email, { exact: true })).toBeVisible();
+    await expect(main.getByText(mockBookingDetailPending.customer_phone!)).toBeVisible();
+    await expect(main.getByText(mockBookingDetailPending.customer_address!)).toBeVisible();
+    await expect(main.getByText(mockBookingDetailPending.customer_note!)).toBeVisible();
   });
 
   /** TC_AD_BDET_018 */
@@ -128,7 +134,7 @@ test.describe('Admin Booking Detail — confirmed @P1', () => {
     await detailPage.goto();
     await detailPage.waitForLoaded();
     await expect(detailPage.completeBookingButton).toBeVisible();
-    await expect(detailPage.confirmBookingButton).toHaveCount(0);
+    await expect(detailPage.allConfirmBookingButtons).toHaveCount(0);
   });
 
   /** TC_AD_BDET_029 */
@@ -137,14 +143,29 @@ test.describe('Admin Booking Detail — confirmed @P1', () => {
     await mockAdminLayoutApis(adminPage);
     await mockBookingsApi(adminPage);
     const detailPage = new BookingDetailPage(adminPage, confirmedBookingDetailId);
-    adminPage.on('dialog', (dialog) => dialog.accept());
     await detailPage.goto();
     await detailPage.waitForLoaded();
     const patchReq = detailPage.waitForStatusPatch();
-    await detailPage.completeBookingButton.click();
+    await detailPage.openCompleteDialog();
+    await detailPage.submitCompleteDialog();
     await patchReq;
     await expect(adminPage.getByText(copy.completeSuccess)).toBeVisible();
     expect(getMockBooking(confirmedBookingDetailId)?.booking_status).toBe('completed');
+  });
+
+  /** TC_AD_BDET_030 */
+  test('TC_AD_BDET_030 shows error toast when complete fails', async ({ adminPage }) => {
+    resetMockBookings();
+    setBookingMutationFail(true);
+    await mockAdminLayoutApis(adminPage);
+    await mockBookingsApi(adminPage);
+    const detailPage = new BookingDetailPage(adminPage, confirmedBookingDetailId);
+    await detailPage.goto();
+    await detailPage.waitForLoaded();
+    await detailPage.openCompleteDialog();
+    await detailPage.submitCompleteDialog();
+    await expect(adminPage.getByText(copy.updateError)).toBeVisible();
+    expect(getMockBooking(confirmedBookingDetailId)?.booking_status).toBe('confirmed');
   });
 });
 
@@ -157,8 +178,8 @@ test.describe('Admin Booking Detail — terminal states @P1', () => {
     await detailPage.goto();
     await detailPage.waitForLoaded();
     await expect(adminPage.getByText(copy.terminalCompleted)).toBeVisible();
-    await expect(detailPage.confirmBookingButton).toHaveCount(0);
-    await expect(detailPage.completeBookingButton).toHaveCount(0);
+    await expect(detailPage.allConfirmBookingButtons).toHaveCount(0);
+    await expect(detailPage.allCompleteBookingButtons).toHaveCount(0);
     await expect(detailPage.cancelBookingButton).toHaveCount(0);
   });
 
@@ -185,6 +206,7 @@ test.describe('Admin Booking Detail — error @P1', () => {
     const detailPage = new BookingDetailPage(adminPage, invalidBookingDetailId);
     await detailPage.goto();
     await expect(detailPage.errorPanel).toBeVisible({ timeout: 15_000 });
+    await expect(adminPage.getByText(copy.notFoundTitle)).toBeVisible();
     await expect(detailPage.retryButton).toBeVisible();
   });
 

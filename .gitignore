@@ -29,9 +29,8 @@ dist-ssr
 *.sln
 *.sw?
 
-# Test results and screenshots
-test-results/
-reports/
+# Playwright / test HTML reports (repo root only)
+/reports/
 
 # Codegraph
 .codegraph/

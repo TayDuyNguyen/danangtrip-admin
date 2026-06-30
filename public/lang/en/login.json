@@ -5,6 +5,7 @@
   "password": "Password",
   "remember_me": "Remember me",
   "forgot_password": "Forgot password?",
+  "forgot_password_soon": "This feature is coming soon",
   "logging_in": "Logging in...",
   "login_btn": "LOGIN",
   "or_login_with": "Or login with",

@@ -6,11 +6,13 @@
         "export": "Xuất Excel",
         "filter": "Lọc",
         "reset": "Đặt lại",
+        "reset": "Đặt lại",
         "activate": "Kích hoạt",
         "deactivate": "Tạm dừng",
         "delete": "Xóa",
         "selected": "Đã chọn {{count}}",
         "confirm_delete": "Xóa địa điểm này?",
+        "bulk_confirm_delete": "Xóa các địa điểm đã chọn?",
         "cancel": "Hủy"
     },
     "stats": {
@@ -37,7 +39,9 @@
             "actions": "Thao tác"
         },
         "pagination": "Hiển thị {{from}}-{{to}} trong tổng số {{total}} địa điểm",
-        "per_page": "{{count}} / trang"
+        "per_page": "{{count}} / trang",
+        "price_free": "Miễn phí",
+        "price_not_set": "Chưa cập nhật"
     },
     "status": {
         "all": "Tất cả",
@@ -53,11 +57,16 @@
     },
     "messages": {
         "delete_confirm": "Địa điểm <strong>{{name}}</strong> sẽ bị xóa vĩnh viễn.",
+        "bulk_delete_confirm": "Bạn sắp xóa <strong>{{count}}</strong> địa điểm. Hành động không thể hoàn tác.",
         "delete_warning": "Tất cả đánh giá, lượt yêu thích và dữ liệu liên quan sẽ bị xóa theo.",
         "delete_success": "Xóa địa điểm thành công",
         "delete_error": "Có lỗi xảy ra khi xóa địa điểm",
         "no_data": "Không có dữ liệu",
         "load_error": "Không thể tải chi tiết địa điểm.",
+        "list_load_error": "Không tải được danh sách địa điểm",
+        "list_load_error_desc": "Dữ liệu địa điểm tạm thời không khả dụng. Vui lòng thử lại.",
+        "export_success": "Đang tải file Excel...",
+        "export_error": "Có lỗi xảy ra khi xuất file",
         "update_success": "Cập nhật thành công",
         "update_error": "Cập nhật thất bại",
         "bulk_update_success": "Cập nhật hàng loạt thành công",
@@ -91,7 +100,8 @@
             "pricing": "Mức giá & Giờ mở cửa",
             "media": "Hình ảnh & Video",
             "map": "Vị trí trên bản đồ",
-            "settings": "Cài đặt & Trạng thái"
+            "settings": "Cài đặt & Trạng thái",
+            "tags_amenities": "Tags & Tiện ích"
         },
         "section_descriptions": {
             "basic": "Tên, danh mục và mô tả chi tiết của địa điểm",
@@ -99,7 +109,12 @@
             "pricing": "Khoảng giá và thời gian hoạt động hàng ngày",
             "media": "Tải lên ảnh đại diện và bộ sưu tập ảnh của địa điểm",
             "map": "Xác định tọa độ chính xác để hiển thị trên bản đồ du lịch",
-            "settings": "Cấu hình trạng thái hiển thị và độ ưu tiên"
+            "settings": "Cấu hình trạng thái hiển thị và độ ưu tiên",
+            "tags_amenities": "Mở rộng thông tin cho địa điểm"
+        },
+        "tags_amenities": {
+            "tags": "Tags",
+            "amenities": "Tiện ích (Amenities)"
         },
         "basic": {
             "name": "Tên địa điểm",
@@ -149,7 +164,8 @@
         "map": {
             "latitude": "Vĩ độ (Latitude)",
             "longitude": "Kinh độ (Longitude)",
-            "helper": "Click vào bản đồ để chọn tọa độ chính xác"
+            "helper": "Click vào bản đồ để chọn tọa độ chính xác",
+            "reset_center": "Đặt lại về trung tâm Đà Nẵng"
         },
         "settings": {
             "status": "Trạng thái hiển thị",
@@ -173,6 +189,8 @@
     "detail": {
         "title": "Chi tiết Địa điểm",
         "back_to_list": "Quay lại danh sách",
+        "not_found": "Không tìm thấy địa điểm",
+        "not_found_desc": "Địa điểm không tồn tại hoặc đã bị xóa khỏi hệ thống.",
         "edit": "Chỉnh sửa",
         "delete": "Xóa địa điểm",
         "tabs": {
@@ -187,7 +205,9 @@
             "avg_score": "Trung bình"
         },
         "hero": {
-            "no_images": "Chưa có hình ảnh"
+            "no_images": "Chưa có hình ảnh",
+            "view_full": "Xem ảnh full màn hình",
+            "close_lightbox": "Đóng xem ảnh"
         },
         "info": {
             "description": "Mô tả",
@@ -223,6 +243,7 @@
         },
         "reviews": {
             "empty": "Chưa có đánh giá nào cho địa điểm này.",
+            "load_error": "Không thể tải đánh giá. Vui lòng thử lại.",
             "all_reviews": "Tất cả đánh giá",
             "distribution": "Phân bổ đánh giá",
             "total_count": "{{count}} đánh giá",
@@ -249,10 +270,20 @@
         "title": "Danh mục Địa điểm",
         "subtitle": "Quản lý các loại hình địa điểm (Ẩm thực, Lưu trú, Tham quan...)",
         "search_placeholder": "Tìm theo tên danh mục hoặc slug...",
+        "stats_scope_note": "Thống kê toàn hệ thống (không theo bộ lọc hiện tại)",
+        "reset_filters": "Đặt lại bộ lọc",
+        "empty_title": "Không có danh mục nào",
+        "empty_subtitle": "Thử thay đổi bộ lọc hoặc tạo danh mục mới",
+        "empty_cta": "Thêm danh mục đầu tiên",
         "actions": {
             "add": "Thêm danh mục",
-            "edit": "Sửa danh mục",
-            "delete": "Xóa danh mục"
+            "edit": "Sửa danh mục {{name}}",
+            "delete": "Xóa danh mục {{name}}",
+            "delete_blocked": "Không thể xóa — đang có {{count}} địa điểm liên kết"
+        },
+        "dialog": {
+            "button_delete": "Xóa danh mục",
+            "button_cancel": "Hủy"
         },
         "stats": {
             "total": "TỔNG DANH MỤC",
@@ -300,7 +331,9 @@
             "image_placeholder": "https://... hoặc để trống",
             "icon": "Icon (class hoặc URL)",
             "icon_placeholder": "VD: MapPinned",
-            "icon_background": "Màu nền icon"
+            "icon_background": "Màu nền icon",
+            "create_subtitle": "Thêm loại hình địa điểm mới vào hệ thống",
+            "edit_subtitle": "Cập nhật thông tin danh mục địa điểm và trạng thái hiển thị"
         },
         "messages": {
             "create_success": "Tạo danh mục thành công",

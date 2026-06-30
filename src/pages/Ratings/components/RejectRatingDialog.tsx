@@ -50,6 +50,11 @@ export const RejectRatingDialog = ({
         reset();
     };
 
+    const handleClose = () => {
+        reset();
+        onClose();
+    };
+
     if (!isOpen) return null;
 
     const isBulk = !rating;
@@ -59,14 +64,14 @@ export const RejectRatingDialog = ({
             {/* Backdrop blur overlay */}
             <div
                 className="absolute inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity duration-300"
-                onClick={onClose}
+                onClick={handleClose}
             ></div>
 
             {/* Modal Box */}
             <div className="relative w-full max-w-lg bg-white border border-slate-100 rounded-3xl p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200 overflow-hidden z-10">
                 {/* Close Button */}
                 <button
-                    onClick={onClose}
+                    onClick={handleClose}
                     className="absolute right-6 top-6 text-slate-400 hover:text-slate-900 p-1 hover:bg-slate-50 rounded-lg transition-all"
                 >
                     <X size={18} />
@@ -145,7 +150,7 @@ export const RejectRatingDialog = ({
                     <div className="flex gap-3 justify-end pt-2">
                         <button
                             type="button"
-                            onClick={onClose}
+                            onClick={handleClose}
                             disabled={isSubmitting}
                             className="px-4 py-2.5 text-sm font-bold border border-slate-200 bg-white hover:bg-slate-50 rounded-xl text-slate-600 disabled:opacity-50 transition-all"
                         >

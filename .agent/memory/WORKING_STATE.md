@@ -2,12 +2,12 @@
 
 ## Current Status
 
-- Date: 2026-06-02
-- Active feature/task: `admin_landing_pages`
-- Status: **COMPLETED** — All front-end and back-end modules for Landing Pages are fully completed, compiled, and verified.
-- Next step: Select a new administrative feature or wrap up.
-- Objective: Provide a fully functional interface to manage SEO Landing Pages, content blocks, and tour filter query JSONs.
-- Mode: Completed
+- Date: 2026-06-28
+- Active feature/task: `react_doctor_top3_cleanup`
+- Status: **COMPLETED** — Top 3 requested React Doctor issue classes are cleared in the real tool.
+- Next step: Follow-up pass on remaining React Doctor findings, starting with migration-scale `button-has-type` only after code-owner sign-off.
+- Objective: Resolve chained array iteration, unused default exports, and unused-file findings without suppressing rules.
+- Mode: Completed cleanup
 - Owner: AI collaborator
 
 ## Progress Breakdown — admin_landing_pages (COMPLETED ✅)

@@ -34,7 +34,8 @@ export interface RawTourCategory {
  * Category Statistics
  */
 export interface CategoryStats {
-    total: number;
+    totalTours: number;
+    totalCategories: number;
     active: number;
     inactive: number;
 }
@@ -108,8 +109,8 @@ export const tourCategoryMapper = {
         // Robust stats mapping using actual backend field names
         const rawStats = (response?.stats || {}) as Record<string, unknown>;
         const stats: CategoryStats = {
-            // Map 'total_tours' to 'total' as it's used in the first card "Số lượng Tour"
-            total: toNumberSafe(rawStats.total_tours || rawStats.total_categories),
+            totalTours: toNumberSafe(rawStats.total_tours),
+            totalCategories: toNumberSafe(rawStats.total_categories),
             active: toNumberSafe(rawStats.active_categories),
             inactive: toNumberSafe(rawStats.inactive_categories),
         };
@@ -129,17 +130,3 @@ export const tourCategoryMapper = {
     }
 };
 
-/**
- * Helper to get icon component name based on category name or slug
- */
-export const getCategoryIcon = (slug: string): string => {
-    const iconMap: Record<string, string> = {
-        'beach': 'Waves',
-        'culture': 'Landmark',
-        'food': 'Utensils',
-        'adventure': 'Mountain',
-        'luxury': 'Gem',
-        'family': 'Users',
-    };
-    return iconMap[slug] || 'Map';
-};

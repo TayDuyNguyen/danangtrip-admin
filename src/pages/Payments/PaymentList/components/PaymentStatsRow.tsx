@@ -23,7 +23,7 @@ export const PaymentStatsRow = ({ stats, isLoading }: PaymentStatsRowProps) => {
 
     const cards = [
         {
-            title: t("stats.revenue", "Tổng Doanh thu"),
+            title: t("stats.revenue_on_page", "Tổng Doanh thu (trang này)"),
             value: formatCurrency(stats?.totalRevenue || 0),
             icon: DollarSign,
             color: "text-teal-600 bg-teal-50 border-teal-100",
@@ -31,7 +31,7 @@ export const PaymentStatsRow = ({ stats, isLoading }: PaymentStatsRowProps) => {
             gradient: "from-teal-500/5 to-transparent",
         },
         {
-            title: t("stats.success_count", "Giao dịch Thành công"),
+            title: t("stats.success_count_on_page", "Giao dịch Thành công (trang này)"),
             value: stats?.successCount || 0,
             icon: CheckCircle2,
             color: "text-emerald-600 bg-emerald-50 border-emerald-100",
@@ -39,7 +39,7 @@ export const PaymentStatsRow = ({ stats, isLoading }: PaymentStatsRowProps) => {
             gradient: "from-emerald-500/5 to-transparent",
         },
         {
-            title: t("stats.pending_count", "Giao dịch Đang chờ"),
+            title: t("stats.pending_count_on_page", "Giao dịch Đang chờ (trang này)"),
             value: stats?.pendingCount || 0,
             icon: Clock,
             color: "text-amber-600 bg-amber-50 border-amber-100",
@@ -47,7 +47,7 @@ export const PaymentStatsRow = ({ stats, isLoading }: PaymentStatsRowProps) => {
             gradient: "from-amber-500/5 to-transparent",
         },
         {
-            title: t("stats.refunded_amount", "Số tiền Hoàn trả"),
+            title: t("stats.refunded_amount_on_page", "Số tiền Hoàn trả (trang này)"),
             value: formatCurrency(stats?.refundedAmount || 0),
             icon: RefreshCw,
             color: "text-rose-600 bg-rose-50 border-rose-100",

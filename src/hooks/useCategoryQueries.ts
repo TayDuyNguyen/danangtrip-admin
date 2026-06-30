@@ -2,7 +2,6 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { categoryApi } from '@/api/categoryApi';
-import { categoryMapper } from '@/dataHelper/category.mapper';
 import type { PaginationParams } from '@/types/api';
 import type { CategoryInput } from '@/types/category';
 import { getLocalizedApiErrorMessage } from '@/utils/apiError';
@@ -10,7 +9,7 @@ import { getLocalizedApiErrorMessage } from '@/utils/apiError';
 /**
  * Query keys for categories
  */
-export const categoryKeys = {
+const categoryKeys = {
     all: ['categories'] as const,
     lists: () => [...categoryKeys.all, 'list'] as const,
     list: (params: PaginationParams) => [...categoryKeys.lists(), params] as const,
@@ -26,21 +25,6 @@ export const useCategoriesQuery = (params: PaginationParams) => {
         queryKey: categoryKeys.list(params),
         queryFn: () => categoryApi.getList(params),
         staleTime: 5 * 60 * 1000,
-        placeholderData: (previousData) => previousData,
-    });
-};
-
-/**
- * Hook for fetching category detail
- */
-export const useCategoryDetailQuery = (id: number) => {
-    return useQuery({
-        queryKey: categoryKeys.detail(id),
-        queryFn: async () => {
-            const data = await categoryApi.getDetail(id);
-            return categoryMapper.mapCategory(data);
-        },
-        enabled: !!id,
     });
 };
 

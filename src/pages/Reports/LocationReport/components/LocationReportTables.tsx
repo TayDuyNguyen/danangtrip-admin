@@ -2,6 +2,7 @@ import React from 'react';
 import { RefreshCw, MapPin } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import type { LocationReportViewModel } from '@/dataHelper/report.dataHelper';
+import ReportPerPageSelector from '../../shared/ReportPerPageSelector';
 
 type TabType = 'views' | 'favorites' | 'ratings';
 
@@ -11,6 +12,7 @@ interface LocationReportTablesProps {
     activeTab: TabType;
     onTabChange: (tab: TabType) => void;
     onPageChange: (page: number) => void;
+    onPerPageChange?: (perPage: number) => void;
 }
 
 const tabs: { key: TabType; labelKey: string }[] = [
@@ -25,6 +27,7 @@ const LocationReportTables: React.FC<LocationReportTablesProps> = ({
     activeTab,
     onTabChange,
     onPageChange,
+    onPerPageChange,
 }) => {
     const { t } = useTranslation('location_report');
 
@@ -130,15 +133,24 @@ const LocationReportTables: React.FC<LocationReportTablesProps> = ({
             </div>
 
             {/* Pagination Footer */}
-            {!isLoading && pagination && pagination.lastPage > 1 && (
+            {!isLoading && pagination && pagination.total > 0 && (
                 <div className="px-[24px] py-[16px] border-t border-[#E2E8F0] flex flex-col sm:flex-row gap-4 justify-between items-center bg-[#F8FAFC]/50 shrink-0">
-                    <span className="text-[12px] font-bold text-[#94A3B8]">
-                        {t('table.pagination_showing', {
-                            from: ((pagination.currentPage - 1) * pagination.perPage) + 1,
-                            to: Math.min(pagination.currentPage * pagination.perPage, pagination.total),
-                            total: pagination.total,
-                        })}
-                    </span>
+                    <div className="flex flex-col sm:flex-row gap-3 items-center">
+                        <span className="text-[12px] font-bold text-[#94A3B8]">
+                            {t('table.pagination_showing', {
+                                from: ((pagination.currentPage - 1) * pagination.perPage) + 1,
+                                to: Math.min(pagination.currentPage * pagination.perPage, pagination.total),
+                                total: pagination.total,
+                            })}
+                        </span>
+                        {onPerPageChange && (
+                            <ReportPerPageSelector
+                                value={pagination.perPage}
+                                onChange={onPerPageChange}
+                                testId="locations-report-per-page"
+                            />
+                        )}
+                    </div>
                     <div className="flex gap-1.5 items-center">
                         <button type="button" onClick={() => onPageChange(pagination.currentPage - 1)} disabled={pagination.currentPage <= 1}
                             className="px-3.5 py-1.5 rounded-lg text-xs font-bold border border-[#E2E8F0] bg-white text-slate-600 hover:border-[#14b8a6] hover:text-[#14b8a6] hover:bg-[#14b8a6]/5 active:scale-95 disabled:opacity-50 disabled:active:scale-100 transition-all duration-150 cursor-pointer select-none">

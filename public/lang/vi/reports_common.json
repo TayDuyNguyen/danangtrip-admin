@@ -1,0 +1,28 @@
+{
+  "mock": {
+    "toggle_title": "Nhấp để bật/tắt chế độ giả lập dữ liệu",
+    "mock_on": "Dữ liệu Giả lập (On)",
+    "mock_off": "Dữ liệu Thật (Off)",
+    "banner": "Đang xem dữ liệu giả lập — số liệu không phản ánh API thật",
+    "toast_to_mock": "Không kết nối được API. Vui lòng thử lại hoặc bật dữ liệu giả lập.",
+    "toast_switched_mock": "Đã chuyển sang chế độ Giả lập (Mock Data)",
+    "toast_switched_real": "Đã chuyển sang chế độ Dữ liệu thật (API Laravel)"
+  },
+  "error": {
+    "load_failed": "Không thể tải dữ liệu từ API",
+    "connection": "Đã xảy ra sự cố kết nối với hệ thống API của Laravel.",
+    "retry_btn": "Thử lại",
+    "use_mock_btn": "Sử dụng Mock Data"
+  },
+  "export": {
+    "btn_label": "Xuất Excel",
+    "toast_mock_loading": "Đang chuẩn bị file CSV giả lập...",
+    "toast_mock_success": "Đã tải xuống báo cáo CSV giả lập thành công!"
+  },
+  "pagination": {
+    "per_page": "Số dòng / trang"
+  },
+  "access": {
+    "denied_toast": "Bạn không có quyền truy cập báo cáo này."
+  }
+}

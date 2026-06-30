@@ -6,7 +6,7 @@ import { mapApiErrorMessage } from './apiError';
  * Returns true when the axios response interceptor already showed a global toast
  * (network failure after failover, or 403 permission denied).
  */
-export function isGlobalApiErrorToastHandled(error: unknown): boolean {
+function isGlobalApiErrorToastHandled(error: unknown): boolean {
     if (!isAxiosError(error)) {
         return false;
     }

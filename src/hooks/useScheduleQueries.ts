@@ -5,7 +5,7 @@ import type { ScheduleFilters, Schedule } from '@/types/schedule';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 
-export const SCHEDULE_QUERY_KEYS = {
+const SCHEDULE_QUERY_KEYS = {
     all: ['schedules'] as const,
     lists: () => [...SCHEDULE_QUERY_KEYS.all, 'list'] as const,
     list: (filters: ScheduleFilters) => [...SCHEDULE_QUERY_KEYS.lists(), { filters }] as const,
@@ -147,10 +147,10 @@ export const useBulkUpdateScheduleStatus = () => {
 };
 
 /** Limit for schedule preview in tour list modal (invalidation key `tour-detail-schedules`). */
-export const TOUR_DETAIL_MODAL_SCHEDULE_LIMIT = 5;
+const TOUR_DETAIL_MODAL_SCHEDULE_LIMIT = 5;
 
 /** Limit for departure list block on tour edit page. */
-export const TOUR_EDIT_DEPARTURE_SCHEDULE_LIMIT = 25;
+const TOUR_EDIT_DEPARTURE_SCHEDULE_LIMIT = 25;
 
 /**
  * Schedules preview for `TourDetailModal` — data flow: hook → `scheduleApi` (PROJECT_RULES §4).

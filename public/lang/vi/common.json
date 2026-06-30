@@ -48,6 +48,10 @@
         "leave": "Rời đi",
         "retry": "Thử lại"
     },
+    "table": {
+        "select_all": "Chọn tất cả bài viết trên trang này",
+        "select_row": "Chọn bài viết: {{name}}"
+    },
     "breadcrumb": {
         "home": "Trang chủ",
         "edit": "Chỉnh sửa",

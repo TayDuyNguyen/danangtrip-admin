@@ -42,7 +42,12 @@ export const bookingDetailCopy = {
   exportSuccess: /Đang tải file Excel|Excel file is downloading|downloading/i,
   exportError: /Có lỗi xảy ra khi xuất|An error occurred while exporting/i,
   reasonRequired: /Vui lòng nhập lý do hủy|Cancellation reason is required/i,
-  completeDialog: /Xác nhận hoàn tất|Confirm completion|hoàn tất đơn hàng|complete order/i,
+  notFoundTitle: /Không tìm thấy đơn hàng|Booking not found/i,
+  loadErrorTitle: /Không tải được chi tiết đơn|Unable to load booking/i,
+  completeDialogTitle: /Hoàn tất đơn hàng này|Complete this booking/i,
+  completeDialogSubmit: /Xác nhận hoàn tất|Confirm completion/i,
+  viewUserProfile: /Xem hồ sơ khách hàng|View customer profile/i,
+  viewTourDetail: /Xem chi tiết tour|View tour details/i,
   stickyContextBadge: /Chi tiết|^Detail$/i,
 };
 
@@ -57,10 +62,16 @@ export class BookingDetailPage {
     this.bookingId = bookingId;
   }
 
-  async goto() {
-    await this.page.setViewportSize({ width: 1280, height: 800 });
+  async goto(viewport = { width: 1535, height: 697 }) {
+    await this.page.setViewportSize(viewport);
     await this.page.goto(`/admin/bookings/detail/${this.bookingId}`, { waitUntil: 'domcontentloaded' });
-    await this.pageTitle.waitFor({ state: 'visible', timeout: 25_000 });
+  }
+
+  async captureUiScreenshot(tcId: string) {
+    await this.page.screenshot({
+      path: `reports/ui-screenshots/booking-detail/${tcId}.png`,
+      fullPage: false,
+    });
   }
 
   get pageTitle() {
@@ -68,7 +79,11 @@ export class BookingDetailPage {
   }
 
   get customerSection() {
-    return this.page.getByRole('heading', { name: copy.sectionCustomer });
+    return this.page.locator('main').getByRole('heading', { name: copy.sectionCustomer });
+  }
+
+  get paymentCard() {
+    return this.paymentSection.locator('xpath=ancestor::div[contains(@class,"rounded-3xl")][1]');
   }
 
   get tourSection() {
@@ -88,7 +103,7 @@ export class BookingDetailPage {
   }
 
   get operationsSection() {
-    return this.page.getByRole('heading', { name: copy.operationsTitle });
+    return this.page.locator('main').getByRole('heading', { name: copy.operationsTitle });
   }
 
   get backButton() {
@@ -105,23 +120,35 @@ export class BookingDetailPage {
   }
 
   get invoiceButton() {
-    return this.page.getByRole('button', { name: copy.invoiceButton });
+    return this.page.locator('main').getByRole('button', { name: copy.invoiceButton }).first();
+  }
+
+  get mobileFooter() {
+    return this.page.locator('[data-booking-detail-mobile-footer]');
   }
 
   get confirmBookingButton() {
-    return this.page.getByRole('button', { name: copy.confirmBooking });
+    return this.page.getByRole('button', { name: copy.confirmBooking }).first();
   }
 
   get confirmPaymentButton() {
-    return this.page.getByRole('button', { name: copy.confirmPayment });
+    return this.page.getByRole('button', { name: copy.confirmPayment }).first();
   }
 
   get completeBookingButton() {
-    return this.page.getByRole('button', { name: copy.completeBooking });
+    return this.page.getByRole('button', { name: copy.completeBooking }).first();
   }
 
   get cancelBookingButton() {
-    return this.page.getByRole('button', { name: copy.cancelBooking });
+    return this.page.getByRole('button', { name: copy.cancelBooking }).first();
+  }
+
+  get allConfirmBookingButtons() {
+    return this.page.getByRole('button', { name: copy.confirmBooking });
+  }
+
+  get allCompleteBookingButtons() {
+    return this.page.getByRole('button', { name: copy.completeBooking });
   }
 
   get cancelDialog() {
@@ -132,12 +159,33 @@ export class BookingDetailPage {
     return this.page.locator('.relative.w-full.max-w-\\[440px\\]').filter({ hasText: copy.confirmPaymentDialog });
   }
 
-  get loadingSkeleton() {
-    return this.page.locator('.animate-pulse.rounded-3xl').first();
+  get loadingSkeletonGrid() {
+    return this.page.locator('.grid.grid-cols-1.lg\\:grid-cols-12.gap-8.animate-pulse');
   }
 
   get errorPanel() {
-    return this.page.getByText(copy.updateError).first();
+    return this.page.getByTestId('booking-detail-error');
+  }
+
+  get completeDialog() {
+    return this.page.locator('.relative.w-full.max-w-\\[440px\\]').filter({ hasText: copy.completeDialogTitle });
+  }
+
+  get completeDialogSubmitButton() {
+    return this.completeDialog.getByRole('button', { name: copy.completeDialogSubmit });
+  }
+
+  async openCompleteDialog() {
+    await this.completeBookingButton.click();
+    await expect(this.completeDialog).toBeVisible();
+  }
+
+  async submitCompleteDialog() {
+    await this.completeDialogSubmitButton.click();
+  }
+
+  async dismissCompleteDialog() {
+    await this.completeDialog.getByRole('button', { name: copy.closeDialog }).click();
   }
 
   get stickyContextBadge() {
@@ -156,7 +204,11 @@ export class BookingDetailPage {
   }
 
   async waitForLoaded() {
-    await this.customerSection.waitFor({ state: 'visible', timeout: 20_000 });
+    await expect(this.loadingSkeletonGrid).toHaveCount(0, { timeout: 20_000 });
+    await this.page.locator('main').getByRole('heading', { name: copy.sectionTour }).waitFor({
+      state: 'attached',
+      timeout: 20_000,
+    });
   }
 
   async fillCancelReason(reason: string) {

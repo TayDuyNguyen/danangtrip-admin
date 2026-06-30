@@ -19,17 +19,7 @@ export const usePromotions = (filters?: PromotionFilters) => {
             return response.data as Paginator<Promotion>;
         },
         placeholderData: (prev) => prev,
-    });
-};
-
-export const usePromotion = (id: number | null) => {
-    return useQuery<Promotion>({
-        queryKey: [QUERY_KEY, 'detail', id],
-        queryFn: async () => {
-            const response = await promotionsApi.get(id!);
-            return response.data as Promotion;
-        },
-        enabled: !!id,
+        retry: false,
     });
 };
 

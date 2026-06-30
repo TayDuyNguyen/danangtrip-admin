@@ -12,6 +12,7 @@ interface ReportFilterBarProps {
     onFilterChange: (updated: Partial<ReportFilterBarProps['filters']>) => void;
     onApply: () => void;
     onReset: () => void;
+    onQuickRangeApply?: (dates: { from: string; to: string }) => void;
     isSubmitting?: boolean;
 }
 
@@ -20,6 +21,7 @@ const ReportFilterBar: React.FC<ReportFilterBarProps> = ({
     onFilterChange,
     onApply,
     onReset,
+    onQuickRangeApply,
     isSubmitting = false,
 }) => {
     const { t } = useTranslation(['revenue_report', 'common']);
@@ -57,7 +59,12 @@ const ReportFilterBar: React.FC<ReportFilterBarProps> = ({
     };
 
     const applyQuickRange = (range: '7days' | '30days' | '3months' | 'thisyear') => {
-        onFilterChange(getQuickRangeDates(range));
+        const dates = getQuickRangeDates(range);
+        if (onQuickRangeApply) {
+            onQuickRangeApply(dates);
+            return;
+        }
+        onFilterChange(dates);
     };
 
     const isQuickRangeActive = (range: '7days' | '30days' | '3months' | 'thisyear') => {

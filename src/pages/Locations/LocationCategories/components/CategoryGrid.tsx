@@ -1,4 +1,4 @@
-import { FolderOpen } from 'lucide-react';
+import { FolderOpen, Plus } from 'lucide-react';
 import { Reorder } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import type { Category } from '@/dataHelper/category.dataHelper';
@@ -9,21 +9,47 @@ interface CategoryGridProps {
     onEdit: (category: Category) => void;
     onDelete: (category: Category) => void;
     onStatusChange: (id: number, status: 'active' | 'inactive') => void;
+    onAdd?: () => void;
+    hasActiveFilters?: boolean;
+    statusUpdatingId?: number | null;
     isReorderMode?: boolean;
     onReorderChange?: (items: Category[]) => void;
 }
 
-const CategoryGrid = ({ categories, onEdit, onDelete, onStatusChange, isReorderMode, onReorderChange }: CategoryGridProps) => {
+const CategoryGrid = ({
+    categories,
+    onEdit,
+    onDelete,
+    onStatusChange,
+    onAdd,
+    hasActiveFilters = false,
+    statusUpdatingId = null,
+    isReorderMode,
+    onReorderChange,
+}: CategoryGridProps) => {
     const { t } = useTranslation('location');
 
     if (categories.length === 0) {
         return (
-            <div className="flex flex-col items-center justify-center rounded-[32px] border border-dashed border-slate-200 bg-white py-20 text-center">
+            <div
+                data-testid="location-category-empty"
+                className="flex flex-col items-center justify-center rounded-[32px] border border-dashed border-slate-200 bg-white py-20 text-center"
+            >
                 <div className="mb-6 flex h-24 w-24 items-center justify-center rounded-[32px] bg-slate-50">
                     <FolderOpen size={48} className="text-slate-200" />
                 </div>
-                <h3 className="text-xl font-black tracking-tight text-slate-900">{t('messages.no_data')}</h3>
-                <p className="mt-2 font-medium text-slate-500">{t('messages.no_data_subtitle')}</p>
+                <h3 className="text-xl font-black tracking-tight text-slate-900">{t('categories.empty_title')}</h3>
+                <p className="mt-2 max-w-md font-medium text-slate-500">{t('categories.empty_subtitle')}</p>
+                {!hasActiveFilters && onAdd && (
+                    <button
+                        type="button"
+                        onClick={onAdd}
+                        className="mt-8 inline-flex items-center gap-2 rounded-2xl bg-[#14b8a6] px-8 py-3.5 font-black text-white shadow-xl shadow-[#14b8a6]/20 transition-all hover:bg-[#0f766e]"
+                    >
+                        <Plus size={18} />
+                        {t('categories.empty_cta')}
+                    </button>
+                )}
             </div>
         );
     }
@@ -39,6 +65,7 @@ const CategoryGrid = ({ categories, onEdit, onDelete, onStatusChange, isReorderM
                             onEdit={onEdit}
                             onDelete={onDelete}
                             onStatusChange={onStatusChange}
+                            statusUpdatingId={statusUpdatingId}
                             isReorderMode
                         />
                     </Reorder.Item>
@@ -56,6 +83,7 @@ const CategoryGrid = ({ categories, onEdit, onDelete, onStatusChange, isReorderM
                     onEdit={onEdit}
                     onDelete={onDelete}
                     onStatusChange={onStatusChange}
+                    statusUpdatingId={statusUpdatingId}
                 />
             ))}
         </div>

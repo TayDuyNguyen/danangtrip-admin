@@ -9,6 +9,8 @@ interface DeleteLocationModalProps {
     onConfirm: () => void;
     locationName: string;
     isDeleting?: boolean;
+    isBulk?: boolean;
+    count?: number;
 }
 
 const DeleteLocationModal = ({
@@ -16,63 +18,79 @@ const DeleteLocationModal = ({
     onClose,
     onConfirm,
     locationName,
-    isDeleting
+    isDeleting,
+    isBulk = false,
+    count = 0,
 }: DeleteLocationModalProps) => {
-    const { t } = useTranslation('location');
+    const { t } = useTranslation(['location', 'common']);
 
     if (!isOpen) return null;
 
     return (
         <div className="fixed inset-0 z-100 flex items-center justify-center p-4 overflow-x-hidden overflow-y-auto outline-none focus:outline-none">
             <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity" onClick={onClose}></div>
-            
+
             <div className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
                 <div className="p-6">
                     <div className="flex justify-between items-start mb-4">
                         <div className="w-12 h-12 bg-rose-50 rounded-2xl flex items-center justify-center text-rose-500">
                             <AlertTriangle size={26} />
                         </div>
-                        <button onClick={onClose} className="text-slate-400 hover:text-slate-900 transition-colors">
+                        <button
+                            type="button"
+                            onClick={onClose}
+                            aria-label={t('common:actions.close')}
+                            className="text-slate-400 hover:text-slate-900 transition-colors"
+                        >
                             <X size={20} />
                         </button>
                     </div>
 
                     <h3 className="text-xl font-black text-slate-900 mb-2">
-                        {t('actions.confirm_delete')}
+                        {isBulk ? t('location:actions.bulk_confirm_delete') : t('location:actions.confirm_delete')}
                     </h3>
-                    
+
                     <p className="text-slate-500 text-sm font-medium leading-relaxed mb-4">
-                        <Trans
-                            t={t}
-                            i18nKey="messages.delete_confirm"
-                            values={{ name: locationName }}
-                            components={{ strong: <strong className="text-slate-900 font-black" /> }}
-                        />
+                        {isBulk ? (
+                            <Trans
+                                t={t}
+                                i18nKey="location:messages.bulk_delete_confirm"
+                                values={{ count }}
+                                components={{ strong: <strong className="text-slate-900 font-black" /> }}
+                            />
+                        ) : (
+                            <Trans
+                                t={t}
+                                i18nKey="location:messages.delete_confirm"
+                                values={{ name: locationName }}
+                                components={{ strong: <strong className="text-slate-900 font-black" /> }}
+                            />
+                        )}
                     </p>
 
                     <div className="flex gap-3 rounded-2xl border border-tertiary-border bg-tertiary p-4">
                         <AlertTriangle size={18} className="shrink-0 text-teal-700" />
                         <p className="text-[12px] font-bold leading-tight text-teal-700">
-                            {t('messages.delete_warning')}
+                            {t('location:messages.delete_warning')}
                         </p>
                     </div>
                 </div>
 
                 <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
-                    <Button 
-                        variant="outline" 
+                    <Button
+                        variant="outline"
                         onClick={onClose}
                         className="rounded-xl px-6 font-bold"
                     >
-                        {t('actions.cancel')}
+                        {t('location:actions.cancel')}
                     </Button>
-                    <Button 
-                        variant="danger" 
+                    <Button
+                        variant="danger"
                         onClick={onConfirm}
                         isLoading={isDeleting}
                         className="rounded-xl px-6 font-bold shadow-lg shadow-rose-500/20"
                     >
-                        {t('actions.delete')}
+                        {t('location:actions.delete')}
                     </Button>
                 </div>
             </div>

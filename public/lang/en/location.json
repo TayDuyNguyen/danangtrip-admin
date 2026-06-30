@@ -6,11 +6,13 @@
         "export": "Export Excel",
         "filter": "Filter",
         "reset": "Reset",
+        "reset": "Reset",
         "activate": "Activate",
         "deactivate": "Deactivate",
         "delete": "Delete",
         "selected": "{{count}} selected",
         "confirm_delete": "Delete this location?",
+        "bulk_confirm_delete": "Delete selected locations?",
         "cancel": "Cancel"
     },
     "stats": {
@@ -37,7 +39,9 @@
             "actions": "Actions"
         },
         "pagination": "Showing {{from}}–{{to}} of {{total}} locations",
-        "per_page": "{{count}} / page"
+        "per_page": "{{count}} / page",
+        "price_free": "Free",
+        "price_not_set": "Not set"
     },
     "status": {
         "all": "All",
@@ -53,11 +57,16 @@
     },
     "messages": {
         "delete_confirm": "Location <strong>{{name}}</strong> will be permanently deleted.",
+        "bulk_delete_confirm": "You are about to delete <strong>{{count}}</strong> locations. This cannot be undone.",
         "delete_warning": "All reviews, favorites, and related data will also be deleted.",
         "delete_success": "Location deleted successfully",
         "delete_error": "Error deleting location",
         "no_data": "No data available",
         "load_error": "Unable to load location details.",
+        "list_load_error": "Failed to load location list",
+        "list_load_error_desc": "Location data is temporarily unavailable. Please try again.",
+        "export_success": "Excel file is downloading...",
+        "export_error": "An error occurred while exporting the file",
         "update_success": "Updated successfully",
         "update_error": "Update failed",
         "bulk_update_success": "Bulk update successful",
@@ -91,7 +100,8 @@
             "pricing": "Pricing & Hours",
             "media": "Media",
             "map": "Map Location",
-            "settings": "Settings & Status"
+            "settings": "Settings & Status",
+            "tags_amenities": "Tags & Amenities"
         },
         "section_descriptions": {
             "basic": "Name, category, and detailed description",
@@ -99,7 +109,12 @@
             "pricing": "Price range and daily operating hours",
             "media": "Upload thumbnail and photo gallery",
             "map": "Pin the exact coordinates on the map",
-            "settings": "Visibility and priority settings"
+            "settings": "Visibility and priority settings",
+            "tags_amenities": "Extend location metadata with tags and amenities"
+        },
+        "tags_amenities": {
+            "tags": "Tags",
+            "amenities": "Amenities"
         },
         "basic": {
             "name": "Location Name",
@@ -149,7 +164,8 @@
         "map": {
             "latitude": "Latitude",
             "longitude": "Longitude",
-            "helper": "Click on the map to select exact coordinates"
+            "helper": "Click on the map to select exact coordinates",
+            "reset_center": "Reset to Da Nang center"
         },
         "settings": {
             "status": "Visibility Status",
@@ -173,6 +189,8 @@
     "detail": {
         "title": "Location Details",
         "back_to_list": "Back to list",
+        "not_found": "Location not found",
+        "not_found_desc": "This location does not exist or has been removed from the system.",
         "edit": "Edit",
         "delete": "Delete location",
         "tabs": {
@@ -187,7 +205,9 @@
             "avg_score": "Average"
         },
         "hero": {
-            "no_images": "No images available"
+            "no_images": "No images available",
+            "view_full": "View full-size image",
+            "close_lightbox": "Close image viewer"
         },
         "info": {
             "description": "Description",
@@ -223,6 +243,7 @@
         },
         "reviews": {
             "empty": "No reviews yet for this location.",
+            "load_error": "Unable to load reviews. Please try again.",
             "all_reviews": "All reviews",
             "distribution": "Review distribution",
             "total_count": "{{count}} reviews",
@@ -249,10 +270,20 @@
         "title": "Location Categories",
         "subtitle": "Manage place types (Dining, Accommodation, Sightseeing...)",
         "search_placeholder": "Search by category name or slug...",
+        "stats_scope_note": "System-wide stats (not affected by current filters)",
+        "reset_filters": "Reset filters",
+        "empty_title": "No categories found",
+        "empty_subtitle": "Try adjusting filters or add a new category",
+        "empty_cta": "Add your first category",
         "actions": {
             "add": "Add Category",
-            "edit": "Edit Category",
-            "delete": "Delete Category"
+            "edit": "Edit category {{name}}",
+            "delete": "Delete category {{name}}",
+            "delete_blocked": "Cannot delete — {{count}} linked places"
+        },
+        "dialog": {
+            "button_delete": "Delete category",
+            "button_cancel": "Cancel"
         },
         "stats": {
             "total": "TOTAL CATEGORIES",
@@ -300,7 +331,9 @@
             "image_placeholder": "https://... or leave blank",
             "icon": "Icon (class or URL)",
             "icon_placeholder": "e.g. MapPinned",
-            "icon_background": "Icon background"
+            "icon_background": "Icon background",
+            "create_subtitle": "Add a new location category to the system",
+            "edit_subtitle": "Update category details and display status"
         },
         "messages": {
             "create_success": "Category created successfully",

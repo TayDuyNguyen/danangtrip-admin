@@ -16,7 +16,7 @@ import { toNumberSafe, toArraySafe } from "./dashboard.mapper";
  * Mappers: Raw Backend Data -> UI View Models
  */
 
-export const mapBookingItem = (raw: AdminRawBookingItem): BookingItem => {
+const mapBookingItem = (raw: AdminRawBookingItem): BookingItem => {
     return {
         id: raw.id,
         code: raw.booking_code,
@@ -65,7 +65,7 @@ export const mapBookingStatusCounts = (raw: AdminRawBookingStatusCounts | unknow
     };
 };
 
-export const mapBookingDetailItem = (raw: RawBookingDetailItem): BookingDetailItem => {
+const mapBookingDetailItem = (raw: RawBookingDetailItem): BookingDetailItem => {
     return {
         id: raw.id,
         bookingId: raw.booking_id,

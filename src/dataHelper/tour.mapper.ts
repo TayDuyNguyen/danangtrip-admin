@@ -105,14 +105,14 @@ function normalizeItineraryRaw(raw: unknown): Array<{ day: number; title: string
     }
 
     return entries
-        .map((entry, index) => {
+        .flatMap((entry, index) => {
             if (typeof entry === 'string') {
                 const text = entry.trim();
-                return { day: index + 1, title: '', content: text };
+                return text ? [{ day: index + 1, title: '', content: text }] : [];
             }
 
             if (!entry || typeof entry !== 'object') {
-                return { day: index + 1, title: '', content: '' };
+                return [];
             }
 
             const item = entry as Record<string, unknown>;
@@ -122,9 +122,8 @@ function normalizeItineraryRaw(raw: unknown): Array<{ day: number; title: string
             ).trim();
             const day = toNumberSafe(item.day) || index + 1;
 
-            return { day, title, content };
-        })
-        .filter((item) => item.title || item.content);
+            return title || content ? [{ day, title, content }] : [];
+        });
 }
 
 export const tourMapper = {

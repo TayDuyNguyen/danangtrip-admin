@@ -190,19 +190,31 @@ axiosClient.interceptors.response.use(
                 (b) => normalizeBaseForFailover(b) !== failedNorm
             );
 
-            for (const base of candidates) {
+            const tryFailover = async (candidateIndex: number): Promise<ReturnType<typeof axiosClient.request>> => {
+                const base = candidates[candidateIndex];
+
+                if (!base) {
+                    throw error;
+                }
+
                 try {
-                    const res = await axiosClient.request({
+                    const response = await axiosClient.request({
                         ...originalRequest,
                         baseURL: base,
                         __isFailoverRetry: true,
                     });
                     currentBaseUrl = base;
                     axiosClient.defaults.baseURL = base;
-                    return res;
+                    return response;
                 } catch {
-                    /* try next base */
+                    return tryFailover(candidateIndex + 1);
                 }
+            };
+
+            try {
+                return await tryFailover(0);
+            } catch {
+                /* all failover bases failed */
             }
 
             toast.error(i18next.t("translation:network_error"));

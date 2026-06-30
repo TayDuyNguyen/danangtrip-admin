@@ -1,7 +1,7 @@
 import { useAuth } from "@/store"
 import { Navigate, Outlet } from "react-router-dom";
 import { ROUTES } from "./routes";
-import { hasRole } from "@/utils/roleUtils";
+import { canAccessAdminPanel } from '@/pages/Reports/shared/reportAccess';
 import LoadingReact from "@/components/loading";
 
 const PrivateRoute = () => {
@@ -12,7 +12,7 @@ const PrivateRoute = () => {
     }
 
     return (
-        isAuthenticated && hasRole(user, 'admin') ? <Outlet /> : <Navigate to={ROUTES.LOGIN} replace />
+        isAuthenticated && canAccessAdminPanel(user) ? <Outlet /> : <Navigate to={ROUTES.LOGIN} replace />
     );
 }
 

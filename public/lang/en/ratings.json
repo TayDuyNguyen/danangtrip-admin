@@ -11,7 +11,18 @@
     "error": {
         "load_failed": "Failed to load report data",
         "laravel_connection": "A connection error occurred with the Laravel API system.",
-        "api_failed": "Failed to load data from API"
+        "api_failed": "Failed to load data from API",
+        "hide": "An error occurred while hiding the rating.",
+        "delete": "An error occurred while deleting the rating.",
+        "mark_viewed": "An error occurred while marking as viewed.",
+        "update_bulk": "Bulk update failed.",
+        "delete_bulk": "Bulk delete failed.",
+        "stats_load_failed": "Failed to load rating statistics",
+        "stats_load_failed_desc": "Overview metrics are temporarily unavailable. Please try again."
+    },
+    "messages": {
+        "list_load_error": "Failed to load ratings list",
+        "list_load_error_desc": "Ratings data is temporarily unavailable. Please try again."
     },
     "filter": {
         "validation": {
@@ -93,7 +104,10 @@
         "reject_reason_placeholder": "Enter an internal reason for hiding this rating",
         "warning_title": "IMPORTANT WARNING:",
         "warning_bulk_desc": "This action will update the status of all selected ratings to 'Rejected' (Hidden) and recalculate the corresponding average ratings of their Locations/Tours.",
-        "warning_single_desc": "Upon rejection, the review will be hidden from public details. The system will automatically notify the customer with the provided explanation."
+        "warning_single_desc": "Upon rejection, the review will be hidden from public details. The system will automatically notify the customer with the provided explanation.",
+        "empty_title": "No reviews found",
+        "empty_subtitle": "No ratings match your current filters.",
+        "image_count_badge": "{{count}} photos"
     },
     "actions": {
         "hide_bulk": "Hide selected",
@@ -110,10 +124,17 @@
         "reject_bulk_desc": "You are hiding the selected reviews from public display. Please enter the reason for hiding them.",
         "reject_single_desc": "You are hiding this review from public display. Please enter a rejection reason to notify the customer.",
         "export_excel": "Export Excel Report",
-        "exporting": "Exporting..."
+        "exporting": "Exporting...",
+        "reset_filters": "Reset filters"
     },
     "success": {
-        "hide_bulk_success": "Successfully hid {{count}} ratings."
+        "hide": "Rating hidden successfully.",
+        "hide_bulk_success": "Successfully hid {{count}} ratings.",
+        "hide_bulk_partial": "Hid {{success}} of {{total}} ratings. {{failed}} failed.",
+        "delete": "Rating deleted permanently.",
+        "delete_bulk_success": "Successfully deleted {{count}} ratings.",
+        "delete_bulk_partial": "Deleted {{success}} of {{total}} ratings. {{failed}} failed.",
+        "mark_viewed": "Marked as viewed."
     },
     "modal": {
         "title": "Review Detail",

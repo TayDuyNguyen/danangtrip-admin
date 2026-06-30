@@ -23,10 +23,3 @@ export const toArraySafe = <T>(input: unknown): T[] => {
     return [];
 };
 
-export const toDateLabelSafe = (val: unknown): string => {
-    const str = String(val || '');
-    if (str.match(/^\d+$/)) {
-        return `Th.${str}`; // For numeric months
-    }
-    return str;
-};

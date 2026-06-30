@@ -14,7 +14,7 @@ interface LocationFilterProps {
 }
 
 const LocationFilter = ({ filters, onFilterChange, onReset }: LocationFilterProps) => {
-    const { t } = useTranslation('location');
+    const { t } = useTranslation(['location', 'common']);
     const { data: categories = [], isLoading: catLoading } = useLocationCategoriesQuery();
     const { data: districts = [], isLoading: distLoading } = useLocationFilterDistrictsQuery();
 
@@ -109,6 +109,8 @@ const LocationFilter = ({ filters, onFilterChange, onReset }: LocationFilterProp
                     <Button
                         variant="ghost"
                         onClick={onReset}
+                        aria-label={t('common:actions.reset')}
+                        title={t('location:actions.reset')}
                         className="h-[52px] px-4 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-xl"
                     >
                         <RotateCcw size={18} />

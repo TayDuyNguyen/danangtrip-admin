@@ -10,7 +10,7 @@ import type { LoginField } from '@/types';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { loginSchema } from '@/validations';
 import type { LoginForm, LoginRequest } from '@/dataHelper';
-import { hasRole } from '@/utils/roleUtils';
+import { canAccessAdminPanel } from '@/pages/Reports/shared/reportAccess';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 import { AxiosError } from 'axios';
@@ -46,8 +46,7 @@ const Login = () => {
             });
             if (!res.data) throw new Error();
 
-            if (hasRole(res.data.user, 'admin')) {
-                // Store logic is already handled in mutation's onSuccess (as per useAuthQuery.ts)
+            if (canAccessAdminPanel(res.data.user)) {
                 toast.success(t('login_success'), { description: t('welcome_back') });
                 navigate(ROUTES.DASHBOARD);
             } else {
@@ -119,7 +118,11 @@ const Login = () => {
                         </h2>
 
                         {err && (
-                            <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-md text-red-400 text-sm text-center">
+                            <div
+                                data-testid="login-error"
+                                role="alert"
+                                className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-md text-red-400 text-sm text-center"
+                            >
                                 {err}
                             </div>
                         )}
@@ -165,20 +168,28 @@ const Login = () => {
                                 <label className="flex items-center gap-2 text-sm text-slate-400 cursor-pointer hover:text-slate-900 transition-colors duration-200">
                                     <input
                                         type="checkbox"
+                                        data-testid="login-remember-me"
                                         checked={rememberMe}
                                         onChange={(e) => setRememberMe(e.target.checked)}
                                         className="accent-[#14b8a6] w-4 h-4 rounded border-slate-300 focus:ring-[#14b8a6]/20"
                                     />
                                     {t('remember_me')}
                                 </label>
-                                <a href="#" className="text-sm text-[#14b8a6] hover:text-[#0f766e] hover:underline transition-all">
+                                <span
+                                    data-testid="login-forgot-password"
+                                    title={t('forgot_password_soon')}
+                                    aria-disabled="true"
+                                    className="text-sm text-slate-400 cursor-not-allowed select-none"
+                                >
                                     {t('forgot_password')}
-                                </a>
+                                </span>
                             </div>
 
                             <button
                                 type="submit"
+                                data-testid="login-submit"
                                 disabled={loading}
+                                aria-busy={loading}
                                 className="w-full flex items-center justify-center gap-2 bg-[#14b8a6] hover:bg-[#0f766e] disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-full border border-transparent transition-all duration-300 shadow-sm shadow-[#14b8a6]/25 uppercase tracking-wider"
                             >
                                 {loading ? (

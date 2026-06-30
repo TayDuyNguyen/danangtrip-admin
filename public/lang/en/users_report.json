@@ -12,6 +12,8 @@
     "role_label": "Role (Export)",
     "role_all": "All Roles",
     "role_admin": "Administrator",
+    "role_manager": "Manager",
+    "role_staff": "Staff",
     "role_user": "User",
     "status_label": "Status (Export)",
     "status_all": "All Statuses",
@@ -39,7 +41,9 @@
     "growth_subtitle": "Statistics of newly registered accounts grouped by month",
     "no_data": "No new user signup statistics recorded in this calendar year",
     "users_label": "New registered users",
-    "legend_users": "New signups count"
+    "legend_users": "New signups count",
+    "roles_title": "User role distribution",
+    "roles_subtitle": "Share of accounts by system role"
   },
   "table": {
     "title": "Growth Breakdown",

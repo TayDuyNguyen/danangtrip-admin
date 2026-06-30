@@ -10,7 +10,7 @@ import type { PaginationParams } from '@/types';
 
 import type { CreateLocationInput } from '@/validations/location.schema';
 
-export const locationKeys = {
+const locationKeys = {
     all: ['locations'] as const,
     lists: () => [...locationKeys.all, 'list'] as const,
     list: (filters: LocationFilters) => [...locationKeys.lists(), filters] as const,
@@ -180,6 +180,7 @@ export const useUpdateLocationMutation = () => {
             toast.success(t('messages.update_success'));
             queryClient.invalidateQueries({ queryKey: locationKeys.lists() });
             queryClient.invalidateQueries({ queryKey: locationKeys.detail(variables.id) });
+            queryClient.invalidateQueries({ queryKey: locationKeys.detailRaw(variables.id) });
         },
         onError: () => {
             toast.error(t('messages.update_error'));
@@ -225,6 +226,26 @@ export const useUpdateLocationFeaturedMutation = () => {
     });
 };
 
+export const useUpdateLocationStatusMutation = () => {
+    const queryClient = useQueryClient();
+    const { t } = useTranslation('location');
+
+    return useMutation({
+        mutationFn: ({ id, status }: { id: number; status: 'active' | 'inactive' }) =>
+            locationApi.updateStatus(id, status),
+        onSuccess: (_data, variables) => {
+            toast.success(t('messages.update_success'));
+            queryClient.invalidateQueries({ queryKey: locationKeys.lists() });
+            queryClient.invalidateQueries({ queryKey: locationKeys.stats() });
+            queryClient.invalidateQueries({ queryKey: locationKeys.filterDistricts() });
+            queryClient.invalidateQueries({ queryKey: locationKeys.detail(variables.id) });
+        },
+        onError: () => {
+            toast.error(t('messages.update_error'));
+        },
+    });
+};
+
 export type BulkLocationAction = 'active' | 'inactive' | 'delete';
 
 export const useBulkLocationActionsMutation = () => {
@@ -262,6 +283,20 @@ export const useBulkLocationActionsMutation = () => {
         },
         onError: (err) => {
             toast.error(err instanceof Error && err.message === 'partial' ? t('messages.bulk_partial_error') : t('messages.update_error'));
+        },
+    });
+};
+
+export const useLocationExportMutation = () => {
+    const { t } = useTranslation('location');
+
+    return useMutation({
+        mutationFn: (filters: LocationFilters) => locationApi.exportExcel(filters),
+        onSuccess: () => {
+            toast.success(t('messages.export_success'));
+        },
+        onError: () => {
+            toast.error(t('messages.export_error'));
         },
     });
 };

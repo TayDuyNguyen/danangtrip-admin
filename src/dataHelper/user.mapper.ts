@@ -6,7 +6,7 @@ import type { RawUserItem, RawUserListResponse, UserItem, UserListResponse, User
  */
 
 /** Normalize API date strings for `<input type="date">` (YYYY-MM-DD). */
-export const normalizeDateForInput = (value?: string | null): string | undefined => {
+const normalizeDateForInput = (value?: string | null): string | undefined => {
     if (!value) return undefined;
     const trimmed = value.trim();
     if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) return trimmed;

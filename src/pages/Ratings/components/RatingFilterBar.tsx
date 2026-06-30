@@ -34,10 +34,11 @@ const RatingFilterBar: React.FC<RatingFilterBarProps> = ({
 
     // Handle debounced search change
     useEffect(() => {
-        if (debouncedSearch !== (filters.search || '')) {
-            onFilterChange({ search: debouncedSearch, page: 1 });
-        }
-    }, [debouncedSearch, filters.search, onFilterChange]);
+        if (debouncedSearch === (filters.search || '')) return;
+        // Parent reset cleared search — ignore stale debounced value until it catches up.
+        if ((filters.search || '') === '' && searchValue === '') return;
+        onFilterChange({ search: debouncedSearch, page: 1 });
+    }, [debouncedSearch, filters.search, searchValue, onFilterChange]);
 
     const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearchValue(e.target.value);
@@ -149,7 +150,7 @@ const RatingFilterBar: React.FC<RatingFilterBarProps> = ({
                             className="flex items-center justify-center gap-2 bg-slate-50 border border-slate-100 hover:bg-slate-100 hover:text-slate-900 rounded-xl py-2.5 px-4 text-sm font-bold text-slate-500 transition-all duration-200 cursor-pointer"
                         >
                             <RotateCcw size={15} />
-                            <span>{t('actions.reset', 'Làm mới')}</span>
+                            <span>{t('actions.reset_filters', 'Đặt lại bộ lọc')}</span>
                         </button>
                     )}
                 </div>

@@ -16,7 +16,7 @@ import {
     sanitizeDownloadFilename
 } from '@/utils';
 
-export const bookingKeys = {
+const bookingKeys = {
     all: ['bookings'] as const,
     lists: () => [...bookingKeys.all, 'list'] as const,
     list: (filters: BookingListFilters, page: number, limit: number) => 

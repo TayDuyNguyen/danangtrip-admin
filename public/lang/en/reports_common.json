@@ -1,0 +1,28 @@
+{
+  "mock": {
+    "toggle_title": "Click to toggle mock data mode",
+    "mock_on": "Mock Data (On)",
+    "mock_off": "Real Data (Off)",
+    "banner": "Viewing mock data — figures do not reflect the live API",
+    "toast_to_mock": "Could not connect to API. Please retry or switch to mock data.",
+    "toast_switched_mock": "Switched to Mock Data mode",
+    "toast_switched_real": "Switched to Real Laravel API mode"
+  },
+  "error": {
+    "load_failed": "Failed to load data from API",
+    "connection": "A connection error occurred with the Laravel API system.",
+    "retry_btn": "Retry",
+    "use_mock_btn": "Use Mock Data"
+  },
+  "export": {
+    "btn_label": "Export Excel",
+    "toast_mock_loading": "Preparing mock CSV file...",
+    "toast_mock_success": "Mock CSV report downloaded successfully!"
+  },
+  "pagination": {
+    "per_page": "Rows per page"
+  },
+  "access": {
+    "denied_toast": "You do not have permission to access this report."
+  }
+}
